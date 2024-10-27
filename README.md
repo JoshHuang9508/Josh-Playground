@@ -21,9 +21,9 @@
 
 ---
 
-### 📈 GitHub Stats
+### 📈 Stats
 
-(Under Constructed)
+![My osu profile](https://osu-sig.vercel.app/card?user=-Whitedog-&mode=std&lang=en&animation=true)
 
 ---
 
