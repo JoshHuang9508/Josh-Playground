@@ -1,9 +1,9 @@
 # Hello World! 👋
 
-### I'm Josh (a.k.a Whydog)!
+### I'm Josh (a.k.a Whydog, Whitedog)!
 
 - 🌱 Currently learning: ReactNative, TypeScript, Photography, Dressing
-- 🌟 Interested in: Coding, Wotagei, Photography, Gaming, Dressing(newbie)
+- 🌟 Interested in: Coding, Wotagei, Photography, Gaming, Dressing
 - 💼 Working on: None
 - 🎓 Education: National Taiwan University of Science and Technology
 - 📫 Reach me at: joshhuang9508@gmail.com
@@ -17,7 +17,7 @@
 - **Web**: HTML, CSS
 - **Framework**: Node.js, React.js, Express.js
 - **Databases**: Not yet
-- **Tools & Platforms**: Git
+- **Toolbox**: VSCode, VisualStudio, Unity, Postman, Paint.NET, Word, Excel, Github
 
 ---
 
