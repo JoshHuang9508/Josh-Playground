@@ -21,7 +21,7 @@
 
 ---
 
-### 📈 Stats
+### 📈 Osu! Stats (I'm an osu player too!)
 
 ![My osu profile](https://osu-sig.vercel.app/card?user=-Whitedog-&mode=std&lang=en&animation=true)
 
