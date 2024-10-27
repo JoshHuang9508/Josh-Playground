@@ -1,13 +1,13 @@
 # Hello World! 👋
 
-### I'm [Josh (a.k.a Whydog)]!
+### I'm Josh (a.k.a Whydog)!
 
-- 🌱 Currently learning: [ReactNative, TypeScript, Photography, Dressing]
-- 🌟 Interested in: [Coding, Wotagei, Photography, Gaming, Dressing(newbie)]
-- 💼 Working on: [None]
-- 🎓 Education: [National Taiwan University of Science and Technology]
-- 📫 Reach me at: [joshhuang9508@gmail.com]
-- 🐱 Fun fact: [Yeci]
+- 🌱 Currently learning: ReactNative, TypeScript, Photography, Dressing
+- 🌟 Interested in: Coding, Wotagei, Photography, Gaming, Dressing(newbie)
+- 💼 Working on: None
+- 🎓 Education: National Taiwan University of Science and Technology
+- 📫 Reach me at: joshhuang9508@gmail.com
+- 🐱 Fun fact: Yeci
 
 ---
 
@@ -23,7 +23,7 @@
 
 ### 📈 GitHub Stats
 
-![My Page](Under Constructed)
+(Under Constructed)
 
 ---
 
