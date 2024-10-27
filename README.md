@@ -1,38 +1,34 @@
-# Hi there! 👋
+# Hello World! 👋
 
-### I'm [Your Name]!
+### I'm [Josh (a.k.a Whydog)]!
 
-- 🌱 Currently learning: [Learning Topics, e.g., React, Node.js, Python]
-- 🌟 Interested in: [Topics you're passionate about, e.g., AI, Web Development, Data Science]
-- 💼 Working on: [Current Projects, e.g., Portfolio Website, Open Source Contributions]
-- 🎓 Education: [Your Degree, Major, University]
-- 📝 Blog: [Your Blog/Website link]
-- 📫 Reach me at: [Your Email or Social Media Handle]
-- 🐱 Fun fact: [Interesting fact about you!]
+- 🌱 Currently learning: [ReactNative, TypeScript, Photography, Dressing]
+- 🌟 Interested in: [Coding, Wotagei, Photography, Gaming, Dressing(newbie)]
+- 💼 Working on: [None]
+- 🎓 Education: [National Taiwan University of Science and Technology]
+- 📫 Reach me at: [joshhuang9508@gmail.com]
+- 🐱 Fun fact: [Yeci]
 
 ---
 
 ### 🛠️ My Tech Stack
 
-- **Programming Languages**: JavaScript, Python, C++
-- **Frontend**: HTML, CSS, React, Vue
-- **Backend**: Node.js, Express, Django
-- **Databases**: MySQL, MongoDB, PostgreSQL
-- **Tools & Platforms**: Git, Docker, AWS
+- **Programming Languages**: JavaScript, TypeScript, C#
+- **Web**: HTML, CSS
+- **Framework**: Node.js, React.js, Express.js
+- **Databases**: Not yet
+- **Tools & Platforms**: Git
 
 ---
 
 ### 📈 GitHub Stats
 
-![Your GitHub stats](https://github-readme-stats.vercel.app/api?username=your-username&show_icons=true&theme=radical)
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=your-username&layout=compact)
+![My Page](Under Constructed)
 
 ---
 
-### 📫 Let's Connect!
+### 📫 Connect Me
 
-- [LinkedIn](https://linkedin.com/in/your-username)
-- [Twitter](https://twitter.com/your-username)
-- [GitHub](https://github.com/your-username)
+- [GitHub](https://github.com/JoshHuang9508)
 
 Thanks for stopping by! 😊
