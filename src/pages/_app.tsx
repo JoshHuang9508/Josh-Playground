@@ -1,132 +1,85 @@
 // Import ...
 import { useState, useRef, useEffect } from "react";
 import store from "../redux/store";
+import { Provider } from "react-redux";
 // Import styles
 import "../../public/styles/global.css";
-import {
-  addConsoleContent,
-  setConsoleContent,
-} from "../redux/consoleContentSlice";
+import styles from "../../public/styles/_app.module.css";
+// Import redux
+import { addConsoleContent } from "../redux/consoleContentSlice";
+import { setCommand } from "../redux/commandSlice";
 
 export default function Page({ Component, pageProps }) {
   // Handle input change
   const [inputValue, setInputValue] = useState("");
+  const [currentURL, setCurrentURL] = useState("");
   const inputBox = useRef(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentURL(window.location.href);
+    }
+  }, []);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  // Maybe change it to a event and add listeners in different page
   const handleEnter = (event) => {
-    if (event.key === "Enter" && inputValue) {
-      store.dispatch(addConsoleContent([inputValue]));
-      switch (inputValue.split(" ")[0]) {
-        case "clear":
-          store.dispatch(setConsoleContent([]));
-          break;
-        case "goto":
-          const page = inputValue.split(" ")[1] ?? "";
-          store.dispatch(addConsoleContent([`Going to ${page}...`]));
-          if (page || page === "") {
-            window.location.href = `/${page}`;
-          } else {
-            store.dispatch(addConsoleContent(["Please provide a page"]));
-          }
-          break;
-        case "back":
-          store.dispatch(addConsoleContent(["Going back..."]));
-          window.history.back();
-          break;
-        case "help":
-          store.dispatch(
-            addConsoleContent([
-              "Available commands:",
-              "help <command> - Show help message, type command to get more info",
-              "goto <page> - Redirect to page",
-              "back - Go back",
-              "clear - Clear console",
-            ])
-          );
-          break;
-        case "log":
-          store.dispatch(addConsoleContent(store.getState().consoleContent));
-          break;
-        default:
-          store.dispatch(
-            addConsoleContent([`"${inputValue}" is not a valid command`])
-          );
-          break;
-      }
+    if (event.key === "Enter") {
+      if (!inputValue || inputValue == "") return;
+      store.dispatch(setCommand(inputValue));
+      store.dispatch(addConsoleContent([`${currentURL}>${inputValue}`]));
       setInputValue("");
     }
   };
 
   // Handle console
-  const consoleContent = store.getState().consoleContent;
+  const [consoleContent, setConsoleContent] = useState<String[]>([]);
   const consoleBox = useRef<HTMLDivElement>(null);
-
-  // Listener for diffent pages callbacks
-  const handleConsoleInput = (input) => {
-    store.dispatch(addConsoleContent(input));
-  };
 
   useEffect(() => {
     if (consoleBox.current)
       consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
   }, [consoleContent]);
 
+  useEffect(() => {
+    store.subscribe(() => {
+      setConsoleContent(store.getState().consoleContent);
+    });
+    store.dispatch(
+      addConsoleContent([
+        "Welcome to the console!",
+        "Type 'help' for available commands",
+      ])
+    );
+  }, []);
+
   return (
-    <>
-      <Component {...pageProps} />
-      <div
-        style={{
-          flex: "1",
-          position: "absolute",
-          bottom: "0",
-          width: "100vw",
-        }}
-      >
-        <div
-          ref={consoleBox}
-          style={{
-            flex: "1",
-            flexDirection: "column-reverse",
-            padding: "10px",
-            background: "none",
-            width: "100%",
-            height: "400px",
-            color: "white",
-            fontSize: "16px",
-            overflowY: "scroll",
-            border: "1px solid white",
-          }}
-        >
+    <Provider store={store}>
+      <div style={{ height: "100vh" }}>
+        <div className={styles["container"]}>
+          <Component {...pageProps} />
+        </div>
+
+        <div ref={consoleBox} className={styles["console"]}>
           {consoleContent.map((content, index) => (
-            <p style={{ margin: 2, fontFamily: "monospace" }} key={index}>
-              {content}
-            </p>
+            <p key={index}>{content}</p>
           ))}
         </div>
 
-        <input
-          ref={inputBox}
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder=">/..."
-          style={{
-            padding: "10px",
-            background: "none",
-            width: "100%",
-            color: "white",
-            fontSize: "16px",
-            border: "1px solid white",
-            fontFamily: "monospace",
-          }}
-          onKeyDown={handleEnter}
-        />
+        <div className={styles["console-input"]}>
+          <span>{`${currentURL}>`}</span>
+          <input
+            ref={inputBox}
+            type="text"
+            value={`${inputValue}`}
+            placeholder=""
+            onChange={handleInputChange}
+            onKeyDown={handleEnter}
+          />
+        </div>
       </div>
-    </>
+    </Provider>
   );
 }

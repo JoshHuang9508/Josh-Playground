@@ -1,17 +1,17 @@
 // Import ...
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import store from "../redux/store";
+import store from "../../redux/store";
 // Import styles
-import styles from "../../public/styles/index.module.css";
+import styles from "../../../public/styles/index.module.css";
 // Import redux
 import {
   addConsoleContent,
   setConsoleContent,
-} from "../redux/consoleContentSlice";
-import { setCommand } from "../redux/commandSlice";
+} from "../../redux/consoleContentSlice";
+import { setCommand } from "../../redux/commandSlice";
 
-import profileImage from "../../public/assets/pfp.png";
+import profileImage from "../../../public/assets/pfp.png";
 
 export default function Page() {
   // Command control
@@ -66,6 +66,12 @@ export default function Page() {
 
   // Text content
   const textContent = {
+    name: ["Whydog", "Whitedog", "白狗"],
+    about: [
+      "我是 Whydog，一位來自台灣的大學生。",
+      "因為興趣而學習，因為喜歡而鑽研。",
+      "一步一步成為理想中的自己。",
+    ],
     hint: [
       "1. 如果網頁沒有進到輸入模式，可以用滑鼠先點一下 (當然我並不推薦)，或是點一下Tab切過去。",
       "2. 在控制台打上各種指令控制所有動作，每個頁面都有一些不同的指令，可以通過help查詢所有指令",
@@ -85,47 +91,61 @@ export default function Page() {
       if (Array.isArray(path)) {
         return index != paths.length - 1 ? (
           <>
-            <p key={index}>{`${prefix}├─ ${path[0]}/`}</p>
+            <p key={index}>{`${prefix}├── ${path[0]}/`}</p>
             <div key={`${index}-container`} style={{ flexDirection: "column" }}>
               {renderWebPaths(
                 path.filter((_, i) => i > 0),
-                prefix + "│　"
+                prefix + "│　　"
               )}
             </div>
           </>
         ) : (
           <>
-            <p key={index}>{`${prefix}└─ ${path[0]}/`}</p>
+            <p key={index}>{`${prefix}└── ${path[0]}/`}</p>
             <div key={`${index}-container`} style={{ flexDirection: "column" }}>
               {renderWebPaths(
                 path.filter((_, i) => i > 0),
-                prefix + "　　"
+                prefix + "　　　"
               )}
             </div>
           </>
         );
       } else {
         return index != paths.length - 1 ? (
-          <p key={index}>{`${prefix}├─ ${path}`}</p>
+          <p key={index}>{`${prefix}├── ${path}`}</p>
         ) : (
-          <p key={index}>{`${prefix}└─ ${path}`}</p>
+          <p key={index}>{`${prefix}└── ${path}`}</p>
         );
       }
     });
   };
 
   return (
-    <div className={styles["layout"]}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "10px",
+      }}
+    >
       <p className={styles["title"]}>為什麼狗狗遊樂場</p>
       <p className={styles["subtitle"]}>
         Whydog 的個人網頁，一個致力於無滑鼠操作的網站
       </p>
-      <div className={styles["info-div"]}>
+      <div className={styles["info-div"]} style={{ justifyContent: "center" }}>
         <div className={styles["container"]} style={{ width: "30%" }}>
           <p className={styles["header"]}>我是誰?</p>
           <div
             className="col"
-            style={{ gap: "10px", justifyContent: "center" }}
+            style={{
+              flex: 2,
+              gap: "10px",
+              justifyContent: "center",
+            }}
           >
             <img
               className={styles["profile-picture"]}
@@ -146,7 +166,14 @@ export default function Page() {
         <div className={styles["container"]} style={{ width: "30%" }}>
           <p className={styles["header"]}>網頁目錄</p>
           <div className="row" style={{ justifyContent: "center" }}>
-            <div className="col">{renderWebPaths(webPaths, "")}</div>
+            <div
+              className="col"
+              style={{
+                flex: 2,
+              }}
+            >
+              {renderWebPaths(webPaths, "")}
+            </div>
           </div>
         </div>
         <div className={styles["container"]} style={{ width: "30%" }}>

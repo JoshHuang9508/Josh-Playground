@@ -1,0 +1,59 @@
+div.container{
+    padding: 10px;
+    width: 100%;
+    height: 70%;
+    border: 1px solid #747474;
+}
+div.console {
+    padding: 10px;
+    width: 100%;
+    height: 27%;
+    border: 1px solid #747474;
+    background-color: #2f2f2f;
+    font-family: monospace;
+    font-size: 16px;
+    color: #bababa;
+    overflow-y: scroll;
+    scrollbar-width: none
+}
+div.console p {
+    margin: 2px;
+    min-height: 20px;
+}
+div.console-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+    height: 3%;
+    border: 1px solid #747474;
+    background-color: #2f2f2f;
+    font-family: monospace;
+    font-size: 16px;
+    color: #bababa;
+    outline: none;
+}
+div.console-input span {
+    width: fit-content;
+    background: none;
+    user-select: none;
+    pointer-events: none;
+}
+div.console-input input {
+    display: flex;
+    flex-direction: row;
+    background: none;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-family: monospace;
+    font-size: 16px;
+    color: #bababa;
+    border: none;
+    outline: none;
+}
+div.console-input input:focus  {
+    outline: none;
+}
