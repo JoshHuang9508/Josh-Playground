@@ -1,10 +1,10 @@
-// Import ...
+// Import packages
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import store from "../../redux/store";
 // Import styles
 import styles from "../../../public/styles/index.module.css";
 // Import redux
+import store from "../../redux/store";
 import {
   addConsoleContent,
   setConsoleContent,

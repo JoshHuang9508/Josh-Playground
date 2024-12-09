@@ -1,40 +1,42 @@
 @font-face {
-    font-family: "MyCustomFont"; /* 字體名稱 */
-    src: url("../fonts/zh-tw.ttf") format("truetype");
-    font-weight: normal; /* 字體權重（粗細） */
-    font-style: normal;  /* 字體樣式 */
-  }
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  font-family: "MyCustomFont"; /* 字體名稱 */
+  src: url("../fonts/zh-tw.ttf") format("truetype");
+  font-weight: normal; /* 字體權重（粗細） */
+  font-style: normal; /* 字體樣式 */
 }
 
-html, body {
-    background-color: #181818;
-    color: white;
-    width: 100vw;
-    height: 100vh;
-    font-family: 'MyCustomFont', 'Noto Sans TC', sans-serif;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background-color: #181818;
+  color: white;
+  width: 100vw;
+  height: 100vh;
+  font-family: "MyCustomFont", "Noto Sans TC", sans-serif;
+  font-size: 1vw;
 }
 
 p {
-    font-size: 16px;
-    margin: 2px;
-    min-height: 20px;
+  font-size: 1vw;
+  margin: 0.125vw;
+  min-height: 1.25vw;
 }
 
 div {
-    overflow: hidden;
+  overflow: hidden;
 }
 div.row {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
 }
 div.col {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }

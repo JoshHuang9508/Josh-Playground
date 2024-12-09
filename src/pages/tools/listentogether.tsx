@@ -1,15 +1,17 @@
-// Import ...
-import React, { useEffect } from "react";
+// Import packages
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import store from "../../redux/store";
+import dynamic from "next/dynamic";
 // Import styles
 import styles from "../../../public/styles/index.module.css";
 // Import redux
+import store from "../../redux/store";
 import {
   addConsoleContent,
   setConsoleContent,
 } from "../../redux/consoleContentSlice";
 import { setCommand } from "../../redux/commandSlice";
+import ReactPlayer from "react-player";
 
 export default function Page() {
   // Command control
@@ -52,6 +54,17 @@ export default function Page() {
       case "log":
         // Use for debugging
         break;
+      case "play":
+        const videoID = command.split(" ")[1] ?? "";
+        if (!videoID) {
+          store.dispatch(addConsoleContent(["Please provide a video ID"]));
+          break;
+        }
+        setVedioURL(`https://www.youtube.com/watch?v=${videoID}`);
+        // player.current?.seekTo(0, "seconds");
+        // player.current?.getCurrentTime();
+        store.dispatch(addConsoleContent([`Playing video ${videoID}`]));
+        break;
       default:
         store.dispatch(
           addConsoleContent([`"${command}" is not a valid command`])
@@ -60,6 +73,12 @@ export default function Page() {
     }
     store.dispatch(setCommand(""));
   }, [command]);
+
+  // Video player control
+  const player = useRef<ReactPlayer>(null);
+  const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
+  // const videoURL = useSelector((state: { videoURL: string }) => state.videoURL);
+  const [vedioURL, setVedioURL] = useState("");
 
   return (
     <div className={styles["layout"]}>
@@ -72,7 +91,15 @@ export default function Page() {
           <div
             className="col"
             style={{ gap: "10px", justifyContent: "center" }}
-          ></div>
+          >
+            <ReactPlayer
+              ref={player}
+              url={vedioURL}
+              controls={false}
+              width="100%"
+              height="100%"
+            />
+          </div>
         </div>
 
         <div

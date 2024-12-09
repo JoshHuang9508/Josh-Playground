@@ -1,4 +1,4 @@
-// Import ...
+// Import packages
 import { useState, useRef, useEffect } from "react";
 import store from "../redux/store";
 import { Provider } from "react-redux";
@@ -66,18 +66,17 @@ export default function Page({ Component, pageProps }) {
           {consoleContent.map((content, index) => (
             <p key={index}>{content}</p>
           ))}
-        </div>
-
-        <div className={styles["console-input"]}>
-          <span>{`${currentURL}>`}</span>
-          <input
-            ref={inputBox}
-            type="text"
-            value={`${inputValue}`}
-            placeholder=""
-            onChange={handleInputChange}
-            onKeyDown={handleEnter}
-          />
+          <div>
+            <span>{`${currentURL}>`}</span>
+            <input
+              ref={inputBox}
+              type="text"
+              value={`${inputValue}`}
+              placeholder=""
+              onChange={handleInputChange}
+              onKeyDown={handleEnter}
+            />
+          </div>
         </div>
       </div>
     </Provider>
