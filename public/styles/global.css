@@ -18,13 +18,13 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: "MyCustomFont", "Noto Sans TC", sans-serif;
-  font-size: 1vw;
+  font-size: 0.75vw;
 }
 
 p {
-  font-size: 1vw;
-  margin: 0.125vw;
-  min-height: 1.25vw;
+  font-size: 0.75vw;
+  margin: 0.01vw;
+  min-height: 1vw;
 }
 
 div {
