@@ -8,7 +8,7 @@ const consoleContentSlice = createSlice({
       return action.payload;
     },
     addConsoleContent: (state, action: { payload: String[] }) => {
-      return [...state, ...action.payload, ""];
+      return [...state, ...action.payload];
     },
   },
 });
