@@ -1,0 +1,90 @@
+div.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+p.title {
+  font-size: 3rem;
+  text-align: center;
+  text-shadow: 0px 0px 10px white;
+  opacity: 1;
+}
+p.subtitle {
+  font-size: 1.2rem;
+  text-align: center;
+  opacity: 1;
+}
+
+div.info-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+  height: 80%;
+  gap: 20px;
+}
+div.info-div div.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #2f2f2f;
+  height: 100%;
+  border-radius: 20px;
+  border: 1px solid #747474;
+  opacity: 1;
+  box-shadow: 0px 0px 20px black;
+}
+div.info-div div.container div.box {
+  display: flex;
+  flex-direction: column;
+  padding: 5%;
+  background-color: #1f1f1f;
+  height: 100%;
+  border-radius: 0px;
+  opacity: 1;
+  box-shadow: inset 0px 0px 20px black;
+}
+div.info-div div.container p.header {
+  font-size: 2rem;
+}
+div.info-div div.container p.header2 {
+  font-size: 1.6rem;
+}
+
+div.track-card.selected {
+  border: 1px solid rgb(0, 150, 40);
+}
+div.track-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 3%;
+  margin: 3%;
+  background-color: #1f1f1f;
+  height: 5rem;
+  border-radius: 1rem;
+  border: 1px solid #747474;
+  opacity: 1;
+  box-shadow: 0px 0px 1vw black;
+}
+div.track-card div.track-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+div.track-card div.track-info p.track-title {
+  font-size: 0.8rem;
+  color: white;
+}
+div.track-card div.track-info p.track-subtitle {
+  font-size: 0.6rem;
+  color: #bababa;
+}
