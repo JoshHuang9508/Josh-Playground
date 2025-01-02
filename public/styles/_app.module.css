@@ -1,17 +1,16 @@
 div.container {
-  padding: 10px;
+  flex: 1;
   width: 100%;
-  height: 70%;
+  min-height: 70%;
   border: 1px solid #747474;
 }
 div.console {
-  padding: 10px;
+  padding: 0.5rem;
   width: 100%;
   height: 30%;
   border: 1px solid #747474;
   background-color: #2f2f2f;
   font-family: monospace;
-  font-size: 1rem;
   color: #bababa;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -20,8 +19,6 @@ div.console div {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0.01vw;
-  min-height: 1vw;
 }
 div.console span {
   width: fit-content;
@@ -31,10 +28,7 @@ div.console span {
 }
 div.console input {
   background: none;
-  justify-content: center;
-  align-items: center;
   font-family: monospace;
-  font-size: 1rem;
   width: 100%;
   color: #bababa;
   border: none;
@@ -42,4 +36,11 @@ div.console input {
 }
 div.console input:focus {
   outline: none;
+}
+
+div.console.hidden {
+  height: auto;
+}
+div.console.hidden p {
+  display: none;
 }

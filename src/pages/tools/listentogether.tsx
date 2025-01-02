@@ -24,9 +24,7 @@ export default function Page() {
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
-        store.dispatch(
-          addConsoleContent([JSON.stringify(playerState.duration)])
-        );
+        store.dispatch(addConsoleContent([playerState.playing.toString()]));
         break;
       case "queue":
         const URL = command.split(" ").slice(1)[0] ?? "";
@@ -38,18 +36,27 @@ export default function Page() {
           store.dispatch(addConsoleContent(["Can not play this URL"]));
           return;
         }
-        const track: Track = {
-          url: URL,
-          title: "Unknown Title",
-          author: "Unknown Author",
-          img: getThumbnail(URL.split("v=")[1]),
-          requestBy: "Unknown User",
+        const updateTrackQueue = async () => {
+          const _ = await getVideoInfo(URL.split("v=")[1]);
+          const track: Track = {
+            url: _.video_url,
+            title: _.title,
+            author: _.ownerChannelName,
+            img: _.thumbnails[_.thumbnails.length - 1].url,
+            requestBy: "Unknown User", // TODO: Get user name
+          };
+          setPlayerState({
+            ...playerState,
+            playing: true,
+            trackQueue: [...playerState.trackQueue, track],
+          });
+          store.dispatch(
+            addConsoleContent([
+              `Added ${track.title} to queue (#${playerState.trackQueue.length})`,
+            ])
+          );
         };
-        setPlayerState({
-          ...playerState,
-          trackQueue: [...playerState.trackQueue, track],
-        });
-        store.dispatch(addConsoleContent([`Added ${URL} to queue`]));
+        updateTrackQueue();
         break;
       case "remove":
         const indexToRm = command.split(" ").slice(1)[0] ?? "";
@@ -58,8 +65,7 @@ export default function Page() {
           break;
         }
         if (indexToRm == "*") {
-          playerState.trackQueue = [];
-          setPlayerState({ ...playerState });
+          setPlayerState({ ...playerState, trackQueue: [] });
           store.dispatch(addConsoleContent(["Removed all tracks"]));
           break;
         }
@@ -67,31 +73,47 @@ export default function Page() {
           store.dispatch(addConsoleContent(["Index out of range"]));
           break;
         }
-        playerState.trackQueue.splice(parseInt(indexToRm), 1);
-        setPlayerState({ ...playerState });
+        setPlayerState({
+          ...playerState,
+          trackQueue: playerState.trackQueue.filter(
+            (_, index) => index != parseInt(indexToRm)
+          ),
+        });
         store.dispatch(addConsoleContent([`Removed track ${indexToRm}`]));
         break;
       case "play":
-        playerState.isPlaying = true;
+        setPlayerState({
+          ...playerState,
+          playing: true,
+        });
         store.dispatch(addConsoleContent(["Start playing..."]));
         break;
       case "pause":
-        playerState.isPlaying = false;
+        setPlayerState({
+          ...playerState,
+          playing: false,
+        });
         store.dispatch(addConsoleContent(["Pause playing..."]));
         break;
       case "next":
-        playerState.index =
-          playerState.index + 1 >= playerState.trackQueue.length
-            ? 0
-            : playerState.index + 1;
+        setPlayerState({
+          ...playerState,
+          index:
+            playerState.index + 1 >= playerState.trackQueue.length
+              ? 0
+              : playerState.index + 1,
+        });
         player.current?.seekTo(0);
         store.dispatch(addConsoleContent(["Next track..."]));
         break;
       case "prev":
-        playerState.index =
-          playerState.index - 1 < 0
-            ? playerState.trackQueue.length - 1
-            : playerState.index - 1;
+        setPlayerState({
+          ...playerState,
+          index:
+            playerState.index - 1 <= -1
+              ? playerState.trackQueue.length - 1
+              : playerState.index - 1,
+        });
         player.current?.seekTo(0);
         store.dispatch(addConsoleContent(["Previous track..."]));
         break;
@@ -105,7 +127,7 @@ export default function Page() {
           store.dispatch(addConsoleContent(["Index out of range"]));
           break;
         }
-        playerState.index = parseInt(indexToSw);
+        setPlayerState({ ...playerState, index: parseInt(indexToSw) });
         player.current?.seekTo(0);
         store.dispatch(addConsoleContent([`Switch to track ${indexToSw}`]));
         break;
@@ -115,23 +137,23 @@ export default function Page() {
           store.dispatch(addConsoleContent(["Please provide a volume"]));
           break;
         }
-        playerState.volume = parseFloat(volume) / 100;
+        setPlayerState({ ...playerState, volume: parseFloat(volume) / 100 });
         store.dispatch(addConsoleContent([`Set volume to ${volume}`]));
         break;
       case "mute":
-        playerState.muted = true;
+        setPlayerState({ ...playerState, muted: true });
         store.dispatch(addConsoleContent(["Mute..."]));
         break;
       case "unmute":
-        playerState.muted = false;
+        setPlayerState({ ...playerState, muted: false });
         store.dispatch(addConsoleContent(["Unmute..."]));
         break;
       case "loop":
-        playerState.loop = true;
+        setPlayerState({ ...playerState, loop: true });
         store.dispatch(addConsoleContent(["Loop..."]));
         break;
       case "unloop":
-        playerState.loop = false;
+        setPlayerState({ ...playerState, loop: false });
         store.dispatch(addConsoleContent(["Unloop..."]));
         break;
       case "rate":
@@ -140,7 +162,10 @@ export default function Page() {
           store.dispatch(addConsoleContent(["Please provide a rate"]));
           break;
         }
-        playerState.playbackRate = parseFloat(rate);
+        setPlayerState({
+          ...playerState,
+          playbackRate: parseFloat(rate) / 100,
+        });
         store.dispatch(addConsoleContent([`Set rate to ${rate}`]));
         break;
       case "seek":
@@ -182,6 +207,49 @@ export default function Page() {
   }, [command]);
 
   // Video player control
+  interface VideoInfo {
+    videoId: string;
+    title: string;
+    lengthSeconds: string;
+    keywords: string[];
+    viewCount: string;
+    embed: {
+      iframeUrl: string;
+      width: number;
+      height: number;
+    };
+    description: string;
+    ownerProfileUrl: string;
+    externalChannelId: string;
+    isFamilySafe: boolean;
+    availableCountries: string[];
+    isUnlisted: boolean;
+    hasYpcMetadata: boolean;
+    category: string;
+    publishDate: string;
+    ownerChannelName: string;
+    uploadDate: string;
+    isShortsEligible: boolean;
+    channelId: string;
+    video_url: string;
+    storyboards: {
+      templateUrl: string;
+      thumbnailWidth: number;
+      thumbnailHeight: number;
+      thumbnailCount: number;
+      interval: number;
+      columns: number;
+      rows: number;
+      storyboardCount: number;
+    }[];
+    chapters: any[];
+    thumbnails: {
+      url: string;
+      width: number;
+      height: number;
+    }[];
+    error: string;
+  }
   interface Track {
     url: string; //https://www.youtube.com/watch?v={ID}
     title: string;
@@ -190,7 +258,7 @@ export default function Page() {
     requestBy: string;
   }
   interface PlayerState {
-    isPlaying: boolean;
+    playing: boolean;
     played: number;
     playedSeconds: number;
     loaded: number;
@@ -206,7 +274,7 @@ export default function Page() {
   }
   const player = useRef<ReactPlayer>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
-    isPlaying: false,
+    playing: false,
     played: 0,
     playedSeconds: 0,
     loaded: 0,
@@ -222,25 +290,22 @@ export default function Page() {
   });
 
   return (
-    <div className={styles["layout"]}>
-      <p className={styles["title"]}>YT音樂同步撥放器</p>
-      <p className={styles["subtitle"]}>
+    <div className={"layout"}>
+      <p className={"title"}>YT音樂同步撥放器</p>
+      <p className={"subtitle"}>
         一個可以同步撥放音樂的網站，讓你和朋友一起聽音樂
       </p>
-      <div className={styles["info-div"]}>
-        <div
-          className={styles["container"]}
-          style={{ gap: "20px", width: "30%" }}
-        >
-          <div className={styles["box"]}>
-            <p className={styles["header2"]}>在線使用者</p>
+      <div className={"content-div"}>
+        <div className={"container1"} style={{ gap: "2rem", flex: 0.5 }}>
+          <div className={"sub-container1"} style={{ gap: "10%" }}>
+            <p className={"header2"}>在線使用者</p>
           </div>
-          <div className={styles["box"]}>
-            <p className={styles["header2"]}>房間日誌</p>
+          <div className={"sub-container1"}>
+            <p className={"header2"}>房間日誌</p>
           </div>
         </div>
 
-        <div className={styles["container"]} style={{ width: "30%" }}>
+        <div className={"container1"}>
           <div
             className="col"
             style={{
@@ -256,7 +321,7 @@ export default function Page() {
                 }
                 ref={player}
                 url={playerState.trackQueue[playerState.index]?.url ?? ""}
-                playing={playerState.isPlaying}
+                playing={playerState.playing}
                 volume={playerState.volume}
                 muted={playerState.muted}
                 loop={playerState.loop}
@@ -286,11 +351,8 @@ export default function Page() {
           </div>
         </div>
 
-        <div
-          className={styles["container"]}
-          style={{ width: "30%", gap: "5%" }}
-        >
-          <p className={styles["header"]}>播放歌單</p>
+        <div className={"container1"} style={{ gap: "5%" }}>
+          <p className={"header1"}>播放歌單</p>
           <div
             style={{
               width: "100%",
@@ -324,16 +386,11 @@ export default function Page() {
       </div>
     </div>
   );
-}
 
-function getThumbnail(videoId: string, quality = "high") {
-  const qualities = {
-    default: "default.jpg",
-    medium: "mqdefault.jpg",
-    high: "hqdefault.jpg",
-    standard: "sddefault.jpg",
-    maxres: "maxresdefault.jpg",
-  };
-
-  return `https://i.ytimg.com/vi/${videoId}/${qualities[quality]}`;
+  async function getVideoInfo(videoId: string): Promise<VideoInfo> {
+    const data = await fetch(`/api/getYTInfo?videoId=${videoId}`).then((res) =>
+      res.json()
+    );
+    return data as VideoInfo;
+  }
 }

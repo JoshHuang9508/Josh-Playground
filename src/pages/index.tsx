@@ -89,49 +89,54 @@ export default function Page() {
   };
 
   return (
-    <div className={styles["layout"]}>
-      <p className={styles["title"]}>為什麼狗狗遊樂場</p>
-      <p className={styles["subtitle"]}>
+    <div className={"layout"}>
+      <p className={`title`}>為什麼狗狗遊樂場</p>
+      <p className={`subtitle`}>
         Whydog 的個人網頁，一個致力於無滑鼠操作的網站
       </p>
-      <div className={styles["info-div"]}>
-        <div className={styles["container"]} style={{ width: "30%" }}>
-          <p className={styles["header"]}>我是誰?</p>
+      <div className={"content-div"}>
+        <div className={"container1"} style={{ flex: 0.5 }}>
+          <p className={"header1"}>網頁目錄</p>
+          <div className="row" style={{ justifyContent: "center" }}>
+            <div className="col">{renderWebPaths(webPaths, "")}</div>
+          </div>
+        </div>
+        <div className={"container1"}>
+          <p className={"header1"}>我是誰?</p>
           <div
-            className="col"
-            style={{ gap: "10px", justifyContent: "center" }}
+            className="row"
+            style={{ gap: "1rem", justifyContent: "center" }}
           >
             <img
               className={styles["profile-picture"]}
               src={profileImage.src}
               alt="Profile Picture"
             />
-            {textContent.about.map((content, index) => {
-              if (index == 0)
+            <div
+              className="col"
+              style={{ gap: "1rem", justifyContent: "center" }}
+            >
+              {textContent.about.map((content, index) => {
+                if (index == 0)
+                  return (
+                    <p className={styles["introduce-title"]} key={index}>
+                      {content}
+                    </p>
+                  );
                 return (
-                  <p className={styles["introduce-title"]} key={index}>
+                  <p className={styles["introduce-content"]} key={index}>
                     {content}
                   </p>
                 );
-              return (
-                <p className={styles["introduce-content"]} key={index}>
-                  {content}
-                </p>
-              );
-            })}
+              })}
+            </div>
           </div>
         </div>
-        <div className={styles["container"]} style={{ width: "30%" }}>
-          <p className={styles["header"]}>網頁目錄</p>
-          <div className="row" style={{ justifyContent: "center" }}>
-            <div className="col">{renderWebPaths(webPaths, "")}</div>
-          </div>
-        </div>
-        <div className={styles["container"]} style={{ width: "30%" }}>
-          <p className={styles["header"]}>如何操作?</p>
+        <div className={"container1"} style={{ flex: 0.5 }}>
+          <p className={"header1"}>如何操作?</p>
           <div
             className="col"
-            style={{ gap: "10px", justifyContent: "center" }}
+            style={{ gap: "1rem", justifyContent: "center" }}
           >
             {textContent.hint.map((hint, index) => (
               <p key={index}>{hint}</p>

@@ -52,7 +52,7 @@ export default function Page({ Component, pageProps }) {
       store.dispatch(addConsoleContent([`${currentURL}>${inputValue}`]));
       store.dispatch(addCoomandHistory(inputValue));
 
-      // 攔截基本指令
+      // Catch basic command
       switch (inputValue.split(" ")[0]) {
         case "cl":
           store.dispatch(setConsoleContent([]));
@@ -74,12 +74,29 @@ export default function Page({ Component, pageProps }) {
             window.location.href = link.join("/");
           }
           break;
-        case "log":
-          // Use for debugging
-          store.dispatch(
-            addConsoleContent([store.getState().commandHistory.toString()])
-          );
-          break;
+        // case "log":
+        //   // Use for debugging
+        //   break;
+        // case "mode":
+        //   const mode = inputValue.split(" ")[1] ?? "";
+        //   if (mode == "fixed") {
+        //     setConsoleMode("fixed");
+        //   } else if (mode == "close") {
+        //     setConsoleMode("close");
+        //   } else if (mode == "tab") {
+        //     setConsoleMode("tab");
+        //   } else {
+        //     store.dispatch(
+        //       addConsoleContent([
+        //         "Available modes:",
+        //         "",
+        //         "mode fixed - Fixed console",
+        //         "mode close - Close console",
+        //         "mode tab - Tab console",
+        //       ])
+        //     );
+        //   }
+        //   break;
         case "help":
           store.dispatch(
             addConsoleContent([
@@ -90,7 +107,7 @@ export default function Page({ Component, pageProps }) {
               "cl - Clear console",
             ])
           );
-        // 送出指令事件
+        // Set command
         default:
           store.dispatch(setCommand(inputValue));
           setCommandHistoryIndex(-1);
@@ -104,16 +121,21 @@ export default function Page({ Component, pageProps }) {
     if (event.key === "ArrowDown") {
       setCommandHistoryIndex(commandHistoryIndex - 1);
     }
+    if (event.key === "Escape") {
+      setConsoleVisible(!consoleVisible);
+    }
   };
 
   // Handle console
   const [consoleContents, setConsoleContents] = useState<String[]>([]);
+  const [consoleVisible, setConsoleVisible] = useState(true);
   const consoleBox = useRef<HTMLDivElement>(null);
 
+  // Scroll to bottom
   useEffect(() => {
     if (consoleBox.current)
       consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
-  }, [store.getState().consoleContent]);
+  }, [store.getState().consoleContent, consoleVisible]);
 
   useEffect(() => {
     store.subscribe(() => {
@@ -129,12 +151,19 @@ export default function Page({ Component, pageProps }) {
 
   return (
     <Provider store={store}>
-      <div style={{ height: "100vh" }}>
+      <div
+        style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <div className={styles["container"]}>
           <Component {...pageProps} />
         </div>
 
-        <div ref={consoleBox} className={styles["console"]}>
+        <div
+          ref={consoleBox}
+          className={`${styles["console"]} ${
+            styles[consoleVisible ? "visible" : "hidden"]
+          }`}
+        >
           {consoleContents.map((content, index) => (
             <p key={index}>{content}</p>
           ))}

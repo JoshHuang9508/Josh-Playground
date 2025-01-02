@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "MyCustomFont"; /* 字體名稱 */
+  font-family: "MyCustomFont";
   src: url("../fonts/zh-tw.ttf") format("truetype");
-  font-weight: normal; /* 字體權重（粗細） */
-  font-style: normal; /* 字體樣式 */
+  font-weight: normal; 
+  font-style: normal;
 }
 
 * {
@@ -21,6 +21,8 @@ body {
   font-size: 0.75vw;
 }
 
+span,
+input,
 p {
   font-size: 0.75vw;
   margin: 0.01vw;
@@ -29,6 +31,15 @@ p {
 
 div {
   overflow: hidden;
+}
+div.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 div.row {
   display: flex;
@@ -39,4 +50,77 @@ div.col {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+div.content-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  width: 100%;
+  height: 0%;
+  gap: 2rem;
+  animation: slideIn 2s ease-in-out forwards;
+  animation-delay: 2s; 
+}
+@keyframes slideIn {
+  from {
+    height: 0%;
+  }
+  to {
+    height: 80%;
+  }
+}
+div.content-div div.container1 {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 2rem;
+  background-color: #2f2f2f;
+  height: 35rem;
+  border-radius: 2rem;
+  border: 1px solid #747474;
+  opacity: 0;
+  box-shadow: 0 0 1rem rgb(0, 0, 0);
+  animation: fadeIn 2s ease-in forwards;
+  animation-delay: 4s;
+}
+div.content-div div div.sub-container1 {
+  display: flex;
+  flex-direction: column;
+  padding: 5%;
+  background-color: #1f1f1f;
+  height: 100%;
+  border-radius: 0px;
+  opacity: 1;
+  box-shadow: inset 0 0 2rem black;
+}
+
+p.title {
+  font-size: 3rem;
+  text-align: center;
+  text-shadow: 0 0 1rem white;
+  opacity: 0;
+  animation: fadeIn 2s ease-in forwards;
+}
+p.subtitle {
+  font-size: 1.2rem;
+  text-align: center;
+  opacity: 0;
+  animation: fadeIn 2s ease-in forwards;
+  animation-delay: 1s;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+p.header1 {
+  font-size: 2rem;
+}
+p.header2 {
+  font-size: 1.6rem;
 }
