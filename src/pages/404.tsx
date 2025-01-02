@@ -5,10 +5,7 @@ import { useSelector } from "react-redux";
 import styles from "../../public/styles/index.module.css";
 // Import redux
 import store from "../redux/store";
-import {
-  addConsoleContent,
-  setConsoleContent,
-} from "../redux/consoleContentSlice";
+import { addConsoleContent } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
 
 export default function Page() {

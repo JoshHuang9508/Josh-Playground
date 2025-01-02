@@ -5,10 +5,7 @@ import { useSelector } from "react-redux";
 import styles from "../../public/styles/index.module.css";
 // Import redux
 import store from "../redux/store";
-import {
-  addConsoleContent,
-  setConsoleContent,
-} from "../redux/consoleContentSlice";
+import { addConsoleContent } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
 
 import profileImage from "../../public/assets/pfp.png";
@@ -22,6 +19,9 @@ export default function Page() {
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
+        break;
+      case "help":
+        store.dispatch(addConsoleContent([]));
         break;
       default:
         store.dispatch(

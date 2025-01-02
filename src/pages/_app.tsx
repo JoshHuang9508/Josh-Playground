@@ -18,6 +18,7 @@ export default function Page({ Component, pageProps }) {
   const [inputValue, setInputValue] = useState("");
   const [currentURL, setCurrentURL] = useState("");
   const [commandHistoryIndex, setCommandHistoryIndex] = useState<number>(-1);
+  const [autoComplete, setAutoComplete] = useState<string[]>([]);
   const inputBox = useRef(null);
 
   useEffect(() => {
@@ -77,26 +78,6 @@ export default function Page({ Component, pageProps }) {
         // case "log":
         //   // Use for debugging
         //   break;
-        // case "mode":
-        //   const mode = inputValue.split(" ")[1] ?? "";
-        //   if (mode == "fixed") {
-        //     setConsoleMode("fixed");
-        //   } else if (mode == "close") {
-        //     setConsoleMode("close");
-        //   } else if (mode == "tab") {
-        //     setConsoleMode("tab");
-        //   } else {
-        //     store.dispatch(
-        //       addConsoleContent([
-        //         "Available modes:",
-        //         "",
-        //         "mode fixed - Fixed console",
-        //         "mode close - Close console",
-        //         "mode tab - Tab console",
-        //       ])
-        //     );
-        //   }
-        //   break;
         case "help":
           store.dispatch(
             addConsoleContent([
@@ -123,6 +104,31 @@ export default function Page({ Component, pageProps }) {
     }
     if (event.key === "Escape") {
       setConsoleVisible(!consoleVisible);
+    }
+    if (event.key === "Tab") {
+      event.preventDefault();
+      const command = inputValue.split(" ")[0];
+
+      // Auto complete
+      if (autoComplete.length == 0) {
+        const optionList = ["help", "cd", "cl"]; // This list must be updated when new command is added or when in different page
+        const autoComplete = optionList.filter((item) =>
+          item.startsWith(command)
+        );
+        store.dispatch(addConsoleContent([`${autoComplete.join(", ")}`]));
+        setInputValue(autoComplete[0]);
+        setAutoComplete(autoComplete);
+      }
+      if (autoComplete.length > 0) {
+        autoComplete.indexOf(command) == -1
+          ? setInputValue(autoComplete[0])
+          : autoComplete.indexOf(command) == autoComplete.length - 1
+          ? setInputValue(autoComplete[0])
+          : setInputValue(autoComplete[autoComplete.indexOf(command) + 1]);
+      }
+    }
+    if (event.key != "Tab") {
+      setAutoComplete([]);
     }
   };
 
