@@ -10,6 +10,10 @@ import {
   setConsoleContent,
 } from "../../redux/consoleContentSlice";
 import { setCommand } from "../../redux/commandSlice";
+import { addAvailableCommands } from "../../redux/autoCompleteSlice";
+// Import json
+import textContent from "../../../src/lib/textContent.json";
+import availableCommandsList from "../../../src/lib/availableCommandsList.json";
 
 export default function Page() {
   // Command control
@@ -39,15 +43,6 @@ export default function Page() {
         }
         break;
       case "help":
-        store.dispatch(
-          addConsoleContent([
-            "Available commands:",
-            "",
-            "help <command> - Show help message, type command to get more info",
-            "cd <page> - Redirect to page",
-            "cl - Clear console",
-          ])
-        );
         break;
       case "log":
         // Use for debugging
@@ -61,11 +56,6 @@ export default function Page() {
     store.dispatch(setCommand(""));
   }, [command]);
 
-  // Text content
-  const textContent = {
-    tools: ["listentogether"],
-  };
-
   return (
     <div
       style={{
@@ -78,18 +68,12 @@ export default function Page() {
         gap: "10px",
       }}
     >
-      <p className={styles["title"]}>工具</p>
-      <p className={styles["subtitle"]}>
-        一些給我自己用的工具，也許你會覺得有趣
-      </p>
-      <div className={styles["info-div"]} style={{ justifyContent: "center" }}>
+      <p className="title">工具</p>
+      <p className="subtitle">一些給我自己用的工具，也許你會覺得有趣</p>
+      <div className="content-div" style={{ justifyContent: "center" }}>
         {textContent.tools.map((tool, index) => (
-          <div
-            key={index}
-            className={styles["container"]}
-            style={{ width: "30%" }}
-          >
-            <p className={styles["header"]}>{`/tools/${tool}`}</p>
+          <div key={index} className={"container1"} style={{ width: "30%" }}>
+            <p className={"header2"}>{`/tools/${tool}`}</p>
           </div>
         ))}
       </div>

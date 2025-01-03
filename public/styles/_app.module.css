@@ -21,7 +21,7 @@ div.console div {
   align-items: center;
 }
 div.console span {
-  width: fit-content;
+  min-width: fit-content;
   background: none;
   user-select: none;
   pointer-events: none;

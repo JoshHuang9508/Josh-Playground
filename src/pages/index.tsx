@@ -7,6 +7,10 @@ import styles from "../../public/styles/index.module.css";
 import store from "../redux/store";
 import { addConsoleContent } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
+import { addAvailableCommands } from "../redux/autoCompleteSlice";
+// Import json
+import textContent from "../../src/lib/textContent.json";
+import availableCommandsList from "../../src/lib/availableCommandsList.json";
 
 import profileImage from "../../public/assets/pfp.png";
 
@@ -31,25 +35,6 @@ export default function Page() {
     }
     store.dispatch(setCommand(""));
   }, [command]);
-
-  // Text content
-  const textContent = {
-    name: ["Whydog", "Whitedog", "白狗"],
-    about: [
-      "我是 Whydog，來自台灣的大學生。",
-      "因為興趣而學習，因為有趣而鑽研。",
-      "一步一步成為理想中的自己。",
-    ],
-    hint: [
-      "1. 如果網頁沒有進到輸入模式，可以用滑鼠先點一下 (當然我並不推薦)，或是點一下Tab切過去。",
-      "2. 在控制台打上各種指令控制所有動作，每個頁面都有一些不同的指令，可以通過help查詢所有指令",
-      "3. 以下是一些常用指令:",
-      "help <commad> - 顯示所有指令，輸入指令可以查看更多資訊",
-      "cd <page> - 前往指定頁面",
-      "cl - 清空控制台",
-      "ls - 顯示當前根目錄下的所有頁面",
-    ],
-  };
 
   // Web paths
   const webPaths = [["", ["tools", "listentogether"], ["games", "colorgame"]]];

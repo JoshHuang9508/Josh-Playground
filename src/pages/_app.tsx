@@ -12,13 +12,19 @@ import {
 } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
 import { addCoomandHistory } from "../redux/commandHistorySlice";
+import {
+  addAvailableCommands,
+  setAvailableCommands,
+  setInput,
+} from "../redux/autoCompleteSlice";
+// Import json
+import availableCommandsList from "../lib/availableCommandsList.json";
 
 export default function Page({ Component, pageProps }) {
   // Handle input change
   const [inputValue, setInputValue] = useState("");
   const [currentURL, setCurrentURL] = useState("");
   const [commandHistoryIndex, setCommandHistoryIndex] = useState<number>(-1);
-  const [autoComplete, setAutoComplete] = useState<string[]>([]);
   const inputBox = useRef(null);
 
   useEffect(() => {
@@ -75,14 +81,11 @@ export default function Page({ Component, pageProps }) {
             window.location.href = link.join("/");
           }
           break;
-        // case "log":
-        //   // Use for debugging
-        //   break;
         case "help":
           store.dispatch(
             addConsoleContent([
               "Available commands:",
-              "",
+              "--| Basic commands |--",
               "help <command> - Show help message, type command to get more info",
               "cd <page> - Redirect to page",
               "cl - Clear console",
@@ -107,28 +110,47 @@ export default function Page({ Component, pageProps }) {
     }
     if (event.key === "Tab") {
       event.preventDefault();
-      const command = inputValue.split(" ")[0];
+      const availableCommands = store.getState().autoComplete.availableCommands;
+      const { command, value, prefix } = processString(inputValue);
 
       // Auto complete
-      if (autoComplete.length == 0) {
-        const optionList = ["help", "cd", "cl"]; // This list must be updated when new command is added or when in different page
-        const autoComplete = optionList.filter((item) =>
-          item.startsWith(command)
-        );
-        store.dispatch(addConsoleContent([`${autoComplete.join(", ")}`]));
-        setInputValue(autoComplete[0]);
-        setAutoComplete(autoComplete);
-      }
-      if (autoComplete.length > 0) {
-        autoComplete.indexOf(command) == -1
-          ? setInputValue(autoComplete[0])
-          : autoComplete.indexOf(command) == autoComplete.length - 1
-          ? setInputValue(autoComplete[0])
-          : setInputValue(autoComplete[autoComplete.indexOf(command) + 1]);
+      if (availableCommands.length == 0) {
+        if (!inputValue || inputValue == "") return;
+
+        const availableCommands =
+          value && value != ""
+            ? availableCommandsList[value.replace(" ", "")]?.filter((item) =>
+                item.startsWith(prefix)
+              ) ?? []
+            : command && command != ""
+            ? availableCommandsList[command.replace(" ", "")]?.filter((item) =>
+                item.startsWith(prefix)
+              ) ?? []
+            : availableCommandsList[window.location.pathname]?.filter((item) =>
+                item.startsWith(prefix)
+              ) ?? [];
+
+        if (availableCommands.length > 0) {
+          store.dispatch(
+            addConsoleContent([`${availableCommands.join(", ")}`])
+          );
+          store.dispatch(addAvailableCommands(availableCommands));
+        }
+      } else {
+        availableCommands.indexOf(prefix) == -1
+          ? setInputValue(`${command}${value}${availableCommands[0]}`)
+          : availableCommands.indexOf(prefix) == availableCommands.length - 1
+          ? setInputValue(`${command}${value}${availableCommands[0]}`)
+          : setInputValue(
+              `${command}${value}${
+                availableCommands[availableCommands.indexOf(prefix) + 1]
+              }`
+            );
       }
     }
     if (event.key != "Tab") {
-      setAutoComplete([]);
+      store.dispatch(setInput(""));
+      store.dispatch(setAvailableCommands([]));
     }
   };
 
@@ -154,6 +176,22 @@ export default function Page({ Component, pageProps }) {
       ])
     );
   }, []);
+
+  // Process string
+  const processString = (input: string) => {
+    const lastSeparatorIndex =
+      input.lastIndexOf(" ") > input.lastIndexOf("/")
+        ? input.lastIndexOf(" ")
+        : input.lastIndexOf("/");
+    const firstSpaceIndex = input.indexOf(" ");
+    if (firstSpaceIndex === -1) {
+      return { command: "", value: "", prefix: input };
+    }
+    const command = inputValue.slice(0, firstSpaceIndex + 1);
+    const value = inputValue.slice(firstSpaceIndex + 1, lastSeparatorIndex + 1);
+    const prefix = inputValue.slice(lastSeparatorIndex + 1, inputValue.length);
+    return { command, value, prefix };
+  };
 
   return (
     <Provider store={store}>

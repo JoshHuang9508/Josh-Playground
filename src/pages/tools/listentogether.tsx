@@ -8,6 +8,9 @@ import styles from "../../../public/styles/listentogether.module.css";
 import store from "../../redux/store";
 import { addConsoleContent } from "../../redux/consoleContentSlice";
 import { setCommand } from "../../redux/commandSlice";
+import { addAvailableCommands } from "../../redux/autoCompleteSlice";
+// Import json
+import availableCommandsList from "../../lib/availableCommandsList.json";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
@@ -24,7 +27,6 @@ export default function Page() {
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
-        store.dispatch(addConsoleContent([playerState.playing.toString()]));
         break;
       case "queue":
         const URL = command.split(" ").slice(1)[0] ?? "";
@@ -141,20 +143,36 @@ export default function Page() {
         store.dispatch(addConsoleContent([`Set volume to ${volume}`]));
         break;
       case "mute":
-        setPlayerState({ ...playerState, muted: true });
-        store.dispatch(addConsoleContent(["Mute..."]));
-        break;
-      case "unmute":
-        setPlayerState({ ...playerState, muted: false });
-        store.dispatch(addConsoleContent(["Unmute..."]));
+        const sufix_mute = command.split(" ").slice(1)[0] ?? "";
+        switch (sufix_mute) {
+          case "-t":
+            setPlayerState({ ...playerState, muted: true });
+            store.dispatch(addConsoleContent(["Mute..."]));
+            break;
+          case "-f":
+            setPlayerState({ ...playerState, muted: false });
+            store.dispatch(addConsoleContent(["Unmute..."]));
+            break;
+          default:
+            store.dispatch(addConsoleContent(["Usage: mute <-t | -f>"]));
+            break;
+        }
         break;
       case "loop":
-        setPlayerState({ ...playerState, loop: true });
-        store.dispatch(addConsoleContent(["Loop..."]));
-        break;
-      case "unloop":
-        setPlayerState({ ...playerState, loop: false });
-        store.dispatch(addConsoleContent(["Unloop..."]));
+        const sufix_loop = command.split(" ").slice(1)[0] ?? "";
+        switch (sufix_loop) {
+          case "-t":
+            setPlayerState({ ...playerState, loop: true });
+            store.dispatch(addConsoleContent(["Loop..."]));
+            break;
+          case "-f":
+            setPlayerState({ ...playerState, loop: false });
+            store.dispatch(addConsoleContent(["Unloop..."]));
+            break;
+          default:
+            store.dispatch(addConsoleContent(["Usage: loop <-t | -f>"]));
+            break;
+        }
         break;
       case "rate":
         const rate = command.split(" ").slice(1)[0] ?? "";
@@ -182,18 +200,17 @@ export default function Page() {
           addConsoleContent([
             "--| Commands for this page |--",
             "queue <URL> - Add a track to queue",
+            "remove <index | *> - Remove a track from queue",
             "play - Start playing",
             "pause - Pause playing",
             "next - Play next track",
             "prev - Play previous track",
             "switch <index> - Switch to track",
-            "volume <volume> - Set volume (0 - 100) %",
-            "mute - Mute",
-            "unmute - Unmute",
-            "loop - Loop",
-            "unloop - Unloop",
-            "rate <rate> - Set playback rate",
-            "seek <time> - Seek to time",
+            "volume <0 - 100> - Set volume (0 - 100%)",
+            "mute <-t | -f> - Mute / Unmute",
+            "loop <-t | -f> - Loop / Unloop",
+            "rate <0 - 100> - Set playback rate (0 - 100%)",
+            "seek <time> - Seek to time (s)",
           ])
         );
         break;
