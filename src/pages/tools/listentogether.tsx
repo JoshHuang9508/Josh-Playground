@@ -20,10 +20,13 @@ export default function Page() {
 
   // Socket control
   const [socketInstance, setSocketInstance] = useState<Socket>();
-  const hostURL = "http://localhost:3000";
+  const hostURL = "wss://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app";
 
   useEffect(() => {
-    const socket = io(hostURL, { path: "/api/socket" });
+    const socket = io(hostURL, {
+      transports: ["websocket"],
+    });
+    console.log(`Connecting to ${hostURL}...`);
 
     setSocketInstance(socket);
 
