@@ -691,7 +691,7 @@ export default function Page() {
   );
 
   async function getVideoInfo(videoId: string): Promise<VideoInfo> {
-    const data = await fetch(`/api/ytdl?videoId=${videoId}`).then((res) =>
+    const data = await fetch(`/api/get-ytdl?videoId=${videoId}`).then((res) =>
       res.json()
     );
     return data as VideoInfo;
