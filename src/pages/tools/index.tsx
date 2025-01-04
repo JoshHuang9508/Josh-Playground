@@ -10,10 +10,8 @@ import {
   setConsoleContent,
 } from "../../redux/consoleContentSlice";
 import { setCommand } from "../../redux/commandSlice";
-import { addAvailableCommands } from "../../redux/autoCompleteSlice";
 // Import json
 import textContent from "../../../src/lib/textContent.json";
-import availableCommandsList from "../../../src/lib/availableCommandsList.json";
 
 export default function Page() {
   // Command control
