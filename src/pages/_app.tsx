@@ -1,5 +1,5 @@
 // Import packages
-import { useState, useRef, useEffect, use } from "react";
+import { useState, useRef, useEffect } from "react";
 import store from "../redux/store";
 import { Provider } from "react-redux";
 // Import styles
@@ -13,12 +13,13 @@ import {
 import { setCommand } from "../redux/commandSlice";
 import { addCoomandHistory } from "../redux/commandHistorySlice";
 import {
-  addAvailableCommands,
-  setAvailableCommands,
+  addAvailable,
+  setAvailable,
   setInput,
 } from "../redux/autoCompleteSlice";
 // Import json
-import availableCommandsList from "../lib/availableCommandsList.json";
+import commandList from "../lib/commandList.json";
+import pathList from "../lib/pathList.json";
 
 export default function Page({ Component, pageProps }) {
   // Handle input change
@@ -108,49 +109,59 @@ export default function Page({ Component, pageProps }) {
     if (event.key === "Escape") {
       setConsoleVisible(!consoleVisible);
     }
+    // Auto complete
     if (event.key === "Tab") {
       event.preventDefault();
-      const availableCommands = store.getState().autoComplete.availableCommands;
+      if (!inputValue || inputValue == "") return;
+
+      let available = store.getState().autoComplete.available;
       const { command, value, prefix } = processString(inputValue);
 
-      // Auto complete
-      if (availableCommands.length == 0) {
-        if (!inputValue || inputValue == "") return;
-
-        const availableCommands =
-          value && value != ""
-            ? availableCommandsList[value.replace(" ", "")]?.filter((item) =>
-                item.startsWith(prefix)
-              ) ?? []
-            : command && command != ""
-            ? availableCommandsList[command.replace(" ", "")]?.filter((item) =>
-                item.startsWith(prefix)
-              ) ?? []
-            : availableCommandsList[window.location.pathname]?.filter((item) =>
-                item.startsWith(prefix)
+      if (available.length == 0) {
+        const path = window.location.pathname.split("/").filter(Boolean);
+        if (!command) {
+          available =
+            commandList[`/${path.join("/")}/`]?.filter((_) =>
+              _.startsWith(prefix)
+            ) ?? [];
+        } else {
+          if (command === "cd") {
+            value.split("/").forEach((element) => {
+              if (element === "..") {
+                path.pop();
+              } else if (element) {
+                path.push(element);
+              }
+            });
+            available =
+              pathList[`/${path.join("/")}/`]?.filter((_) =>
+                _.startsWith(prefix)
               ) ?? [];
+          } else {
+            available =
+              commandList[command]?.filter((_) => _.startsWith(prefix)) ?? [];
+          }
+        }
 
-        if (availableCommands.length > 0) {
-          store.dispatch(
-            addConsoleContent([`${availableCommands.join(", ")}`])
-          );
-          store.dispatch(addAvailableCommands(availableCommands));
+        if (available.length > 0) {
+          store.dispatch(addConsoleContent([`${available.join(", ")}`]));
+          store.dispatch(addAvailable(available));
         }
       } else {
-        availableCommands.indexOf(prefix) == -1
-          ? setInputValue(`${command}${value}${availableCommands[0]}`)
-          : availableCommands.indexOf(prefix) == availableCommands.length - 1
-          ? setInputValue(`${command}${value}${availableCommands[0]}`)
-          : setInputValue(
-              `${command}${value}${
-                availableCommands[availableCommands.indexOf(prefix) + 1]
-              }`
-            );
+        const nextIndex =
+          available.indexOf(prefix) === -1 ||
+          available.indexOf(prefix) === available.length - 1
+            ? 0
+            : available.indexOf(prefix) + 1;
+        setInputValue(
+          [command, value + available[nextIndex]].filter(Boolean).join(" ")
+        );
+        //  `${command}${value}${available[nextIndex]}`
       }
     }
     if (event.key != "Tab") {
       store.dispatch(setInput(""));
-      store.dispatch(setAvailableCommands([]));
+      store.dispatch(setAvailable([]));
     }
   };
 
@@ -187,7 +198,7 @@ export default function Page({ Component, pageProps }) {
     if (firstSpaceIndex === -1) {
       return { command: "", value: "", prefix: input };
     }
-    const command = inputValue.slice(0, firstSpaceIndex + 1);
+    const command = inputValue.slice(0, firstSpaceIndex);
     const value = inputValue.slice(firstSpaceIndex + 1, lastSeparatorIndex + 1);
     const prefix = inputValue.slice(lastSeparatorIndex + 1, inputValue.length);
     return { command, value, prefix };

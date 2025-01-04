@@ -2,29 +2,29 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const autoCompleteSlice = createSlice({
   name: "autoCompleteSlice",
-  initialState: { input: "", availableCommands: [] } as {
+  initialState: { input: "", available: [] } as {
     input: string;
-    availableCommands: string[];
+    available: string[];
   },
   reducers: {
     setInput: (state, action: { payload: string }) => {
       return {
         input: action.payload,
-        availableCommands: state.availableCommands,
+        available: state.available,
       };
     },
-    setAvailableCommands: (state, action: { payload: string[] }) => {
-      return { input: state.input, availableCommands: action.payload };
+    setAvailable: (state, action: { payload: string[] }) => {
+      return { input: state.input, available: action.payload };
     },
-    addAvailableCommands: (state, action: { payload: string[] }) => {
+    addAvailable: (state, action: { payload: string[] }) => {
       return {
         input: state.input,
-        availableCommands: [...state.availableCommands, ...action.payload],
+        available: [...state.available, ...action.payload],
       };
     },
   },
 });
 
-export const { setInput, setAvailableCommands, addAvailableCommands } =
+export const { setInput, setAvailable, addAvailable } =
   autoCompleteSlice.actions;
 export default autoCompleteSlice.reducer;

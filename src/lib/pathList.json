@@ -1,0 +1,7 @@
+{
+    "//": ["tools", "games"],
+    "/tools/": ["listentogether", ".."],
+    "/tools/listentogether/": [".."],
+    "/games/": ["colorgame", ".."],
+    "/games/colorgame/": [".."]
+}

@@ -8,9 +8,7 @@ import styles from "../../../public/styles/listentogether.module.css";
 import store from "../../redux/store";
 import { addConsoleContent } from "../../redux/consoleContentSlice";
 import { setCommand } from "../../redux/commandSlice";
-import { addAvailableCommands } from "../../redux/autoCompleteSlice";
 // Import json
-import availableCommandsList from "../../lib/availableCommandsList.json";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);

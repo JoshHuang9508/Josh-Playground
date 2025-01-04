@@ -7,10 +7,8 @@ import styles from "../../public/styles/index.module.css";
 import store from "../redux/store";
 import { addConsoleContent } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
-import { addAvailableCommands } from "../redux/autoCompleteSlice";
 // Import json
 import textContent from "../../src/lib/textContent.json";
-import availableCommandsList from "../../src/lib/availableCommandsList.json";
 
 import profileImage from "../../public/assets/pfp.png";
 
