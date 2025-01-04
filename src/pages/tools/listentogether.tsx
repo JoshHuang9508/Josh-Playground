@@ -82,9 +82,9 @@ export default function Page() {
   const SetPlayerState = (state: PlayerState) => {
     socketInstance?.emit("setPlayerState", state);
   };
-  // const UpdatePlayerState = (state: PlayerState) => {
-  //   socketInstance?.emit("updatePlayerState", state);
-  // };
+  const UpdatePlayerState = (state: PlayerState) => {
+    socketInstance?.emit("updatePlayerState", state);
+  };
   const Seek = (time: number) => {
     return new Promise((resolve) => {
       socketInstance?.emit("seek", time);
@@ -594,12 +594,14 @@ export default function Page() {
                 muted={PlayerStateClient.muted}
                 loop={playerState.loop}
                 playbackRate={playerState.playbackRate}
-                onProgress={(state) =>
-                  SetPlayerState({ ...playerState, ...state })
-                }
-                onDuration={(duration) =>
-                  SetPlayerState({ ...playerState, duration })
-                }
+                onProgress={(state) => {
+                  console.log("onProgress");
+                  UpdatePlayerState({ ...playerState, ...state });
+                }}
+                onDuration={(duration) => {
+                  console.log("onDuration");
+                  SetPlayerState({ ...playerState, duration });
+                }}
                 onEnded={() => {
                   if (playerState.trackQueue.length > 0) {
                     const nextIndex =

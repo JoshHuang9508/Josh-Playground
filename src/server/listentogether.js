@@ -74,6 +74,9 @@ io.on("connection", (socket) => {
   socket.on("getPlayerState", () => {
     io.to(socket.id).emit("getPlayerState", playerState);
   });
+  socket.on("updatePlayerState", (state) => {
+    playerState = { ...playerState, ...state };
+  });
 
   socket.on("seek", (time) => {
     io.emit("seek", time);
