@@ -30,3 +30,10 @@ div.track-card div.track-info p.track-subtitle {
   font-size: 0.6rem;
   color: #bababa;
 }
+
+p.online-user {
+  color: #00ca00;
+}
+p.log {
+  height: fit-content;
+}

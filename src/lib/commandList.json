@@ -1,7 +1,7 @@
 {
     "//": ["cd", "cl", "help", "log"],
     "/tools/": ["cd", "cl", "help", "log"],
-    "/tools/listentogether/": ["cd", "cl", "help", "log", "queue", "remove", "play", "pause", "next", "prev", "switch", "volume", "mute", "loop", "rate", "seek"],
+    "/tools/listentogether/": ["cd", "cl", "help", "log", "queue", "remove", "play", "pause", "next", "prev", "switch", "volume", "mute", "loop", "rate", "seek", "refresh", "send", "setname", "page"],
     "cd": [
         "tools", "games"
     ],

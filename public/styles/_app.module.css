@@ -11,14 +11,13 @@ div.console {
   border: 1px solid #747474;
   background-color: #2f2f2f;
   font-family: monospace;
+  line-height: 1vw;
   color: #bababa;
   overflow-y: scroll;
   scrollbar-width: none;
 }
 div.console div {
   display: flex;
-  justify-content: center;
-  align-items: center;
 }
 div.console span {
   min-width: fit-content;

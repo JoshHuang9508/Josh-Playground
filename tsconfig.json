@@ -28,7 +28,7 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx",
+    "**/*.tsx", "src/pages/api/socket.js", "src/pages/api/ytdl.js",
   ],
   "paths": {
     "@/*": ["./src/*"]

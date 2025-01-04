@@ -2,9 +2,6 @@ import ytdl from "ytdl-core";
 
 export default async function handler(req, res) {
   const { videoId } = req.query;
-
-  console.log("videoId", videoId);
-
   try {
     const info = await ytdl.getBasicInfo(
       `https://www.youtube.com/watch?v=${videoId}`
