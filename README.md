@@ -1,34 +1,65 @@
-# Hello World! 👋
+# Josh Playgound
 
-### I'm Josh (a.k.a Whydog, Whitedog)!
+## What is this
 
-- 🌱 Currently learning: ReactNative, TypeScript, Photography, Dressing
-- 🌟 Interested in: Coding, Wotagei, Photography, Gaming, Dressing
-- 💼 Working on: None
-- 🎓 Education: National Taiwan University of Science and Technology
-- 📫 Reach me at: joshhuang9508@gmail.com
-- 🐱 Fun fact: Yeci
+- This is a website that I made for introduce my self and develop cool things, 
 
----
+## Feature
 
-### 🛠️ My Tech Stack
+- ### Commnad line interface (cli)
 
-- **Programming Languages**: JavaScript, TypeScript, C#
-- **Web**: HTML, CSS
-- **Framework**: Node.js, React.js, Express.js
-- **Databases**: Not yet
-- **Toolbox**: VSCode, VisualStudio, Unity, Postman, Paint.NET, Word, Excel, Github
+  This website has no buttons like normal website does, instead, it is totally controled by built-in cli under the site.
+  Use [Tab] to focus, type `help` to find available commands, press [Esc] to close console log.
 
----
+  **Basic commands (available in all pages):**
 
-### 📈 Osu! Stats (I'm an osu player too!)
+  `help <command>` - Show help message, type command to get more info
 
-![My osu profile](https://osu-sig.vercel.app/card?user=-Whitedog-&mode=std&lang=en&animation=true)
+  `cd <page>` - Redirect to page
+  
+  `cl` - Clear console
 
----
+## Tools
 
-### 📫 Connect Me
+- ### Listentogether
 
-- [GitHub](https://github.com/JoshHuang9508)
+  A tools that can add YouTube music by `queue <URL>` and sync play to all users.
 
-Thanks for stopping by! 😊
+  **Avalible commands:**
+ 
+  `queue <URL>` - Add a track to queue
+
+  `remove <index | *>` - Remove a track from queue
+
+  `play` - Start playing
+
+  `pause` - Pause playing
+
+  `next` - Play next track
+
+  `prev` - Play previous track
+
+  `switch <index>` - Switch to track
+
+  `volume <0 - 100>` - Set volume (0 - 100%)
+
+  `mute <-t | -f>` - Mute / Unmute
+
+  `loop <-t | -f>` - Loop / Unloop
+
+  `rate <0 - 100>` - Set playback rate (0 - 100%)
+
+  `seek <time>` - Seek to time (s)
+
+  `refresh` - Refresh player
+
+  `setname <name>` - Set username
+
+  `page <page>` - Switch playlist page
+  
+
+## Games
+
+- ### Colorgame
+
+  Under developing... ^w^
