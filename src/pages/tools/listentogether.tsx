@@ -11,6 +11,9 @@ import { addConsoleContent } from "../../redux/consoleContentSlice";
 import { setCommand } from "../../redux/commandSlice";
 // Import json
 
+// API server
+const hostURL = "https://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app";
+
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
 
@@ -20,7 +23,6 @@ export default function Page() {
 
   // Socket control
   const [socketInstance, setSocketInstance] = useState<Socket>();
-  const hostURL = "wss://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app";
 
   useEffect(() => {
     const socket = io(hostURL, {
@@ -151,16 +153,18 @@ export default function Page() {
           return;
         }
         const updateTrackQueue = async () => {
-          const track = await getVideoInfo(URL.split("v=")[1]).then((data) => {
-            return {
-              url: data.video_url,
-              title: data.title,
-              author: data.ownerChannelName,
-              img: data.thumbnails[data.thumbnails.length - 1].url,
-              requestBy: username,
-              id: Date.now(),
-            } as Track;
-          });
+          const track = await getVideoInfoAPI(URL.split("v=")[1]).then(
+            (data) => {
+              return {
+                url: data.video_url,
+                title: data.title,
+                author: data.ownerChannelName,
+                img: data.thumbnails[data.thumbnails.length - 1].url,
+                requestBy: username,
+                id: Date.now(),
+              } as Track;
+            }
+          );
           SetPlayerState({
             ...playerState,
             trackQueue: [...playerState.trackQueue, track],
@@ -695,6 +699,13 @@ export default function Page() {
   async function getVideoInfo(videoId: string): Promise<VideoInfo> {
     const data = await fetch(`/api/get-ytdl?videoId=${videoId}`).then((res) =>
       res.json()
+    );
+    return data as VideoInfo;
+  }
+
+  async function getVideoInfoAPI(videoId: string): Promise<VideoInfo> {
+    const data = await fetch(`${hostURL}/api/get-ytdl?videoId=${videoId}`).then(
+      (res) => res.json()
     );
     return data as VideoInfo;
   }
