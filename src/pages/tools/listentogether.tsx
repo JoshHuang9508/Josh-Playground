@@ -12,9 +12,7 @@ import { setCommand } from "../../redux/commandSlice";
 // Import json
 
 // API server
-const hostURL = "https://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app";
-
-// "https://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app"
+const hostURL = "https://d816-2001-df2-45c1-75-00-1.ngrok-free.app";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
@@ -30,7 +28,6 @@ export default function Page() {
     const socket = io(hostURL, {
       transports: ["websocket"],
     });
-    console.log(`Connecting to ${hostURL}...`);
 
     setSocketInstance(socket);
 
@@ -58,12 +55,15 @@ export default function Page() {
       console.log("Message received:", msg);
     });
     socket.on("receivePlayerState", (state) => {
+      console.log("Player state received:", state);
       setPlayerState({ ...playerState, ...state });
     });
     socket.on("receiveLog", (logs) => {
+      console.log("Logs received:", logs);
       setLogs(logs);
     });
     socket.on("receiveUsers", (users) => {
+      console.log("Users received:", users);
       setUsers(users);
     });
     socket.on("seek", (time) => {
@@ -546,10 +546,13 @@ export default function Page() {
   const [logs, setLogs] = useState<string[]>([]);
 
   const getVideoInfoAPI = async (videoId: string): Promise<VideoInfo> => {
-    console.log(`${hostURL}/api/ytdl?videoId=${videoId}`);
-    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`)
+    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -559,7 +562,6 @@ export default function Page() {
         console.error("Error:", error);
         throw error;
       });
-
     return data as VideoInfo;
   };
 
