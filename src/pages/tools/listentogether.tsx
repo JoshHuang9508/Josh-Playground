@@ -14,6 +14,8 @@ import { setCommand } from "../../redux/commandSlice";
 // API server
 const hostURL = "https://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app";
 
+// "https://c6ec-2001-df2-45c1-75-00-1.ngrok-free.app"
+
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
 
@@ -543,6 +545,24 @@ export default function Page() {
   // Log control
   const [logs, setLogs] = useState<string[]>([]);
 
+  const getVideoInfoAPI = async (videoId: string): Promise<VideoInfo> => {
+    console.log(`${hostURL}/api/ytdl?videoId=${videoId}`);
+    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`)
+      .then((response) => {
+        console.log(response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        throw error;
+      });
+
+    return data as VideoInfo;
+  };
+
   return (
     <div className={"layout"}>
       <p className={"title"}>YT音樂同步撥放器</p>
@@ -696,23 +716,10 @@ export default function Page() {
     </div>
   );
 
-  async function getVideoInfo(videoId: string): Promise<VideoInfo> {
-    const data = await fetch(`/api/get-ytdl?videoId=${videoId}`).then((res) =>
-      res.json()
-    );
-    return data as VideoInfo;
-  }
-
-  async function getVideoInfoAPI(videoId: string): Promise<VideoInfo> {
-    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((res) => res.json())
-      .catch((error) => console.error("Error:", error));
-    return data as VideoInfo;
-  }
+  // async function getVideoInfo(videoId: string): Promise<VideoInfo> {
+  //   const data = await fetch(`/api/get-ytdl?videoId=${videoId}`).then((res) =>
+  //     res.json()
+  //   );
+  //   return data as VideoInfo;
+  // }
 }
