@@ -136,6 +136,9 @@ export default function Page() {
   const Seek = (time: number) => {
     socketInstance?.emit("seek", time);
   };
+  const End = () => {
+    socketInstance?.emit("end");
+  };
 
   // User control
   interface User {
@@ -186,12 +189,12 @@ export default function Page() {
             AddConsoleLog([
               `Added ${tracks.length} tracks to queue (#${
                 playerState.trackQueue.length
-              } ~ #${playerState.trackQueue.length + tracks.length})`,
+              } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
             ]);
             AddRoomLog(
               `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
                 playerState.trackQueue.length
-              } ~ #${playerState.trackQueue.length + tracks.length})`
+              } ~ #${playerState.trackQueue.length + tracks.length - 1})`
             );
           }
           if (URL.includes("watch?v=")) {
@@ -634,20 +637,10 @@ export default function Page() {
                 }}
                 onDuration={(duration) => {
                   console.log("onDuration");
-                  SetPlayerState({ ...playerState, duration });
+                  UpdatePlayerState({ ...playerState, duration });
                 }}
                 onEnded={() => {
-                  if (playerState.trackQueue.length > 0) {
-                    if (playerState.random) {
-                      SetTrackIndex(
-                        Math.floor(
-                          Math.random() * playerState.trackQueue.length
-                        )
-                      );
-                    } else {
-                      NextTrack();
-                    }
-                  }
+                  End();
                 }}
                 onError={(error) => {
                   AddConsoleLog([`Error: ${error}`]);
