@@ -1,10 +1,11 @@
 {
     "//": ["cd", "cl", "help", "log"],
     "/tools/": ["cd", "cl", "help", "log"],
-    "/tools/listentogether/": ["cd", "cl", "help", "log", "queue", "remove", "play", "pause", "next", "prev", "switch", "volume", "mute", "loop", "rate", "seek", "refresh", "send", "setname", "page"],
+    "/tools/listentogether/": ["cd", "cl", "help", "log", "queue", "remove", "play", "pause", "next", "prev", "switch", "volume", "rate", "mute", "loop", "random", "seek", "refresh", "send", "setname", "page"],
     "cd": [
         "tools", "games"
     ],
     "loop": ["-t", "-f"],
-    "mute": ["-t", "-f"]
+    "mute": ["-t", "-f"],
+    "random": ["-t", "-f"]
 }

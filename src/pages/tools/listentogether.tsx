@@ -14,10 +14,19 @@ import { setCommand } from "../../redux/commandSlice";
 // API server
 const hostURL = "https://d816-2001-df2-45c1-75-00-1.ngrok-free.app";
 
+const AddConsoleLog = (log: string[]) => {
+  store.dispatch(addConsoleContent([...log]));
+};
+
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
+  const [isSetup, setIsSetup] = useState(false);
 
   useEffect(() => {
+    AddConsoleLog([
+      "Welcome to YT Music Sync Player",
+      "Room is setting up... please wait a moment",
+    ]);
     setIsClient(true);
   }, []);
 
@@ -31,39 +40,38 @@ export default function Page() {
 
     setSocketInstance(socket);
 
-    socket.emit("join", localStorage.getItem("username") ?? "Anonymous");
-
-    socket.on("connect", () => {
-      store.dispatch(
-        addConsoleContent([`Connect server success (id: ${socket.id})`])
-      );
+    socket.on("connect", async () => {
+      AddConsoleLog([`Connect server success (id: ${socket.id})`]);
+      socket.emit("join", localStorage.getItem("username") ?? "Anonymous");
+      await new Promise((resolve) => setTimeout(resolve, 6000));
+      AddConsoleLog([`Player is ready`]);
+      socket.emit("ready");
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      AddConsoleLog([
+        `Auto refresh once (if is not playing, please refresh manually)`,
+      ]);
+      socket.emit("refresh");
+      setIsSetup(true);
     });
     socket.on("connect_error", () => {
-      store.dispatch(
-        addConsoleContent([`Connect server failed (id: ${socket.id})`])
-      );
+      AddConsoleLog([`Connect server error (id: ${socket.id})`]);
     });
     socket.on("error", (error) => {
-      store.dispatch(
-        addConsoleContent([`Connect server error: ${error.message}`])
-      );
+      AddConsoleLog([`Connect server error: ${error.message}`]);
     });
     socket.on("disconnect", () => {
-      store.dispatch(addConsoleContent([`Disconnect from server`]));
-    });
-    socket.on("message", (msg) => {
-      console.log("Message received:", msg);
+      AddConsoleLog([`Disconnect from server`]);
     });
     socket.on("receivePlayerState", (state) => {
-      console.log("Player state received:", state);
+      console.log("Receive player state");
       setPlayerState({ ...playerState, ...state });
     });
     socket.on("receiveLog", (logs) => {
-      console.log("Logs received:", logs);
+      console.log("Receive logs");
       setLogs(logs);
     });
     socket.on("receiveUsers", (users) => {
-      console.log("Users received:", users);
+      console.log("Receive users");
       setUsers(users);
     });
     socket.on("seek", (time) => {
@@ -75,38 +83,58 @@ export default function Page() {
     };
   }, []);
 
-  const GetPlayerState = () => {
-    return new Promise((resolve) => {
-      socketInstance?.emit("getPlayerState");
-      socketInstance?.once("getPlayerState", (data) => {
-        resolve(data);
-      });
-    });
+  const SetUsername = (username: string) => {
+    socketInstance?.emit("setUsername", username);
   };
+
+  const AddRoomLog = (log: string) => {
+    socketInstance?.emit("addLog", log);
+  };
+
   const SetPlayerState = (state: PlayerState) => {
     socketInstance?.emit("setPlayerState", state);
   };
   const UpdatePlayerState = (state: PlayerState) => {
     socketInstance?.emit("updatePlayerState", state);
   };
+  const Play = () => {
+    socketInstance?.emit("play");
+  };
+  const Pause = () => {
+    socketInstance?.emit("pause");
+  };
+  const Refresh = () => {
+    socketInstance?.emit("refresh");
+  };
+  const AddTrack = (track: Track) => {
+    socketInstance?.emit("addTrack", track);
+  };
+  const AddTracks = (tracks: Track[]) => {
+    socketInstance?.emit("addTracks", tracks);
+  };
+  const RemoveTrack = (index: number) => {
+    socketInstance?.emit("removeTrack", index);
+  };
+  const SetTrackQueue = (queue: Track[]) => {
+    socketInstance?.emit("setTrackQueue", queue);
+  };
+  const NextTrack = () => {
+    socketInstance?.emit("nextTrack");
+  };
+  const PrevTrack = () => {
+    socketInstance?.emit("prevTrack");
+  };
+  const SetTrackIndex = (index: number) => {
+    socketInstance?.emit("setTrackIndex", index);
+  };
+  const SetPlayBackRate = (rate: number) => {
+    socketInstance?.emit("setPlayBackRate", rate);
+  };
+  const SetLoop = (loop: boolean) => {
+    socketInstance?.emit("setLoop", loop);
+  };
   const Seek = (time: number) => {
-    return new Promise((resolve) => {
-      socketInstance?.emit("seek", time);
-      socketInstance?.once("seek", (data) => {
-        resolve(data);
-      });
-    });
-  };
-  const SetLog = (logs: string[]) => {
-    socketInstance?.emit("setLog", logs);
-  };
-  const AddLog = (log: string) => {
-    socketInstance?.emit("addLog", log);
-  };
-  const SetUsername = (username: string) => {
-    setUsername(username);
-    localStorage.setItem("username", username);
-    socketInstance?.emit("setUsername", username);
+    socketInstance?.emit("seek", time);
   };
 
   // User control
@@ -117,177 +145,163 @@ export default function Page() {
   const [username, setUsername] = useState("Anonymous");
 
   useEffect(() => {
-    const name: string = localStorage.getItem("username") ?? "Anonymous";
-    setUsername(name);
+    setUsername(localStorage.getItem("username") ?? "Anonymous");
   }, []);
+
+  // Log control
+  const [logs, setLogs] = useState<string[]>([]);
 
   // Command control
   const command = useSelector((state: { command: string }) => state.command);
 
   useEffect(() => {
-    if (!command || command == "") return;
+    if (!command || command == "" || !isSetup) return;
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
-        console.log(currentTrack);
         break;
       case "send":
-        const message = command.split(" ").slice(1)[0] ?? "";
+        const message = command.split(" ").slice(1).join(" ") ?? "";
         if (!message) {
-          store.dispatch(addConsoleContent(["Please provide a message"]));
+          AddConsoleLog(["Please provide a message"]);
           break;
         }
-        if (!socketInstance) {
-          store.dispatch(addConsoleContent(["WebSocket is not connected"]));
-          break;
-        }
-        store.dispatch(addConsoleContent([`Send message: ${message}`]));
-        AddLog(`${username}: ${message}`);
+        AddConsoleLog([`Send message: ${message}`]);
+        AddRoomLog(`${username}: ${message}`);
         break;
       case "queue":
         const URL = command.split(" ").slice(1)[0] ?? "";
         if (!URL) {
-          store.dispatch(addConsoleContent(["Please provide a URL"]));
+          AddConsoleLog(["Please provide a URL"]);
           break;
         }
         if (!ReactPlayer.canPlay(URL)) {
-          store.dispatch(addConsoleContent(["Can not play this URL"]));
+          AddConsoleLog(["Can not play this URL"]);
           return;
         }
         const updateTrackQueue = async () => {
-          const track = await getVideoInfoAPI(URL.split("v=")[1]).then(
-            (data) => {
-              return {
-                url: data.video_url,
-                title: data.title,
-                author: data.ownerChannelName,
-                img: data.thumbnails[data.thumbnails.length - 1].url,
-                requestBy: username,
-                id: Date.now(),
-              } as Track;
-            }
-          );
-          SetPlayerState({
-            ...playerState,
-            trackQueue: [...playerState.trackQueue, track],
-          });
-          store.dispatch(
-            addConsoleContent([
+          if (URL.includes("playlist?list=")) {
+            const tracks = await getPlaylistAPI(URL.split("list=")[1]);
+            AddTracks(tracks);
+            AddConsoleLog([
+              `Added ${tracks.length} tracks to queue (#${
+                playerState.trackQueue.length
+              } ~ #${playerState.trackQueue.length + tracks.length})`,
+            ]);
+            AddRoomLog(
+              `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
+                playerState.trackQueue.length
+              } ~ #${playerState.trackQueue.length + tracks.length})`
+            );
+          }
+          if (URL.includes("watch?v=")) {
+            const track = await getVideoInfoAPI(URL.split("v=")[1]);
+            AddTrack(track);
+            AddConsoleLog([
               `Added ${track.title} to queue (#${playerState.trackQueue.length})`,
-            ])
-          );
-          AddLog(
-            `${username} 在播放清單中新增了 ${track.title} (#${playerState.trackQueue.length})`
-          );
+            ]);
+            AddRoomLog(
+              `${username} 在播放清單中新增了 ${track.title} (#${playerState.trackQueue.length})`
+            );
+          }
         };
         updateTrackQueue();
         break;
       case "remove":
         const indexToRm = command.split(" ").slice(1)[0] ?? "";
         if (!indexToRm) {
-          store.dispatch(addConsoleContent(["Please provide an index"]));
-          break;
-        }
-        if (parseInt(indexToRm) >= playerState.trackQueue.length) {
-          store.dispatch(addConsoleContent(["Index out of range"]));
+          AddConsoleLog(["Please provide an index"]);
           break;
         }
         if (indexToRm == "*") {
-          SetPlayerState({ ...playerState, trackQueue: [] });
-          store.dispatch(addConsoleContent(["Removed all tracks"]));
-          AddLog(`${username} 移除了所有歌曲`);
+          SetTrackQueue([]);
+          AddConsoleLog(["Removed all tracks"]);
+          AddRoomLog(`${username} 移除了所有歌曲`);
+          break;
+        }
+        if (isNaN(parseFloat(indexToRm))) {
+          AddConsoleLog(["Invalid index"]);
+          break;
+        }
+        if (parseInt(indexToRm) >= playerState.trackQueue.length) {
+          AddConsoleLog(["Index out of range"]);
           break;
         }
         const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
-        SetPlayerState({
-          ...playerState,
-          trackQueue: playerState.trackQueue.filter(
-            (_, index) => index != parseInt(indexToRm)
-          ),
-        });
-        store.dispatch(addConsoleContent([`Removed track ${indexToRm}`]));
-        AddLog(`${username} 移除了 ${trackToRm.title} (#${indexToRm})`);
+        RemoveTrack(parseInt(indexToRm));
+        AddConsoleLog([`Removed track ${indexToRm}`]);
+        AddRoomLog(`${username} 移除了 ${trackToRm.title} (#${indexToRm})`);
         break;
       case "play":
-        SetPlayerState({
-          ...playerState,
-          playing: true,
-        });
-        store.dispatch(addConsoleContent(["Start playing..."]));
-        AddLog(`${username} 開始播放`);
+        Play();
+        AddConsoleLog(["Start playing..."]);
+        AddRoomLog(`${username} 開始播放`);
         break;
       case "pause":
-        SetPlayerState({
-          ...playerState,
-          playing: false,
-        });
-        store.dispatch(addConsoleContent(["Pause playing..."]));
-        AddLog(`${username} 暫停播放`);
+        Pause();
+        AddConsoleLog(["Pause playing..."]);
+        AddRoomLog(`${username} 暫停播放`);
         break;
       case "next":
-        SetPlayerState({
-          ...playerState,
-          index:
-            playerState.index + 1 >= playerState.trackQueue.length
-              ? 0
-              : playerState.index + 1,
-        });
-        store.dispatch(addConsoleContent(["Next track..."]));
-        AddLog(`${username} 播放下一首歌曲`);
+        NextTrack();
+        AddConsoleLog(["Next track..."]);
+        AddRoomLog(`${username} 播放下一首歌曲`);
         break;
       case "prev":
-        SetPlayerState({
-          ...playerState,
-          index:
-            playerState.index - 1 <= -1
-              ? playerState.trackQueue.length - 1
-              : playerState.index - 1,
-        });
-        store.dispatch(addConsoleContent(["Previous track..."]));
-        AddLog(`${username} 播放上一首歌曲`);
+        PrevTrack();
+        AddConsoleLog(["Previous track..."]);
+        AddRoomLog(`${username} 播放上一首歌曲`);
         break;
       case "switch":
         const indexToSw = command.split(" ").slice(1)[0] ?? "";
         if (!indexToSw) {
-          store.dispatch(addConsoleContent(["Please provide an index"]));
+          AddConsoleLog(["Please provide an index"]);
+          break;
+        }
+        if (isNaN(parseFloat(indexToSw))) {
+          AddConsoleLog(["Invalid index"]);
           break;
         }
         if (
           parseInt(indexToSw) >= playerState.trackQueue.length ||
           parseInt(indexToSw) < 0
         ) {
-          store.dispatch(addConsoleContent(["Index out of range"]));
+          AddConsoleLog(["Index out of range"]);
           break;
         }
-        SetPlayerState({ ...playerState, index: parseInt(indexToSw) });
-        store.dispatch(addConsoleContent([`Switch to track ${indexToSw}`]));
-        AddLog(`${username} 切換到歌曲 #${indexToSw}`);
+        SetTrackIndex(parseInt(indexToSw));
+        AddConsoleLog([`Switch to track ${indexToSw}`]);
+        AddRoomLog(`${username} 切換到歌曲 #${indexToSw}`);
         break;
       case "volume":
         const volume = command.split(" ").slice(1)[0] ?? "";
         if (!volume) {
-          store.dispatch(addConsoleContent(["Please provide a volume"]));
+          AddConsoleLog(["Please provide a volume"]);
+          break;
+        }
+        if (isNaN(parseFloat(volume))) {
+          AddConsoleLog(["Invalid volume"]);
           break;
         }
         setPlayerStateClient({
           ...PlayerStateClient,
           volume: parseFloat(volume) / 100,
         });
-        store.dispatch(addConsoleContent([`Set volume to ${volume}`]));
+        AddConsoleLog([`Set volume to ${volume}`]);
         break;
       case "mute":
         const sufix_mute = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_mute) {
           case "-t":
             setPlayerStateClient({ ...PlayerStateClient, muted: true });
-            store.dispatch(addConsoleContent(["Mute..."]));
+            AddConsoleLog(["Mute..."]);
             break;
           case "-f":
             setPlayerStateClient({ ...PlayerStateClient, muted: false });
-            store.dispatch(addConsoleContent(["Unmute..."]));
+            AddConsoleLog(["Unmute..."]);
             break;
           default:
-            store.dispatch(addConsoleContent(["Usage: mute <-t | -f>"]));
+            AddConsoleLog(["Usage: mute <-t | -f>"]);
             break;
         }
         break;
@@ -295,162 +309,132 @@ export default function Page() {
         const sufix_loop = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_loop) {
           case "-t":
-            SetPlayerState({ ...playerState, loop: true });
-            store.dispatch(addConsoleContent(["Loop..."]));
-            AddLog(`${username} 開啟循環播放`);
+            SetLoop(true);
+            AddConsoleLog(["Loop..."]);
+            AddRoomLog(`${username} 開啟循環播放`);
             break;
           case "-f":
-            SetPlayerState({ ...playerState, loop: false });
-            store.dispatch(addConsoleContent(["Unloop..."]));
-            AddLog(`${username} 關閉循環播放`);
+            SetLoop(false);
+            AddConsoleLog(["Unloop..."]);
+            AddRoomLog(`${username} 關閉循環播放`);
             break;
           default:
-            store.dispatch(addConsoleContent(["Usage: loop <-t | -f>"]));
+            AddConsoleLog(["Usage: loop <-t | -f>"]);
+            break;
+        }
+        break;
+      case "random":
+        const sufix_random = command.split(" ").slice(1)[0] ?? "";
+        switch (sufix_random) {
+          case "-t":
+            SetPlayerState({ ...playerState, random: true });
+            AddConsoleLog(["Random..."]);
+            AddRoomLog(`${username} 開啟隨機播放`);
+            break;
+          case "-f":
+            SetPlayerState({ ...playerState, random: false });
+            AddConsoleLog(["Unrandom..."]);
+            AddRoomLog(`${username} 關閉隨機播放`);
+            break;
+          default:
+            AddConsoleLog(["Usage: random <-t | -f>"]);
             break;
         }
         break;
       case "rate":
         const rate = command.split(" ").slice(1)[0] ?? "";
         if (!rate) {
-          store.dispatch(addConsoleContent(["Please provide a rate"]));
+          AddConsoleLog(["Please provide a rate"]);
           break;
         }
-        SetPlayerState({
-          ...playerState,
-          playbackRate: parseFloat(rate) / 100,
-        });
-        store.dispatch(addConsoleContent([`Set rate to ${rate}`]));
-        AddLog(`${username} 設定播放速度為 ${rate}%`);
+        SetPlayBackRate(parseFloat(rate) / 100);
+        AddConsoleLog([`Set rate to ${rate}%`]);
+        AddRoomLog(`${username} 設定播放速度為 ${rate}%`);
         break;
       case "seek":
         const seek = command.split(" ").slice(1)[0] ?? "";
         if (!seek) {
-          store.dispatch(addConsoleContent(["Please provide a time"]));
+          AddConsoleLog(["Please provide a time"]);
           break;
         }
         if (isNaN(parseFloat(seek))) {
-          store.dispatch(addConsoleContent(["Invalid time"]));
+          AddConsoleLog(["Invalid time"]);
           break;
         }
         if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
-          store.dispatch(addConsoleContent(["Time out of range"]));
+          AddConsoleLog(["Time out of range"]);
           break;
         }
         Seek(parseFloat(seek));
-        store.dispatch(addConsoleContent([`Seek to ${seek}`]));
-        AddLog(`${username} 跳轉到 ${seek} 秒`);
+        AddConsoleLog([`Seek to ${seek}`]);
+        AddRoomLog(`${username} 跳轉到 ${seek} 秒`);
         break;
       case "refresh":
-        const refresh = async () => {
-          const state = await GetPlayerState().then((state) => {
-            return state as PlayerState;
-          });
-          SetPlayerState({ ...state, playing: false });
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          await Seek(state.playedSeconds);
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          SetPlayerState({ ...state, playing: state.playing });
-          store.dispatch(addConsoleContent(["Refresh player..."]));
-          AddLog(`${username} 刷新了播放器`);
-        };
-        refresh();
+        Refresh();
+        AddConsoleLog(["Refresh player..."]);
+        AddRoomLog(`${username} 刷新播放器`);
         break;
       case "setname":
         const name = command.split(" ").slice(1)[0] ?? "";
         if (!name) {
-          store.dispatch(addConsoleContent(["Please provide a name"]));
+          AddConsoleLog(["Please provide a name"]);
           break;
         }
+        if (name.length > 20) {
+          AddConsoleLog(["Name too long (max 20 characters)"]);
+          break;
+        }
+        setUsername(name);
+        localStorage.setItem("username", name);
         SetUsername(name);
         break;
       case "page":
         const page = command.split(" ").slice(1)[0] ?? "";
         if (!page) {
-          store.dispatch(addConsoleContent(["Please provide a page"]));
+          AddConsoleLog(["Please provide a page"]);
+          break;
+        }
+        if (isNaN(parseFloat(page))) {
+          AddConsoleLog(["Invalid page"]);
           break;
         }
         if (parseInt(page) > totalPage || parseInt(page) <= 0) {
-          store.dispatch(addConsoleContent(["Page out of range"]));
+          AddConsoleLog(["Page out of range"]);
           break;
         }
         setCurrentPage(parseInt(page));
-        store.dispatch(addConsoleContent([`Switch to playlist page ${page}`]));
+        AddConsoleLog([`Switch to playlist page ${page}`]);
         break;
       case "help":
-        store.dispatch(
-          addConsoleContent([
-            "--| Commands for this page |--",
-            "queue <URL> - Add a track to queue",
-            "remove <index | *> - Remove a track from queue",
-            "play - Start playing",
-            "pause - Pause playing",
-            "next - Play next track",
-            "prev - Play previous track",
-            "switch <index> - Switch to track",
-            "volume <0 - 100> - Set volume (0 - 100%)",
-            "mute <-t | -f> - Mute / Unmute",
-            "loop <-t | -f> - Loop / Unloop",
-            "rate <0 - 100> - Set playback rate (0 - 100%)",
-            "seek <time> - Seek to time (s)",
-            "refresh - Refresh player",
-            "setname <name> - Set username",
-            "page <page> - Switch playlist page",
-          ])
-        );
+        AddConsoleLog([
+          "--| Commands for this page |--",
+          "queue <URL> - Add a track to queue",
+          "remove <index | *> - Remove a track from queue",
+          "play - Start playing",
+          "pause - Pause playing",
+          "next - Play next track",
+          "prev - Play previous track",
+          "switch <index> - Switch to track",
+          "volume <0 - 100> - Set volume (0 - 100%)",
+          "rate <0 - 100> - Set playback rate (0 - 100%)",
+          "mute <-t | -f> - Mute / Unmute",
+          "loop <-t | -f> - Loop / Unloop",
+          "random <-t | -f> - Random / Unrandom",
+          "seek <time> - Seek to time (s)",
+          "refresh - Refresh player",
+          "setname <name> - Set username",
+          "send <message> - Send message",
+          "page <page> - Switch playlist page",
+        ]);
         break;
       default:
-        store.dispatch(
-          addConsoleContent([`"${command}" is not a valid command`])
-        );
+        AddConsoleLog([`"${command}" is not a valid command`]);
         break;
     }
     store.dispatch(setCommand(""));
   }, [command]);
 
   // Video player control
-  interface VideoInfo {
-    videoId: string;
-    title: string;
-    lengthSeconds: string;
-    keywords: string[];
-    viewCount: string;
-    embed: {
-      iframeUrl: string;
-      width: number;
-      height: number;
-    };
-    description: string;
-    ownerProfileUrl: string;
-    externalChannelId: string;
-    isFamilySafe: boolean;
-    availableCountries: string[];
-    isUnlisted: boolean;
-    hasYpcMetadata: boolean;
-    category: string;
-    publishDate: string;
-    ownerChannelName: string;
-    uploadDate: string;
-    isShortsEligible: boolean;
-    channelId: string;
-    video_url: string;
-    storyboards: {
-      templateUrl: string;
-      thumbnailWidth: number;
-      thumbnailHeight: number;
-      thumbnailCount: number;
-      interval: number;
-      columns: number;
-      rows: number;
-      storyboardCount: number;
-    }[];
-    chapters: any[];
-    thumbnails: {
-      url: string;
-      width: number;
-      height: number;
-    }[];
-    error: string;
-  }
   interface Track {
     url: string; //https://www.youtube.com/watch?v={ID}
     title: string;
@@ -468,6 +452,7 @@ export default function Page() {
     duration: number;
     playbackRate: number;
     loop: boolean;
+    random: boolean;
     trackQueue: Track[];
     index: number;
   }
@@ -487,6 +472,7 @@ export default function Page() {
     duration: 0,
     playbackRate: 1,
     loop: false,
+    random: false,
     trackQueue: [],
     index: 0,
   });
@@ -498,29 +484,10 @@ export default function Page() {
       isReady: false,
     }
   );
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
-
-  useEffect(() => {
-    if (
-      playerState.index < 0 ||
-      playerState.index >= playerState.trackQueue.length
-    ) {
-      setPlayerState({ ...playerState, index: 0 });
-    } else if (playerState.trackQueue.length > 0) {
-      if (currentTrack?.id != playerState.trackQueue[playerState.index].id)
-        // This will cause restart when someone join the room
-        Seek(0);
-      setCurrentTrack(playerState.trackQueue[playerState.index]);
-    } else {
-      setCurrentTrack(null);
-    }
-  }, [playerState.index, playerState.trackQueue]);
-
-  // Playlist control
-  const [totalPage, setTotalPage] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [playlist, setPlaylist] = useState<Track[][]>([]);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
 
   useEffect(() => {
     const newPlaylist: Track[][] = [];
@@ -528,24 +495,27 @@ export default function Page() {
       newPlaylist.push(playerState.trackQueue.slice(i, i + 4));
     }
     setPlaylist(newPlaylist);
-  }, [playerState.trackQueue]);
+
+    if (!currentTrack) {
+      setCurrentTrack(playerState.trackQueue[playerState.index] ?? null);
+    } else if (
+      currentTrack?.id != playerState.trackQueue[playerState.index]?.id
+    ) {
+      Seek(0);
+      setCurrentTrack(playerState.trackQueue[playerState.index] ?? null);
+    }
+  }, [playerState.index, playerState.trackQueue]);
 
   useEffect(() => {
     setTotalPage(Math.ceil(playerState.trackQueue.length / 4));
   }, [playerState.trackQueue]);
 
   useEffect(() => {
-    setCurrentPage(Math.ceil((playerState.index + 1) / 4));
-  }, [playerState.index]);
+    setCurrentPage(Math.min(totalPage, Math.ceil((playerState.index + 1) / 4)));
+  }, [playerState.index, totalPage]);
 
-  useEffect(() => {
-    setCurrentPageIndex(currentPage - 1);
-  }, [currentPage]);
-
-  // Log control
-  const [logs, setLogs] = useState<string[]>([]);
-
-  const getVideoInfoAPI = async (videoId: string): Promise<VideoInfo> => {
+  // API control
+  const getVideoInfoAPI = async (videoId: string): Promise<Track> => {
     const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`, {
       method: "GET",
       headers: {
@@ -562,7 +532,45 @@ export default function Page() {
         console.error("Error:", error);
         throw error;
       });
-    return data as VideoInfo;
+    const track: Track = {
+      url: data.video_url,
+      title: data.title,
+      author: data.ownerChannelName,
+      img: data.thumbnails[data.thumbnails.length - 1].url,
+      requestBy: username,
+      id: Date.now(),
+    };
+    return track;
+  };
+
+  const getPlaylistAPI = async (playlistId: string): Promise<Track[]> => {
+    const data = await fetch(`${hostURL}/api/ytpl?playlistId=${playlistId}`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        throw error;
+      });
+    const tracks: Track[] = data.map((item: any, index) => {
+      return {
+        url: item.shortUrl,
+        title: item.title,
+        author: item.author.name,
+        img: item.thumbnails[item.thumbnails.length - 1].url,
+        requestBy: username,
+        id: `${index}-${Date.now()}`,
+      };
+    });
+    return tracks;
   };
 
   return (
@@ -630,28 +638,21 @@ export default function Page() {
                 }}
                 onEnded={() => {
                   if (playerState.trackQueue.length > 0) {
-                    const nextIndex =
-                      playerState.index + 1 >= playerState.trackQueue.length
-                        ? 0
-                        : playerState.index + 1;
-                    SetPlayerState({ ...playerState, index: nextIndex });
-                    Seek(0);
+                    if (playerState.random) {
+                      SetTrackIndex(
+                        Math.floor(
+                          Math.random() * playerState.trackQueue.length
+                        )
+                      );
+                    } else {
+                      NextTrack();
+                    }
                   }
                 }}
                 onError={(error) => {
-                  store.dispatch(addConsoleContent([`Error: ${error}`]));
+                  AddConsoleLog([`Error: ${error}`]);
                 }}
-                onReady={async () => {
-                  // Wait for website to load (6s)
-                  await new Promise((resolve) => setTimeout(resolve, 6000));
-                  if (!PlayerStateClient.isReady) {
-                    store.dispatch(
-                      addConsoleContent([
-                        "Player is ready, auto refresh once (if player is not playing, please refresh manually)",
-                      ])
-                    );
-                    store.dispatch(setCommand("refresh"));
-                  }
+                onReady={() => {
                   setPlayerStateClient({ ...PlayerStateClient, isReady: true });
                 }}
                 onSeek={() => {
@@ -685,11 +686,11 @@ export default function Page() {
               scrollbarWidth: "none",
             }}
           >
-            {playlist[currentPageIndex]?.map((track, index) => (
+            {playlist[currentPage - 1]?.map((track, index) => (
               <div
-                key={index + currentPageIndex * 4}
+                key={index + (currentPage - 1) * 4}
                 className={`${styles["track-card"]} ${
-                  index + currentPageIndex * 4 === playerState.index
+                  index + (currentPage - 1) * 4 === playerState.index
                     ? styles["selected"]
                     : ""
                 }`}
@@ -699,7 +700,7 @@ export default function Page() {
                   <div>
                     <p className={styles["track-title"]}>
                       {"#" +
-                        (index + currentPageIndex * 4) +
+                        (index + (currentPage - 1) * 4) +
                         " " +
                         track.author +
                         " | " +
