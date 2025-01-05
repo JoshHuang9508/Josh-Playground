@@ -704,9 +704,15 @@ export default function Page() {
   }
 
   async function getVideoInfoAPI(videoId: string): Promise<VideoInfo> {
-    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`).then(
-      (res) => res.json()
-    );
+    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((res) => res.json())
+      .catch((error) => console.error("Error:", error));
     return data as VideoInfo;
   }
 }
