@@ -11,8 +11,7 @@ import { setCommand } from "../../redux/commandSlice";
 // Import json
 
 // API server
-const hostURL = "http://localhost:4000";
-// "https://1852-2001-df2-45c1-75-00-1.ngrok-free.app"
+const hostURL = "https://fec6-2001-df2-45c1-75-00-1.ngrok-free.app/";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
@@ -173,7 +172,7 @@ export default function Page() {
       case "send":
         const message = command.split(" ").slice(1).join(" ") ?? "";
         if (!message) {
-          AddConsoleLog(["Please provide a message"]);
+          AddConsoleLog(["Usage: send <message>"]);
           break;
         }
         AddConsoleLog([`Send message: ${message}`]);
@@ -182,7 +181,7 @@ export default function Page() {
       case "queue":
         const URL = command.split(" ").slice(1)[0] ?? "";
         if (!URL) {
-          AddConsoleLog(["Please provide a URL"]);
+          AddConsoleLog(["Usage: queue <URL>"]);
           break;
         }
         if (!ReactPlayer.canPlay(URL)) {
@@ -220,7 +219,7 @@ export default function Page() {
       case "remove":
         const indexToRm = command.split(" ").slice(1)[0] ?? "";
         if (!indexToRm) {
-          AddConsoleLog(["Please provide an index"]);
+          AddConsoleLog(["Usage: remove <index | *>"]);
           break;
         }
         if (indexToRm == "*") {
@@ -252,41 +251,41 @@ export default function Page() {
         AddConsoleLog(["Pause playing..."]);
         AddRoomLog(`${username} 暫停播放`);
         break;
-      case "next":
-        NextTrack();
-        AddConsoleLog(["Next track..."]);
-        AddRoomLog(`${username} 播放下一首歌曲`);
-        break;
-      case "prev":
-        PrevTrack();
-        AddConsoleLog(["Previous track..."]);
-        AddRoomLog(`${username} 播放上一首歌曲`);
-        break;
       case "switch":
-        const indexToSw = command.split(" ").slice(1)[0] ?? "";
-        if (!indexToSw) {
-          AddConsoleLog(["Please provide an index"]);
-          break;
+        const sufix_switch = command.split(" ").slice(1)[0] ?? "";
+        switch (sufix_switch) {
+          case "-n":
+            SetTrackIndex(playerState.index + 1);
+            AddConsoleLog([`Switch to next track`]);
+            AddRoomLog(`${username} 切換到下一首歌曲`);
+            break;
+          case "-p":
+            SetTrackIndex(playerState.index - 1);
+            AddConsoleLog([`Switch to previous track`]);
+            AddRoomLog(`${username} 切換到上一首歌曲`);
+            break;
+          default:
+            if (isNaN(parseFloat(sufix_switch))) {
+              AddConsoleLog(["Invalid index"]);
+              break;
+            }
+            if (
+              parseInt(sufix_switch) >= playerState.trackQueue.length ||
+              parseInt(sufix_switch) < 0
+            ) {
+              AddConsoleLog(["Index out of range"]);
+              break;
+            }
+            SetTrackIndex(parseInt(sufix_switch));
+            AddConsoleLog([`Switch to track ${sufix_switch}`]);
+            AddRoomLog(`${username} 切換到歌曲 #${sufix_switch}`);
+            break;
         }
-        if (isNaN(parseFloat(indexToSw))) {
-          AddConsoleLog(["Invalid index"]);
-          break;
-        }
-        if (
-          parseInt(indexToSw) >= playerState.trackQueue.length ||
-          parseInt(indexToSw) < 0
-        ) {
-          AddConsoleLog(["Index out of range"]);
-          break;
-        }
-        SetTrackIndex(parseInt(indexToSw));
-        AddConsoleLog([`Switch to track ${indexToSw}`]);
-        AddRoomLog(`${username} 切換到歌曲 #${indexToSw}`);
         break;
       case "volume":
         const volume = command.split(" ").slice(1)[0] ?? "";
         if (!volume) {
-          AddConsoleLog(["Please provide a volume"]);
+          AddConsoleLog(["Usage: volume <0 - 100>"]);
           break;
         }
         if (isNaN(parseFloat(volume))) {
@@ -297,41 +296,8 @@ export default function Page() {
           ...prev,
           volume: parseFloat(volume) / 100,
         }));
-        localStorage.setItem(
-          "playerStateClient",
-          JSON.stringify(PlayerStateClient)
-        );
+        localStorage.setItem("volume", volume);
         AddConsoleLog([`Set volume to ${volume}`]);
-        break;
-      case "mute":
-        const sufix_mute = command.split(" ").slice(1)[0] ?? "";
-        switch (sufix_mute) {
-          case "-t":
-            setPlayerStateClient((prev) => ({
-              ...prev,
-              muted: true,
-            }));
-            localStorage.setItem(
-              "playerStateClient",
-              JSON.stringify(PlayerStateClient)
-            );
-            AddConsoleLog(["Mute..."]);
-            break;
-          case "-f":
-            setPlayerStateClient((prev) => ({
-              ...prev,
-              muted: false,
-            }));
-            localStorage.setItem(
-              "playerStateClient",
-              JSON.stringify(PlayerStateClient)
-            );
-            AddConsoleLog(["Unmute..."]);
-            break;
-          default:
-            AddConsoleLog(["Usage: mute <-t | -f>"]);
-            break;
-        }
         break;
       case "loop":
         const sufix_loop = command.split(" ").slice(1)[0] ?? "";
@@ -382,7 +348,7 @@ export default function Page() {
       case "seek":
         const seek = command.split(" ").slice(1)[0] ?? "";
         if (!seek) {
-          AddConsoleLog(["Please provide a time"]);
+          AddConsoleLog(["Usage: seek <time>"]);
           break;
         }
         if (isNaN(parseFloat(seek))) {
@@ -405,7 +371,7 @@ export default function Page() {
       case "setname":
         const name = command.split(" ").slice(1)[0] ?? "";
         if (!name) {
-          AddConsoleLog(["Please provide a name"]);
+          AddConsoleLog(["Usage: setname <name>"]);
           break;
         }
         if (name.length > 20) {
@@ -419,21 +385,29 @@ export default function Page() {
         AddRoomLog(`${username} 更改名稱為 ${name}`);
         break;
       case "page":
-        const page = command.split(" ").slice(1)[0] ?? "";
-        if (!page) {
-          AddConsoleLog(["Please provide a page"]);
-          break;
+        const sufix_page = command.split(" ").slice(1)[0] ?? "";
+        switch (sufix_page) {
+          case "-n":
+            setCurrentPage(currentPage + 1);
+            AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+            break;
+          case "-p":
+            setCurrentPage(currentPage - 1);
+            AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+            break;
+          default:
+            if (isNaN(parseFloat(sufix_page))) {
+              AddConsoleLog(["Invalid page"]);
+              break;
+            }
+            if (parseInt(sufix_page) > totalPage || parseInt(sufix_page) <= 0) {
+              AddConsoleLog(["Page out of range"]);
+              break;
+            }
+            setCurrentPage(parseInt(sufix_page));
+            AddConsoleLog([`Switch to playlist page ${sufix_page}`]);
+            break;
         }
-        if (isNaN(parseFloat(page))) {
-          AddConsoleLog(["Invalid page"]);
-          break;
-        }
-        if (parseInt(page) > totalPage || parseInt(page) <= 0) {
-          AddConsoleLog(["Page out of range"]);
-          break;
-        }
-        setCurrentPage(parseInt(page));
-        AddConsoleLog([`Switch to playlist page ${page}`]);
         break;
       case "help":
         AddConsoleLog([
@@ -442,19 +416,16 @@ export default function Page() {
           "remove <index | *> - Remove a track from queue",
           "play - Start playing",
           "pause - Pause playing",
-          "next - Play next track",
-          "prev - Play previous track",
-          "switch <index> - Switch to track",
+          "switch <-n | -p | index> - Switch to track",
           "volume <0 - 100> - Set volume (0 - 100%)",
           "rate <0 - 100> - Set playback rate (0 - 100%)",
-          "mute <-t | -f> - Mute / Unmute",
           "loop <-t | -f> - Loop / Unloop",
           "random <-t | -f> - Random / Unrandom",
           "seek <time> - Seek to time (s)",
           "refresh - Refresh player",
           "setname <name> - Set username",
           "send <message> - Send message",
-          "page <page> - Switch playlist page",
+          "page <-n | -p | page> - Switch playlist page",
         ]);
         break;
       default:
@@ -490,7 +461,6 @@ export default function Page() {
   }
   interface PlayerStateClient {
     volume: number;
-    muted: boolean;
     seeking: boolean;
     isReady: boolean;
   }
@@ -513,7 +483,6 @@ export default function Page() {
   const [PlayerStateClient, setPlayerStateClient] = useState<PlayerStateClient>(
     {
       volume: 0.5,
-      muted: false,
       seeking: false,
       isReady: false,
     }
@@ -521,7 +490,6 @@ export default function Page() {
   const [playlist, setPlaylist] = useState<Track[][]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  // const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
 
   useEffect(() => {
     const newPlaylist: Track[][] = [];
@@ -529,10 +497,6 @@ export default function Page() {
       newPlaylist.push(playerState.trackQueue.slice(i, i + 4));
     }
     setPlaylist(newPlaylist);
-
-    // const newTrack = playerState.trackQueue[playerState.index] ?? null;
-    // if (currentTrack && newTrack && newTrack.id != currentTrack.id) Seek(0);
-    // setCurrentTrack(newTrack);
   }, [playerState.trackQueue]);
 
   useEffect(() => {
@@ -544,11 +508,8 @@ export default function Page() {
   }, [playerState.index, totalPage]);
 
   useEffect(() => {
-    const state = JSON.parse(
-      localStorage.getItem("playerStateClient") ??
-        "{volume: 0.5, muted: false, seeking: false, isReady: false}"
-    );
-    setPlayerStateClient({ ...state, seeking: false, isReady: false });
+    const volume = parseFloat(localStorage.getItem("volume") ?? "50");
+    setPlayerStateClient((prev) => ({ ...prev, volume: volume / 100 }));
   }, []);
 
   // API control
@@ -612,12 +573,14 @@ export default function Page() {
 
   return (
     <div className={"layout"}>
-      <p className={"title"}>YT音樂同步撥放器</p>
-      <p className={"subtitle"}>
-        一個可以同步撥放音樂的網站，讓你和朋友一起聽音樂
-      </p>
+      <div className="title-div">
+        <p className={"title"}>YT音樂同步撥放器</p>
+        <p className={"subtitle"}>
+          一個可以同步撥放音樂的網站，讓你和朋友一起聽音樂
+        </p>
+      </div>
       <div className={"content-div"}>
-        <div className={"container1"} style={{ gap: "2rem", flex: 0.5 }}>
+        <div className={"container2"}>
           <div className={"sub-container1"} style={{ gap: "1rem" }}>
             <p className={"header2"}>在線使用者</p>
             <div className={"col"}>
@@ -641,14 +604,7 @@ export default function Page() {
         </div>
 
         <div className={"container1"}>
-          <div
-            className="col"
-            style={{
-              justifyContent: "center",
-              pointerEvents: "none",
-              backgroundColor: "black",
-            }}
-          >
+          <div className={styles["player"]}>
             {isClient && playerState && (
               <ReactPlayer
                 style={
@@ -663,7 +619,7 @@ export default function Page() {
                   playerState.playing
                 }
                 volume={PlayerStateClient.volume}
-                muted={PlayerStateClient.muted || !isAllowedToUnmute}
+                muted={!isAllowedToUnmute}
                 loop={playerState.loop}
                 playbackRate={playerState.playbackRate}
                 controls={false}

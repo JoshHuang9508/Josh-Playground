@@ -18,16 +18,18 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: "MyCustomFont", "Noto Sans TC", sans-serif;
-  font-size: 0.75vw;
+  font-size: clamp(7px, 0.75vw, 18px);
 }
 
 span,
-input,
 p {
   padding: 0;
-  margin: 0.01vw;
-  font-size: 0.75vw;
-  min-height: 1vw;
+  margin: 0.05rem;
+  min-height: 1rem;
+}
+
+input {
+  font-size: clamp(7px, 0.75vw, 18px)
 }
 
 div {
@@ -40,7 +42,6 @@ div.layout {
   height: 100%;
   justify-content: center;
   align-items: center;
-  gap: 10px;
 }
 div.row {
   /* display: flex; */
@@ -86,10 +87,25 @@ div.content-div div.container1 {
   animation: fadeIn 2s ease-in forwards;
   animation-delay: 4s;
 }
+div.content-div div.container2 {
+  display: flex;
+  flex: 0.5;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 2rem;
+  background-color: #2f2f2f;
+  height: 35rem;
+  border-radius: 2rem;
+  border: 1px solid #747474;
+  opacity: 0;
+  box-shadow: 0 0 1rem rgb(0, 0, 0);
+  animation: fadeIn 2s ease-in forwards;
+  animation-delay: 4s;
+}
 div.content-div div div.sub-container1 {
   display: flex;
   flex-direction: column;
-  padding: 5%;
+  padding: 1rem;
   background-color: #1f1f1f;
   height: 100%;
   border-radius: 0px;
@@ -97,14 +113,22 @@ div.content-div div div.sub-container1 {
   box-shadow: inset 0 0 2rem black;
 }
 
-p.title {
+div.title-div {
+  margin: 2rem 0 1rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+div.title-div p.title {
+  padding: 0.5rem;
   font-size: 3rem;
   text-align: center;
   text-shadow: 0 0 1rem white;
   opacity: 0;
   animation: fadeIn 2s ease-in forwards;
 }
-p.subtitle {
+div.title-div p.subtitle {
   font-size: 1.2rem;
   text-align: center;
   opacity: 0;
@@ -124,4 +148,29 @@ p.header1 {
 }
 p.header2 {
   font-size: 1.6rem;
+}
+
+@media (max-width: 1200px) {
+  html,
+  body {
+    font-size: clamp(7px, 1.5vw, 18px);
+  }
+
+  div.layout {
+    height: fit-content;
+  }
+  div.content-div {
+    flex-direction: column;
+  }
+  div.content-div div.container1 {
+    flex: none;
+    height: 35rem;
+    width: 50rem;
+  }
+  div.content-div div.container2 {
+    display: flex;
+    flex: none;
+    height: 35rem;
+    width: 50rem;
+  }
 }
