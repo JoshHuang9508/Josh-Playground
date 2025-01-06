@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import consoleContentSlice from "./consoleContentSlice";
+import consoleContentSlice, { addConsoleContent } from "./consoleContentSlice";
 import commandSlice from "./commandSlice";
 import commandHistorySlice from "./commandHistorySlice";
 import autoCompleteSlice from "./autoCompleteSlice";
@@ -15,3 +15,7 @@ const store = configureStore({
 });
 
 export default store;
+
+export const AddConsoleLog = (message: string[]) => {
+  store.dispatch(addConsoleContent(message));
+};

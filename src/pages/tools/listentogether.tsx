@@ -1,26 +1,21 @@
 // Import packages
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
 // Import styles
 import styles from "../../../public/styles/listentogether.module.css";
 // Import redux
-import store from "../../redux/store";
-import { addConsoleContent } from "../../redux/consoleContentSlice";
+import store, { AddConsoleLog } from "../../redux/store";
 import { setCommand } from "../../redux/commandSlice";
 // Import json
 
 // API server
-const hostURL = "https://d816-2001-df2-45c1-75-00-1.ngrok-free.app";
-
-const AddConsoleLog = (log: string[]) => {
-  store.dispatch(addConsoleContent([...log]));
-};
+const hostURL = "http://localhost:4000";
+// "https://1852-2001-df2-45c1-75-00-1.ngrok-free.app"
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
-  const [isSetup, setIsSetup] = useState(false);
 
   useEffect(() => {
     AddConsoleLog([
@@ -28,6 +23,22 @@ export default function Page() {
       "Room is setting up... please wait a moment",
     ]);
     setIsClient(true);
+  }, []);
+
+  // Mute control
+  const [isAllowedToUnmute, setIsAllowedToUnmute] = useState(false);
+
+  useEffect(() => {
+    const enablePlay = () => setIsAllowedToUnmute(true);
+
+    // 註冊用戶交互事件
+    document.addEventListener("click", enablePlay);
+    document.addEventListener("touchstart", enablePlay);
+
+    return () => {
+      document.removeEventListener("click", enablePlay);
+      document.removeEventListener("touchstart", enablePlay);
+    };
   }, []);
 
   // Socket control
@@ -43,15 +54,7 @@ export default function Page() {
     socket.on("connect", async () => {
       AddConsoleLog([`Connect server success (id: ${socket.id})`]);
       socket.emit("join", localStorage.getItem("username") ?? "Anonymous");
-      await new Promise((resolve) => setTimeout(resolve, 6000));
-      AddConsoleLog([`Player is ready`]);
       socket.emit("ready");
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      AddConsoleLog([
-        `Auto refresh once (if is not playing, please refresh manually)`,
-      ]);
-      socket.emit("refresh");
-      setIsSetup(true);
     });
     socket.on("connect_error", () => {
       AddConsoleLog([`Connect server error (id: ${socket.id})`]);
@@ -75,6 +78,7 @@ export default function Page() {
       setUsers(users);
     });
     socket.on("seek", (time) => {
+      console.log("Seek to: ", time);
       player.current?.seekTo(time);
     });
 
@@ -94,8 +98,14 @@ export default function Page() {
   const SetPlayerState = (state: PlayerState) => {
     socketInstance?.emit("setPlayerState", state);
   };
-  const UpdatePlayerState = (state: PlayerState) => {
-    socketInstance?.emit("updatePlayerState", state);
+  const onDuration = (duration: number) => {
+    socketInstance?.emit("onDuration", duration);
+  };
+  const onProgress = (state: any) => {
+    socketInstance?.emit("onProgress", state);
+  };
+  const onEnd = () => {
+    socketInstance?.emit("onEnd");
   };
   const Play = () => {
     socketInstance?.emit("play");
@@ -128,16 +138,13 @@ export default function Page() {
     socketInstance?.emit("setTrackIndex", index);
   };
   const SetPlayBackRate = (rate: number) => {
-    socketInstance?.emit("setPlayBackRate", rate);
+    socketInstance?.emit("setPlaybackRate", rate);
   };
   const SetLoop = (loop: boolean) => {
     socketInstance?.emit("setLoop", loop);
   };
   const Seek = (time: number) => {
     socketInstance?.emit("seek", time);
-  };
-  const End = () => {
-    socketInstance?.emit("end");
   };
 
   // User control
@@ -158,7 +165,7 @@ export default function Page() {
   const command = useSelector((state: { command: string }) => state.command);
 
   useEffect(() => {
-    if (!command || command == "" || !isSetup) return;
+    if (!command || command == "") return;
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
@@ -286,21 +293,39 @@ export default function Page() {
           AddConsoleLog(["Invalid volume"]);
           break;
         }
-        setPlayerStateClient({
-          ...PlayerStateClient,
+        setPlayerStateClient((prev) => ({
+          ...prev,
           volume: parseFloat(volume) / 100,
-        });
+        }));
+        localStorage.setItem(
+          "playerStateClient",
+          JSON.stringify(PlayerStateClient)
+        );
         AddConsoleLog([`Set volume to ${volume}`]);
         break;
       case "mute":
         const sufix_mute = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_mute) {
           case "-t":
-            setPlayerStateClient({ ...PlayerStateClient, muted: true });
+            setPlayerStateClient((prev) => ({
+              ...prev,
+              muted: true,
+            }));
+            localStorage.setItem(
+              "playerStateClient",
+              JSON.stringify(PlayerStateClient)
+            );
             AddConsoleLog(["Mute..."]);
             break;
           case "-f":
-            setPlayerStateClient({ ...PlayerStateClient, muted: false });
+            setPlayerStateClient((prev) => ({
+              ...prev,
+              muted: false,
+            }));
+            localStorage.setItem(
+              "playerStateClient",
+              JSON.stringify(PlayerStateClient)
+            );
             AddConsoleLog(["Unmute..."]);
             break;
           default:
@@ -390,6 +415,8 @@ export default function Page() {
         setUsername(name);
         localStorage.setItem("username", name);
         SetUsername(name);
+        AddConsoleLog([`Set username to ${name}`]);
+        AddRoomLog(`${username} 更改名稱為 ${name}`);
         break;
       case "page":
         const page = command.split(" ").slice(1)[0] ?? "";
@@ -437,7 +464,7 @@ export default function Page() {
     store.dispatch(setCommand(""));
   }, [command]);
 
-  // Video player control
+  // Player control
   interface Track {
     url: string; //https://www.youtube.com/watch?v={ID}
     title: string;
@@ -457,7 +484,9 @@ export default function Page() {
     loop: boolean;
     random: boolean;
     trackQueue: Track[];
+    currentTrack: Track | null;
     index: number;
+    isEnd: boolean;
   }
   interface PlayerStateClient {
     volume: number;
@@ -477,7 +506,9 @@ export default function Page() {
     loop: false,
     random: false,
     trackQueue: [],
+    currentTrack: null,
     index: 0,
+    isEnd: false,
   });
   const [PlayerStateClient, setPlayerStateClient] = useState<PlayerStateClient>(
     {
@@ -490,7 +521,7 @@ export default function Page() {
   const [playlist, setPlaylist] = useState<Track[][]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  // const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
 
   useEffect(() => {
     const newPlaylist: Track[][] = [];
@@ -499,15 +530,10 @@ export default function Page() {
     }
     setPlaylist(newPlaylist);
 
-    if (!currentTrack) {
-      setCurrentTrack(playerState.trackQueue[playerState.index] ?? null);
-    } else if (
-      currentTrack?.id != playerState.trackQueue[playerState.index]?.id
-    ) {
-      Seek(0);
-      setCurrentTrack(playerState.trackQueue[playerState.index] ?? null);
-    }
-  }, [playerState.index, playerState.trackQueue]);
+    // const newTrack = playerState.trackQueue[playerState.index] ?? null;
+    // if (currentTrack && newTrack && newTrack.id != currentTrack.id) Seek(0);
+    // setCurrentTrack(newTrack);
+  }, [playerState.trackQueue]);
 
   useEffect(() => {
     setTotalPage(Math.ceil(playerState.trackQueue.length / 4));
@@ -516,6 +542,14 @@ export default function Page() {
   useEffect(() => {
     setCurrentPage(Math.min(totalPage, Math.ceil((playerState.index + 1) / 4)));
   }, [playerState.index, totalPage]);
+
+  useEffect(() => {
+    const state = JSON.parse(
+      localStorage.getItem("playerStateClient") ??
+        "{volume: 0.5, muted: false, seeking: false, isReady: false}"
+    );
+    setPlayerStateClient({ ...state, seeking: false, isReady: false });
+  }, []);
 
   // API control
   const getVideoInfoAPI = async (videoId: string): Promise<Track> => {
@@ -621,41 +655,49 @@ export default function Page() {
                   playerState.trackQueue.length > 0 ? {} : { display: "none" }
                 }
                 ref={player}
-                url={currentTrack?.url ?? ""}
+                url={playerState.currentTrack?.url ?? ""}
                 playing={
                   playerState.trackQueue.length > 0 &&
                   PlayerStateClient.isReady &&
+                  !PlayerStateClient.seeking &&
                   playerState.playing
                 }
                 volume={PlayerStateClient.volume}
-                muted={PlayerStateClient.muted}
+                muted={PlayerStateClient.muted || !isAllowedToUnmute}
                 loop={playerState.loop}
                 playbackRate={playerState.playbackRate}
+                controls={false}
                 onProgress={(state) => {
-                  console.log("onProgress");
-                  UpdatePlayerState({ ...playerState, ...state });
+                  onProgress(state);
                 }}
                 onDuration={(duration) => {
-                  console.log("onDuration");
-                  UpdatePlayerState({ ...playerState, duration });
+                  onDuration(duration);
                 }}
                 onEnded={() => {
-                  End();
+                  onEnd();
                 }}
                 onError={(error) => {
                   AddConsoleLog([`Error: ${error}`]);
                 }}
                 onReady={() => {
-                  setPlayerStateClient({ ...PlayerStateClient, isReady: true });
+                  if (PlayerStateClient.isReady) return;
+                  Seek(playerState.playedSeconds);
+                  setPlayerStateClient((prev) => ({
+                    ...prev,
+                    isReady: true,
+                  }));
                 }}
                 onSeek={() => {
-                  setPlayerStateClient({ ...PlayerStateClient, seeking: true });
+                  setPlayerStateClient((prev) => ({
+                    ...prev,
+                    seeking: true,
+                  }));
                   setTimeout(() => {
                     setPlayerStateClient((prev) => ({
                       ...prev,
                       seeking: false,
                     }));
-                  }, 80);
+                  }, 1000);
                 }}
                 width="100%"
                 height="100%"
@@ -711,11 +753,4 @@ export default function Page() {
       </div>
     </div>
   );
-
-  // async function getVideoInfo(videoId: string): Promise<VideoInfo> {
-  //   const data = await fetch(`/api/get-ytdl?videoId=${videoId}`).then((res) =>
-  //     res.json()
-  //   );
-  //   return data as VideoInfo;
-  // }
 }
