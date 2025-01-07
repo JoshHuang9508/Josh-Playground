@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const commandHistorySlice = createSlice({
   name: "commandHistorySlice",
-  initialState: [] as String[],
+  initialState: [] as string[],
   reducers: {
-    addCoomandHistory: (state, action: { payload: String }) => {
+    addCoomandHistory: (state, action: { payload: string }) => {
       return [action.payload, ...state];
     },
   },

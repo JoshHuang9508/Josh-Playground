@@ -3,7 +3,8 @@ div.player {
   justify-content: center;
   pointer-events: none;
   background-color: black;
-  box-shadow: 0 0 1rem rgb(70, 227, 255);
+  box-shadow: 0 0 2rem black;
+  animation: rgb-shadow 5s infinite linear;
 }
 
 div.track-card.selected {
@@ -43,4 +44,19 @@ p.online-user {
 }
 p.log {
   height: fit-content;
+}
+
+@keyframes rgb-shadow {
+  0% {
+    box-shadow: 0 0 2rem rgb(255, 0, 0);
+  }
+  33% {
+    box-shadow: 0 0 2rem rgb(0, 255, 0); 
+  }
+  66% {
+    box-shadow: 0 0 2rem rgb(0, 0, 255); 
+  }
+  100% {
+    box-shadow: 0 0 2rem rgb(255, 0, 0); 
+  }
 }

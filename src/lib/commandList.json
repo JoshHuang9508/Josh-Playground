@@ -1,12 +1,102 @@
 {
-    "//": ["cd", "cl", "help", "log"],
-    "/tools/": ["cd", "cl", "help", "log"],
-    "/tools/listentogether/": ["cd", "cl", "help", "log", "queue", "remove", "play", "pause", "switch", "volume", "rate", "loop", "random", "seek", "refresh", "send", "setname", "page"],
-    "cd": [
-        "tools", "games"
-    ],
-    "loop": ["-t", "-f"],
-    "random": ["-t", "-f"],
-    "switch": ["-n", "-p"],
-    "page": ["-n", "-p"]
+  "/": [
+    {
+      "name": "cd",
+      "description": "Change the directory",
+      "usage": "cd [directory]",
+      "options": ["./", "../"]
+    },
+    {
+      "name": "cl",
+      "description": "Clear the console",
+      "usage": "cl"
+    },
+    {
+      "name": "help",
+      "description": "Show the help message",
+      "usage": "help [command]"
+    },
+    {
+      "name": "log",
+      "description": "Show the log message",
+      "usage": "log [message]"
+    }
+  ],
+  "tools/": [],
+  "tools/listentogether/": [
+    {
+      "name": "queue",
+      "description": "Queue a song or a playlist",
+      "usage": "queue [song_URL|playlist_URL]"
+    },
+    {
+      "name": "remove",
+      "description": "Remove a song from the queue",
+      "usage": "remove [index]"
+    },
+    {
+      "name": "play",
+      "description": "Strat the player",
+      "usage": "play"
+    },
+    {
+      "name": "pause",
+      "description": "Pause the player",
+      "usage": "pause"
+    },
+    {
+      "name": "switch",
+      "description": "Switch the track",
+      "usage": "switch [index|option]",
+      "options": ["-n", "-p", "--next", "--prev"]
+    },
+    {
+      "name": "volume",
+      "description": "Change the volume",
+      "usage": "volume [value]"
+    },
+    {
+      "name": "rate",
+      "description": "Change the playback rate",
+      "usage": "rate [value]"
+    },
+    {
+      "name": "loop",
+      "description": "Loop the track",
+      "usage": "loop [option]",
+      "options": ["-t", "-f", "--true", "--false"]
+    },
+    {
+      "name": "random",
+      "description": "Random the track",
+      "usage": "random [option]",
+      "options": ["-t", "-f", "--true", "--false"]
+    },
+    {
+      "name": "send",
+      "description": "Send the message to the server",
+      "usage": "send [message]"
+    },
+    {
+      "name": "setname",
+      "description": "Set your username",
+      "usage": "setname [name]"
+    },
+    {
+      "name": "page",
+      "description": "Change the playlist page",
+      "usage": "page [option]",
+      "options": ["-n", "-p", "--next", "--prev"]
+    },
+    {
+      "name": "seek",
+      "description": "Seek the track",
+      "usage": "seek [value]"
+    },
+    {
+      "name": "refresh",
+      "description": "Refresh the queue",
+      "usage": "refresh"
+    }
+  ]
 }

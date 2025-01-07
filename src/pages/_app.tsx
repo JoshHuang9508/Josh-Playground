@@ -1,6 +1,6 @@
 // Import packages
 import { useState, useRef, useEffect } from "react";
-import store from "../redux/store";
+import store, { AddConsoleLog } from "../redux/store";
 import { Provider } from "react-redux";
 // Import styles
 import "../../public/styles/global.css";
@@ -12,42 +12,45 @@ import {
 } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
 import { addCoomandHistory } from "../redux/commandHistorySlice";
-import {
-  addAvailable,
-  setAvailable,
-  setInput,
-} from "../redux/autoCompleteSlice";
+import { setAvailable, setIndex, setInput } from "../redux/autoCompleteSlice";
+// Import types
+import { Command } from "../lib/types";
 // Import json
 import commandList from "../lib/commandList.json";
 import pathList from "../lib/pathList.json";
 
 export default function Page({ Component, pageProps }) {
-  // Handle input change
-  const [inputValue, setInputValue] = useState("");
-  const [currentURL, setCurrentURL] = useState("");
-  const [commandHistoryIndex, setCommandHistoryIndex] = useState<number>(-1);
-  const inputBox = useRef(null);
+  const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
+  const [availablePaths, setAvailablePaths] = useState<string[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const paths = window.location.pathname.split("/").filter(Boolean);
       setCurrentURL(window.location.href);
+      setAvailableCommands([
+        ...commandList["/"],
+        ...(commandList[`${paths.join("/")}/`] ?? []),
+      ]);
+      setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
     }
   }, []);
 
+  // Handle input change
+  const [inputValue, setInputValue] = useState<string>("");
+  const [currentURL, setCurrentURL] = useState<string>("");
+  const [cmdHistoryIndex, setCmdHistoryIndex] = useState<number>(-1);
+  const inputBox = useRef(null);
+
   useEffect(() => {
-    if (store.getState().commandHistory.length == 0) return;
-    if (commandHistoryIndex < -1) {
-      setCommandHistoryIndex(-1);
-    }
-    if (commandHistoryIndex > store.getState().commandHistory.length - 1) {
-      setCommandHistoryIndex(store.getState().commandHistory.length - 1);
-    }
-    setInputValue(
-      commandHistoryIndex != -1
-        ? (store.getState().commandHistory[commandHistoryIndex] as string)
-        : ""
+    const cmdHistory = store.getState().commandHistory;
+    const cmdHistoryLength = cmdHistory.length;
+    const newIndex = Math.max(
+      -1,
+      Math.min(cmdHistoryIndex, cmdHistoryLength - 1)
     );
-  }, [commandHistoryIndex]);
+    setCmdHistoryIndex(newIndex);
+    setInputValue(newIndex !== -1 ? cmdHistory[newIndex] : "");
+  }, [cmdHistoryIndex]);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -56,55 +59,54 @@ export default function Page({ Component, pageProps }) {
   const handleEnter = (event) => {
     if (event.key === "Enter") {
       if (!inputValue || inputValue == "") return;
-
       store.dispatch(addConsoleContent([`${currentURL}>${inputValue}`]));
       store.dispatch(addCoomandHistory(inputValue));
-
       // Catch basic command
       switch (inputValue.split(" ")[0]) {
+        case "help":
+          AddConsoleLog(["Available commands:", "---"]);
+          availableCommands.forEach((command: Command) => {
+            AddConsoleLog([`${command.usage} - ${command.description}`]);
+          });
+          break;
         case "cl":
           store.dispatch(setConsoleContent([]));
           break;
         case "cd":
           const page = inputValue.split(" ")[1] ?? "";
-          const link = window.location.href.split("/");
+          const paths = window.location.href.split("/");
           if (!page) {
             window.location.href = "/";
             break;
           } else {
             page.split("/").forEach((element) => {
-              if (element == "..") {
-                link.pop();
+              if (element == ".") {
+                return;
+              } else if (element == "..") {
+                paths.pop();
               } else if (element != "") {
-                link.push(element);
+                paths.push(element);
               }
             });
-            window.location.href = link.join("/");
+            window.location.href = paths.join("/");
           }
           break;
-        case "help":
-          store.dispatch(
-            addConsoleContent([
-              "Available commands:",
-              "--| Basic commands |--",
-              "help <command> - Show help message, type command to get more info",
-              "cd <page> - Redirect to page",
-              "cl - Clear console",
-            ])
-          );
+        case "ls":
+          AddConsoleLog([availablePaths.join(" ")]);
+          break;
         // Set command
         default:
           store.dispatch(setCommand(inputValue));
-          setCommandHistoryIndex(-1);
+          setCmdHistoryIndex(-1);
           break;
       }
       setInputValue("");
     }
     if (event.key === "ArrowUp") {
-      setCommandHistoryIndex(commandHistoryIndex + 1);
+      setCmdHistoryIndex(cmdHistoryIndex + 1);
     }
     if (event.key === "ArrowDown") {
-      setCommandHistoryIndex(commandHistoryIndex - 1);
+      setCmdHistoryIndex(cmdHistoryIndex - 1);
     }
     if (event.key === "Escape") {
       setConsoleVisible(!consoleVisible);
@@ -113,56 +115,101 @@ export default function Page({ Component, pageProps }) {
     if (event.key === "Tab") {
       event.preventDefault();
       if (!inputValue || inputValue == "") return;
-
+      let input = store.getState().autoComplete.input;
       let available = store.getState().autoComplete.available;
-      const { command, value, prefix } = processString(inputValue);
-
+      let index = store.getState().autoComplete.index;
+      if (!input) input = inputValue;
       if (available.length == 0) {
-        const path = window.location.pathname.split("/").filter(Boolean);
-        if (!command) {
-          available =
-            commandList[`/${path.join("/")}/`]?.filter((_) =>
-              _.startsWith(prefix)
-            ) ?? [];
-        } else {
-          if (command === "cd") {
-            value.split("/").forEach((element) => {
-              if (element === "..") {
-                path.pop();
-              } else if (element) {
-                path.push(element);
-              }
-            });
-            available =
-              pathList[`/${path.join("/")}/`]?.filter((_) =>
-                _.startsWith(prefix)
-              ) ?? [];
-          } else {
-            available =
-              commandList[command]?.filter((_) => _.startsWith(prefix)) ?? [];
-          }
-        }
-
-        if (available.length > 0) {
-          store.dispatch(addConsoleContent([`${available.join(", ")}`]));
-          store.dispatch(addAvailable(available));
-        }
-      } else {
-        const nextIndex =
-          available.indexOf(prefix) === -1 ||
-          available.indexOf(prefix) === available.length - 1
-            ? 0
-            : available.indexOf(prefix) + 1;
-        setInputValue(
-          [command, value + available[nextIndex]].filter(Boolean).join(" ")
-        );
-        //  `${command}${value}${available[nextIndex]}`
+        available = autoComplete(input, availableCommands);
+      }
+      if (available.length > 0) {
+        setInputValue(replaceInput(input, available[index]));
+        const newIndex = index === available.length - 1 ? 0 : index + 1;
+        store.dispatch(setAvailable(available));
+        store.dispatch(setInput(input));
+        store.dispatch(setIndex(newIndex));
       }
     }
     if (event.key != "Tab") {
       store.dispatch(setInput(""));
       store.dispatch(setAvailable([]));
     }
+  };
+
+  const replaceInput = (input: string, replace: string) => {
+    for (let i = 0; i < input.length; i++) {
+      if (replace.startsWith(input.slice(i, input.length))) {
+        return input.slice(0, i) + replace;
+      }
+    }
+    return input + replace;
+  };
+  const autoComplete = (input: string, commands: Command[]): string[] => {
+    const parts = input.split(" ");
+    const lastPart = parts[parts.length - 1];
+    const command =
+      parts.length <= 1 ? "" : commands.find((cmd) => cmd.name === parts[0]);
+    let suggestions: string[] = [];
+
+    if (
+      !command &&
+      commands.filter((_) => _.name.startsWith(parts[0])).length != 0
+    ) {
+      suggestions.push(
+        ...commands
+          .filter(
+            (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart
+          )
+          .map((cmd) => cmd.name)
+      );
+    } else if (command) {
+      // suppose that sub-sub-commands are not supported
+      if (command.subCommands) {
+        suggestions.push(
+          ...command.subCommands
+            .filter(
+              (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart
+            )
+            .map((cmd) => cmd.name)
+        );
+      }
+      if (command.options) {
+        suggestions.push(
+          ...command.options.filter(
+            (opt) => opt.startsWith(lastPart) && opt != lastPart
+          )
+        );
+      }
+    }
+    if (
+      lastPart.startsWith("../") ||
+      lastPart.startsWith("./") ||
+      lastPart.startsWith("/") ||
+      lastPart.includes("\\")
+    ) {
+      suggestions.push(...completePath(lastPart));
+    }
+
+    return suggestions;
+  };
+  const completePath = (input: string) => {
+    const paths = input.split("/");
+    const lastPath = paths.pop();
+    const pagePaths = window.location.pathname.split("/").filter(Boolean);
+    paths.forEach((element) => {
+      if (element === ".") {
+        return;
+      } else if (element === "..") {
+        pagePaths.pop();
+      } else {
+        pagePaths.push(element);
+      }
+    });
+    return (
+      pathList[`${pagePaths.join("/")}/`]?.filter((_) =>
+        _.startsWith(lastPath)
+      ) ?? []
+    );
   };
 
   // Handle console
@@ -187,22 +234,6 @@ export default function Page({ Component, pageProps }) {
       ])
     );
   }, []);
-
-  // Process string
-  const processString = (input: string) => {
-    const lastSeparatorIndex =
-      input.lastIndexOf(" ") > input.lastIndexOf("/")
-        ? input.lastIndexOf(" ")
-        : input.lastIndexOf("/");
-    const firstSpaceIndex = input.indexOf(" ");
-    if (firstSpaceIndex === -1) {
-      return { command: "", value: "", prefix: input };
-    }
-    const command = inputValue.slice(0, firstSpaceIndex);
-    const value = inputValue.slice(firstSpaceIndex + 1, lastSeparatorIndex + 1);
-    const prefix = inputValue.slice(lastSeparatorIndex + 1, inputValue.length);
-    return { command, value, prefix };
-  };
 
   return (
     <Provider store={store}>

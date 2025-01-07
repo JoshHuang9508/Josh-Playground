@@ -1,7 +1,7 @@
 {
-    "//": ["tools", "games"],
-    "/tools/": ["listentogether", ".."],
-    "/tools/listentogether/": [".."],
-    "/games/": ["colorgame", ".."],
-    "/games/colorgame/": [".."]
+  "/": ["tools/", "games/"],
+  "tools/": ["listentogether/"],
+  "tools/listentogether/": [],
+  "games/": ["colorgame/"],
+  "games/colorgame/": []
 }

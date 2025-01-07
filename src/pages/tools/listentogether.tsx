@@ -1,5 +1,5 @@
 // Import packages
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
@@ -8,7 +8,8 @@ import styles from "../../../public/styles/listentogether.module.css";
 // Import redux
 import store, { AddConsoleLog } from "../../redux/store";
 import { setCommand } from "../../redux/commandSlice";
-// Import json
+// Import types
+import { PlayerState, Track, PlayerStateClient, User } from "../../lib/types";
 
 // API server
 const hostURL = "https://fec6-2001-df2-45c1-75-00-1.ngrok-free.app";
@@ -17,10 +18,6 @@ export default function Page() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    AddConsoleLog([
-      "Welcome to YT Music Sync Player",
-      "Room is setting up... please wait a moment",
-    ]);
     setIsClient(true);
   }, []);
 
@@ -29,11 +26,8 @@ export default function Page() {
 
   useEffect(() => {
     const enablePlay = () => setIsAllowedToUnmute(true);
-
-    // 註冊用戶交互事件
     document.addEventListener("click", enablePlay);
     document.addEventListener("touchstart", enablePlay);
-
     return () => {
       document.removeEventListener("click", enablePlay);
       document.removeEventListener("touchstart", enablePlay);
@@ -147,9 +141,7 @@ export default function Page() {
   };
 
   // User control
-  interface User {
-    [id: string]: string;
-  }
+
   const [users, setUsers] = useState<User>({});
   const [username, setUsername] = useState("Anonymous");
 
@@ -172,7 +164,7 @@ export default function Page() {
       case "send":
         const message = command.split(" ").slice(1).join(" ") ?? "";
         if (!message) {
-          AddConsoleLog(["Usage: send <message>"]);
+          AddConsoleLog(["Usage: send [message]"]);
           break;
         }
         AddConsoleLog([`Send message: ${message}`]);
@@ -181,7 +173,7 @@ export default function Page() {
       case "queue":
         const URL = command.split(" ").slice(1)[0] ?? "";
         if (!URL) {
-          AddConsoleLog(["Usage: queue <URL>"]);
+          AddConsoleLog(["Usage: queue [video_URL|playlist_URL]"]);
           break;
         }
         if (!ReactPlayer.canPlay(URL)) {
@@ -219,7 +211,7 @@ export default function Page() {
       case "remove":
         const indexToRm = command.split(" ").slice(1)[0] ?? "";
         if (!indexToRm) {
-          AddConsoleLog(["Usage: remove <index | *>"]);
+          AddConsoleLog(["Usage: remove [index]"]);
           break;
         }
         if (indexToRm == "*") {
@@ -254,11 +246,13 @@ export default function Page() {
       case "switch":
         const sufix_switch = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_switch) {
+          case "--next":
           case "-n":
             SetTrackIndex(playerState.index + 1);
             AddConsoleLog([`Switch to next track`]);
             AddRoomLog(`${username} 切換到下一首歌曲`);
             break;
+          case "--prev":
           case "-p":
             SetTrackIndex(playerState.index - 1);
             AddConsoleLog([`Switch to previous track`]);
@@ -285,7 +279,7 @@ export default function Page() {
       case "volume":
         const volume = command.split(" ").slice(1)[0] ?? "";
         if (!volume) {
-          AddConsoleLog(["Usage: volume <0 - 100>"]);
+          AddConsoleLog(["Usage: volume [value]"]);
           break;
         }
         if (isNaN(parseFloat(volume))) {
@@ -302,43 +296,51 @@ export default function Page() {
       case "loop":
         const sufix_loop = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_loop) {
+          case "--true":
           case "-t":
             SetLoop(true);
             AddConsoleLog(["Loop..."]);
             AddRoomLog(`${username} 開啟循環播放`);
             break;
+          case "--false":
           case "-f":
             SetLoop(false);
             AddConsoleLog(["Unloop..."]);
             AddRoomLog(`${username} 關閉循環播放`);
             break;
           default:
-            AddConsoleLog(["Usage: loop <-t | -f>"]);
+            AddConsoleLog(["Usage: loop [options]"]);
             break;
         }
         break;
       case "random":
         const sufix_random = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_random) {
+          case "--true":
           case "-t":
             SetPlayerState({ ...playerState, random: true });
             AddConsoleLog(["Random..."]);
             AddRoomLog(`${username} 開啟隨機播放`);
             break;
+          case "--false":
           case "-f":
             SetPlayerState({ ...playerState, random: false });
             AddConsoleLog(["Unrandom..."]);
             AddRoomLog(`${username} 關閉隨機播放`);
             break;
           default:
-            AddConsoleLog(["Usage: random <-t | -f>"]);
+            AddConsoleLog(["Usage: random [options]"]);
             break;
         }
         break;
       case "rate":
         const rate = command.split(" ").slice(1)[0] ?? "";
         if (!rate) {
-          AddConsoleLog(["Please provide a rate"]);
+          AddConsoleLog(["Usage: rate [value]"]);
+          break;
+        }
+        if (isNaN(parseFloat(rate))) {
+          AddConsoleLog(["Invalid rate"]);
           break;
         }
         SetPlayBackRate(parseFloat(rate) / 100);
@@ -348,7 +350,7 @@ export default function Page() {
       case "seek":
         const seek = command.split(" ").slice(1)[0] ?? "";
         if (!seek) {
-          AddConsoleLog(["Usage: seek <time>"]);
+          AddConsoleLog(["Usage: seek [time]"]);
           break;
         }
         if (isNaN(parseFloat(seek))) {
@@ -371,7 +373,7 @@ export default function Page() {
       case "setname":
         const name = command.split(" ").slice(1)[0] ?? "";
         if (!name) {
-          AddConsoleLog(["Usage: setname <name>"]);
+          AddConsoleLog(["Usage: setname [name]"]);
           break;
         }
         if (name.length > 20) {
@@ -387,10 +389,12 @@ export default function Page() {
       case "page":
         const sufix_page = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_page) {
+          case "--next":
           case "-n":
             setCurrentPage(currentPage + 1);
             AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
             break;
+          case "--prev":
           case "-p":
             setCurrentPage(currentPage - 1);
             AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
@@ -409,25 +413,6 @@ export default function Page() {
             break;
         }
         break;
-      case "help":
-        AddConsoleLog([
-          "--| Commands for this page |--",
-          "queue <URL> - Add a track to queue",
-          "remove <index | *> - Remove a track from queue",
-          "play - Start playing",
-          "pause - Pause playing",
-          "switch <-n | -p | index> - Switch to track",
-          "volume <0 - 100> - Set volume (0 - 100%)",
-          "rate <0 - 100> - Set playback rate (0 - 100%)",
-          "loop <-t | -f> - Loop / Unloop",
-          "random <-t | -f> - Random / Unrandom",
-          "seek <time> - Seek to time (s)",
-          "refresh - Refresh player",
-          "setname <name> - Set username",
-          "send <message> - Send message",
-          "page <-n | -p | page> - Switch playlist page",
-        ]);
-        break;
       default:
         AddConsoleLog([`"${command}" is not a valid command`]);
         break;
@@ -436,34 +421,6 @@ export default function Page() {
   }, [command]);
 
   // Player control
-  interface Track {
-    url: string; //https://www.youtube.com/watch?v={ID}
-    title: string;
-    author: string;
-    img: string; //https://img.youtube.com/vi/{ID}/default.jpg
-    requestBy: string;
-    id: number;
-  }
-  interface PlayerState {
-    playing: boolean;
-    played: number;
-    playedSeconds: number;
-    loaded: number;
-    loadedSeconds: number;
-    duration: number;
-    playbackRate: number;
-    loop: boolean;
-    random: boolean;
-    trackQueue: Track[];
-    currentTrack: Track | null;
-    index: number;
-    isEnd: boolean;
-  }
-  interface PlayerStateClient {
-    volume: number;
-    seeking: boolean;
-    isReady: boolean;
-  }
   const player = useRef<ReactPlayer>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
     playing: false,
@@ -540,7 +497,6 @@ export default function Page() {
     };
     return track;
   };
-
   const getPlaylistAPI = async (playlistId: string): Promise<Track[]> => {
     const data = await fetch(`${hostURL}/api/ytpl?playlistId=${playlistId}`, {
       method: "GET",
