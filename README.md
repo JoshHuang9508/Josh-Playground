@@ -13,51 +13,50 @@
 
   **Basic commands (available in all pages):**
 
-  `help <command>` - Show help message, type command to get more info
+  `help [command]` - Show help message, type command to get more info
 
-  `cd <page>` - Redirect to page
+  `cd [page]` - Redirect to page
   
   `cl` - Clear console
+
+  `ls` - List the directory
 
 ## Tools
 
 - ### Listentogether
 
-  A tools that can add YouTube music by `queue <URL>` and sync play to all users.
+  A tools that can add YouTube music by `queue [song_URL|playlist_URL]` and sync play to all users.
 
   **Avalible commands:**
  
-  `queue <URL>` - Add a track to queue
-
-  `remove <index | *>` - Remove a track from queue
-
-  `play` - Start playing
-
-  `pause` - Pause playing
-
-  `next` - Play next track
-
-  `prev` - Play previous track
-
-  `switch <index>` - Switch to track
-
-  `volume <0 - 100>` - Set volume (0 - 100%)
-
-  `mute <-t | -f>` - Mute / Unmute
-
-  `loop <-t | -f>` - Loop / Unloop
-
-  `rate <0 - 100>` - Set playback rate (0 - 100%)
-
-  `seek <time>` - Seek to time (s)
-
-  `refresh` - Refresh player
-
-  `setname <name>` - Set username
-
-  `page <page>` - Switch playlist page
+  `loop [option]` - Loop the track
   
-
+  `page [option]` - Change the playlist page
+  
+  `pause` - Pause playing
+  
+  `play` - Start playing
+  
+  `queue [song_URL|playlist_URL]` - Add a song or playlist to queue
+  
+  `random [option]` - Random the track
+  
+  `rate [value]` - Change the playback rate
+  
+  `refresh` - Refresh the queue
+  
+  `remove [index]` - Remove a track from the queue
+  
+  `seek [value]` - Seek the track
+  
+  `send [message]` - Send the message to the server
+  
+  `setname [name]` - Set your username
+  
+  `switch [index|option]` - Switch the track
+  
+  `volume [value]` - Change the volume
+  
 ## Games
 
 - ### Colorgame
