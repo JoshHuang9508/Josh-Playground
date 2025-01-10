@@ -20,46 +20,15 @@
       "name": "log",
       "description": "Show the log message",
       "usage": "log [message]"
+    },
+    {
+      "name": "ls",
+      "description": "List the directory",
+      "usage": "ls"
     }
   ],
   "tools/": [],
   "tools/listentogether/": [
-    {
-      "name": "queue",
-      "description": "Queue a song or a playlist",
-      "usage": "queue [song_URL|playlist_URL]"
-    },
-    {
-      "name": "remove",
-      "description": "Remove a song from the queue",
-      "usage": "remove [index]"
-    },
-    {
-      "name": "play",
-      "description": "Strat the player",
-      "usage": "play"
-    },
-    {
-      "name": "pause",
-      "description": "Pause the player",
-      "usage": "pause"
-    },
-    {
-      "name": "switch",
-      "description": "Switch the track",
-      "usage": "switch [index|option]",
-      "options": ["-n", "-p", "--next", "--prev"]
-    },
-    {
-      "name": "volume",
-      "description": "Change the volume",
-      "usage": "volume [value]"
-    },
-    {
-      "name": "rate",
-      "description": "Change the playback rate",
-      "usage": "rate [value]"
-    },
     {
       "name": "loop",
       "description": "Loop the track",
@@ -67,10 +36,51 @@
       "options": ["-t", "-f", "--true", "--false"]
     },
     {
+      "name": "page",
+      "description": "Change the playlist page",
+      "usage": "page [option]",
+      "options": ["-n", "-p", "--next", "--prev"]
+    },
+    {
+      "name": "pause",
+      "description": "Pause playing",
+      "usage": "pause"
+    },
+    {
+      "name": "play",
+      "description": "Strat playing",
+      "usage": "play"
+    },
+    {
+      "name": "queue",
+      "description": "Add a song or playlist to queue",
+      "usage": "queue [song_URL|playlist_URL]"
+    },
+    {
       "name": "random",
       "description": "Random the track",
       "usage": "random [option]",
       "options": ["-t", "-f", "--true", "--false"]
+    },
+    {
+      "name": "rate",
+      "description": "Change the playback rate",
+      "usage": "rate [value]"
+    },
+    {
+      "name": "refresh",
+      "description": "Refresh the queue",
+      "usage": "refresh"
+    },
+    {
+      "name": "remove",
+      "description": "Remove a track from the queue",
+      "usage": "remove [index]"
+    },
+    {
+      "name": "seek",
+      "description": "Seek the track",
+      "usage": "seek [value]"
     },
     {
       "name": "send",
@@ -83,20 +93,15 @@
       "usage": "setname [name]"
     },
     {
-      "name": "page",
-      "description": "Change the playlist page",
-      "usage": "page [option]",
+      "name": "switch",
+      "description": "Switch the track",
+      "usage": "switch [index|option]",
       "options": ["-n", "-p", "--next", "--prev"]
     },
     {
-      "name": "seek",
-      "description": "Seek the track",
-      "usage": "seek [value]"
-    },
-    {
-      "name": "refresh",
-      "description": "Refresh the queue",
-      "usage": "refresh"
+      "name": "volume",
+      "description": "Change the volume",
+      "usage": "volume [value]"
     }
   ]
 }
