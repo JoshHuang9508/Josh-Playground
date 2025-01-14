@@ -12,7 +12,7 @@ import { setCommand } from "../../redux/commandSlice";
 import { PlayerState, Track, PlayerStateClient, User } from "../../lib/types";
 
 // API server
-const hostURL = "https://f9dc-2001-df2-45c1-75-00-1.ngrok-free.app";
+const hostURL = "https://15e3-2001-df2-45c1-75-00-1.ngrok-free.app";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
