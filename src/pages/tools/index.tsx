@@ -18,7 +18,7 @@ export default function Page() {
         // Use for debugging
         break;
       default:
-        AddConsoleLog([`"${command}" is not a valid command`]);
+        AddConsoleLog([`Command not found: ${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
@@ -27,15 +27,13 @@ export default function Page() {
   return (
     <div className={"layout"}>
       <div className={"title-div"}>
-        <p className="title">工具</p>
-        <p className="subtitle">一些給我自己用的工具，也許你會覺得有趣</p>
+        <p className="title">{textContent.tools.title}</p>
+        <p className="subtitle">{textContent.tools.subtitle}</p>
       </div>
       <div className="content-div" style={{ justifyContent: "center" }}>
-        {textContent.tools.map((tool, index) => (
-          <div key={index} className={"container1"}>
-            <p className={"header2"}>{`/tools/${tool}`}</p>
-          </div>
-        ))}
+        <div className={"container1"}>
+          <p className={"header2"}>{textContent.tools.listentogether.title}</p>
+        </div>
       </div>
     </div>
   );

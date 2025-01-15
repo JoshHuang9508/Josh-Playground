@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 // Import redux
 import store, { AddConsoleLog } from "../redux/store";
 import { setCommand } from "../redux/commandSlice";
+// Import json
+import textContent from "../../src/lib/textContent.json";
 
 export default function Page() {
   // Command control
@@ -16,7 +18,7 @@ export default function Page() {
         // Use for debugging
         break;
       default:
-        AddConsoleLog([`"${command}" is not a valid command`]);
+        AddConsoleLog([`Command not found: ${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
@@ -25,10 +27,8 @@ export default function Page() {
   return (
     <div className={"layout"}>
       <div className={"title-div"}>
-        <p className={"title"}>頁面不存在</p>
-        <p className={"subtitle"}>
-          未找到頁面，請檢查網址是否正確，或是使用 "cd" 回到首頁
-        </p>
+        <p className="title">{textContent[404].title}</p>
+        <p className="subtitle">{textContent[404].subtitle}</p>
       </div>
     </div>
   );

@@ -22,62 +22,23 @@ export default function Page() {
         // Use for debugging
         break;
       default:
-        AddConsoleLog([`"${command}" is not a valid command`]);
+        AddConsoleLog([`Command not found: ${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
   }, [command]);
 
-  // Web paths
-  const webPaths = [["", ["tools", "listentogether"], ["games", "colorgame"]]];
-
-  const renderWebPaths = (paths: any, prefix: string) => {
-    return paths.map((path, index) => {
-      if (Array.isArray(path)) {
-        return index != paths.length - 1 ? (
-          <>
-            <p key={index}>{`${prefix}├─ ${path[0]}/`}</p>
-            <div key={`${index}-container`} style={{ flexDirection: "column" }}>
-              {renderWebPaths(
-                path.filter((_, i) => i > 0),
-                prefix + "│　"
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <p key={index}>{`${prefix}└─ ${path[0]}/`}</p>
-            <div key={`${index}-container`} style={{ flexDirection: "column" }}>
-              {renderWebPaths(
-                path.filter((_, i) => i > 0),
-                prefix + "　　"
-              )}
-            </div>
-          </>
-        );
-      } else {
-        return index != paths.length - 1 ? (
-          <p key={index}>{`${prefix}├─ ${path}`}</p>
-        ) : (
-          <p key={index}>{`${prefix}└─ ${path}`}</p>
-        );
-      }
-    });
-  };
-
   return (
     <div className={"layout"}>
       <div className={"title-div"}>
-        <p className={`title`}>為什麼狗狗遊樂場</p>
-        <p className={`subtitle`}>
-          Whydog 的個人網頁，一個致力於無滑鼠操作的網站
-        </p>
+        <p className={`title`}>{textContent.home.title}</p>
+        <p className={`subtitle`}>{textContent.home.subtitle}</p>
       </div>
       <div className={"content-div"}>
         <div className={"container2"}>
-          <p className={"header1"}>網頁目錄</p>
+          <p className={"header1"}></p>
           <div className="row" style={{ justifyContent: "center" }}>
-            <div className="col">{renderWebPaths(webPaths, "")}</div>
+            <div className="col">{}</div>
           </div>
         </div>
         <div className={"container1"}>
@@ -99,7 +60,7 @@ export default function Page() {
               className="col"
               style={{ gap: "1rem", justifyContent: "center" }}
             >
-              {textContent.about.map((content, index) => {
+              {textContent.home.about.map((content, index) => {
                 if (index == 0)
                   return (
                     <p className={styles["introduce-title"]} key={index}>
@@ -116,15 +77,11 @@ export default function Page() {
           </div>
         </div>
         <div className={"container2"}>
-          <p className={"header1"}>如何操作?</p>
+          <p className={"header1"}></p>
           <div
             className="col"
             style={{ gap: "1rem", justifyContent: "center" }}
-          >
-            {textContent.hint.map((hint, index) => (
-              <p key={index}>{hint}</p>
-            ))}
-          </div>
+          ></div>
         </div>
       </div>
     </div>

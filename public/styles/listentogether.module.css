@@ -3,8 +3,6 @@ div.player {
   justify-content: center;
   pointer-events: none;
   background-color: black;
-  box-shadow: 0 0 2rem black;
-  animation: rgb-shadow 5s infinite linear;
 }
 
 div.track-card.selected {

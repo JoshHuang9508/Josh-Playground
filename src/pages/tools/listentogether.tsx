@@ -414,7 +414,7 @@ export default function Page() {
         }
         break;
       default:
-        AddConsoleLog([`"${command}" is not a valid command`]);
+        AddConsoleLog([`Command not found: ${command}`]);
         break;
     }
     store.dispatch(setCommand(""));

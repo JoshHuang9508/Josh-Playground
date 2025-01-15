@@ -19,6 +19,40 @@ import { Command } from "../lib/types";
 import commandList from "../lib/commandList.json";
 import pathList from "../lib/pathList.json";
 
+const webPaths = [["", ["tools", "listentogether"], ["games", "colorgame"]]];
+
+const renderWebPaths = (paths: any, prefix: string): string[] => {
+  const result: string[] = [];
+  paths.map((path, index) => {
+    if (Array.isArray(path)) {
+      if (index != paths.length - 1) {
+        result.push(`${prefix}├─ ${path[0]}/`);
+        result.push(
+          ...renderWebPaths(
+            path.filter((_, i) => i > 0),
+            prefix + "│　"
+          )
+        );
+      } else {
+        result.push(`${prefix}└─ ${path[0]}/`);
+        result.push(
+          ...renderWebPaths(
+            path.filter((_, i) => i > 0),
+            prefix + "　　"
+          )
+        );
+      }
+    } else {
+      if (index != paths.length - 1) {
+        result.push(`${prefix}├─ ${path}`);
+      } else {
+        result.push(`${prefix}└─ ${path}`);
+      }
+    }
+  });
+  return result;
+};
+
 export default function Page({ Component, pageProps }) {
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
@@ -92,6 +126,14 @@ export default function Page({ Component, pageProps }) {
           }
           break;
         case "ls":
+          const flag = inputValue.split(" ")[1] ?? "";
+          if (flag == "-l") {
+            console.log(renderWebPaths(webPaths, ""));
+            renderWebPaths(webPaths, "").forEach((path) => {
+              AddConsoleLog([path]);
+            });
+            break;
+          }
           AddConsoleLog([availablePaths.join(" ")]);
           break;
         // Set command
