@@ -19,6 +19,8 @@ import { Command } from "../lib/types";
 import commandList from "../lib/commandList.json";
 import pathList from "../lib/pathList.json";
 
+import backgroundImage from "../../public/assets/bg.jpg";
+
 const webPaths = [["", ["tools", "listentogether"], ["games", "colorgame"]]];
 
 const renderWebPaths = (paths: any, prefix: string): string[] => {
@@ -282,6 +284,8 @@ export default function Page({ Component, pageProps }) {
       <div
         style={{ height: "100vh", display: "flex", flexDirection: "column" }}
       >
+        <img src={backgroundImage.src} className={styles["background"]} />
+
         <div className={styles["container"]}>
           <Component {...pageProps} />
         </div>
