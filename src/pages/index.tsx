@@ -6,6 +6,8 @@ import styles from "../../public/styles/index.module.css";
 // Import redux
 import store, { AddConsoleLog } from "../redux/store";
 import { setCommand } from "../redux/commandSlice";
+// Import components
+import ColorSpan from "../components/ColorSpan";
 // Import json
 import textContent from "../../src/lib/textContent.json";
 
@@ -55,14 +57,20 @@ export default function Page() {
             {textContent.home.about.map((content, index) => {
               if (index == 0)
                 return (
-                  <p className={styles["introduce-title"]} key={index}>
-                    {content}
-                  </p>
+                  <div key={index} className="row">
+                    <ColorSpan
+                      str={content}
+                      className={styles["introduce-title"]}
+                    />
+                  </div>
                 );
               return (
-                <p className={styles["introduce-content"]} key={index}>
-                  {content}
-                </p>
+                <div key={index} className="row">
+                  <ColorSpan
+                    str={content}
+                    className={styles["introduce-content"]}
+                  />
+                </div>
               );
             })}
           </div>

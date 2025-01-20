@@ -2,12 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const consoleContentSlice = createSlice({
   name: "consoleContentSlice",
-  initialState: [] as String[],
+  initialState: [] as string[],
   reducers: {
-    setConsoleContent: (state, action: { payload: String[] }) => {
+    setConsoleContent: (state, action: { payload: string[] }) => {
       return action.payload;
     },
-    addConsoleContent: (state, action: { payload: String[] }) => {
+    addConsoleContent: (state, action: { payload: string[] }) => {
       return [...state, ...action.payload];
     },
   },

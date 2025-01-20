@@ -11,6 +11,8 @@ import {
   setConsoleContent,
 } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
+// Import components
+import ColorSpan from "../components/ColorSpan";
 // Import types
 import { Command } from "../lib/types";
 // Import json
@@ -63,7 +65,7 @@ export default function Page({ Component, pageProps }) {
       const paths = window.location.pathname.split("/").filter(Boolean);
       setCurrentURL(window.location.pathname);
       setAvailableCommands([
-        ...commandList["/"],
+        ...commandList["*"],
         ...(commandList[`${paths.join("/")}/`] ?? []),
       ]);
       setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
@@ -109,7 +111,7 @@ export default function Page({ Component, pageProps }) {
       if (!inputValue || inputValue == "") return;
       store.dispatch(
         addConsoleContent([
-          `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$@#fff700${inputValue}`,
+          `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ @#fff700${inputValue}`,
         ])
       );
       setCmdHistory([inputValue, ...cmdHistory]);
@@ -317,23 +319,18 @@ export default function Page({ Component, pageProps }) {
   }, [cmdHistory]);
 
   // Handle console
-  const [consoleContents, setConsoleContents] = useState<String[]>([]);
+  const [consoleContents, setConsoleContents] = useState<string[]>([]);
   const [consoleVisible, setConsoleVisible] = useState(true);
   const consoleBox = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (consoleBox.current)
-      consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
-  }, [store.getState().consoleContent, consoleVisible]);
+  // useEffect(() => {}, [store.getState().consoleContent, consoleVisible]);
 
   useEffect(() => {
-    store.dispatch(
-      addConsoleContent(
-        localStorage.getItem("consoleContent")?.split(",") ?? [
-          "Welcome to the console!",
-          "Type @#00ffaa'help'@# for available commands",
-        ]
-      )
+    AddConsoleLog(
+      localStorage.getItem("consoleContent")?.split(",") ?? [
+        "Welcome to the console!",
+        "Type @#00ffaa'help'@# for available commands",
+      ]
     );
     store.subscribe(() => {
       setConsoleContents(store.getState().consoleContent);
@@ -341,16 +338,13 @@ export default function Page({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
+    if (consoleBox.current)
+      consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
     localStorage.setItem(
       "consoleContent",
-      consoleContents.slice(0, 100).join(",")
+      consoleContents.slice(-100).join(",")
     );
-  }, [consoleContents]);
-
-  function isValidColorCode(color) {
-    const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-    return regex.test(color);
-  }
+  }, [consoleContents, consoleVisible]);
 
   return (
     <Provider store={store}>
@@ -377,34 +371,18 @@ export default function Page({ Component, pageProps }) {
         >
           {consoleContents.map((content, index) => (
             <div key={index} className={styles[`output`]}>
-              {content.split("@#").map((item) => {
-                const color = item.slice(0, 6);
-                const content = isValidColorCode(color) ? item.slice(6) : item;
-                return (
-                  <span key={color + content} style={{ color: `#${color}` }}>
-                    {content}
-                  </span>
-                );
-              })}
+              <ColorSpan str={content} />
             </div>
           ))}
           <div className={styles[`input`]}>
-            {`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$`
-              .split("@#")
-              .map((item) => {
-                const color = item.slice(0, 6);
-                const content = isValidColorCode(color) ? item.slice(6) : item;
-                return (
-                  <span key={color + content} style={{ color: `#${color}` }}>
-                    {content}
-                  </span>
-                );
-              })}
+            <ColorSpan
+              str={`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ `}
+            />
             <input
               ref={inputBox}
               type="text"
               value={`${inputValue}`}
-              placeholder=""
+              placeholder="Feel confused? Type 'help' to get started!"
               onChange={handleInputChange}
               onKeyDown={handleEnter}
             />

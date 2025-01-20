@@ -55,7 +55,6 @@ div.console span {
   min-width: fit-content;
   background: none;
   user-select: none;
-  white-space: pre;
 }
 div.console input {
   font-size: 1rem;
@@ -78,4 +77,13 @@ div.console.hidden {
 }
 div.console.hidden div.output {
   display: none;
+}
+
+@media (max-width: 1200px) {
+  div.container {
+    margin: 2rem;
+  }
+  div.console {
+    margin: 2rem;
+  }
 }

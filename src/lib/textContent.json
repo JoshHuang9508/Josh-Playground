@@ -2,14 +2,13 @@
   "home": {
     "title": "Whydog's playground",
     "subtitle": "A site dedicated to mouse-free navigation.",
-    "name": ["Whydog", "Whitedog", "白狗"],
     "about": [
-      "Whitedog@NTUST-CSIE, Taiwan",
+      "@#FFF700Whitedog@#@@#00f3ffNTUST-CSIE@#, Taiwan (18yo)",
       "(a.k.a. Whydog)",
-      "I love playing games and coding. Sometimes watching anime.",
-      "I want to be a full-stack developer, as well as a UI/UX designer.",
-      "This website is built with React, and I'm still working on it.",
-      "I hope you enjoy your stay here."
+      "I @#FF77B7love@# @#00ffaaplaying games@# and @#00ffaacoding@#. Sometimes @#00ffaawatching anime@#.",
+      "I @#FF77B7want@# to be a @#00ffaafull-stack@# developer, as well as a @#00ffaaUI/UX@# designer.",
+      "This website is built with @#00ffaaReact@#, and I'm still working on it.",
+      "@#f9f284I hope you enjoy your stay here."
     ]
   },
   "tools": {

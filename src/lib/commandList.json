@@ -1,5 +1,5 @@
 {
-  "/": [
+  "*": [
     {
       "name": "cd",
       "description": "Change the directory",
@@ -37,6 +37,7 @@
       "usage": "username [name]"
     }
   ],
+  "/": [],
   "tools/": [],
   "tools/listentogether/": [
     {
