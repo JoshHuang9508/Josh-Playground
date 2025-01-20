@@ -1,12 +1,15 @@
 {
   "home": {
-    "title": "為什麼狗狗遊樂場",
-    "subtitle": "Whydog 的個人網頁，一個致力於無滑鼠操作的網站",
+    "title": "Whydog's playground",
+    "subtitle": "A site dedicated to mouse-free navigation.",
     "name": ["Whydog", "Whitedog", "白狗"],
     "about": [
-      "我是 Whydog，來自台灣的大學生。",
-      "因為興趣而學習，因為有趣而鑽研。",
-      "一步一步成為理想中的自己。"
+      "Whitedog@NTUST-CSIE, Taiwan",
+      "(a.k.a. Whydog)",
+      "I love playing games and coding. Sometimes watching anime.",
+      "I want to be a full-stack developer, as well as a UI/UX designer.",
+      "This website is built with React, and I'm still working on it.",
+      "I hope you enjoy your stay here."
     ]
   },
   "tools": {

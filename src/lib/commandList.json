@@ -25,6 +25,16 @@
       "name": "ls",
       "description": "List the directory",
       "usage": "ls"
+    },
+    {
+      "name": "background",
+      "description": "Change the background",
+      "usage": "background [image_URL]"
+    },
+    {
+      "name": "username",
+      "description": "Set your username",
+      "usage": "username [name]"
     }
   ],
   "tools/": [],
@@ -86,11 +96,6 @@
       "name": "send",
       "description": "Send the message to the server",
       "usage": "send [message]"
-    },
-    {
-      "name": "setname",
-      "description": "Set your username",
-      "usage": "setname [name]"
     },
     {
       "name": "switch",

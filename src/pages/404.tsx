@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import store, { AddConsoleLog } from "../redux/store";
 import { setCommand } from "../redux/commandSlice";
 // Import json
-import textContent from "../../src/lib/textContent.json";
 
 export default function Page() {
   // Command control
@@ -18,18 +17,11 @@ export default function Page() {
         // Use for debugging
         break;
       default:
-        AddConsoleLog([`Command not found: ${command}`]);
+        AddConsoleLog([`Command not found: @#fff700${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
   }, [command]);
 
-  return (
-    <div className={"layout"}>
-      <div className={"title-div"}>
-        <p className="title">{textContent[404].title}</p>
-        <p className="subtitle">{textContent[404].subtitle}</p>
-      </div>
-    </div>
-  );
+  return;
 }

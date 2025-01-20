@@ -18,22 +18,16 @@ export default function Page() {
         // Use for debugging
         break;
       default:
-        AddConsoleLog([`Command not found: ${command}`]);
+        AddConsoleLog([`Command not found: @#fff700${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
   }, [command]);
 
   return (
-    <div className={"layout"}>
-      <div className={"title-div"}>
-        <p className="title">{textContent.tools.title}</p>
-        <p className="subtitle">{textContent.tools.subtitle}</p>
-      </div>
-      <div className="content-div" style={{ justifyContent: "center" }}>
-        <div className={"container1"}>
-          <p className={"header2"}>{textContent.tools.listentogether.title}</p>
-        </div>
+    <div className="content-div" style={{ justifyContent: "center" }}>
+      <div className={"container1"}>
+        <p className={"header2"}>{textContent.tools.listentogether.title}</p>
       </div>
     </div>
   );

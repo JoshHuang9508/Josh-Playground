@@ -5,6 +5,14 @@ div.player {
   background-color: #00000040;;
 }
 
+div.track-card-list {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
 div.track-card.selected {
   border: 1px solid rgb(0, 150, 40);
   box-shadow: 0 0 0.6rem rgb(70, 255, 70);
@@ -14,7 +22,7 @@ div.track-card {
   flex-direction: row;
   justify-content: space-between;
   padding: 1rem;
-  margin: 1rem;
+  margin: 0.5rem;
   background-color: #ffffff10;
   height: 5.5rem;
   border-radius: 1rem;

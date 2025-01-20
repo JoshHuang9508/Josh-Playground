@@ -22,66 +22,50 @@ export default function Page() {
         // Use for debugging
         break;
       default:
-        AddConsoleLog([`Command not found: ${command}`]);
+        AddConsoleLog([`Command not found: @#fff700${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
   }, [command]);
 
   return (
-    <div className={"layout"}>
-      <div className={"title-div"}>
-        <p className={`title`}>{textContent.home.title}</p>
-        <p className={`subtitle`}>{textContent.home.subtitle}</p>
-      </div>
-      <div className={"content-div"}>
-        <div className={"container2"}>
-          <p className={"header1"}></p>
-          <div className="row" style={{ justifyContent: "center" }}>
-            <div className="col">{}</div>
-          </div>
-        </div>
-        <div className={"container1"}>
-          <p className={"header1"}>我是誰?</p>
+    <div className={"content-div"}>
+      <div className={"container1"}>
+        <div
+          className="flex row"
+          style={{
+            gap: "1rem",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            className={styles["profile-picture"]}
+            src={profileImage.src}
+            alt="Profile Picture"
+          />
           <div
-            className="row"
+            className="col"
             style={{
               gap: "1rem",
               justifyContent: "center",
-              alignItems: "center",
+              fontFamily: "monospace",
             }}
           >
-            <img
-              className={styles["profile-picture"]}
-              src={profileImage.src}
-              alt="Profile Picture"
-            />
-            <div
-              className="col"
-              style={{ gap: "1rem", justifyContent: "center" }}
-            >
-              {textContent.home.about.map((content, index) => {
-                if (index == 0)
-                  return (
-                    <p className={styles["introduce-title"]} key={index}>
-                      {content}
-                    </p>
-                  );
+            {textContent.home.about.map((content, index) => {
+              if (index == 0)
                 return (
-                  <p className={styles["introduce-content"]} key={index}>
+                  <p className={styles["introduce-title"]} key={index}>
                     {content}
                   </p>
                 );
-              })}
-            </div>
+              return (
+                <p className={styles["introduce-content"]} key={index}>
+                  {content}
+                </p>
+              );
+            })}
           </div>
-        </div>
-        <div className={"container2"}>
-          <p className={"header1"}></p>
-          <div
-            className="col"
-            style={{ gap: "1rem", justifyContent: "center" }}
-          ></div>
         </div>
       </div>
     </div>

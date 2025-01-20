@@ -1,6 +1,6 @@
 // Import packages
 import { useState, useRef, useEffect } from "react";
-import store, { AddConsoleLog } from "../redux/store";
+import store, { AddConsoleLog, SetUsername } from "../redux/store";
 import { Provider } from "react-redux";
 // Import styles
 import "../../public/styles/global.css";
@@ -11,11 +11,10 @@ import {
   setConsoleContent,
 } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
-import { addCoomandHistory } from "../redux/commandHistorySlice";
-import { setAvailable, setIndex, setInput } from "../redux/autoCompleteSlice";
 // Import types
 import { Command } from "../lib/types";
 // Import json
+import textContent from "../lib/textContent.json";
 import commandList from "../lib/commandList.json";
 import pathList from "../lib/pathList.json";
 
@@ -62,7 +61,7 @@ export default function Page({ Component, pageProps }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const paths = window.location.pathname.split("/").filter(Boolean);
-      setCurrentURL(window.location.href);
+      setCurrentURL(window.location.pathname);
       setAvailableCommands([
         ...commandList["/"],
         ...(commandList[`${paths.join("/")}/`] ?? []),
@@ -71,38 +70,57 @@ export default function Page({ Component, pageProps }) {
     }
   }, []);
 
-  // Handle input change
-  const [inputValue, setInputValue] = useState<string>("");
-  const [currentURL, setCurrentURL] = useState<string>("");
-  const [cmdHistoryIndex, setCmdHistoryIndex] = useState<number>(-1);
-  const inputBox = useRef(null);
+  // Handle User
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
-    const cmdHistory = store.getState().commandHistory;
-    const cmdHistoryLength = cmdHistory.length;
-    const newIndex = Math.max(
-      -1,
-      Math.min(cmdHistoryIndex, cmdHistoryLength - 1)
-    );
-    setCmdHistoryIndex(newIndex);
-    setInputValue(newIndex !== -1 ? cmdHistory[newIndex] : "");
-  }, [cmdHistoryIndex]);
+    setUsername(localStorage.getItem("username") ?? "Anonymous");
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("username", username);
+    SetUsername(username);
+  }, [username]);
+
+  // Handle input change
+  const [inputValue, setInputValue] = useState<string>("");
+  const [inputTemp, setInputTemp] = useState<string>("");
+  const [currentURL, setCurrentURL] = useState<string>("");
+  const [cmdHistory, setCmdHistory] = useState<string[]>([]);
+  const [cmdHistoryIndex, setCmdHistoryIndex] = useState<number>(-1);
+  const [available, setAvailable] = useState<string[]>([]);
+  const [availableIndex, setAvailableIndex] = useState<number>(0);
+  const [isTabing, setIsTabing] = useState(false);
+  const inputBox = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (event) => {
-    setInputValue(event.target.value);
+    const value = event.target.value;
+    setInputValue(value);
+
+    const available = autoComplete(value, availableCommands);
+    setAvailable(available);
+    if (inputBox.current) {
+      inputBox.current.style.color = available.length > 0 ? "#fff700" : "";
+    }
   };
 
   const handleEnter = (event) => {
     if (event.key === "Enter") {
       if (!inputValue || inputValue == "") return;
-      store.dispatch(addConsoleContent([`${currentURL}>${inputValue}`]));
-      store.dispatch(addCoomandHistory(inputValue));
+      store.dispatch(
+        addConsoleContent([
+          `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$@#fff700${inputValue}`,
+        ])
+      );
+      setCmdHistory([inputValue, ...cmdHistory]);
       // Catch basic command
       switch (inputValue.split(" ")[0]) {
         case "help":
           AddConsoleLog(["Available commands:", "---"]);
           availableCommands.forEach((command: Command) => {
-            AddConsoleLog([`${command.usage} - ${command.description}`]);
+            AddConsoleLog([
+              `@#00ffaa${command.usage}@# - ${command.description}`,
+            ]);
           });
           break;
         case "cl":
@@ -138,6 +156,25 @@ export default function Page({ Component, pageProps }) {
           }
           AddConsoleLog([availablePaths.join(" ")]);
           break;
+        case "background":
+          const url = inputValue.split(" ")[1] ?? "";
+          if (url) {
+            document.body.style.backgroundImage = `url(${url})`;
+          }
+          break;
+        case "username":
+          const name = inputValue.split(" ").slice(1)[0] ?? "";
+          if (!name) {
+            AddConsoleLog(["Usage: setname [name]"]);
+            break;
+          }
+          if (name.length > 20) {
+            AddConsoleLog(["Name too long (max 20 characters)"]);
+            break;
+          }
+          setUsername(name);
+          AddConsoleLog([`Set username to ${name}`]);
+          break;
         // Set command
         default:
           store.dispatch(setCommand(inputValue));
@@ -145,12 +182,25 @@ export default function Page({ Component, pageProps }) {
           break;
       }
       setInputValue("");
+      return;
     }
     if (event.key === "ArrowUp") {
-      setCmdHistoryIndex(cmdHistoryIndex + 1);
+      const cmdHistoryLength = cmdHistory.length;
+      const newIndex = Math.max(
+        -1,
+        Math.min(cmdHistoryIndex + 1, cmdHistoryLength - 1)
+      );
+      setCmdHistoryIndex(newIndex);
+      setInputValue(newIndex !== -1 ? cmdHistory[newIndex] : "");
     }
     if (event.key === "ArrowDown") {
-      setCmdHistoryIndex(cmdHistoryIndex - 1);
+      const cmdHistoryLength = cmdHistory.length;
+      const newIndex = Math.max(
+        -1,
+        Math.min(cmdHistoryIndex - 1, cmdHistoryLength - 1)
+      );
+      setCmdHistoryIndex(newIndex);
+      setInputValue(newIndex !== -1 ? cmdHistory[newIndex] : "");
     }
     if (event.key === "Escape") {
       setConsoleVisible(!consoleVisible);
@@ -158,25 +208,22 @@ export default function Page({ Component, pageProps }) {
     // Auto complete
     if (event.key === "Tab") {
       event.preventDefault();
+      let input = inputTemp;
       if (!inputValue || inputValue == "") return;
-      let input = store.getState().autoComplete.input;
-      let available = store.getState().autoComplete.available;
-      let index = store.getState().autoComplete.index;
-      if (!input) input = inputValue;
-      if (available.length == 0) {
-        available = autoComplete(input, availableCommands);
-      }
+      if (!inputTemp) input = inputValue;
       if (available.length > 0) {
-        setInputValue(replaceInput(input, available[index]));
-        const newIndex = index === available.length - 1 ? 0 : index + 1;
-        store.dispatch(setAvailable(available));
-        store.dispatch(setInput(input));
-        store.dispatch(setIndex(newIndex));
+        setInputValue(replaceInput(input, available[availableIndex]));
+        setIsTabing(true);
+        setInputTemp(input);
+        setAvailableIndex(
+          availableIndex >= available.length - 1 ? 0 : availableIndex + 1
+        );
       }
-    }
-    if (event.key != "Tab") {
-      store.dispatch(setInput(""));
-      store.dispatch(setAvailable([]));
+    } else if (isTabing) {
+      handleInputChange(event);
+      setIsTabing(false);
+      setInputTemp("");
+      setAvailableIndex(0);
     }
   };
 
@@ -188,6 +235,7 @@ export default function Page({ Component, pageProps }) {
     }
     return input + replace;
   };
+
   const autoComplete = (input: string, commands: Command[]): string[] => {
     const parts = input.split(" ");
     const lastPart = parts[parts.length - 1];
@@ -195,6 +243,9 @@ export default function Page({ Component, pageProps }) {
       parts.length <= 1 ? "" : commands.find((cmd) => cmd.name === parts[0]);
     let suggestions: string[] = [];
 
+    if (input == "" || input == " ") {
+      return suggestions;
+    }
     if (
       !command &&
       commands.filter((_) => _.name.startsWith(parts[0])).length != 0
@@ -236,6 +287,7 @@ export default function Page({ Component, pageProps }) {
 
     return suggestions;
   };
+
   const completePath = (input: string) => {
     const paths = input.split("/");
     const lastPath = paths.pop();
@@ -256,28 +308,49 @@ export default function Page({ Component, pageProps }) {
     );
   };
 
+  useEffect(() => {
+    setCmdHistory(localStorage.getItem("cmdHistory")?.split(",") ?? []);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cmdHistory", cmdHistory.slice(0, 100).join(","));
+  }, [cmdHistory]);
+
   // Handle console
   const [consoleContents, setConsoleContents] = useState<String[]>([]);
   const [consoleVisible, setConsoleVisible] = useState(true);
   const consoleBox = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom
   useEffect(() => {
     if (consoleBox.current)
       consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
   }, [store.getState().consoleContent, consoleVisible]);
 
   useEffect(() => {
+    store.dispatch(
+      addConsoleContent(
+        localStorage.getItem("consoleContent")?.split(",") ?? [
+          "Welcome to the console!",
+          "Type @#00ffaa'help'@# for available commands",
+        ]
+      )
+    );
     store.subscribe(() => {
       setConsoleContents(store.getState().consoleContent);
     });
-    store.dispatch(
-      addConsoleContent([
-        "Welcome to the console!",
-        "Type 'help' for available commands",
-      ])
-    );
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "consoleContent",
+      consoleContents.slice(0, 100).join(",")
+    );
+  }, [consoleContents]);
+
+  function isValidColorCode(color) {
+    const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+    return regex.test(color);
+  }
 
   return (
     <Provider store={store}>
@@ -287,20 +360,46 @@ export default function Page({ Component, pageProps }) {
         <img src={backgroundImage.src} className={styles["background"]} />
 
         <div className={styles["container"]}>
-          <Component {...pageProps} />
+          <div className={styles["title"]}>
+            <p className={"title"}>{textContent.home.title}</p>
+            <p className={"subtitle"}>{textContent.home.subtitle}</p>
+          </div>
+          <div className={styles["content"]}>
+            <Component {...pageProps} />
+          </div>
         </div>
 
         <div
           ref={consoleBox}
-          className={`${styles["console"]} ${
-            styles[consoleVisible ? "visible" : "hidden"]
+          className={`${styles[`console`]} ${
+            consoleVisible ? "" : styles[`hidden`]
           }`}
         >
           {consoleContents.map((content, index) => (
-            <p key={index}>{content}</p>
+            <div key={index} className={styles[`output`]}>
+              {content.split("@#").map((item) => {
+                const color = item.slice(0, 6);
+                const content = isValidColorCode(color) ? item.slice(6) : item;
+                return (
+                  <span key={color + content} style={{ color: `#${color}` }}>
+                    {content}
+                  </span>
+                );
+              })}
+            </div>
           ))}
-          <div>
-            <span>{`${currentURL}>`}</span>
+          <div className={styles[`input`]}>
+            {`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$`
+              .split("@#")
+              .map((item) => {
+                const color = item.slice(0, 6);
+                const content = isValidColorCode(color) ? item.slice(6) : item;
+                return (
+                  <span key={color + content} style={{ color: `#${color}` }}>
+                    {content}
+                  </span>
+                );
+              })}
             <input
               ref={inputBox}
               type="text"

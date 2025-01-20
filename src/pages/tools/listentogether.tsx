@@ -1,5 +1,5 @@
 // Import packages
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
@@ -12,7 +12,7 @@ import { setCommand } from "../../redux/commandSlice";
 import { PlayerState, Track, PlayerStateClient, User } from "../../lib/types";
 
 // API server
-const hostURL = "https://15e3-2001-df2-45c1-75-00-1.ngrok-free.app";
+const hostURL = "https://62e7-2001-df2-45c1-75-00-1.ngrok-free.app";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
@@ -141,13 +141,12 @@ export default function Page() {
   };
 
   // User control
-
   const [users, setUsers] = useState<User>({});
-  const [username, setUsername] = useState("Anonymous");
+  const username = useSelector((state: { user: string }) => state.user);
 
   useEffect(() => {
-    setUsername(localStorage.getItem("username") ?? "Anonymous");
-  }, []);
+    SetUsername(username);
+  }, [username]);
 
   // Log control
   const [logs, setLogs] = useState<string[]>([]);
@@ -160,6 +159,9 @@ export default function Page() {
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
+        const s = "123";
+        const s2 = "123 @#FFFFFF123@# @#FFFFFF123@#FFFFFF123@#FFFFFF123";
+        AddConsoleLog([s2]);
         break;
       case "send":
         const message = command.split(" ").slice(1).join(" ") ?? "";
@@ -370,22 +372,6 @@ export default function Page() {
         AddConsoleLog(["Refresh player..."]);
         AddRoomLog(`${username} 刷新播放器`);
         break;
-      case "setname":
-        const name = command.split(" ").slice(1)[0] ?? "";
-        if (!name) {
-          AddConsoleLog(["Usage: setname [name]"]);
-          break;
-        }
-        if (name.length > 20) {
-          AddConsoleLog(["Name too long (max 20 characters)"]);
-          break;
-        }
-        setUsername(name);
-        localStorage.setItem("username", name);
-        SetUsername(name);
-        AddConsoleLog([`Set username to ${name}`]);
-        AddRoomLog(`${username} 更改名稱為 ${name}`);
-        break;
       case "page":
         const sufix_page = command.split(" ").slice(1)[0] ?? "";
         switch (sufix_page) {
@@ -414,7 +400,7 @@ export default function Page() {
         }
         break;
       default:
-        AddConsoleLog([`Command not found: ${command}`]);
+        AddConsoleLog([`Command not found: @#fff700${command}`]);
         break;
     }
     store.dispatch(setCommand(""));
@@ -528,111 +514,98 @@ export default function Page() {
   };
 
   return (
-    <div className={"layout"}>
-      <div className="title-div">
-        <p className={"title"}>YT音樂同步撥放器</p>
-        <p className={"subtitle"}>
-          一個可以同步撥放音樂的網站，讓你和朋友一起聽音樂
-        </p>
+    <div className={"content-div"}>
+      <div className={"container2"}>
+        <div className={"sub-container1"} style={{ gap: "1rem" }}>
+          <p className={"header2"}>在線使用者</p>
+          <div className={"flex"}>
+            {Object.keys(users).map((id, index) => (
+              <p key={index} className={styles["online-user"]}>
+                ● {users[id]}
+              </p>
+            ))}
+          </div>
+        </div>
+        <div className={"sub-container1"} style={{ gap: "1rem" }}>
+          <p className={"header2"}>房間日誌</p>
+          <div className={"flex"}>
+            {logs.map((log, index) => (
+              <p key={index} className={styles["log"]}>
+                {log}
+              </p>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className={"content-div"}>
-        <div className={"container2"}>
-          <div className={"sub-container1"} style={{ gap: "1rem" }}>
-            <p className={"header2"}>在線使用者</p>
-            <div className={"col"}>
-              {Object.keys(users).map((id, index) => (
-                <p key={index} className={styles["online-user"]}>
-                  ● {users[id]}
-                </p>
-              ))}
-            </div>
-          </div>
-          <div className={"sub-container1"} style={{ gap: "1rem" }}>
-            <p className={"header2"}>房間日誌</p>
-            <div className={"col"}>
-              {logs.map((log, index) => (
-                <p key={index} className={styles["log"]}>
-                  {log}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        <div className={"container1"}>
-          <div className={styles["player"]}>
-            {isClient && playerState && (
-              <ReactPlayer
-                style={
-                  playerState.trackQueue.length > 0 ? {} : { display: "none" }
-                }
-                ref={player}
-                url={playerState.currentTrack?.url ?? ""}
-                playing={
-                  playerState.trackQueue.length > 0 &&
-                  PlayerStateClient.isReady &&
-                  !PlayerStateClient.seeking &&
-                  playerState.playing
-                }
-                volume={PlayerStateClient.volume}
-                muted={!isAllowedToUnmute}
-                loop={playerState.loop}
-                playbackRate={playerState.playbackRate}
-                controls={false}
-                onProgress={(state) => {
-                  onProgress(state);
-                }}
-                onDuration={(duration) => {
-                  onDuration(duration);
-                }}
-                onEnded={() => {
-                  onEnd();
-                }}
-                onError={(error) => {
-                  AddConsoleLog([`Error: ${error}`]);
-                }}
-                onReady={() => {
-                  if (PlayerStateClient.isReady) return;
-                  Refresh();
+      <div className={"container1"}>
+        <div className={styles["player"]}>
+          {isClient && playerState && (
+            <ReactPlayer
+              style={
+                playerState.trackQueue.length > 0 ? {} : { display: "none" }
+              }
+              ref={player}
+              url={playerState.currentTrack?.url ?? ""}
+              playing={
+                playerState.trackQueue.length > 0 &&
+                PlayerStateClient.isReady &&
+                !PlayerStateClient.seeking &&
+                playerState.playing
+              }
+              volume={PlayerStateClient.volume}
+              muted={!isAllowedToUnmute}
+              loop={playerState.loop}
+              playbackRate={playerState.playbackRate}
+              controls={false}
+              onProgress={(state) => {
+                onProgress(state);
+              }}
+              onDuration={(duration) => {
+                onDuration(duration);
+              }}
+              onEnded={() => {
+                onEnd();
+              }}
+              onError={(error) => {
+                AddConsoleLog([`Error: ${error}`]);
+              }}
+              onReady={() => {
+                if (PlayerStateClient.isReady) return;
+                Refresh();
+                setPlayerStateClient((prev) => ({
+                  ...prev,
+                  isReady: true,
+                }));
+              }}
+              onSeek={() => {
+                setPlayerStateClient((prev) => ({
+                  ...prev,
+                  seeking: true,
+                }));
+                setTimeout(() => {
                   setPlayerStateClient((prev) => ({
                     ...prev,
-                    isReady: true,
+                    seeking: false,
                   }));
-                }}
-                onSeek={() => {
-                  setPlayerStateClient((prev) => ({
-                    ...prev,
-                    seeking: true,
-                  }));
-                  setTimeout(() => {
-                    setPlayerStateClient((prev) => ({
-                      ...prev,
-                      seeking: false,
-                    }));
-                  }, 1000);
-                }}
-                width="100%"
-                height="100%"
-              />
-            )}
-          </div>
+                }, 1000);
+              }}
+              width="100%"
+              height="100%"
+            />
+          )}
         </div>
+      </div>
 
-        <div className={"container1"} style={{ gap: "5%" }}>
-          <p className={"header1"}>
+      <div className={"container1"}>
+        <div className={"sub-container1"} style={{ gap: "1rem" }}>
+          <p className={"header2"}>
             {"播放歌單" +
               (playerState.trackQueue.length > 0
                 ? `(${currentPage}/${totalPage})`
                 : "")}
           </p>
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              overflow: "scroll",
-              scrollbarWidth: "none",
-            }}
-          >
+          <div className={styles["track-card-list"]}>
             {playlist[currentPage - 1]?.map((track, index) => (
               <div
                 key={index + (currentPage - 1) * 4}
