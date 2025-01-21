@@ -1,5 +1,5 @@
 // Import packages
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
@@ -515,7 +515,7 @@ export default function Page() {
 
   return (
     <div className={"content-div"}>
-      <div className={"container2"}>
+      <div className={"container2"} style={{ gap: "1rem" }}>
         <div className={"sub-container1"} style={{ gap: "1rem" }}>
           <p className={"header2"}>在線使用者</p>
           <div className={"flex"}>

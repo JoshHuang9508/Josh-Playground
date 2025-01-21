@@ -1,5 +1,5 @@
 {
-  "home": {
+  "/": {
     "title": "Whydog's playground",
     "subtitle": "A site dedicated to mouse-free navigation.",
     "about": [
@@ -8,19 +8,51 @@
       "I @#FF77B7love@# @#00ffaaplaying games@# and @#00ffaacoding@#. Sometimes @#00ffaawatching anime@#.",
       "I @#FF77B7want@# to be a @#00ffaafull-stack@# developer, as well as a @#00ffaaUI/UX@# designer.",
       "This website is built with @#00ffaaReact@#, and I'm still working on it.",
-      "@#f9f284I hope you enjoy your stay here."
+      "@#f9f284Hope you enjoy your stay here."
     ]
   },
-  "tools": {
-    "title": "工具箱",
-    "subtitle": "這裡有一些我自己寫的小工具，歡迎使用",
-    "listentogether": {
-      "title": "Listen Together",
-      "description": "Listen Together 是一個線上音樂播放器，可以和朋友一起聽歌。"
-    }
+  "tools/": {
+    "title": "Tool box",
+    "subtitle": "Here are some tools I've made. Feel free to try them out!",
+    "item": [
+      {
+        "title": "@#FFF700./listentogether",
+        "description": "@#FFF700Listen Together@# is a web-based music player that allows you to listen to music with your friends in @#FFF700real-time@#. It supports @#00ffaaYouTube video@# and @#00ffaaplaylist@#."
+      },
+      {
+        "title": "...coming soon",
+        "description": "This tool is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
+      },
+      {
+        "title": "...coming soon",
+        "description": "This tool is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
+      }
+    ]
   },
-  "404": {
-    "title": "404 Not Found",
-    "subtitle": "這裡什麼都沒有，你確定你來對地方了嗎？ 使用 \"cd\" 回到首頁吧！"
+  "tools/listentogether/": {
+    "title": "Listen Together",
+    "subtitle": "A web-based music sync player"
+  },
+  "games/": {
+    "title": "Game center",
+    "subtitle": "Here are some games I've made. Feel free to play them!",
+    "item": [
+      {
+        "title": "@#FFF700./colorgame",
+        "description": "A simple color guessing game. Try to guess the color based on the RGB value given. Have fun!"
+      },
+      {
+        "title": "...coming soon",
+        "description": "This game is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
+      },
+      {
+        "title": "...coming soon",
+        "description": "This game is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
+      }
+    ]
+  },
+  "*": {
+    "title": "Oops!",
+    "subtitle": "Page not found!"
   }
 }

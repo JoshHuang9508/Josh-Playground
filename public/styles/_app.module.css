@@ -3,7 +3,7 @@ div.container {
   display: flex;
   flex-direction: column;
   min-height: 60%;
-  margin: 1rem 10rem 1rem 10rem;
+  margin: 1rem 10rem 0.5rem 10rem;
   padding: 1rem;
   border: none;
   border-radius: 1rem;
@@ -14,7 +14,7 @@ div.container div.title {
   flex: 1;
   display: flex;
   flex-direction: row;
-  font-family: "Signature";
+  font-family: "SignatureFont";
   justify-content: center;
   align-items: center;
 }
@@ -36,7 +36,7 @@ img.background {
 }
 div.console {
   height: 30%;
-  margin: 1rem 10rem 1rem 10rem;
+  margin: 0.5rem 10rem 1rem 10rem;
   padding: 1rem;
   border: none;
   border-radius: 1rem;
@@ -56,7 +56,8 @@ div.console span {
   background: none;
   user-select: none;
 }
-div.console input {
+div.console div.input input {
+  z-index: 10;
   font-size: 1rem;
   line-height: 1.5rem;
   padding-block: 0;
@@ -68,7 +69,7 @@ div.console input {
   border: none;
   outline: none;
 }
-div.console input:focus {
+div.console div.input input:focus {
   outline: none;
 }
 
@@ -81,9 +82,9 @@ div.console.hidden div.output {
 
 @media (max-width: 1200px) {
   div.container {
-    margin: 2rem;
+    margin: 2rem 2rem 1rem 2rem;
   }
   div.console {
-    margin: 2rem;
+    margin: 1rem 2rem 2rem 2rem;
   }
 }

@@ -3,9 +3,10 @@ import React from "react";
 interface ColorSpanProps {
   str: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-function ColorSpan({ str, className }: ColorSpanProps) {
+function ColorSpan({ str, className, style }: ColorSpanProps) {
   function isValidColorCode(color) {
     const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
     return regex.test(color);
@@ -22,7 +23,7 @@ function ColorSpan({ str, className }: ColorSpanProps) {
           return (
             <span
               key={color + content}
-              style={{ color: `#${color}` }}
+              style={{ color: `#${color}`, ...style }}
               className={className}
             >
               {content}

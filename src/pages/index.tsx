@@ -1,5 +1,5 @@
 // Import packages
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 // Import styles
 import styles from "../../public/styles/index.module.css";
@@ -14,6 +14,19 @@ import textContent from "../../src/lib/textContent.json";
 import profileImage from "../../public/assets/pfp.png";
 
 export default function Page() {
+  // Music control
+  const audioPlayer = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (!audioPlayer.current) return;
+    audioPlayer.current.play();
+    audioPlayer.current.volume = 0.05;
+    return () => {
+      if (!audioPlayer.current) return;
+      audioPlayer.current.pause();
+    };
+  }, [audioPlayer]);
+
   // Command control
   const command = useSelector((state: { command: string }) => state.command);
 
@@ -32,15 +45,14 @@ export default function Page() {
 
   return (
     <div className={"content-div"}>
+      <audio
+        ref={audioPlayer}
+        id="audio"
+        src="/musics/eyes-half-closed.mp3"
+        loop
+      />
       <div className={"container1"}>
-        <div
-          className="flex row"
-          style={{
-            gap: "1rem",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div className={styles["introduce"]}>
           <img
             className={styles["profile-picture"]}
             src={profileImage.src}
@@ -49,12 +61,11 @@ export default function Page() {
           <div
             className="col"
             style={{
-              gap: "1rem",
+              gap: "0.5rem",
               justifyContent: "center",
-              fontFamily: "monospace",
             }}
           >
-            {textContent.home.about.map((content, index) => {
+            {textContent["/"].about.map((content, index) => {
               if (index == 0)
                 return (
                   <div key={index} className="row">

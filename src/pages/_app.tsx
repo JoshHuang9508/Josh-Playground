@@ -63,7 +63,7 @@ export default function Page({ Component, pageProps }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const paths = window.location.pathname.split("/").filter(Boolean);
-      setCurrentURL(window.location.pathname);
+      setCurrentURL(`${paths.join("/")}/`); // Change current URL to window.location.pathname instead of `${paths.join("/")}/`
       setAvailableCommands([
         ...commandList["*"],
         ...(commandList[`${paths.join("/")}/`] ?? []),
@@ -184,6 +184,7 @@ export default function Page({ Component, pageProps }) {
           break;
       }
       setInputValue("");
+      handleInputChange({ target: { value: "" } });
       return;
     }
     if (event.key === "ArrowUp") {
@@ -250,6 +251,7 @@ export default function Page({ Component, pageProps }) {
     }
     if (
       !command &&
+      !input.endsWith(" ") &&
       commands.filter((_) => _.name.startsWith(parts[0])).length != 0
     ) {
       suggestions.push(
@@ -323,8 +325,6 @@ export default function Page({ Component, pageProps }) {
   const [consoleVisible, setConsoleVisible] = useState(true);
   const consoleBox = useRef<HTMLDivElement>(null);
 
-  // useEffect(() => {}, [store.getState().consoleContent, consoleVisible]);
-
   useEffect(() => {
     AddConsoleLog(
       localStorage.getItem("consoleContent")?.split(",") ?? [
@@ -344,7 +344,7 @@ export default function Page({ Component, pageProps }) {
       "consoleContent",
       consoleContents.slice(-100).join(",")
     );
-  }, [consoleContents, consoleVisible]);
+  }, [consoleContents, consoleVisible, inputValue]);
 
   return (
     <Provider store={store}>
@@ -355,8 +355,12 @@ export default function Page({ Component, pageProps }) {
 
         <div className={styles["container"]}>
           <div className={styles["title"]}>
-            <p className={"title"}>{textContent.home.title}</p>
-            <p className={"subtitle"}>{textContent.home.subtitle}</p>
+            <p className={"title"}>
+              {textContent[currentURL]?.title ?? textContent["*"].title}
+            </p>
+            <p className={"subtitle"}>
+              {textContent[currentURL]?.subtitle ?? textContent["*"].subtitle}
+            </p>
           </div>
           <div className={styles["content"]}>
             <Component {...pageProps} />
@@ -374,6 +378,12 @@ export default function Page({ Component, pageProps }) {
               <ColorSpan str={content} />
             </div>
           ))}
+          {available[0] && (
+            <div className={styles["prompt"]}>
+              <ColorSpan str={"@#FFF700" + available.join("@#, @#FFF700")} />
+            </div>
+          )}
+
           <div className={styles[`input`]}>
             <ColorSpan
               str={`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ `}
