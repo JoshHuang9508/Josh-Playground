@@ -183,7 +183,6 @@ export default function Page({ Component, pageProps }) {
           setCmdHistoryIndex(-1);
           break;
       }
-      setInputValue("");
       handleInputChange({ target: { value: "" } });
       return;
     }
@@ -194,7 +193,9 @@ export default function Page({ Component, pageProps }) {
         Math.min(cmdHistoryIndex + 1, cmdHistoryLength - 1)
       );
       setCmdHistoryIndex(newIndex);
-      setInputValue(newIndex !== -1 ? cmdHistory[newIndex] : "");
+      handleInputChange({
+        target: { value: newIndex !== -1 ? cmdHistory[newIndex] : "" },
+      });
     }
     if (event.key === "ArrowDown") {
       const cmdHistoryLength = cmdHistory.length;
@@ -203,7 +204,9 @@ export default function Page({ Component, pageProps }) {
         Math.min(cmdHistoryIndex - 1, cmdHistoryLength - 1)
       );
       setCmdHistoryIndex(newIndex);
-      setInputValue(newIndex !== -1 ? cmdHistory[newIndex] : "");
+      handleInputChange({
+        target: { value: newIndex !== -1 ? cmdHistory[newIndex] : "" },
+      });
     }
     if (event.key === "Escape") {
       setConsoleVisible(!consoleVisible);
@@ -338,12 +341,17 @@ export default function Page({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
+    setConsoleVisible(localStorage.getItem("consoleVisible") === "true");
+  }, []);
+
+  useEffect(() => {
     if (consoleBox.current)
       consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
     localStorage.setItem(
       "consoleContent",
       consoleContents.slice(-100).join(",")
     );
+    localStorage.setItem("consoleVisible", consoleVisible.toString());
   }, [consoleContents, consoleVisible, inputValue]);
 
   return (
