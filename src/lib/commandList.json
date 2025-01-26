@@ -114,7 +114,7 @@
     {
       "name": "download",
       "description": "Download the video",
-      "usage": "download [video_URL]",
+      "usage": "download [video_URL] <option>",
       "options": ["-v", "-a", "--video", "--audio"]
     }
   ]
