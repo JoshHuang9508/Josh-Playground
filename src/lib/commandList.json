@@ -109,5 +109,13 @@
       "description": "Change the volume",
       "usage": "volume [value]"
     }
+  ],
+  "tools/ytdownloader/": [
+    {
+      "name": "download",
+      "description": "Download the video",
+      "usage": "download [video_URL]",
+      "options": ["-v", "-a", "--video", "--audio"]
+    }
   ]
 }

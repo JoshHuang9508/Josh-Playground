@@ -33,6 +33,10 @@
     "title": "Listen Together",
     "subtitle": "A web-based music sync player"
   },
+  "tools/ytdownloader/": {
+    "title": "YouTube Downloader",
+    "subtitle": "A web-based YouTube video downloader"
+  },
   "games/": {
     "title": "Game center",
     "subtitle": "Here are some games I've made. Feel free to play them!",

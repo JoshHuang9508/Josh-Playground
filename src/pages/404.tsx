@@ -14,6 +14,11 @@ export default function Page() {
 
   useEffect(() => {
     if (!command || command == "") return;
+    const flags =
+      command
+        .split(" ")
+        .slice(1)
+        .filter((_) => _.startsWith("-")) ?? "";
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging

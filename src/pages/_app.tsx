@@ -6,10 +6,7 @@ import { Provider } from "react-redux";
 import "../../public/styles/global.css";
 import styles from "../../public/styles/_app.module.css";
 // Import redux
-import {
-  addConsoleContent,
-  setConsoleContent,
-} from "../redux/consoleContentSlice";
+import { setConsoleContent } from "../redux/consoleContentSlice";
 import { setCommand } from "../redux/commandSlice";
 // Import components
 import ColorSpan from "../components/ColorSpan";
@@ -109,14 +106,18 @@ export default function Page({ Component, pageProps }) {
   const handleEnter = (event) => {
     if (event.key === "Enter") {
       if (!inputValue || inputValue == "") return;
-      store.dispatch(
-        addConsoleContent([
-          `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ @#fff700${inputValue}`,
-        ])
-      );
-      setCmdHistory([inputValue, ...cmdHistory]);
+      const command = inputValue;
+      AddConsoleLog([
+        `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ @#fff700${command}`,
+      ]);
+      setCmdHistory([command, ...cmdHistory]);
       // Catch basic command
-      switch (inputValue.split(" ")[0]) {
+      const flags =
+        command
+          .split(" ")
+          .slice(1)
+          .filter((_) => _.startsWith("-")) ?? "";
+      switch (command.split(" ")[0]) {
         case "help":
           AddConsoleLog(["Available commands:", "---"]);
           availableCommands.forEach((command: Command) => {
@@ -129,7 +130,7 @@ export default function Page({ Component, pageProps }) {
           store.dispatch(setConsoleContent([]));
           break;
         case "cd":
-          const page = inputValue.split(" ")[1] ?? "";
+          const page = command.split(" ")[1] ?? "";
           const paths = window.location.href.split("/");
           if (!page) {
             window.location.href = "/";
@@ -148,8 +149,7 @@ export default function Page({ Component, pageProps }) {
           }
           break;
         case "ls":
-          const flag = inputValue.split(" ")[1] ?? "";
-          if (flag == "-l") {
+          if (flags.includes("-l")) {
             console.log(renderWebPaths(webPaths, ""));
             renderWebPaths(webPaths, "").forEach((path) => {
               AddConsoleLog([path]);
@@ -159,13 +159,13 @@ export default function Page({ Component, pageProps }) {
           AddConsoleLog([availablePaths.join(" ")]);
           break;
         case "background":
-          const url = inputValue.split(" ")[1] ?? "";
+          const url = command.split(" ")[1] ?? "";
           if (url) {
             document.body.style.backgroundImage = `url(${url})`;
           }
           break;
         case "username":
-          const name = inputValue.split(" ").slice(1)[0] ?? "";
+          const name = command.split(" ").slice(1)[0] ?? "";
           if (!name) {
             AddConsoleLog(["Usage: setname [name]"]);
             break;
@@ -179,7 +179,7 @@ export default function Page({ Component, pageProps }) {
           break;
         // Set command
         default:
-          store.dispatch(setCommand(inputValue));
+          store.dispatch(setCommand(command));
           setCmdHistoryIndex(-1);
           break;
       }

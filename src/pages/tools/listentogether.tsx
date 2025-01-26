@@ -11,10 +11,11 @@ import { setCommand } from "../../redux/commandSlice";
 // Import types
 import { PlayerState, Track, PlayerStateClient, User } from "../../lib/types";
 
-// API server
-const hostURL = "https://62e7-2001-df2-45c1-75-00-1.ngrok-free.app";
-
 export default function Page() {
+  // API server
+  const hostURL = useSelector((state: { host: string }) => state.host);
+
+  // Client control
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -156,12 +157,14 @@ export default function Page() {
 
   useEffect(() => {
     if (!command || command == "") return;
+    const flags =
+      command
+        .split(" ")
+        .slice(1)
+        .filter((_) => _.startsWith("-")) ?? "";
     switch (command.split(" ")[0]) {
       case "log":
         // Use for debugging
-        const s = "123";
-        const s2 = "123 @#FFFFFF123@# @#FFFFFF123@#FFFFFF123@#FFFFFF123";
-        AddConsoleLog([s2]);
         break;
       case "send":
         const message = command.split(" ").slice(1).join(" ") ?? "";
@@ -180,7 +183,7 @@ export default function Page() {
         }
         if (!ReactPlayer.canPlay(URL)) {
           AddConsoleLog(["Can not play this URL"]);
-          return;
+          break;
         }
         const updateTrackQueue = async () => {
           if (URL.includes("playlist?list=")) {
@@ -246,37 +249,37 @@ export default function Page() {
         AddRoomLog(`${username} 暫停播放`);
         break;
       case "switch":
-        const sufix_switch = command.split(" ").slice(1)[0] ?? "";
-        switch (sufix_switch) {
-          case "--next":
-          case "-n":
-            SetTrackIndex(playerState.index + 1);
-            AddConsoleLog([`Switch to next track`]);
-            AddRoomLog(`${username} 切換到下一首歌曲`);
-            break;
-          case "--prev":
-          case "-p":
-            SetTrackIndex(playerState.index - 1);
-            AddConsoleLog([`Switch to previous track`]);
-            AddRoomLog(`${username} 切換到上一首歌曲`);
-            break;
-          default:
-            if (isNaN(parseFloat(sufix_switch))) {
-              AddConsoleLog(["Invalid index"]);
-              break;
-            }
-            if (
-              parseInt(sufix_switch) >= playerState.trackQueue.length ||
-              parseInt(sufix_switch) < 0
-            ) {
-              AddConsoleLog(["Index out of range"]);
-              break;
-            }
-            SetTrackIndex(parseInt(sufix_switch));
-            AddConsoleLog([`Switch to track ${sufix_switch}`]);
-            AddRoomLog(`${username} 切換到歌曲 #${sufix_switch}`);
-            break;
+        const index = command.split(" ").slice(1)[0] ?? "";
+        if (!index) {
+          AddConsoleLog(["Usage: switch [index|options]"]);
+          break;
         }
+        if (flags.includes("-n") || flags.includes("--next")) {
+          SetTrackIndex(playerState.index + 1);
+          AddConsoleLog([`Switch to next track`]);
+          AddRoomLog(`${username} 切換到下一首歌曲`);
+          break;
+        }
+        if (flags.includes("-p") || flags.includes("--prev")) {
+          SetTrackIndex(playerState.index - 1);
+          AddConsoleLog([`Switch to previous track`]);
+          AddRoomLog(`${username} 切換到上一首歌曲`);
+          break;
+        }
+        if (isNaN(parseFloat(index))) {
+          AddConsoleLog(["Invalid index"]);
+          break;
+        }
+        if (
+          parseInt(index) >= playerState.trackQueue.length ||
+          parseInt(index) < 0
+        ) {
+          AddConsoleLog(["Index out of range"]);
+          break;
+        }
+        SetTrackIndex(parseInt(index));
+        AddConsoleLog([`Switch to track ${index}`]);
+        AddRoomLog(`${username} 切換到歌曲 #${index}`);
         break;
       case "volume":
         const volume = command.split(" ").slice(1)[0] ?? "";
@@ -296,44 +299,34 @@ export default function Page() {
         AddConsoleLog([`Set volume to ${volume}`]);
         break;
       case "loop":
-        const sufix_loop = command.split(" ").slice(1)[0] ?? "";
-        switch (sufix_loop) {
-          case "--true":
-          case "-t":
-            SetLoop(true);
-            AddConsoleLog(["Loop..."]);
-            AddRoomLog(`${username} 開啟循環播放`);
-            break;
-          case "--false":
-          case "-f":
-            SetLoop(false);
-            AddConsoleLog(["Unloop..."]);
-            AddRoomLog(`${username} 關閉循環播放`);
-            break;
-          default:
-            AddConsoleLog(["Usage: loop [options]"]);
-            break;
+        if (flags.includes("-t") || flags.includes("--true")) {
+          SetLoop(true);
+          AddConsoleLog(["Loop..."]);
+          AddRoomLog(`${username} 開啟循環播放`);
+          break;
         }
+        if (flags.includes("-f") || flags.includes("--false")) {
+          SetLoop(false);
+          AddConsoleLog(["Unloop..."]);
+          AddRoomLog(`${username} 關閉循環播放`);
+          break;
+        }
+        AddConsoleLog(["Usage: loop [options]"]);
         break;
       case "random":
-        const sufix_random = command.split(" ").slice(1)[0] ?? "";
-        switch (sufix_random) {
-          case "--true":
-          case "-t":
-            SetPlayerState({ ...playerState, random: true });
-            AddConsoleLog(["Random..."]);
-            AddRoomLog(`${username} 開啟隨機播放`);
-            break;
-          case "--false":
-          case "-f":
-            SetPlayerState({ ...playerState, random: false });
-            AddConsoleLog(["Unrandom..."]);
-            AddRoomLog(`${username} 關閉隨機播放`);
-            break;
-          default:
-            AddConsoleLog(["Usage: random [options]"]);
-            break;
+        if (flags.includes("-t") || flags.includes("--true")) {
+          SetPlayerState({ ...playerState, random: true });
+          AddConsoleLog(["Random..."]);
+          AddRoomLog(`${username} 開啟隨機播放`);
+          break;
         }
+        if (flags.includes("-f") || flags.includes("--false")) {
+          SetPlayerState({ ...playerState, random: false });
+          AddConsoleLog(["Unrandom..."]);
+          AddRoomLog(`${username} 關閉隨機播放`);
+          break;
+        }
+        AddConsoleLog(["Usage: random [options]"]);
         break;
       case "rate":
         const rate = command.split(" ").slice(1)[0] ?? "";
@@ -373,31 +366,31 @@ export default function Page() {
         AddRoomLog(`${username} 刷新播放器`);
         break;
       case "page":
-        const sufix_page = command.split(" ").slice(1)[0] ?? "";
-        switch (sufix_page) {
-          case "--next":
-          case "-n":
-            setCurrentPage(currentPage + 1);
-            AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
-            break;
-          case "--prev":
-          case "-p":
-            setCurrentPage(currentPage - 1);
-            AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
-            break;
-          default:
-            if (isNaN(parseFloat(sufix_page))) {
-              AddConsoleLog(["Invalid page"]);
-              break;
-            }
-            if (parseInt(sufix_page) > totalPage || parseInt(sufix_page) <= 0) {
-              AddConsoleLog(["Page out of range"]);
-              break;
-            }
-            setCurrentPage(parseInt(sufix_page));
-            AddConsoleLog([`Switch to playlist page ${sufix_page}`]);
-            break;
+        const page = command.split(" ").slice(1)[0] ?? "";
+        if (!page) {
+          AddConsoleLog(["Usage: page [page|options]"]);
+          break;
         }
+        if (flags.includes("-n") || flags.includes("--next")) {
+          setCurrentPage(currentPage + 1);
+          AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+          break;
+        }
+        if (flags.includes("-p") || flags.includes("--prev")) {
+          setCurrentPage(currentPage - 1);
+          AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+          break;
+        }
+        if (isNaN(parseFloat(page))) {
+          AddConsoleLog(["Invalid page"]);
+          break;
+        }
+        if (parseInt(page) > totalPage || parseInt(page) <= 0) {
+          AddConsoleLog(["Page out of range"]);
+          break;
+        }
+        setCurrentPage(parseInt(page));
+        AddConsoleLog([`Switch to playlist page ${page}`]);
         break;
       default:
         AddConsoleLog([`Command not found: @#fff700${command}`]);
