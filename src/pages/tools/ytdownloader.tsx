@@ -43,12 +43,12 @@ export default function Page() {
           flags.length == 0
         ) {
           getVideoFile(URL.split("v=")[1], "mp4");
-          AddConsoleLog([`Downloading video: ${URL} (.mp4)`]);
+          AddConsoleLog([`Pending download: ${URL} (.mp4)`]);
           break;
         }
         if (flags.includes("-a") || flags.includes("--audio")) {
           getVideoFile(URL.split("v=")[1], "mp3");
-          AddConsoleLog([`Downloading video: ${URL} (.mp3)`]);
+          AddConsoleLog([`Pending download: ${URL} (.mp3)`]);
           break;
         }
         break;
@@ -62,20 +62,35 @@ export default function Page() {
   // API control
   const getVideoFile = (videoId: string, format: string) => {
     const downloadAudio = (videoId: string) => {
-      AddConsoleLog([`${hostURL}/api/ytdownload-mp3?videoId=${videoId}`]);
       fetch(`${hostURL}/api/ytdownload-mp3?videoId=${videoId}`, {
         method: "GET",
         headers: {
           "ngrok-skip-browser-warning": "true",
         },
       })
-        .then((response) => response.blob())
+        .then((response) => {
+          const contentType = response.headers.get("Content-Type");
+          if (!response.ok) {
+            AddConsoleLog([`HTTP error! status: ${response.status}`]);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          if (contentType === "application/json") {
+            AddConsoleLog([`Download failed!`]);
+            throw new Error("Download failed!");
+          }
+          return response.blob();
+        })
         .then((blob) => {
+          AddConsoleLog(["Starting download..."]);
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
           a.download = `${videoId}.mp3`;
           a.click();
+        })
+        .catch((error) => {
+          AddConsoleLog([`Error downloading audio: ${error}`]);
+          throw error;
         });
     };
     const downloadVideo = (videoId: string) => {
@@ -85,13 +100,29 @@ export default function Page() {
           "ngrok-skip-browser-warning": "true",
         },
       })
-        .then((response) => response.blob())
+        .then((response) => {
+          const contentType = response.headers.get("Content-Type");
+          if (!response.ok) {
+            AddConsoleLog([`HTTP error! status: ${response.status}`]);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          if (contentType === "application/json") {
+            AddConsoleLog(["Download failed!"]);
+            throw new Error("Download failed!");
+          }
+          return response.blob();
+        })
         .then((blob) => {
+          AddConsoleLog(["Starting download..."]);
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
           a.download = `${videoId}.mp4`;
           a.click();
+        })
+        .catch((error) => {
+          AddConsoleLog([`Error downloading video: ${error}`]);
+          throw error;
         });
     };
     switch (format) {

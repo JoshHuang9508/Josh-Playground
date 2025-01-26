@@ -458,12 +458,13 @@ export default function Page() {
     })
       .then((response) => {
         if (!response.ok) {
+          AddConsoleLog([`HTTP error! status: ${response.status}`]);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
       .catch((error) => {
-        console.error("Error:", error);
+        AddConsoleLog([`Error getting video info: ${error}`]);
         throw error;
       });
     const track: Track = {
@@ -485,12 +486,13 @@ export default function Page() {
     })
       .then((response) => {
         if (!response.ok) {
+          AddConsoleLog([`HTTP error! status: ${response.status}`]);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
       .catch((error) => {
-        console.error("Error:", error);
+        AddConsoleLog([`Error getting playlist info: ${error}`]);
         throw error;
       });
     const tracks: Track[] = data.map((item: any, index) => {
