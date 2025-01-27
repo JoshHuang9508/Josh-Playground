@@ -5,9 +5,11 @@ img.profile-picture {
   border-radius: 50%;
   margin: 2rem;
   box-shadow: 0 0 1rem white;
-  animation: rgb-shadow 10s infinite linear;
+  animation: rgb-shadow 10s infinite linear, spinBack 1s linear;
 }
-
+img.profile-picture.spin {
+  animation: rgb-shadow 10s infinite linear, spin 5s infinite linear;
+}
 @keyframes rgb-shadow {
   0% {
     box-shadow: 0 0 2rem rgb(255, 0, 0), inset 0 0 2rem rgb(255, 0, 0);
@@ -31,10 +33,76 @@ img.profile-picture {
     box-shadow: 0 0 2rem rgb(255, 0, 0), inset 0 0 2rem rgb(255, 0, 0);
   }
 }
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinBack {
+  from {
+    transform: rotate(var(--current-rotation)); /* 保持當前旋轉角度 */
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+div.music-info {
+  display: flex;
+  justify-content: flex-start;
+  animation: slideIn 1s forwards;
+}
+div.music-info.hidden {
+  animation: slideOut 1s forwards;
+}
+@keyframes slideIn {
+  from {
+    width: 0;
+  }
+  to {
+    width: 30%;
+  }
+}
+@keyframes slideOut {
+  from {
+    width: 30%;
+  }
+  to {
+    width: 0;
+  }
+}
 
 @media (max-width: 1200px) {
   img.profile-picture {
     width: 10rem;
     height: 10rem;
+    margin: 1rem;
+  }
+
+  div.music-info {
+    justify-content: center;
+  }
+  @keyframes slideIn {
+    from {
+      width: 0;
+      margin-bottom: 0;
+    }
+    to {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  }
+  @keyframes slideOut {
+    from {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    to {
+      width: 0;
+      margin-bottom: 0;
+    }
   }
 }

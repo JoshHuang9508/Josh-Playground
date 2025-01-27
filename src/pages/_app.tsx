@@ -19,8 +19,9 @@ import pathList from "../lib/pathList.json";
 
 import backgroundImage from "../../public/assets/bg.jpg";
 
-const webPaths = [["", ["tools", "listentogether"], ["games", "colorgame"]]];
-
+const webPaths = [
+  ["", ["tools", "listentogether", "ytdownloader"], ["games", "colorgame"]],
+];
 const renderWebPaths = (paths: any, prefix: string): string[] => {
   const result: string[] = [];
   paths.map((path, index) => {
@@ -149,11 +150,18 @@ export default function Page({ Component, pageProps }) {
           }
           break;
         case "ls":
-          if (flags.includes("-l")) {
-            console.log(renderWebPaths(webPaths, ""));
+          if (flags.includes("-t") || flags.includes("--tree")) {
             renderWebPaths(webPaths, "").forEach((path) => {
               AddConsoleLog([path]);
             });
+            break;
+          }
+          if (flags.includes("-a") || flags.includes("--all")) {
+            AddConsoleLog([["./", "../", ...availablePaths].join(" ")]);
+            break;
+          }
+          if (flags.includes("-l") || flags.includes("--long")) {
+            AddConsoleLog(["Available paths:", ...availablePaths]);
             break;
           }
           AddConsoleLog([availablePaths.join(" ")]);
@@ -362,7 +370,7 @@ export default function Page({ Component, pageProps }) {
         <img src={backgroundImage.src} className={styles["background"]} />
 
         <div className={styles["container"]}>
-          <div className={styles["title"]}>
+          <div className={"title-div"}>
             <p className={"title"}>
               {textContent[currentURL]?.title ?? textContent["*"].title}
             </p>
@@ -370,9 +378,7 @@ export default function Page({ Component, pageProps }) {
               {textContent[currentURL]?.subtitle ?? textContent["*"].subtitle}
             </p>
           </div>
-          <div className={styles["content"]}>
-            <Component {...pageProps} />
-          </div>
+          <Component {...pageProps} />
         </div>
 
         <div

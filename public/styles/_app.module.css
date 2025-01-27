@@ -5,28 +5,17 @@ div.container {
   gap: 1rem;
   min-height: 60%;
   margin: 1rem 10rem 0.5rem 10rem;
-  padding: 1rem;
   border: none;
   border-radius: 1rem;
   background-color: #ffffff10;
   box-shadow: 0 0 1rem #00000040;
-}
-div.container div.title {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  font-family: "SignatureFont";
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  overflow: auto;
 }
-div.container div.content {
-  flex: 5;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+div.container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 img.background {
   position: absolute;
@@ -82,10 +71,8 @@ div.console.hidden div.output {
 
 @media (max-width: 1200px) {
   div.container {
+    display: block;
     margin: 2rem 2rem 1rem 2rem;
-  }
-  div.container div.title {
-    flex-direction: column;
   }
   div.console {
     margin: 1rem 2rem 2rem 2rem;

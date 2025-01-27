@@ -24,7 +24,8 @@
     {
       "name": "ls",
       "description": "List the directory",
-      "usage": "ls"
+      "usage": "ls",
+      "options": ["-a", "-l", "-t", "--all", "--long", "--tree"]
     },
     {
       "name": "background",
@@ -37,7 +38,23 @@
       "usage": "username [name]"
     }
   ],
-  "/": [],
+  "/": [
+    {
+      "name": "music",
+      "description": "Background music options",
+      "usage": "music [option]",
+      "options": [
+        "-p",
+        "-s",
+        "-i",
+        "-l",
+        "--play",
+        "--stop",
+        "--info",
+        "--list"
+      ]
+    }
+  ],
   "tools/": [],
   "tools/listentogether/": [
     {

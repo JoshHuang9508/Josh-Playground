@@ -38,3 +38,8 @@ export type PlayerStateClient = {
 export type User = {
   [id: string]: string;
 };
+
+export type Music = {
+  name: string;
+  path: string;
+};
