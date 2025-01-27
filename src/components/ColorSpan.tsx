@@ -17,16 +17,21 @@ function ColorSpan({ str, className, style }: ColorSpanProps) {
       {str
         .split("@#")
         .filter((i) => i !== "")
-        .map((item) => {
+        .map((item, index) => {
           const color = item.slice(0, 6);
-          const content = isValidColorCode(color) ? item.slice(6) : item;
+          if (!isValidColorCode(color))
+            return (
+              <span key={color + index} style={style} className={className}>
+                {item}
+              </span>
+            );
           return (
             <span
-              key={color + content}
+              key={color + index}
               style={{ color: `#${color}`, ...style }}
               className={className}
             >
-              {content}
+              {item.slice(6)}
             </span>
           );
         })}

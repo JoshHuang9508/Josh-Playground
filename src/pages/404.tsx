@@ -33,16 +33,10 @@ export default function Page() {
   return (
     <div className={"content-div"}>
       <div className={"container1"}>
-        <div
-          style={{
-            fontFamily: "monospace",
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ColorSpan str="@#FF77B7Error:@# This page doesn't exist. Use @#00ffaa'cd'@# back to home page" />
+        <div className="sub-container2" style={{ fontFamily: "monospace" }}>
+          <div>
+            <ColorSpan str="@#FF77B7Error:@# This page doesn't exist. Use @#00ffaa'cd'@# back to home page" />
+          </div>
         </div>
       </div>
     </div>

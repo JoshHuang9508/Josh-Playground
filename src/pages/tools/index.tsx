@@ -9,7 +9,7 @@ import { setCommand } from "../../redux/commandSlice";
 // Import components
 import ColorSpan from "../../components/ColorSpan";
 // Import json
-import textContent from "../../../src/lib/textContent.json";
+import textContent from "../../lib/textContent.json";
 
 export default function Page() {
   // Command control
@@ -36,15 +36,12 @@ export default function Page() {
             <div
               key={index}
               className={"sub-container1"}
-              style={{ gap: "1rem" }}
+              style={{ gap: "1rem", fontFamily: "monospace" }}
             >
-              <ColorSpan str={item.title} className={styles["title"]} />
+              <ColorSpan str={item.title} className="header2" />
               <img className={styles["screen-shot"]} />
-              <div className={"flex"}>
-                <ColorSpan
-                  str={item.description}
-                  className={styles["description"]}
-                />
+              <div>
+                <ColorSpan str={item.description} className="p1" />
               </div>
             </div>
           </div>

@@ -7,6 +7,10 @@ import ReactPlayer from "react-player";
 import store, { AddConsoleLog } from "../../redux/store";
 import { setCommand } from "../../redux/commandSlice";
 // Import types
+// Import components
+import ColorSpan from "../../components/ColorSpan";
+// Import json
+import textContent from "../../lib/textContent.json";
 
 export default function Page() {
   // API server
@@ -136,20 +140,31 @@ export default function Page() {
 
   return (
     <div className={"content-div"}>
-      <div className={"container2"} style={{ gap: "1rem" }}>
-        <div className={"sub-container1"} style={{ gap: "1rem" }}>
-          <p className={"header2"}>在線使用者</p>
-        </div>
-        <div className={"sub-container1"} style={{ gap: "1rem" }}>
-          <p className={"header2"}>房間日誌</p>
-        </div>
-      </div>
-
-      <div className={"container1"}></div>
-
       <div className={"container1"}>
-        <div className={"sub-container1"} style={{ gap: "1rem" }}>
-          <p className={"header2"}>{"播放歌單"}</p>
+        <div className={"sub-container2"} style={{ fontFamily: "monospace" }}>
+          <div
+            className="col"
+            style={{
+              gap: "0.5rem",
+              justifyContent: "center",
+            }}
+          >
+            {textContent["tools/ytdownloader/"].tutorial.map(
+              (content, index) => {
+                if (index == 0)
+                  return (
+                    <div key={index}>
+                      <ColorSpan str={content} className="header2" />
+                    </div>
+                  );
+                return (
+                  <div key={index}>
+                    <ColorSpan str={content} className="p1" />
+                  </div>
+                );
+              }
+            )}
+          </div>
         </div>
       </div>
     </div>

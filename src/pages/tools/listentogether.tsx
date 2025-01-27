@@ -532,7 +532,7 @@ export default function Page() {
       </div>
 
       <div className={"container1"}>
-        <div className={styles["player"]}>
+        <div className={"sub-container1"} style={{ pointerEvents: "none" }}>
           {isClient && playerState && (
             <ReactPlayer
               style={

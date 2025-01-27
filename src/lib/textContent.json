@@ -1,10 +1,10 @@
 {
   "/": {
     "title": "Whydog's playground",
-    "subtitle": "A site dedicated to mouse-free navigation.",
+    "subtitle": "A site dedicated to mouse-free navigation",
     "about": [
-      "@#FFF700Whitedog@#@@#00f3ffNTUST-CSIE@#, Taiwan (18yo)",
-      "(a.k.a. Whydog)",
+      "@#FFF700Whitedog@#@@#00f3ffNTUST-CSIE@#, Taiwan",
+      "(18yo) (a.k.a. Whydog)",
       "I @#FF77B7love@# @#00ffaaplaying games@# and @#00ffaacoding@#. Sometimes @#00ffaawatching anime@#.",
       "I @#FF77B7want@# to be a @#00ffaafull-stack@# developer, as well as a @#00ffaaUI/UX@# designer.",
       "This website is built with @#00ffaaReact@#, and I'm still working on it.",
@@ -13,7 +13,7 @@
   },
   "tools/": {
     "title": "Tool box",
-    "subtitle": "Here are some tools I've made. Feel free to try them out!",
+    "subtitle": "Here are some tools I've made",
     "item": [
       {
         "title": "@#FFF700./listentogether",
@@ -35,11 +35,19 @@
   },
   "tools/ytdownloader/": {
     "title": "YouTube Downloader",
-    "subtitle": "A web-based YouTube video downloader"
+    "subtitle": "A web-based YouTube video downloader",
+    "tutorial": [
+      "@#FFF700How to use?",
+      "1. @#FF77B7Copy@# the @#00ffaaURL@# of the @#00ffaaYouTube video@# you want to download.",
+      "2. @#FF77B7Type@# @#00ffaa'download'@# in the console and paste the @#00ffaaURL@#.",
+      "3. @#FF77B7Use@# flag @#00ffaa'-a'@# to download the @#00ffaaaudio@# only, or @#00ffaa'-v'@# to download the @#00ffaavideo@# only.",
+      "4. @#FF77B7Wait@# for the download to complete.",
+      "@#f9f284Enjoy your download!"
+    ]
   },
   "games/": {
     "title": "Game center",
-    "subtitle": "Here are some games I've made. Feel free to play them!",
+    "subtitle": "Here are some games I've made",
     "item": [
       {
         "title": "@#FFF700./colorgame",

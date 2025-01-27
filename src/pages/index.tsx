@@ -57,7 +57,10 @@ export default function Page() {
         loop
       />
       <div className={"container1"}>
-        <div className={styles["introduce"]}>
+        <div
+          className="sub-container2"
+          style={{ fontFamily: "monospace", gap: "1rem" }}
+        >
           <img
             className={styles["profile-picture"]}
             src={profileImage.src}
@@ -73,19 +76,13 @@ export default function Page() {
             {textContent["/"].about.map((content, index) => {
               if (index == 0)
                 return (
-                  <div key={index} className="row">
-                    <ColorSpan
-                      str={content}
-                      className={styles["introduce-title"]}
-                    />
+                  <div key={index}>
+                    <ColorSpan str={content} className="header2" />
                   </div>
                 );
               return (
-                <div key={index} className="row">
-                  <ColorSpan
-                    str={content}
-                    className={styles["introduce-content"]}
-                  />
+                <div key={index}>
+                  <ColorSpan str={content} className="p1" />
                 </div>
               );
             })}
