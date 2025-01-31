@@ -40,6 +40,16 @@
   ],
   "/": [
     {
+      "name": "github",
+      "description": "Open my GitHub page",
+      "usage": "github"
+    },
+    {
+      "name": "youtube",
+      "description": "Open my YouTube channel",
+      "usage": "youtube"
+    },
+    {
       "name": "music",
       "description": "Background music options",
       "usage": "music [option]",

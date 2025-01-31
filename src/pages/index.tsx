@@ -63,6 +63,12 @@ export default function Page() {
       case "log":
         // Use for debugging
         break;
+      case "github":
+        window.open("https://github.com/JoshHuang9508", "_blank");
+        AddConsoleLog(["Opening my @#FFF700GitHub@# page..."]);
+      case "youtube":
+        window.open("https://www.youtube.com/@whydog5555", "_blank");
+        AddConsoleLog(["Opening my @#FFF700YouTube@# channel..."]);
       case "music":
         if (flags.includes("-l") || flags.includes("--list")) {
           AddConsoleLog([
