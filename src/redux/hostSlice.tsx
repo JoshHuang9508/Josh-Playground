@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const hostSlice = createSlice({
   name: "hostSlice",
-  initialState: "https://8a3f-36-50-249-80.ngrok-free.app" as string,
+  initialState: "https://b01e-2001-df2-45c1-75-00-1.ngrok-free.app" as string,
   reducers: {},
 });
 
