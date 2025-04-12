@@ -13,7 +13,7 @@ import { PlayerState, Track, PlayerStateClient, User } from "../../lib/types";
 
 export default function Page() {
   // API server
-  const hostURL = useSelector((state: { host: string }) => state.host);
+  const API_URL = useSelector((state: { host: string }) => state.host);
 
   // Client control
   const [isClient, setIsClient] = useState(false);
@@ -39,7 +39,7 @@ export default function Page() {
   const [socketInstance, setSocketInstance] = useState<Socket>();
 
   useEffect(() => {
-    const socket = io(hostURL, {
+    const socket = io(API_URL, {
       transports: ["websocket"],
     });
 
@@ -450,7 +450,7 @@ export default function Page() {
 
   // API control
   const getVideoInfoAPI = async (videoId: string): Promise<Track> => {
-    const data = await fetch(`${hostURL}/api/ytdl?videoId=${videoId}`, {
+    const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
       method: "GET",
       headers: {
         "ngrok-skip-browser-warning": "true",
@@ -477,7 +477,7 @@ export default function Page() {
     return track;
   };
   const getPlaylistAPI = async (playlistId: string): Promise<Track[]> => {
-    const data = await fetch(`${hostURL}/api/ytpl?playlistId=${playlistId}`, {
+    const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
       method: "GET",
       headers: {
         "ngrok-skip-browser-warning": "true",

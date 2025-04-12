@@ -14,7 +14,7 @@ import textContent from "../../lib/textContent.json";
 
 export default function Page() {
   // API server
-  const hostURL = useSelector((state: { host: string }) => state.host);
+  const API_URL = useSelector((state: { host: string }) => state.host);
 
   // Command control
   const command = useSelector((state: { command: string }) => state.command);
@@ -28,7 +28,7 @@ export default function Page() {
         .filter((_) => _.startsWith("-")) ?? "";
     switch (command.split(" ")[0]) {
       case "log":
-        AddConsoleLog([hostURL]);
+        AddConsoleLog([API_URL]);
         // Use for debugging
         break;
       case "download":
@@ -89,7 +89,7 @@ export default function Page() {
     switch (format) {
       case "mp4":
         const blob_mp4 = await fetch(
-          `${hostURL}/api/ytdownload-mp4?videoId=${videoId}`,
+          `${API_URL}/api/ytdownload-mp4?videoId=${videoId}`,
           {
             method: "GET",
             headers: {
@@ -113,7 +113,7 @@ export default function Page() {
         return blob_mp4;
       case "mp3":
         const blob_mp3 = await fetch(
-          `${hostURL}/api/ytdownload-mp3?videoId=${videoId}`,
+          `${API_URL}/api/ytdownload-mp3?videoId=${videoId}`,
           {
             method: "GET",
             headers: {
