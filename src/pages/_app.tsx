@@ -62,10 +62,12 @@ export default function Page({ Component, pageProps }) {
     if (typeof window !== "undefined") {
       const paths = window.location.pathname.split("/").filter(Boolean);
       setCurrentURL(`${paths.join("/")}/`); // Change current URL to window.location.pathname instead of `${paths.join("/")}/`
-      setAvailableCommands([
-        ...commandList["*"],
-        ...(commandList[`${paths.join("/")}/`] ?? []),
-      ]);
+      setAvailableCommands(
+        [
+          ...commandList["*"],
+          ...(commandList[`${paths.join("/")}/`] ?? []),
+        ].sort((a, b) => a.name.localeCompare(b.name))
+      );
       setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
     }
   }, []);
@@ -97,7 +99,7 @@ export default function Page({ Component, pageProps }) {
     const value = event.target.value;
     setInputValue(value);
 
-    const available = autoComplete(value, availableCommands);
+    const available = findAvailable(value, availableCommands);
     setAvailable(available);
     if (inputBox.current) {
       inputBox.current.style.color = available.length > 0 ? "#fff700" : "";
@@ -250,22 +252,22 @@ export default function Page({ Component, pageProps }) {
     return input + replace;
   };
 
-  const autoComplete = (input: string, commands: Command[]): string[] => {
+  const findAvailable = (input: string, commands: Command[]): string[] => {
     const parts = input.split(" ");
     const lastPart = parts[parts.length - 1];
     const command =
       parts.length <= 1 ? "" : commands.find((cmd) => cmd.name === parts[0]);
-    let suggestions: string[] = [];
+    let availables: string[] = [];
 
     if (input == "" || input == " ") {
-      return suggestions;
+      return availables;
     }
     if (
       !command &&
       !input.endsWith(" ") &&
       commands.filter((_) => _.name.startsWith(parts[0])).length != 0
     ) {
-      suggestions.push(
+      availables.push(
         ...commands
           .filter(
             (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart
@@ -273,18 +275,8 @@ export default function Page({ Component, pageProps }) {
           .map((cmd) => cmd.name)
       );
     } else if (command) {
-      // suppose that sub-sub-commands are not supported
-      if (command.subCommands) {
-        suggestions.push(
-          ...command.subCommands
-            .filter(
-              (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart
-            )
-            .map((cmd) => cmd.name)
-        );
-      }
       if (command.options) {
-        suggestions.push(
+        availables.push(
           ...command.options.filter(
             (opt) => opt.startsWith(lastPart) && opt != lastPart
           )
@@ -297,13 +289,13 @@ export default function Page({ Component, pageProps }) {
       lastPart.startsWith("/") ||
       lastPart.includes("\\")
     ) {
-      suggestions.push(...completePath(lastPart));
+      availables.push(...findAvailablePath(lastPart));
     }
 
-    return suggestions;
+    return availables;
   };
 
-  const completePath = (input: string) => {
+  const findAvailablePath = (input: string) => {
     const paths = input.split("/");
     const lastPath = paths.pop();
     const pagePaths = window.location.pathname.split("/").filter(Boolean);
