@@ -61,7 +61,7 @@ div.title-div {
   flex-direction: row;
   gap: 1rem;
   padding: 1rem;
-  font-family: "SignatureFont";
+  font-family: "Noto Sans TC", sans-serif;
   justify-content: center;
   align-items: center;
   height: fit-content;

@@ -359,17 +359,17 @@ export default function Page({ Component, pageProps }) {
       <div
         style={{ height: "100vh", display: "flex", flexDirection: "column" }}
       >
-        <img src={backgroundImage.src} className={styles["background"]} />
+        {/* <img src={backgroundImage.src} className={styles["background"]} /> */}
 
         <div className={styles["container"]}>
-          <div className={"title-div"}>
+          {/* <div className={"title-div"}>
             <p className={"title"}>
               {textContent[currentURL]?.title ?? textContent["*"].title}
             </p>
             <p className={"subtitle"}>
               {textContent[currentURL]?.subtitle ?? textContent["*"].subtitle}
             </p>
-          </div>
+          </div> */}
           <Component {...pageProps} />
         </div>
 
