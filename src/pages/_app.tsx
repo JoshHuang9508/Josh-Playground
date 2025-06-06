@@ -17,7 +17,7 @@ import textContent from "../lib/textContent.json";
 import commandList from "../lib/commandList.json";
 import pathList from "../lib/pathList.json";
 
-import backgroundImage from "../../public/assets/bg.jpg";
+// import backgroundImage from "../../public/assets/bg.jpg";
 
 const webPaths = [
   ["", ["tools", "listentogether", "ytdownloader"], ["games", "colorgame"]],
@@ -398,7 +398,7 @@ export default function Page({ Component, pageProps }) {
               ref={inputBox}
               type="text"
               value={`${inputValue}`}
-              placeholder="Feel confused? Type 'help' to get started!"
+              placeholder="Feel confused? Type 'help' to get started! Press 'Escape' to hide/show the console."
               onChange={handleInputChange}
               onKeyDown={handleEnter}
             />
