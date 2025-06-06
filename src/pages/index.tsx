@@ -143,7 +143,7 @@ export default function Page() {
           />
           <div
             className={`${styles["music-info"]} ${
-              showMusicInfo ? "" : styles["hidden"]
+              showMusicInfo ? styles["show"] : styles["hidden"]
             }`}
           >
             <ColorSpan

@@ -53,26 +53,14 @@ img.profile-picture.spin {
 div.music-info {
   display: flex;
   justify-content: flex-start;
-  animation: slideIn 1s forwards;
+  transition: all 1s ease-in-out;
+  margin-bottom: 1rem;
+}
+div.music-info.show {
+  width: 30%;
 }
 div.music-info.hidden {
-  animation: slideOut 1s forwards;
-}
-@keyframes slideIn {
-  from {
-    width: 0;
-  }
-  to {
-    width: 30%;
-  }
-}
-@keyframes slideOut {
-  from {
-    width: 30%;
-  }
-  to {
-    width: 0;
-  }
+  width: 0;
 }
 
 @media (max-width: 1200px) {
@@ -80,29 +68,16 @@ div.music-info.hidden {
     width: 10rem;
     height: 10rem;
     margin: 1rem;
+    margin-bottom: 0;
   }
 
   div.music-info {
     justify-content: center;
   }
-  @keyframes slideIn {
-    from {
-      width: 0;
-      margin-bottom: 0;
-    }
-    to {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
+  div.music-info.show {
+    width: 100%;
   }
-  @keyframes slideOut {
-    from {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
-    to {
-      width: 0;
-      margin-bottom: 0;
-    }
+  div.music-info.hidden {
+    width: 0;
   }
 }
