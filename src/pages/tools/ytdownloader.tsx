@@ -14,7 +14,7 @@ import textContent from "../../lib/textContent.json";
 
 export default function Page() {
   // API server
-  const API_URL = useSelector((state: { host: string }) => state.host);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   // Command control
   const command = useSelector((state: { command: string }) => state.command);

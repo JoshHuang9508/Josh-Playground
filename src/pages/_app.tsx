@@ -17,6 +17,10 @@ import textContent from "../lib/textContent.json";
 import commandList from "../lib/commandList.json";
 import pathList from "../lib/pathList.json";
 
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env" });
+
 // import backgroundImage from "../../public/assets/bg.jpg";
 
 const webPaths = [
