@@ -317,7 +317,6 @@ export default function Page({ Component, pageProps }) {
   useEffect(() => {
     const cmdHistory = localStorage.getItem("cmdHistory")?.split(",") ?? [];
     setCmdHistory(cmdHistory);
-    setCmdHistoryIndex(cmdHistory.length - 1);
   }, []);
 
   useEffect(() => {
