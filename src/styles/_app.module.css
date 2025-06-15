@@ -98,12 +98,42 @@ div.console div.input input {
   outline: none;
 }
 
+div.console div.input input::placeholder {
+  filter: invert(-1);
+}
+
 div.console div.input input:focus {
   outline: none;
 }
 
+div.un-support {
+  z-index: 999;
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: fit-content;
+  margin: 1rem 2rem 2rem 2rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: #ffffff10;
+  box-shadow: 0 0 1rem #00000040;
+  font-family: monospace;
+  line-height: 1.25rem;
+  color: #bababa;
+  backdrop-filter: blur(0.5rem);
+  transition: height 0.3s ease-in-out;
+}
+
 @media (max-width: 1200px) {
   div.console {
-    margin: 1rem 2rem 2rem 2rem;
+    display: none;
+  }
+
+  div.un-support {
+    display: flex;
   }
 }

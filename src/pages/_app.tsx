@@ -475,6 +475,14 @@ export default function Page({ Component, pageProps }) {
             />
           </div>
         </div>
+
+        <div className={styles["un-support"]}>
+          <ColorSpan
+            str={
+              "@#FF77B7Mobile device@# is @#FFA24Cnot supported.@# Please use a desktop browser. "
+            }
+          />
+        </div>
       </div>
     </Provider>
   );
