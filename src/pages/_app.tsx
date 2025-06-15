@@ -427,7 +427,13 @@ export default function Page({ Component, pageProps }) {
       </Head>
 
       <div
-        style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+        style={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
+          width: "100vw",
+        }}
       >
         <img
           src={backgroundImageUrl}
