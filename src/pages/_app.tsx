@@ -81,6 +81,7 @@ export default function Page({ Component, pageProps }) {
   const [consoleVisible, setConsoleVisible] = useState(true);
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
 
   // Handlers
   const handleInputChange = (event) => {
@@ -158,9 +159,11 @@ export default function Page({ Component, pageProps }) {
           break;
         case "background":
           const url = command.split(" ")[1] ?? "";
-          if (url) {
-            document.body.style.backgroundImage = `url(${url})`;
+          if (!url) {
+            AddConsoleLog(["URL invalid! Usage: background [url]"]);
+            break;
           }
+          setBackgroundImageUrl(url);
           break;
         case "username":
           const name = command.split(" ").slice(1)[0] ?? "";
@@ -333,6 +336,15 @@ export default function Page({ Component, pageProps }) {
   }, [username]);
 
   useEffect(() => {
+    const backgroundImageUrl = localStorage.getItem("backgroundImageUrl") ?? "";
+    setBackgroundImageUrl(backgroundImageUrl);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("backgroundImageUrl", backgroundImageUrl);
+  }, [backgroundImageUrl]);
+
+  useEffect(() => {
     AddConsoleLog(
       localStorage.getItem("consoleContent")?.split(",") ?? [
         "Welcome to the console!",
@@ -387,7 +399,11 @@ export default function Page({ Component, pageProps }) {
       <div
         style={{ height: "100vh", display: "flex", flexDirection: "column" }}
       >
-        {/* <img src={"/assets/bg.jpg"} className={styles["background"]} /> */}
+        <img
+          src={backgroundImageUrl}
+          className={styles["background"]}
+          alt="background"
+        />
 
         <div className={styles["container"]}>
           <Component {...pageProps} />
