@@ -5,7 +5,6 @@ div.container {
   gap: 1rem;
   min-height: 60%;
   border: none;
-  border-radius: 1rem;
   justify-content: flex-start;
   align-items: center;
   overflow: auto;
@@ -27,6 +26,7 @@ img.background {
 }
 
 div.console {
+  z-index: 999;
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -103,10 +103,6 @@ div.console div.input input:focus {
 }
 
 @media (max-width: 1200px) {
-  div.container {
-    display: block;
-    margin: 2rem 2rem 1rem 2rem;
-  }
   div.console {
     margin: 1rem 2rem 2rem 2rem;
   }

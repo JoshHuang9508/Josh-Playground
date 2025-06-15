@@ -14,83 +14,56 @@ import { setCommand } from "@/redux/commandSlice";
 import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
 
 export default function Page() {
-  // API server
+  // Constants
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const MAX_TRACKS_PER_PAGE = 8;
 
-  // Client control
+  // Refs
+  const playerRef = useRef<ReactPlayer>(null);
+
+  // Redux
+  const command = useSelector((state: { command: string }) => state.command);
+  const username = useSelector((state: { user: string }) => state.user);
+
+  // States
   const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Mute control
   const [isAllowedToUnmute, setIsAllowedToUnmute] = useState(false);
-
-  useEffect(() => {
-    const enablePlay = () => setIsAllowedToUnmute(true);
-    document.addEventListener("click", enablePlay);
-    document.addEventListener("touchstart", enablePlay);
-    return () => {
-      document.removeEventListener("click", enablePlay);
-      document.removeEventListener("touchstart", enablePlay);
-    };
-  }, []);
-
-  // Socket control
   const [socketInstance, setSocketInstance] = useState<Socket>();
+  const [users, setUsers] = useState<User>({});
+  const [playerState, setPlayerState] = useState<PlayerState>({
+    playing: false,
+    played: 0,
+    playedSeconds: 0,
+    loaded: 0,
+    loadedSeconds: 0,
+    duration: 0,
+    playbackRate: 1,
+    loop: false,
+    random: false,
+    trackQueue: [],
+    currentTrack: null,
+    index: 0,
+    isEnd: false,
+  });
+  const [PlayerStateClient, setPlayerStateClient] = useState<PlayerStateClient>(
+    {
+      volume: 0.5,
+      seeking: false,
+      isReady: false,
+    }
+  );
+  const [playlist, setPlaylist] = useState<Track[][]>([]);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [logs, setLogs] = useState<string[]>([]);
 
-  useEffect(() => {
-    const socket = io(API_URL, {
-      transports: ["websocket"],
-    });
-
-    setSocketInstance(socket);
-
-    socket.on("connect", async () => {
-      AddConsoleLog([`Connect server success (id: ${socket.id})`]);
-      socket.emit("join", localStorage.getItem("username") ?? "Anonymous");
-      socket.emit("ready");
-    });
-    socket.on("connect_error", () => {
-      AddConsoleLog([`Connect server error (id: ${socket.id})`]);
-    });
-    socket.on("error", (error) => {
-      AddConsoleLog([`Connect server error: ${error.message}`]);
-    });
-    socket.on("disconnect", () => {
-      AddConsoleLog([`Disconnect from server`]);
-    });
-    socket.on("receivePlayerState", (state) => {
-      console.log("Receive player state");
-      setPlayerState({ ...playerState, ...state });
-    });
-    socket.on("receiveLog", (logs) => {
-      console.log("Receive logs");
-      setLogs(logs);
-    });
-    socket.on("receiveUsers", (users) => {
-      console.log("Receive users");
-      setUsers(users);
-    });
-    socket.on("seek", (time) => {
-      console.log("Seek to: ", time);
-      player.current?.seekTo(time);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
+  // Handlers
   const SetUsername = (username: string) => {
     socketInstance?.emit("setUsername", username);
   };
-
   const AddRoomLog = (log: string) => {
     socketInstance?.emit("addLog", log);
   };
-
   const SetPlayerState = (state: PlayerState) => {
     socketInstance?.emit("setPlayerState", state);
   };
@@ -143,19 +116,126 @@ export default function Page() {
     socketInstance?.emit("seek", time);
   };
 
-  // User control
-  const [users, setUsers] = useState<User>({});
-  const username = useSelector((state: { user: string }) => state.user);
+  const getVideoInfoAPI = async (videoId: string): Promise<Track> => {
+    const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        AddConsoleLog([`Error getting video info: ${error}`]);
+        throw error;
+      });
+    const track: Track = {
+      url: data.video_url,
+      title: data.title,
+      author: data.ownerChannelName,
+      img: data.thumbnails[data.thumbnails.length - 1].url,
+      requestBy: username,
+      id: Date.now(),
+    };
+    return track;
+  };
+
+  const getPlaylistAPI = async (playlistId: string): Promise<Track[]> => {
+    const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        AddConsoleLog([`Error getting playlist info: ${error}`]);
+        throw error;
+      });
+    const tracks: Track[] = data.map((item: any, index) => {
+      return {
+        url: item.shortUrl,
+        title: item.title,
+        author: item.author.name,
+        img: item.thumbnails[item.thumbnails.length - 1].url,
+        requestBy: username,
+        id: `${index}-${Date.now()}`,
+      };
+    });
+    return tracks;
+  };
+
+  // Effects
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    const enablePlay = () => setIsAllowedToUnmute(true);
+    document.addEventListener("click", enablePlay);
+    document.addEventListener("touchstart", enablePlay);
+    return () => {
+      document.removeEventListener("click", enablePlay);
+      document.removeEventListener("touchstart", enablePlay);
+    };
+  }, []);
+
+  useEffect(() => {
+    const socket = io(API_URL, {
+      transports: ["websocket"],
+    });
+
+    setSocketInstance(socket);
+
+    socket.on("connect", async () => {
+      AddConsoleLog([`Connect server success (id: ${socket.id})`]);
+      socket.emit("join", localStorage.getItem("username") ?? "Anonymous");
+      socket.emit("ready");
+    });
+    socket.on("connect_error", () => {
+      AddConsoleLog([`Connect server error (id: ${socket.id})`]);
+    });
+    socket.on("error", (error) => {
+      AddConsoleLog([`Connect server error: ${error.message}`]);
+    });
+    socket.on("disconnect", () => {
+      AddConsoleLog([`Disconnect from server`]);
+    });
+    socket.on("receivePlayerState", (state) => {
+      console.log("Receive player state");
+      setPlayerState({ ...playerState, ...state });
+    });
+    socket.on("receiveLog", (logs) => {
+      console.log("Receive logs");
+      setLogs(logs);
+    });
+    socket.on("receiveUsers", (users) => {
+      console.log("Receive users");
+      setUsers(users);
+    });
+    socket.on("seek", (time) => {
+      if (!playerRef.current) return;
+      console.log("Seek to: ", time);
+      playerRef.current.seekTo(time);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     SetUsername(username);
   }, [username]);
-
-  // Log control
-  const [logs, setLogs] = useState<string[]>([]);
-
-  // Command control
-  const command = useSelector((state: { command: string }) => state.command);
 
   useEffect(() => {
     if (!command || command == "") return;
@@ -401,48 +481,33 @@ export default function Page() {
     store.dispatch(setCommand(""));
   }, [command]);
 
-  // Player control
-  const player = useRef<ReactPlayer>(null);
-  const [playerState, setPlayerState] = useState<PlayerState>({
-    playing: false,
-    played: 0,
-    playedSeconds: 0,
-    loaded: 0,
-    loadedSeconds: 0,
-    duration: 0,
-    playbackRate: 1,
-    loop: false,
-    random: false,
-    trackQueue: [],
-    currentTrack: null,
-    index: 0,
-    isEnd: false,
-  });
-  const [PlayerStateClient, setPlayerStateClient] = useState<PlayerStateClient>(
-    {
-      volume: 0.5,
-      seeking: false,
-      isReady: false,
-    }
-  );
-  const [playlist, setPlaylist] = useState<Track[][]>([]);
-  const [totalPage, setTotalPage] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-
   useEffect(() => {
     const newPlaylist: Track[][] = [];
-    for (let i = 0; i < playerState.trackQueue.length; i += 4) {
-      newPlaylist.push(playerState.trackQueue.slice(i, i + 4));
+    for (
+      let i = 0;
+      i < playerState.trackQueue.length;
+      i += MAX_TRACKS_PER_PAGE
+    ) {
+      newPlaylist.push(
+        playerState.trackQueue.slice(i, i + MAX_TRACKS_PER_PAGE)
+      );
     }
     setPlaylist(newPlaylist);
   }, [playerState.trackQueue]);
 
   useEffect(() => {
-    setTotalPage(Math.ceil(playerState.trackQueue.length / 4));
+    setTotalPage(
+      Math.ceil(playerState.trackQueue.length / MAX_TRACKS_PER_PAGE)
+    );
   }, [playerState.trackQueue]);
 
   useEffect(() => {
-    setCurrentPage(Math.min(totalPage, Math.ceil((playerState.index + 1) / 4)));
+    setCurrentPage(
+      Math.min(
+        totalPage,
+        Math.ceil((playerState.index + 1) / MAX_TRACKS_PER_PAGE)
+      )
+    );
   }, [playerState.index, totalPage]);
 
   useEffect(() => {
@@ -450,185 +515,110 @@ export default function Page() {
     setPlayerStateClient((prev) => ({ ...prev, volume: volume / 100 }));
   }, []);
 
-  // API control
-  const getVideoInfoAPI = async (videoId: string): Promise<Track> => {
-    const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
-      method: "GET",
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        AddConsoleLog([`Error getting video info: ${error}`]);
-        throw error;
-      });
-    const track: Track = {
-      url: data.video_url,
-      title: data.title,
-      author: data.ownerChannelName,
-      img: data.thumbnails[data.thumbnails.length - 1].url,
-      requestBy: username,
-      id: Date.now(),
-    };
-    return track;
-  };
-  const getPlaylistAPI = async (playlistId: string): Promise<Track[]> => {
-    const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
-      method: "GET",
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        AddConsoleLog([`Error getting playlist info: ${error}`]);
-        throw error;
-      });
-    const tracks: Track[] = data.map((item: any, index) => {
-      return {
-        url: item.shortUrl,
-        title: item.title,
-        author: item.author.name,
-        img: item.thumbnails[item.thumbnails.length - 1].url,
-        requestBy: username,
-        id: `${index}-${Date.now()}`,
-      };
-    });
-    return tracks;
-  };
-
   return (
-    <div className={"content-div"}>
-      <div className={"container2"} style={{ gap: "1rem" }}>
-        <div className={"sub-container1"} style={{ gap: "1rem" }}>
-          <p className={"header2"}>在線使用者</p>
-          <div className={"flex"}>
-            {Object.keys(users).map((id, index) => (
-              <p key={index} className={styles["online-user"]}>
-                ● {users[id]}
-              </p>
-            ))}
-          </div>
-        </div>
-        <div className={"sub-container1"} style={{ gap: "1rem" }}>
-          <p className={"header2"}>房間日誌</p>
-          <div className={"flex"}>
-            {logs.map((log, index) => (
-              <p key={index} className={styles["log"]}>
-                {log}
-              </p>
-            ))}
-          </div>
+    <div className={styles["content"]}>
+      <div className={styles["loggerContainer"]}>
+        <p className={"header2"}>房間日誌</p>
+        <div className={styles["log-list"]}>
+          {logs.map((log, index) => (
+            <p key={index} className={styles["log"]}>
+              {log}
+            </p>
+          ))}
         </div>
       </div>
 
-      <div className={"container1"}>
-        <div className={"sub-container1"} style={{ pointerEvents: "none" }}>
-          {isClient && playerState && (
-            <ReactPlayer
-              style={
-                playerState.trackQueue.length > 0 ? {} : { display: "none" }
-              }
-              ref={player}
-              url={playerState.currentTrack?.url ?? ""}
-              playing={
-                playerState.trackQueue.length > 0 &&
-                PlayerStateClient.isReady &&
-                !PlayerStateClient.seeking &&
-                playerState.playing
-              }
-              volume={PlayerStateClient.volume}
-              muted={!isAllowedToUnmute}
-              loop={playerState.loop}
-              playbackRate={playerState.playbackRate}
-              controls={false}
-              onProgress={(state) => {
-                onProgress(state);
-              }}
-              onDuration={(duration) => {
-                onDuration(duration);
-              }}
-              onEnded={() => {
-                onEnd();
-              }}
-              onError={(error) => {
-                AddConsoleLog([`Error: ${error}`]);
-              }}
-              onReady={() => {
-                if (PlayerStateClient.isReady) return;
-                Refresh();
+      <div className={styles["playerContainer"]}>
+        {isClient && playerState && (
+          <ReactPlayer
+            style={playerState.trackQueue.length > 0 ? {} : { display: "none" }}
+            ref={playerRef}
+            url={playerState.currentTrack?.url ?? ""}
+            playing={
+              playerState.trackQueue.length > 0 &&
+              PlayerStateClient.isReady &&
+              !PlayerStateClient.seeking &&
+              playerState.playing
+            }
+            volume={PlayerStateClient.volume}
+            muted={!isAllowedToUnmute}
+            loop={playerState.loop}
+            playbackRate={playerState.playbackRate}
+            controls={false}
+            onProgress={(state) => {
+              onProgress(state);
+            }}
+            onDuration={(duration) => {
+              onDuration(duration);
+            }}
+            onEnded={() => {
+              onEnd();
+            }}
+            onError={(error) => {
+              AddConsoleLog([`Error: ${error}`]);
+            }}
+            onReady={() => {
+              if (PlayerStateClient.isReady) return;
+              Refresh();
+              setPlayerStateClient((prev) => ({
+                ...prev,
+                isReady: true,
+              }));
+            }}
+            onSeek={() => {
+              setPlayerStateClient((prev) => ({
+                ...prev,
+                seeking: true,
+              }));
+              setTimeout(() => {
                 setPlayerStateClient((prev) => ({
                   ...prev,
-                  isReady: true,
+                  seeking: false,
                 }));
-              }}
-              onSeek={() => {
-                setPlayerStateClient((prev) => ({
-                  ...prev,
-                  seeking: true,
-                }));
-                setTimeout(() => {
-                  setPlayerStateClient((prev) => ({
-                    ...prev,
-                    seeking: false,
-                  }));
-                }, 1000);
-              }}
-              width="100%"
-              height="100%"
-            />
-          )}
-        </div>
+              }, 1000);
+            }}
+            width="100%"
+            height="100%"
+          />
+        )}
       </div>
 
-      <div className={"container1"}>
-        <div className={"sub-container1"} style={{ gap: "1rem" }}>
-          <p className={"header2"}>
-            {"播放歌單" +
-              (playerState.trackQueue.length > 0
-                ? `(${currentPage}/${totalPage})`
-                : "")}
-          </p>
-          <div className={styles["track-card-list"]}>
-            {playlist[currentPage - 1]?.map((track, index) => (
-              <div
-                key={index + (currentPage - 1) * 4}
-                className={`${styles["track-card"]} ${
-                  index + (currentPage - 1) * 4 === playerState.index
-                    ? styles["selected"]
-                    : ""
-                }`}
-              >
-                <div className={styles["track-info"]}>
-                  <img style={{ height: "100%" }} src={track.img} />
-                  <div>
-                    <p className={styles["track-title"]}>
-                      {"#" +
-                        (index + (currentPage - 1) * 4) +
-                        " " +
-                        track.author +
-                        " | " +
-                        track.title}
-                    </p>
-                    <p className={styles["track-subtitle"]}>
-                      {"Add by: " + track.requestBy}
-                    </p>
-                  </div>
+      <div className={styles["playlistContainer"]}>
+        <p className={"header2"}>
+          {"Playlist" +
+            (playerState.trackQueue.length > 0
+              ? `(${currentPage}/${totalPage})`
+              : "")}
+        </p>
+        <div className={styles["track-card-list"]}>
+          {playlist[currentPage - 1]?.map((track, index) => (
+            <div
+              key={index + (currentPage - 1) * MAX_TRACKS_PER_PAGE}
+              className={`${styles["track-card"]} ${
+                index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
+                playerState.index
+                  ? styles["selected"]
+                  : ""
+              }`}
+            >
+              <div className={styles["track-info"]}>
+                <img style={{ height: "100%" }} src={track.img} />
+                <div>
+                  <p className={styles["track-title"]}>
+                    {"#" +
+                      (index + (currentPage - 1) * MAX_TRACKS_PER_PAGE) +
+                      " " +
+                      track.author +
+                      " | " +
+                      track.title}
+                  </p>
+                  <p className={styles["track-subtitle"]}>
+                    {"Add by: " + track.requestBy}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
