@@ -49,6 +49,7 @@ div.playerContainer {
   gap: 1rem;
   pointer-events: none;
   opacity: 0.5;
+  user-select: none;
 }
 
 div.playlistContainer {
@@ -142,5 +143,35 @@ p.log {
   }
   100% {
     box-shadow: 0 0 2rem rgb(255, 0, 0);
+  }
+}
+
+div.unmute-container {
+  z-index: 200;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000a0;
+  backdrop-filter: blur(1rem);
+  user-select: none;
+  cursor: pointer;
+}
+
+div.unmute-container.active {
+  animation: fade-out 0.3s ease-in-out forwards;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    display: none;
   }
 }

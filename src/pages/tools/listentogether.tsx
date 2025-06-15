@@ -180,14 +180,16 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    const enablePlay = () => setIsAllowedToUnmute(true);
+    const enablePlay = () => {
+      if (PlayerStateClient.isReady) setIsAllowedToUnmute(true);
+    };
     document.addEventListener("click", enablePlay);
     document.addEventListener("touchstart", enablePlay);
     return () => {
       document.removeEventListener("click", enablePlay);
       document.removeEventListener("touchstart", enablePlay);
     };
-  }, []);
+  }, [PlayerStateClient.isReady]);
 
   useEffect(() => {
     const socket = io(API_URL, {
@@ -517,6 +519,14 @@ export default function Page() {
 
   return (
     <div className={styles["content"]}>
+      <div
+        className={`${styles["unmute-container"]} ${
+          isAllowedToUnmute ? styles["active"] : ""
+        }`}
+      >
+        <p className={"header2"}>點我一下</p>
+      </div>
+
       <div className={styles["loggerContainer"]}>
         <p className={"header2"}>房間日誌</p>
         <div className={styles["log-list"]}>
