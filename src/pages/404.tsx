@@ -1,12 +1,12 @@
-// Import packages
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-// Import redux
-import store, { AddConsoleLog } from "../redux/store";
-import { setCommand } from "../redux/commandSlice";
-// Import components
-import ColorSpan from "../components/ColorSpan";
-// Import json
+
+// Redux
+import store, { AddConsoleLog } from "@/redux";
+import { setCommand } from "@/redux/commandSlice";
+
+// Components
+import ColorSpan from "@/components/ColorSpan";
 
 export default function Page() {
   // Command control

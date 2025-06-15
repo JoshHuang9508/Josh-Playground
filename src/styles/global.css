@@ -1,12 +1,12 @@
 @font-face {
   font-family: "StandardFont";
-  src: url("../fonts/zh-tw.ttf") format("truetype");
+  src: url("/fonts/zh-tw.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: "SignatureFont";
-  src: url("../fonts/signature-us.otf") format("opentype");
+  src: url("/fonts/signature-us.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
@@ -23,8 +23,9 @@ body {
   color: white;
   width: 100vw;
   height: 100vh;
-  font-family: "StandardFont", "Noto Sans TC", sans-serif;
+  font-family: "Consolas", "Noto Sans TC", sans-serif;
   font-size: clamp(7px, 0.75vw, 18px);
+  overflow: hidden;
 }
 
 span,
@@ -42,17 +43,21 @@ input {
 div {
   overflow: hidden;
 }
+
 div.flex {
   flex: 1;
 }
+
 div.row {
-  display: flex;
-  flex-direction: row;
+  display: flex !important;
+  flex-direction: row !important;
 }
+
 div.col {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
 }
+
 div.title-div {
   position: sticky;
   top: 0;
@@ -69,26 +74,30 @@ div.title-div {
   backdrop-filter: blur(8px);
   border-bottom: 1px solid #00000040;
 }
+
 div.content-div {
   flex: 1;
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1rem 10rem;
   justify-content: center;
   align-items: center;
   width: 100%;
   overflow: visible;
 }
+
 div.content-div div.container1 {
   flex: 1;
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 35rem;
   border-radius: 1rem;
   opacity: 0;
   animation: fadeIn 2s ease-in forwards;
 }
+
 div.content-div div.container2 {
   flex: 0.5;
   display: flex;
@@ -98,6 +107,7 @@ div.content-div div.container2 {
   opacity: 0;
   animation: fadeIn 2s ease-in forwards;
 }
+
 div.content-div div div.sub-container1 {
   flex: 1;
   display: flex;
@@ -106,6 +116,7 @@ div.content-div div div.sub-container1 {
   background-color: #00000020;
   box-shadow: inset 0 0 2rem #00000040;
 }
+
 div.content-div div div.sub-container2 {
   flex: 1;
   display: flex;
@@ -115,21 +126,6 @@ div.content-div div div.sub-container2 {
   align-items: center;
 }
 
-p.title {
-  font-size: 3.2rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 0 0 1rem white;
-  opacity: 0;
-  animation: fadeIn 2s ease-in forwards;
-}
-p.subtitle {
-  font-size: 2rem;
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 2s ease-in forwards;
-  animation-delay: 1s;
-}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -143,10 +139,12 @@ span.header1,
 p.header1 {
   font-size: 2rem;
 }
+
 span.header2,
 p.header2 {
   font-size: 1.6rem;
 }
+
 span.p1,
 p.p1 {
   font-size: 1rem;
@@ -161,21 +159,26 @@ p.p1 {
   div.title-div {
     flex-direction: column;
   }
+
   div.content-div {
     flex-direction: column;
     justify-content: flex-start;
+    padding: 1rem;
   }
+
   div.content-div div.container1 {
     flex: none;
     height: 35rem;
     width: 100%;
   }
+
   div.content-div div.container2 {
     display: flex;
     flex: none;
     height: 35rem;
     width: 100%;
   }
+
   div.content-div div div.sub-container2 {
     flex-direction: column;
   }

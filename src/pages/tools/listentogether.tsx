@@ -1,15 +1,17 @@
-// Import packages
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
-// Import styles
-import styles from "../../../public/styles/listentogether.module.css";
-// Import redux
-import store, { AddConsoleLog } from "../../redux/store";
-import { setCommand } from "../../redux/commandSlice";
-// Import types
-import { PlayerState, Track, PlayerStateClient, User } from "../../lib/types";
+
+// Styles
+import styles from "@/styles/listentogether.module.css";
+
+// Redux
+import store, { AddConsoleLog } from "@/redux";
+import { setCommand } from "@/redux/commandSlice";
+
+// Types
+import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
 
 export default function Page() {
   // API server

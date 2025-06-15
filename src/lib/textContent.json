@@ -9,6 +9,65 @@
       "I @#FF77B7want@# to be a @#00ffaafull-stack@# developer, as well as a @#00ffaaUI/UX@# designer.",
       "This website is built with @#00ffaaReact@#, and I'm still working on it.",
       "@#f9f284Hope you enjoy your stay here."
+    ],
+    "projects": [
+      {
+        "name": "JoshHuang9508/Josh-Playground",
+        "description": "A personal website for me to showcase my projects and skills.\nLink: https://whydog.xyz/ (This is the one you're looking at)\nUse @#00ffaa'github Josh-Playground'@# to view the source code."
+      },
+      {
+        "name": "JoshHuang9508/Depth-of-Origin-2.0",
+        "description": "Game made in @#00ffaaUnity@# with @#00ffaaC# programming@#.\nUse @#00ffaa'github Depth-of-Origin-2.0'@# to view the source code."
+      },
+      {
+        "name": "NerdyHomeReOpen/RiceCall",
+        "description": "An unofficial copy of @#00ffaaRaidCall@#.\nUse @#00ffaa'github RiceCall'@# to view the source code."
+      },
+      {
+        "name": "JoshHuang9508/Josh-Playground",
+        "description": "A personal website for me to showcase my projects and skills.\nLink: https://whydog.xyz/ (This is the one you're looking at)\nUse @#00ffaa'github Josh-Playground'@# to view the source code."
+      },
+      {
+        "name": "JoshHuang9508/Depth-of-Origin-2.0",
+        "description": "Game made in @#00ffaaUnity@# with @#00ffaaC# programming@#.\nUse @#00ffaa'github Depth-of-Origin-2.0'@# to view the source code."
+      },
+      {
+        "name": "NerdyHomeReOpen/RiceCall",
+        "description": "An unofficial copy of @#00ffaaRaidCall@#.\nUse @#00ffaa'github RiceCall'@# to view the source code."
+      },{
+        "name": "JoshHuang9508/Josh-Playground",
+        "description": "A personal website for me to showcase my projects and skills.\nLink: https://whydog.xyz/ (This is the one you're looking at)\nUse @#00ffaa'github Josh-Playground'@# to view the source code."
+      },
+      {
+        "name": "JoshHuang9508/Depth-of-Origin-2.0",
+        "description": "Game made in @#00ffaaUnity@# with @#00ffaaC# programming@#.\nUse @#00ffaa'github Depth-of-Origin-2.0'@# to view the source code."
+      },
+      {
+        "name": "NerdyHomeReOpen/RiceCall",
+        "description": "An unofficial copy of @#00ffaaRaidCall@#.\nUse @#00ffaa'github RiceCall'@# to view the source code."
+      },{
+        "name": "JoshHuang9508/Josh-Playground",
+        "description": "A personal website for me to showcase my projects and skills.\nLink: https://whydog.xyz/ (This is the one you're looking at)\nUse @#00ffaa'github Josh-Playground'@# to view the source code."
+      },
+      {
+        "name": "JoshHuang9508/Depth-of-Origin-2.0",
+        "description": "Game made in @#00ffaaUnity@# with @#00ffaaC# programming@#.\nUse @#00ffaa'github Depth-of-Origin-2.0'@# to view the source code."
+      },
+      {
+        "name": "NerdyHomeReOpen/RiceCall",
+        "description": "An unofficial copy of @#00ffaaRaidCall@#.\nUse @#00ffaa'github RiceCall'@# to view the source code."
+      },{
+        "name": "JoshHuang9508/Josh-Playground",
+        "description": "A personal website for me to showcase my projects and skills.\nLink: https://whydog.xyz/ (This is the one you're looking at)\nUse @#00ffaa'github Josh-Playground'@# to view the source code."
+      },
+      {
+        "name": "JoshHuang9508/Depth-of-Origin-2.0",
+        "description": "Game made in @#00ffaaUnity@# with @#00ffaaC# programming@#.\nUse @#00ffaa'github Depth-of-Origin-2.0'@# to view the source code."
+      },
+      {
+        "name": "NerdyHomeReOpen/RiceCall",
+        "description": "An unofficial copy of @#00ffaaRaidCall@#.\nUse @#00ffaa'github RiceCall'@# to view the source code."
+      }
     ]
   },
   "tools/": {

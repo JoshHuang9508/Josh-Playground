@@ -1,25 +1,28 @@
-// Import packages
 import { useState, useRef, useEffect } from "react";
-import store, { AddConsoleLog, SetUsername } from "../redux/store";
 import { Provider } from "react-redux";
-// Import styles
-import "../../public/styles/global.css";
-import styles from "../../public/styles/_app.module.css";
-// Import redux
-import { setConsoleContent } from "../redux/consoleContentSlice";
-import { setCommand } from "../redux/commandSlice";
-// Import components
-import ColorSpan from "../components/ColorSpan";
-// Import types
-import { Command } from "../lib/types";
-// Import json
-import textContent from "../lib/textContent.json";
-import commandList from "../lib/commandList.json";
-import pathList from "../lib/pathList.json";
-
 import dotenv from "dotenv";
 
 dotenv.config({ path: ".env" });
+
+// Styles
+import "@/styles/global.css";
+import styles from "@/styles/_app.module.css";
+
+// Redux
+import store, { AddConsoleLog, SetUsername } from "@/redux";
+import { setConsoleContent } from "@/redux/consoleContentSlice";
+import { setCommand } from "@/redux/commandSlice";
+
+// Components
+import ColorSpan from "@/components/ColorSpan";
+
+// Types
+import { Command } from "@/lib/types";
+
+// JSON
+import textContent from "@/lib/textContent.json";
+import commandList from "@/lib/commandList.json";
+import pathList from "@/lib/pathList.json";
 
 // import backgroundImage from "../../public/assets/bg.jpg";
 
@@ -59,36 +62,13 @@ const renderWebPaths = (paths: any, prefix: string): string[] => {
 };
 
 export default function Page({ Component, pageProps }) {
-  const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
-  const [availablePaths, setAvailablePaths] = useState<string[]>([]);
+  // Refs
+  const consoleBox = useRef<HTMLDivElement>(null);
+  const inputBox = useRef<HTMLInputElement>(null);
+  const outputEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const paths = window.location.pathname.split("/").filter(Boolean);
-      setCurrentURL(`${paths.join("/")}/`); // Change current URL to window.location.pathname instead of `${paths.join("/")}/`
-      setAvailableCommands(
-        [
-          ...commandList["*"],
-          ...(commandList[`${paths.join("/")}/`] ?? []),
-        ].sort((a, b) => a.name.localeCompare(b.name))
-      );
-      setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
-    }
-  }, []);
-
-  // Handle User
+  // States
   const [username, setUsername] = useState<string>("");
-
-  useEffect(() => {
-    setUsername(localStorage.getItem("username") ?? "Anonymous");
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("username", username);
-    SetUsername(username);
-  }, [username]);
-
-  // Handle input change
   const [inputValue, setInputValue] = useState<string>("");
   const [inputTemp, setInputTemp] = useState<string>("");
   const [currentURL, setCurrentURL] = useState<string>("");
@@ -97,8 +77,12 @@ export default function Page({ Component, pageProps }) {
   const [available, setAvailable] = useState<string[]>([]);
   const [availableIndex, setAvailableIndex] = useState<number>(0);
   const [isTabing, setIsTabing] = useState(false);
-  const inputBox = useRef<HTMLInputElement>(null);
+  const [consoleContents, setConsoleContents] = useState<string[]>([]);
+  const [consoleVisible, setConsoleVisible] = useState(true);
+  const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
+  const [availablePaths, setAvailablePaths] = useState<string[]>([]);
 
+  // Handlers
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
@@ -319,18 +303,34 @@ export default function Page({ Component, pageProps }) {
     );
   };
 
+  const handleOutputBoxScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const isBottom =
+      event.currentTarget.scrollTop + event.currentTarget.clientHeight >=
+      event.currentTarget.scrollHeight - 10;
+    event.currentTarget.classList.toggle(styles["bottom"], isBottom);
+  };
+
+  // Effects
   useEffect(() => {
-    setCmdHistory(localStorage.getItem("cmdHistory")?.split(",") ?? []);
+    const cmdHistory = localStorage.getItem("cmdHistory")?.split(",") ?? [];
+    setCmdHistory(cmdHistory);
+    setCmdHistoryIndex(cmdHistory.length - 1);
   }, []);
 
   useEffect(() => {
     localStorage.setItem("cmdHistory", cmdHistory.slice(0, 100).join(","));
   }, [cmdHistory]);
 
-  // Handle console
-  const [consoleContents, setConsoleContents] = useState<string[]>([]);
-  const [consoleVisible, setConsoleVisible] = useState(true);
-  const consoleBox = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const username = localStorage.getItem("username") ?? "Anonymous";
+    setUsername(username);
+    SetUsername(username);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("username", username);
+    SetUsername(username);
+  }, [username]);
 
   useEffect(() => {
     AddConsoleLog(
@@ -345,7 +345,8 @@ export default function Page({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    setConsoleVisible(localStorage.getItem("consoleVisible") === "true");
+    const consoleVisible = localStorage.getItem("consoleVisible") || "true";
+    setConsoleVisible(consoleVisible === "true");
   }, []);
 
   useEffect(() => {
@@ -358,22 +359,37 @@ export default function Page({ Component, pageProps }) {
     localStorage.setItem("consoleVisible", consoleVisible.toString());
   }, [consoleContents, consoleVisible, inputValue]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const paths = window.location.pathname.split("/").filter(Boolean);
+      setCurrentURL(`${paths.join("/")}/`); // Change current URL to window.location.pathname instead of `${paths.join("/")}/`
+      setAvailableCommands(
+        [
+          ...commandList["*"],
+          ...(commandList[`${paths.join("/")}/`] ?? []),
+        ].sort((a, b) => a.name.localeCompare(b.name))
+      );
+      setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (outputEndRef.current) {
+      outputEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [consoleContents]);
+
   return (
     <Provider store={store}>
       <div
         style={{ height: "100vh", display: "flex", flexDirection: "column" }}
       >
-        {/* <img src={backgroundImage.src} className={styles["background"]} /> */}
+        {/* <img src={"/assets/bg.jpg"} className={styles["background"]} /> */}
 
         <div className={styles["container"]}>
-          {/* <div className={"title-div"}>
-            <p className={"title"}>
-              {textContent[currentURL]?.title ?? textContent["*"].title}
-            </p>
-            <p className={"subtitle"}>
-              {textContent[currentURL]?.subtitle ?? textContent["*"].subtitle}
-            </p>
-          </div> */}
           <Component {...pageProps} />
         </div>
 
@@ -383,11 +399,16 @@ export default function Page({ Component, pageProps }) {
             consoleVisible ? "" : styles[`hidden`]
           }`}
         >
-          {consoleContents.map((content, index) => (
-            <div key={index} className={styles[`output`]}>
-              <ColorSpan str={content} />
-            </div>
-          ))}
+          <div className={styles[`output`]} onScroll={handleOutputBoxScroll}>
+            {consoleContents.map((content, index) => (
+              <div key={index} className={styles[`output-line`]}>
+                <ColorSpan str={content} />
+              </div>
+            ))}
+
+            <div ref={outputEndRef} />
+          </div>
+
           {available[0] && (
             <div className={styles["prompt"]}>
               <ColorSpan str={"@#FFF700" + available.join("@#, @#FFF700")} />

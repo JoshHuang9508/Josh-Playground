@@ -1,0 +1,198 @@
+img.profile-picture {
+  display: inline-block;
+  width: 15rem;
+  height: 15rem;
+  border-radius: 50%;
+  margin: 2rem;
+  box-shadow: 0 0 1rem white;
+  animation: rgb-shadow 10s infinite linear, spinBack 1s linear;
+}
+img.profile-picture.spin {
+  animation: rgb-shadow 10s infinite linear, spin 5s infinite linear;
+}
+@keyframes rgb-shadow {
+  0% {
+    box-shadow: 0 0 2rem rgb(255, 0, 0), inset 0 0 2rem rgb(255, 0, 0);
+  }
+  16% {
+    box-shadow: 0 0 2rem rgb(255, 165, 0), inset 0 0 2rem rgb(255, 165, 0);
+  }
+  33% {
+    box-shadow: 0 0 2rem rgb(255, 255, 0), inset 0 0 2rem rgb(255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 2rem rgb(0, 255, 0), inset 0 0 2rem rgb(0, 255, 0);
+  }
+  66% {
+    box-shadow: 0 0 2rem rgb(0, 0, 255), inset 0 0 2rem rgb(0, 0, 255);
+  }
+  83% {
+    box-shadow: 0 0 2rem rgb(255, 0, 255), inset 0 0 2rem rgb(255, 0, 255);
+  }
+  100% {
+    box-shadow: 0 0 2rem rgb(255, 0, 0), inset 0 0 2rem rgb(255, 0, 0);
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinBack {
+  from {
+    transform: rotate(var(--current-rotation)); /* 保持當前旋轉角度 */
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+div.music-info {
+  display: flex;
+  justify-content: flex-start;
+  transition: all 1s ease-in-out;
+  margin-bottom: 1rem;
+}
+div.music-info.show {
+  width: 30%;
+}
+div.music-info.hidden {
+  width: 0;
+}
+
+div.projectList {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  gap: 1rem;
+  padding: 0 1rem;
+  overflow: visible;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+div.projectList.hidden {
+  top: 100%;
+}
+
+div.projectList div.column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  flex: 1;
+  width: 100%;
+  height: fit-content;
+  gap: 1rem;
+  overflow: visible;
+}
+
+div.projectList div.column::last-child {
+  top: 100%;
+}
+
+div.projectList div.column.scroll-speed-1 {
+  animation: autoScroll 20s linear infinite;
+}
+
+div.projectList div.column.scroll-speed-2 {
+  animation: autoScroll 25s linear infinite;
+}
+
+div.projectList div.column.scroll-speed-3 {
+  animation: autoScroll 30s linear infinite;
+}
+
+div.projectList div.column.scroll-speed-4 {
+  animation: autoScroll 45s linear infinite;
+}
+
+div.projectList div.column.scroll-speed-5 {
+  animation: autoScroll 40s linear infinite;
+}
+
+div.projectList div.column div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@keyframes autoScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+div.projectList div.project {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: fit-content;
+  overflow: visible;
+  border: 2px solid white;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: #00000022;
+}
+
+div.projectList div.project div.project-title {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+div.projectList div.project div.project-title::before {
+  content: "";
+  background-image: url("/assets/github.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-width: 3rem;
+  min-height: 3rem;
+  filter: invert(1);
+}
+
+div.projectList div.project div.project-description {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+@media (max-width: 1200px) {
+  img.profile-picture {
+    width: 10rem;
+    height: 10rem;
+    margin: 1rem;
+    margin-bottom: 0;
+  }
+
+  div.music-info {
+    justify-content: center;
+  }
+  div.music-info.show {
+    width: 100%;
+  }
+  div.music-info.hidden {
+    width: 0;
+  }
+
+  div.projectList {
+    flex-direction: column;
+  }
+
+  div.projectList div.column {
+    flex: none;
+  }
+}

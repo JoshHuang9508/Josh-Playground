@@ -4,19 +4,18 @@ div.container {
   flex-direction: column;
   gap: 1rem;
   min-height: 60%;
-  margin: 1rem 10rem 0.5rem 10rem;
   border: none;
   border-radius: 1rem;
-  background-color: #ffffff10;
-  box-shadow: 0 0 1rem #00000040;
   justify-content: flex-start;
   align-items: center;
   overflow: auto;
 }
+
 div.container::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
+
 img.background {
   position: absolute;
   z-index: -1;
@@ -24,32 +23,72 @@ img.background {
   height: 100%;
   object-fit: cover;
   filter: blur(5px);
+  opacity: 0.25;
 }
+
 div.console {
-  height: 30%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 30%;
+  height: 500px;
   margin: 0.5rem 10rem 1rem 10rem;
-  padding: 1rem;
   border: none;
   border-radius: 1rem;
   background-color: #ffffff10;
   box-shadow: 0 0 1rem #00000040;
   font-family: monospace;
-  line-height: 1.5rem;
+  line-height: 1.25rem;
   color: #bababa;
-  overflow: scroll;
-  scrollbar-width: none;
+  backdrop-filter: blur(0.5rem);
+  transition: height 0.3s ease-in-out;
 }
+
+div.console.hidden {
+  height: 3.25rem;
+}
+
 div.console span {
   min-width: fit-content;
   background: none;
   user-select: none;
 }
+
+div.console div.output {
+  margin-top: 1rem;
+  padding: 0 1rem;
+  height: 100%;
+  justify-content: end;
+  overflow: scroll;
+  scrollbar-width: none;
+  box-shadow: inset 0 -10px 10px -10px #00000040;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+div.console div.output.bottom {
+  box-shadow: none;
+}
+
+div.console div.prompt {
+  padding: 1rem 1rem 0 1rem;
+}
+
+div.console div.input {
+  display: flex;
+  padding: 1rem;
+  min-height: fit-content;
+  position: sticky;
+  bottom: 0;
+}
+
 div.console div.input input {
-  max-width: 100%;
-  min-width: 60%;
+  flex: 1;
   z-index: 10;
   font-size: 1rem;
-  line-height: 1.5rem;
+  line-height: 1.25rem;
   padding-block: 0;
   padding-inline: 0;
   background: none;
@@ -58,15 +97,9 @@ div.console div.input input {
   border: none;
   outline: none;
 }
+
 div.console div.input input:focus {
   outline: none;
-}
-
-div.console.hidden {
-  height: auto;
-}
-div.console.hidden div.output {
-  display: none;
 }
 
 @media (max-width: 1200px) {

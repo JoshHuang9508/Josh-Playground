@@ -13,7 +13,7 @@ function ColorSpan({ str, className, style }: ColorSpanProps) {
   }
 
   return (
-    <>
+    <div style={{ display: "inline-block" }}>
       {str
         .split("@#")
         .filter((i) => i !== "")
@@ -35,7 +35,7 @@ function ColorSpan({ str, className, style }: ColorSpanProps) {
             </span>
           );
         })}
-    </>
+    </div>
   );
 }
 

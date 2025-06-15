@@ -1,19 +1,21 @@
-// Import packages
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-// Import styles
-import styles from "../../public/styles/index.module.css";
-// Import redux
-import store, { AddConsoleLog } from "../redux/store";
-import { setCommand } from "../redux/commandSlice";
-// Import types
-import { Music } from "../lib/types";
-// Import components
-import ColorSpan from "../components/ColorSpan";
-// Import json
-import textContent from "../../src/lib/textContent.json";
 
-import profileImage from "../../public/assets/pfp.png";
+// Styles
+import styles from "@/styles/index.module.css";
+
+// Redux
+import store, { AddConsoleLog } from "@/redux";
+import { setCommand } from "@/redux/commandSlice";
+
+// Types
+import { Music } from "@/lib/types";
+
+// Components
+import ColorSpan from "@/components/ColorSpan";
+
+// JSON
+import textContent from "@/lib/textContent.json";
 
 const musics: Music[] = [
   {
@@ -27,30 +29,51 @@ const musics: Music[] = [
 ];
 
 export default function Page() {
-  // Music control
+  const command = useSelector((state: { command: string }) => state.command);
+
+  // Refs
+  const scrollSpeedRef = useRef<number[]>(
+    Array.from({ length: 3 }, () => Math.floor(Math.random() * 5) + 1)
+  );
+  const imageRef = useRef<HTMLImageElement>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement>(null);
+
+  // States
   const [musicIndex, setMusicIndex] = React.useState(0);
   const [showMusicInfo, setShowMusicInfo] = React.useState(false);
-  const audioPlayer = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    if (!audioPlayer.current) return;
-    audioPlayer.current.play();
-    audioPlayer.current.volume = 0.05;
-  }, [audioPlayer]);
-
-  useEffect(() => {
-    if (!audioPlayer.current) return;
-    audioPlayer.current.src = musics[musicIndex].path;
-    audioPlayer.current.play();
-  }, [musicIndex]);
-
+  // Handlers
   const onMusicEnd = () => {
-    if (!audioPlayer.current) return;
+    if (!audioPlayerRef.current) return;
     setMusicIndex((musicIndex + 1) % musics.length);
   };
 
-  // Command control
-  const command = useSelector((state: { command: string }) => state.command);
+  const stopSpin = () => {
+    if (!imageRef.current) return;
+
+    const styles = window.getComputedStyle(imageRef.current);
+    const matrix = new DOMMatrixReadOnly(styles.transform);
+    let currentRotation =
+      Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
+    // @ts-ignore
+    imageRef.current.style.setProperty(
+      "--current-rotation",
+      `${currentRotation}deg`
+    );
+  };
+
+  // Effects
+  useEffect(() => {
+    if (!audioPlayerRef.current) return;
+    audioPlayerRef.current.play();
+    audioPlayerRef.current.volume = 0.05;
+  }, [audioPlayerRef]);
+
+  useEffect(() => {
+    if (!audioPlayerRef.current) return;
+    audioPlayerRef.current.src = musics[musicIndex].path;
+    audioPlayerRef.current.play();
+  }, [musicIndex]);
 
   useEffect(() => {
     if (!command || command == "") return;
@@ -78,11 +101,11 @@ export default function Page() {
           break;
         }
         if (flags.includes("-p") || flags.includes("--play")) {
-          if (audioPlayer.current) audioPlayer.current.play();
+          if (audioPlayerRef.current) audioPlayerRef.current.play();
           break;
         }
         if (flags.includes("-s") || flags.includes("--stop")) {
-          if (audioPlayer.current) audioPlayer.current.pause();
+          if (audioPlayerRef.current) audioPlayerRef.current.pause();
           break;
         }
         if (flags.includes("-i") || flags.includes("--info")) {
@@ -101,32 +124,38 @@ export default function Page() {
     store.dispatch(setCommand(""));
   }, [command]);
 
-  // Image control
-  const image = useRef(null);
+  // useEffect(() => {
+  //   const autoScroll = () => {
+  //     if (!projectListRef.current || !projectListHiddenRef.current) {
+  //       setInterval(autoScroll, 10);
+  //       return;
+  //     }
 
-  const stopSpin = () => {
-    if (!image.current) return;
+  //     projectListRef.current.scrollTop = scrollIndex;
+  //     projectListHiddenRef.current.scrollTop = scrollIndex;
 
-    const styles = window.getComputedStyle(image.current);
-    const matrix = new DOMMatrixReadOnly(styles.transform);
-    let currentRotation =
-      Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
-    // @ts-ignore
-    image.current.style.setProperty(
-      "--current-rotation",
-      `${currentRotation}deg`
-    );
-  };
+  //     setScrollIndex(scrollIndex + 1);
+
+  //     if (
+  //       projectListRef.current.scrollTop +
+  //         projectListRef.current.clientHeight >=
+  //       projectListRef.current.scrollHeight
+  //     ) {
+  //       setScrollIndex(0);
+  //     }
+
+  //     setInterval(autoScroll, 10);
+  //   };
+  //   autoScroll();
+  // }, []);
 
   return (
-    <div className={"content-div"}>
+    <div className={"col content-div"}>
       <audio
-        ref={audioPlayer}
+        ref={audioPlayerRef}
         id="audio"
         src={musics[musicIndex].path}
-        onEnded={() => {
-          onMusicEnd();
-        }}
+        onEnded={onMusicEnd}
       />
       <div className={"container1"}>
         <div
@@ -134,11 +163,11 @@ export default function Page() {
           style={{ fontFamily: "monospace", gap: "1rem" }}
         >
           <img
-            ref={image}
+            ref={imageRef}
             className={`${styles["profile-picture"]} ${
               showMusicInfo ? styles["spin"] : ""
             }`}
-            src={profileImage.src}
+            src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
@@ -174,6 +203,40 @@ export default function Page() {
             })}
           </div>
         </div>
+      </div>
+
+      <div className={styles["projectList"]}>
+        {Array.from({ length: 3 }).map((_, index) => {
+          return (
+            <div
+              className={`${styles["column"]} ${
+                styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
+              }`}
+            >
+              {Array.from({ length: 2 }).map((_, index) => {
+                return (
+                  <div key={index}>
+                    {textContent["/"].projects.map((project, index) => {
+                      return (
+                        <div key={index} className={styles["project"]}>
+                          <div className={styles["project-title"]}>
+                            <ColorSpan str={project.name} className="header2" />
+                          </div>
+                          <div className={styles["project-description"]}>
+                            <ColorSpan
+                              str={project.description}
+                              className="p3"
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

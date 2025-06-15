@@ -14,6 +14,7 @@ export type Track = {
   requestBy: string;
   id: number;
 };
+
 export type PlayerState = {
   playing: boolean;
   played: number;
@@ -29,6 +30,7 @@ export type PlayerState = {
   index: number;
   isEnd: boolean;
 };
+
 export type PlayerStateClient = {
   volume: number;
   seeking: boolean;
