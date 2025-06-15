@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.whydog.xyz
+
+# Sitemaps
+Sitemap: https://www.whydog.xyz/sitemap.xml

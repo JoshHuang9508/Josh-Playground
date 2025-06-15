@@ -124,31 +124,6 @@ export default function Page() {
     store.dispatch(setCommand(""));
   }, [command]);
 
-  // useEffect(() => {
-  //   const autoScroll = () => {
-  //     if (!projectListRef.current || !projectListHiddenRef.current) {
-  //       setInterval(autoScroll, 10);
-  //       return;
-  //     }
-
-  //     projectListRef.current.scrollTop = scrollIndex;
-  //     projectListHiddenRef.current.scrollTop = scrollIndex;
-
-  //     setScrollIndex(scrollIndex + 1);
-
-  //     if (
-  //       projectListRef.current.scrollTop +
-  //         projectListRef.current.clientHeight >=
-  //       projectListRef.current.scrollHeight
-  //     ) {
-  //       setScrollIndex(0);
-  //     }
-
-  //     setInterval(autoScroll, 10);
-  //   };
-  //   autoScroll();
-  // }, []);
-
   return (
     <div className={"col content-div"}>
       <audio
@@ -209,6 +184,7 @@ export default function Page() {
         {Array.from({ length: 3 }).map((_, index) => {
           return (
             <div
+              key={index}
               className={`${styles["column"]} ${
                 styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
               }`}

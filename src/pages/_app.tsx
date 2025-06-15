@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Provider } from "react-redux";
 import dotenv from "dotenv";
+import Head from "next/head";
 
 dotenv.config({ path: ".env" });
 
@@ -395,6 +396,36 @@ export default function Page({ Component, pageProps }) {
 
   return (
     <Provider store={store}>
+      <Head>
+        <title>Whydog - Developer & Designer</title>
+        <meta
+          name="description"
+          content="18yo developer passionate about full-stack development, UI/UX design."
+        />
+        <meta property="og:title" content="Whydog - Developer & Designer" />
+        <meta
+          property="og:description"
+          content="Explore projects and passions of an 18-year-old full-stack developer and anime lover."
+        />
+        <meta property="og:url" content="https://www.whydog.xyz/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="/assets/preview.png" />
+        <link
+          rel="icon"
+          type="image/png"
+          href="/assets/favicon-96x96.png"
+          sizes="96x96"
+        />
+        <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+        <link rel="shortcut icon" href="/assets/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/assets/apple-touch-icon.png"
+        />
+        <link rel="manifest" href="/assets/site.webmanifest" />
+      </Head>
+
       <div
         style={{ height: "100vh", display: "flex", flexDirection: "column" }}
       >
