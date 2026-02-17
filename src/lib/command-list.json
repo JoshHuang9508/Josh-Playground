@@ -45,13 +45,43 @@
   "/": [
     {
       "name": "github",
-      "description": "Open my GitHub page",
+      "description": "Open my GitHub profile",
       "usage": "github"
     },
     {
       "name": "youtube",
       "description": "Open my YouTube channel",
       "usage": "youtube"
+    },
+    {
+      "name": "twitter",
+      "description": "Open my Twitter channel",
+      "usage": "twitter"
+    },
+    {
+      "name": "instagram",
+      "description": "Open my Instagram profile",
+      "usage": "instagram"
+    },
+    {
+      "name": "twitch",
+      "description": "Open my Twitch profile",
+      "usage": "twitch"
+    },
+    {
+      "name": "discord",
+      "description": "Add me on Discord",
+      "usage": "discord"
+    },
+    {
+      "name": "email",
+      "description": "Send me an email",
+      "usage": "email"
+    },
+    {
+      "name": "osu",
+      "description": "Open my osu! profile",
+      "usage": "osu"
     },
     {
       "name": "music",

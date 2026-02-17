@@ -305,3 +305,36 @@ span.lang-dot {
     rotate: 0deg;
   }
 }
+
+div.social-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  opacity: 0;
+  animation: fade-in-out 5s;
+  max-width: 100%;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+
+  33% {
+    opacity: 1;
+  }
+
+  66% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+img.social-icon {
+  width: 2rem;
+  height: 2rem;
+}

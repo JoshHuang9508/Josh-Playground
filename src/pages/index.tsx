@@ -46,8 +46,10 @@ export default function Page() {
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
   // States
+  const [isPlaying, setIsPlaying] = React.useState(false);
   const [musicIndex, setMusicIndex] = React.useState(0);
   const [showMusicInfo, setShowMusicInfo] = React.useState(false);
+  const [currentSocialIndex, setCurrentSocialIndex] = React.useState(0);
 
   // Functions
   const stopSpin = () => {
@@ -74,11 +76,35 @@ export default function Page() {
   useCommandHandler({
     github: () => {
       window.open("https://github.com/JoshHuang9508", "_blank");
-      AddConsoleLog("Opening my @#FFF700GitHub@# page...");
+      AddConsoleLog("Opening my @#FFF700GitHub@# profile...");
     },
     youtube: () => {
       window.open("https://www.youtube.com/@whydog5555", "_blank");
       AddConsoleLog("Opening my @#FFF700YouTube@# channel...");
+    },
+    twitter: () => {
+      window.open("https://x.com/whydog5555", "_blank");
+      AddConsoleLog("Opening my @#FFF700Twitter@# channel...");
+    },
+    instagram: () => {
+      window.open("https://www.instagram.com/whydog5555/", "_blank");
+      AddConsoleLog("Opening my @#FFF700Instagram@# profile...");
+    },
+    twitch: () => {
+      window.open("https://www.twitch.tv/whydog5555", "_blank");
+      AddConsoleLog("Opening my @#FFF700Twitch@# profile...");
+    },
+    discord: () => {
+      window.open("https://discord.com/users/whydog5555", "_blank");
+      AddConsoleLog("Adding me on @#FFF700Discord@#...");
+    },
+    email: () => {
+      window.open("mailto:joshhuang9508@gmail.com", "_blank");
+      AddConsoleLog("Sending an @#FFF700email@# to me...");
+    },
+    osu: () => {
+      window.open("https://osu.ppy.sh/users/15100005", "_blank");
+      AddConsoleLog("Opening my @#FFF700osu!@# profile...");
     },
     music: (_cmd, _args, flags) => {
       if (flags.includes("-l") || flags.includes("--list")) {
@@ -110,9 +136,10 @@ export default function Page() {
   // Effects
   useEffect(() => {
     const onInteraction = () => {
-      if (!audioPlayerRef.current) return;
+      if (!audioPlayerRef.current || isPlaying) return;
       audioPlayerRef.current.play();
       audioPlayerRef.current.volume = 0.05;
+      setIsPlaying(true);
     };
     document.addEventListener("click", onInteraction);
     document.addEventListener("touchstart", onInteraction);
@@ -120,19 +147,24 @@ export default function Page() {
       document.removeEventListener("click", onInteraction);
       document.removeEventListener("touchstart", onInteraction);
     };
-  }, [showMusicInfo]);
-
-  useEffect(() => {
-    if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.play();
-    audioPlayerRef.current.volume = 0.05;
-  }, [audioPlayerRef]);
+  }, [showMusicInfo, isPlaying]);
 
   useEffect(() => {
     if (!audioPlayerRef.current) return;
     audioPlayerRef.current.src = musics[musicIndex].path;
     audioPlayerRef.current.play();
   }, [musicIndex]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSocialIndex(
+        (prev) => (prev + 1) % textContent["/"].social.length,
+      );
+    }, 5000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div className={"col content-div"}>
@@ -186,6 +218,20 @@ export default function Page() {
                 </div>
               );
             })}
+            <div
+              className={styles["social-container"]}
+              key={currentSocialIndex}
+            >
+              <img
+                className={styles["social-icon"]}
+                src={`/assets/${textContent["/"].social[currentSocialIndex].icon}.png`}
+                alt={textContent["/"].social[currentSocialIndex].icon}
+              />
+              <ColorSpan
+                str={textContent["/"].social[currentSocialIndex].value}
+                className="p1"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -198,7 +244,7 @@ export default function Page() {
               styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
             }`}
           >
-            {Array.from({ length: 3 }).map((_, dupIndex) => (
+            {Array.from({ length: 4 }).map((_, dupIndex) => (
               <div key={dupIndex}>
                 {repos.map((repo, repoIndex) => (
                   <GitHubRepoCard

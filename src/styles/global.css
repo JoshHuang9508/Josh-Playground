@@ -135,6 +135,11 @@ p.p1 {
   font-size: 1rem;
 }
 
+span.p2,
+p.p2 {
+  font-size: 0.8rem;
+}
+
 @media (width <= 1200px) {
   html,
   body {
