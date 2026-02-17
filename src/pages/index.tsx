@@ -60,18 +60,18 @@ export default function Page() {
   useCommandHandler({
     github: () => {
       window.open("https://github.com/JoshHuang9508", "_blank");
-      AddConsoleLog(["Opening my @#FFF700GitHub@# page..."]);
+      AddConsoleLog("Opening my @#FFF700GitHub@# page...");
     },
     youtube: () => {
       window.open("https://www.youtube.com/@whydog5555", "_blank");
-      AddConsoleLog(["Opening my @#FFF700YouTube@# channel..."]);
+      AddConsoleLog("Opening my @#FFF700YouTube@# channel...");
     },
     music: (_cmd, _args, flags) => {
       if (flags.includes("-l") || flags.includes("--list")) {
-        AddConsoleLog([
+        AddConsoleLog(
           "Music list:",
           ...musics.map((_, index) => `${index + 1} - ${_.name}`),
-        ]);
+        );
         return;
       }
       if (flags.includes("-p") || flags.includes("--play")) {
@@ -89,7 +89,7 @@ export default function Page() {
         }
         return;
       }
-      AddConsoleLog([`Usage: music [option]`]);
+      AddConsoleLog(`Usage: music [option]`);
     },
   });
 
@@ -135,14 +135,16 @@ export default function Page() {
         >
           <img
             ref={imageRef}
-            className={`${styles["profile-picture"]} ${showMusicInfo ? styles["spin"] : ""
-              }`}
+            className={`${styles["profile-picture"]} ${
+              showMusicInfo ? styles["spin"] : ""
+            }`}
             src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
-            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]
-              }`}
+            className={`${styles["music-info"]} ${
+              showMusicInfo ? styles["show"] : styles["hidden"]
+            }`}
           >
             <ColorSpan
               str={`Now playing: @#FFF700${musics[musicIndex].name}@#...`}
@@ -179,8 +181,9 @@ export default function Page() {
           return (
             <div
               key={index}
-              className={`${styles["column"]} ${styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
-                }`}
+              className={`${styles["column"]} ${
+                styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
+              }`}
             >
               {Array.from({ length: 2 }).map((_, index) => {
                 return (

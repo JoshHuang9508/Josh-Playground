@@ -44,7 +44,9 @@ function PageComponent({ Component, pageProps }) {
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
 
   // Variables
-  const prefix = window ? `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ ` : `@#FF77B7${username}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
+  const prefix = window
+    ? `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
+    : `@#FF77B7${username}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
 
   // Functions
   const replaceInput = (input: string, replace: string) => {
@@ -87,10 +89,7 @@ function PageComponent({ Component, pageProps }) {
         );
       }
     }
-    if (
-      lastPart.endsWith("/") ||
-      input.endsWith(" ")
-    ) {
+    if (lastPart.endsWith("/") || input.endsWith(" ")) {
       availables.push(...findAvailablePath(lastPart));
     }
 
@@ -133,7 +132,7 @@ function PageComponent({ Component, pageProps }) {
     if (event.key === "Enter") {
       if (!inputValue || inputValue == "") return;
       const command = inputValue;
-      AddConsoleLog([`${prefix}@#fff700${command}`]);
+      AddConsoleLog(`${prefix}@#fff700${command}`);
       setCmdHistory([command, ...cmdHistory]);
       setCmdHistoryIndex(-1);
 
@@ -228,10 +227,9 @@ function PageComponent({ Component, pageProps }) {
 
   useEffect(() => {
     AddConsoleLog(
-      localStorage.getItem("consoleContent")?.split(",") ?? [
-        "Welcome to the console!",
-        "Type @#00ffaa'help'@# for available commands",
-      ],
+      ...(localStorage.getItem("consoleContent")?.split(",") ??
+        "Welcome to the console!"),
+      "Type @#00ffaa'help'@# for available commands",
     );
     store.subscribe(() => {
       setConsoleContents(store.getState().consoleContent);
@@ -337,10 +335,15 @@ function PageComponent({ Component, pageProps }) {
 
           <div
             ref={consoleBox}
-            className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
-              }`}
+            className={`${styles[`console`]} ${
+              consoleVisible ? "" : styles[`hidden`]
+            }`}
           >
-            <div tabIndex={-1} className={styles[`output`]} onScroll={handleOutputBoxScroll}>
+            <div
+              tabIndex={-1}
+              className={styles[`output`]}
+              onScroll={handleOutputBoxScroll}
+            >
               {consoleContents.map((content, index) => (
                 <div key={index} className={styles[`output-line`]}>
                   <ColorSpan str={content} />
@@ -352,9 +355,7 @@ function PageComponent({ Component, pageProps }) {
 
             {available[0] && (
               <div className={styles["prompt"]}>
-                <ColorSpan
-                  str={`@#FFF700${available.join("@#, @#FFF700")}`}
-                />
+                <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
               </div>
             )}
 

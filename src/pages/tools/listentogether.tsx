@@ -45,12 +45,10 @@ export default function Page() {
       seeking: false,
       isReady: false,
     });
-  const [playlist, setPlaylist] = useState<Track[][]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [logs, setLogs] = useState<string[]>([]);
 
-  // Handlers
+  // Functions
   const SetUsername = (username: string) => {
     socketInstance?.emit("setUsername", username);
   };
@@ -109,7 +107,7 @@ export default function Page() {
     socketInstance?.emit("seek", time);
   };
 
-  const getVideoInfoAPI = async (videoId: string): Promise<Track> => {
+  const getVideoInfo = async (videoId: string): Promise<Track> => {
     const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
       method: "GET",
       headers: {
@@ -123,7 +121,7 @@ export default function Page() {
         return response.json();
       })
       .catch((error) => {
-        AddConsoleLog([`Error getting video info: ${error}`]);
+        AddConsoleLog(`Error getting video info: ${error}`);
         throw error;
       });
     const track: Track = {
@@ -137,7 +135,7 @@ export default function Page() {
     return track;
   };
 
-  const getPlaylistAPI = async (playlistId: string): Promise<Track[]> => {
+  const getPlaylist = async (playlistId: string): Promise<Track[]> => {
     const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
       method: "GET",
       headers: {
@@ -151,7 +149,7 @@ export default function Page() {
         return response.json();
       })
       .catch((error) => {
-        AddConsoleLog([`Error getting playlist info: ${error}`]);
+        AddConsoleLog(`Error getting playlist info: ${error}`);
         throw error;
       });
     const tracks: Track[] = data.map((item: any, index) => {
@@ -172,41 +170,41 @@ export default function Page() {
     send: (_cmd, args) => {
       const message = args.join(" ") ?? "";
       if (!message) {
-        AddConsoleLog(["Usage: send [message]"]);
+        AddConsoleLog("Usage: send [message]");
         return;
       }
-      AddConsoleLog([`Send message: ${message}`]);
+      AddConsoleLog(`Send message: ${message}`);
       AddRoomLog(`${username}: ${message}`);
     },
     queue: (_cmd, args, flags) => {
       const URL = args[0] ?? "";
       if (!URL) {
-        AddConsoleLog(["Usage: queue [video_URL|playlist_URL]"]);
+        AddConsoleLog("Usage: queue [video_URL|playlist_URL]");
         return;
       }
       if (!ReactPlayer.canPlay(URL)) {
-        AddConsoleLog(["Can not play this URL"]);
+        AddConsoleLog("Can not play this URL");
         return;
       }
       const updateTrackQueue = async () => {
         if (URL.includes("playlist?list=")) {
-          const tracks = await getPlaylistAPI(URL.split("list=")[1]);
+          const tracks = await getPlaylist(URL.split("list=")[1]);
           AddTracks(tracks);
-          AddConsoleLog([
+          AddConsoleLog(
             `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
-          ]);
+          );
           AddRoomLog(
             `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
         if (URL.includes("watch?v=")) {
-          const track = await getVideoInfoAPI(URL.split("v=")[1]);
+          const track = await getVideoInfo(URL.split("v=")[1]);
           AddTrack(track);
-          AddConsoleLog([
+          AddConsoleLog(
             `Added ${track.title} to queue (#${playerState.trackQueue.length})`,
-          ]);
+          );
           AddRoomLog(
             `${username} 在播放清單中新增了 ${track.title} (#${playerState.trackQueue.length})`,
           );
@@ -217,79 +215,79 @@ export default function Page() {
     remove: (_cmd, args) => {
       const indexToRm = args[0] ?? "";
       if (!indexToRm) {
-        AddConsoleLog(["Usage: remove [index]"]);
+        AddConsoleLog("Usage: remove [index]");
         return;
       }
       if (indexToRm === "*") {
         SetTrackQueue([]);
-        AddConsoleLog(["Removed all tracks"]);
+        AddConsoleLog("Removed all tracks");
         AddRoomLog(`${username} 移除了所有歌曲`);
         return;
       }
       if (isNaN(parseFloat(indexToRm))) {
-        AddConsoleLog(["Invalid index"]);
+        AddConsoleLog("Invalid index");
         return;
       }
       if (parseInt(indexToRm) >= playerState.trackQueue.length) {
-        AddConsoleLog(["Index out of range"]);
+        AddConsoleLog("Index out of range");
         return;
       }
       const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
       RemoveTrack(parseInt(indexToRm));
-      AddConsoleLog([`Removed track ${indexToRm}`]);
+      AddConsoleLog(`Removed track ${indexToRm}`);
       AddRoomLog(`${username} 移除了 ${trackToRm.title} (#${indexToRm})`);
     },
     play: () => {
       Play();
-      AddConsoleLog(["Start playing..."]);
+      AddConsoleLog("Start playing...");
       AddRoomLog(`${username} 開始播放`);
     },
     pause: () => {
       Pause();
-      AddConsoleLog(["Pause playing..."]);
+      AddConsoleLog("Pause playing...");
       AddRoomLog(`${username} 暫停播放`);
     },
     switch: (_cmd, args, flags) => {
       const index = args[0] ?? "";
       if (!index) {
-        AddConsoleLog(["Usage: switch [index|options]"]);
+        AddConsoleLog("Usage: switch [index|options]");
         return;
       }
       if (flags.includes("-n") || flags.includes("--next")) {
         NextTrack();
-        AddConsoleLog([`Switch to next track`]);
+        AddConsoleLog("Switch to next track");
         AddRoomLog(`${username} 切換到下一首歌曲`);
         return;
       }
       if (flags.includes("-p") || flags.includes("--prev")) {
         PrevTrack();
-        AddConsoleLog([`Switch to previous track`]);
+        AddConsoleLog("Switch to previous track");
         AddRoomLog(`${username} 切換到上一首歌曲`);
         return;
       }
       if (isNaN(parseFloat(index))) {
-        AddConsoleLog(["Invalid index"]);
+        AddConsoleLog("Invalid index");
         return;
       }
       if (
         parseInt(index) >= playerState.trackQueue.length ||
         parseInt(index) < 0
       ) {
-        AddConsoleLog(["Index out of range"]);
+        AddConsoleLog("Index out of range");
         return;
       }
       SetTrackIndex(parseInt(index));
-      AddConsoleLog([`Switch to track ${index}`]);
+      AddConsoleLog(`Switch to track ${index}`);
       AddRoomLog(`${username} 切換到歌曲 #${index}`);
     },
     volume: (_cmd, args) => {
       const volume = args[0] ?? "";
       if (!volume) {
-        AddConsoleLog(["Usage: volume [value]"]);
+        AddConsoleLog("Usage: volume [value]");
         return;
       }
       if (isNaN(parseFloat(volume))) {
-        AddConsoleLog(["Invalid volume"]);
+        AddConsoleLog("Invalid volume");
         return;
       }
       setPlayerStateClient((prev) => ({
@@ -297,101 +295,119 @@ export default function Page() {
         volume: parseFloat(volume) / 100,
       }));
       localStorage.setItem("volume", volume);
-      AddConsoleLog([`Set volume to ${volume}`]);
+      AddConsoleLog(`Set volume to ${volume}`);
     },
     loop: (_cmd, _args, flags) => {
       if (flags.includes("-t") || flags.includes("--true")) {
         SetLoop(true);
-        AddConsoleLog(["Loop..."]);
+        AddConsoleLog("Loop...");
         AddRoomLog(`${username} 開啟循環播放`);
         return;
       }
       if (flags.includes("-f") || flags.includes("--false")) {
         SetLoop(false);
-        AddConsoleLog(["Unloop..."]);
+        AddConsoleLog("Unloop...");
         AddRoomLog(`${username} 關閉循環播放`);
         return;
       }
-      AddConsoleLog(["Usage: loop [options]"]);
+      AddConsoleLog("Usage: loop [options]");
     },
     random: (_cmd, _args, flags) => {
       if (flags.includes("-t") || flags.includes("--true")) {
         SetPlayerState({ ...playerState, random: true });
-        AddConsoleLog(["Random..."]);
+        AddConsoleLog("Random...");
         AddRoomLog(`${username} 開啟隨機播放`);
         return;
       }
       if (flags.includes("-f") || flags.includes("--false")) {
         SetPlayerState({ ...playerState, random: false });
-        AddConsoleLog(["Unrandom..."]);
+        AddConsoleLog("Unrandom...");
         AddRoomLog(`${username} 關閉隨機播放`);
         return;
       }
-      AddConsoleLog(["Usage: random [options]"]);
+      AddConsoleLog("Usage: random [options]");
     },
     rate: (_cmd, args) => {
       const rate = args[0] ?? "";
       if (!rate) {
-        AddConsoleLog(["Usage: rate [value]"]);
+        AddConsoleLog("Usage: rate [value]");
         return;
       }
       if (isNaN(parseFloat(rate))) {
-        AddConsoleLog(["Invalid rate"]);
+        AddConsoleLog("Invalid rate");
         return;
       }
       SetPlayBackRate(parseFloat(rate) / 100);
-      AddConsoleLog([`Set rate to ${rate}%`]);
+      AddConsoleLog(`Set rate to ${rate}%`);
       AddRoomLog(`${username} 設定播放速度為 ${rate}%`);
     },
     seek: (_cmd, args) => {
       const seek = args[0] ?? "";
       if (!seek) {
-        AddConsoleLog(["Usage: seek [time]"]);
+        AddConsoleLog("Usage: seek [time]");
         return;
       }
       if (isNaN(parseFloat(seek))) {
-        AddConsoleLog(["Invalid time"]);
+        AddConsoleLog("Invalid time");
         return;
       }
       if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
-        AddConsoleLog(["Time out of range"]);
+        AddConsoleLog("Time out of range");
         return;
       }
       Seek(parseFloat(seek));
-      AddConsoleLog([`Seek to ${seek}`]);
+      AddConsoleLog(`Seek to ${seek}`);
       AddRoomLog(`${username} 跳轉到 ${seek} 秒`);
     },
     refresh: () => {
       Refresh();
-      AddConsoleLog(["Refresh player..."]);
+      AddConsoleLog("Refresh player...");
       AddRoomLog(`${username} 刷新播放器`);
     },
     page: (_cmd, args, flags) => {
       const page = args[0] ?? "";
       if (!page) {
-        AddConsoleLog(["Usage: page [page|options]"]);
+        AddConsoleLog("Usage: page [page|options]");
         return;
       }
       if (flags.includes("-n") || flags.includes("--next")) {
         setCurrentPage(currentPage + 1);
-        AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+        AddConsoleLog(`Switch to playlist page ${currentPage + 1}`);
         return;
       }
       if (flags.includes("-p") || flags.includes("--prev")) {
         setCurrentPage(currentPage - 1);
-        AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+        AddConsoleLog(`Switch to playlist page ${currentPage + 1}`);
         return;
       }
       if (isNaN(parseFloat(page))) {
-        AddConsoleLog(["Invalid page"]);
+        AddConsoleLog("Invalid page");
         return;
       }
       if (parseInt(page) > totalPage || parseInt(page) <= 0) {
-        AddConsoleLog(["Page out of range"]);
+        AddConsoleLog("Page out of range");
         return;
       }
       setCurrentPage(parseInt(page));
-      AddConsoleLog([`Switch to playlist page ${page}`]);
+      AddConsoleLog(`Switch to playlist page ${page}`);
+    },
+    playlist: (_cmd, args, flags) => {
+      if (flags.includes("-d") || flags.includes("--detail")) {
+        AddConsoleLog("Playlist detail:", ...playerState.trackQueue.map((track) => {
+          if (track.id === playerState.currentTrack?.id) {
+            return `@#fff700#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+          }
+          return `#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`
+        }));
+      }
+      else {
+        AddConsoleLog("Playlist:", ...playerState.trackQueue.map((track) => {
+          if (track.id === playerState.currentTrack?.id) {
+            return `@#fff700#${track.id} - ${track.title}`;
+          }
+          return `#${track.id} - ${track.title}`;
+        }));
+      }
     },
   });
 
@@ -416,24 +432,26 @@ export default function Page() {
     setSocketInstance(socket);
 
     socket.on("connect", async () => {
-      AddConsoleLog([`Connect server success (id: ${socket.id})`]);
+      AddConsoleLog(`Connect server success (id: ${socket.id})`);
       socket.emit("join", localStorage.getItem("username") ?? "Anonymous");
       socket.emit("ready");
     });
     socket.on("connect_error", () => {
-      AddConsoleLog([`Connect server error (id: ${socket.id})`]);
+      AddConsoleLog(`Connect server error (id: ${socket.id})`);
     });
     socket.on("error", (error) => {
-      AddConsoleLog([`Connect server error: ${error.message}`]);
+      AddConsoleLog(`Connect server error: ${error.message}`);
     });
     socket.on("disconnect", () => {
-      AddConsoleLog([`Disconnect from server`]);
+      AddConsoleLog("Disconnect from server");
     });
     socket.on("receivePlayerState", (state) => {
       setPlayerState({ ...playerState, ...state });
     });
     socket.on("receiveLog", (logs) => {
-      setLogs(logs);
+      AddConsoleLog(
+        `[${new Date().toLocaleDateString()}] ${username}: ${logs}`,
+      );
     });
     socket.on("receiveUsers", (users) => {
       setUsers(users);
@@ -452,17 +470,12 @@ export default function Page() {
   }, [username]);
 
   useEffect(() => {
-    const newPlaylist: Track[][] = [];
-    for (
-      let i = 0;
-      i < playerState.trackQueue.length;
-      i += MAX_TRACKS_PER_PAGE
-    ) {
-      newPlaylist.push(
-        playerState.trackQueue.slice(i, i + MAX_TRACKS_PER_PAGE),
-      );
-    }
-    setPlaylist(newPlaylist);
+    AddConsoleLog("Playlist updated:", ...playerState.trackQueue.map((track) => {
+      if (track.id === playerState.currentTrack?.id) {
+        return `@#fff700#${track.id} - ${track.title}`;
+      }
+      return `#${track.id} - ${track.title}`;
+    }));
   }, [playerState.trackQueue]);
 
   useEffect(() => {
@@ -494,17 +507,6 @@ export default function Page() {
         <p className={"header2"}>點我一下</p>
       </div>
 
-      <div className={styles["logger-container"]}>
-        <p className={"header2"}>房間日誌</p>
-        <div className={styles["log-list"]}>
-          {logs.map((log, index) => (
-            <p key={index} className={styles["log"]}>
-              {log}
-            </p>
-          ))}
-        </div>
-      </div>
-
       <div className={styles["player-container"]}>
         {playerState && (
           <ReactPlayer
@@ -532,7 +534,7 @@ export default function Page() {
               onEnd();
             }}
             onError={(error) => {
-              AddConsoleLog([`Error: ${error}`]);
+              AddConsoleLog(`Error: ${error}`);
             }}
             onReady={() => {
               if (PlayerStateClientState.isReady) return;
@@ -558,44 +560,6 @@ export default function Page() {
             height="100%"
           />
         )}
-      </div>
-
-      <div className={styles["playlist-container"]}>
-        <p className={"header2"}>
-          {"Playlist" +
-            (playerState.trackQueue.length > 0
-              ? `(${currentPage}/${totalPage})`
-              : "")}
-        </p>
-        <div className={styles["track-card-list"]}>
-          {playlist[currentPage - 1]?.map((track, index) => (
-            <div
-              key={index + (currentPage - 1) * MAX_TRACKS_PER_PAGE}
-              className={`${styles["track-card"]} ${index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
-                playerState.index
-                ? styles["selected"]
-                : ""
-                }`}
-            >
-              <div className={styles["track-info"]}>
-                <img style={{ height: "100%" }} src={track.img} />
-                <div>
-                  <p className={styles["track-title"]}>
-                    {"#" +
-                      (index + (currentPage - 1) * MAX_TRACKS_PER_PAGE) +
-                      " " +
-                      track.author +
-                      " | " +
-                      track.title}
-                  </p>
-                  <p className={styles["track-subtitle"]}>
-                    {"Add by: " + track.requestBy}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );

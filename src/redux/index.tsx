@@ -14,8 +14,8 @@ const store = configureStore({
 
 export default store;
 
-export const AddConsoleLog = (message: string[]) => {
-  store.dispatch(addConsoleContent(message));
+export const AddConsoleLog = (...messages: string[]) => {
+  store.dispatch(addConsoleContent(messages));
 };
 export const SetUsername = (username: string) => {
   store.dispatch(setUsername(username));

@@ -39,7 +39,7 @@ export default function Page() {
             return response.blob();
           })
           .catch((error) => {
-            AddConsoleLog([`Error downloading video: ${error}`]);
+            AddConsoleLog(`Error downloading video: ${error}`);
           });
         return blob_mp4;
       case "mp3":
@@ -63,7 +63,7 @@ export default function Page() {
             return response.blob();
           })
           .catch((error) => {
-            AddConsoleLog([`Error downloading audio: ${error}`]);
+            AddConsoleLog(`Error downloading audio: ${error}`);
           });
         return blob_mp3;
     }
@@ -71,18 +71,14 @@ export default function Page() {
 
   // Command handler
   useCommandHandler({
-    log: () => {
-      AddConsoleLog([API_URL]);
-      // Use for debugging
-    },
     download: (_cmd, args, flags) => {
       const URL = args[0] ?? "";
       if (!URL) {
-        AddConsoleLog(["Usage: download [video_URL]"]);
+        AddConsoleLog("Usage: download [video_URL]");
         return;
       }
       if (!ReactPlayer.canPlay(URL)) {
-        AddConsoleLog(["Invalid video URL"]);
+        AddConsoleLog("Invalid video URL");
         return;
       }
       if (
@@ -91,9 +87,9 @@ export default function Page() {
         flags.length === 0
       ) {
         const downloadVideo = async () => {
-          AddConsoleLog([`Pending download: ${URL} (.mp4)`]);
+          AddConsoleLog(`Pending download: ${URL} (.mp4)`);
           const blob = await getVideoBlob(URL.split("v=")[1], "mp4");
-          AddConsoleLog(["Starting download..."]);
+          AddConsoleLog("Starting download...");
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -105,9 +101,9 @@ export default function Page() {
       }
       if (flags.includes("-a") || flags.includes("--audio")) {
         const downloadAudio = async () => {
-          AddConsoleLog([`Pending download: ${URL} (.mp3)`]);
+          AddConsoleLog(`Pending download: ${URL} (.mp3)`);
           const blob = await getVideoBlob(URL.split("v=")[1], "mp3");
-          AddConsoleLog(["Starting download..."]);
+          AddConsoleLog("Starting download...");
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;

@@ -93,32 +93,32 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
   if (!ctx) return {};
   return {
     help: () => {
-      AddConsoleLog(["Available commands:", "---"]);
+      AddConsoleLog("Available commands:", "---");
       ctx.availableCommands.forEach((cmd: Command) => {
-        AddConsoleLog([`@#00ffaa${cmd.usage}@# - ${cmd.description}`]);
+        AddConsoleLog(`@#00ffaa${cmd.usage}@# - ${cmd.description}`);
       });
     },
     ls: (_cmd, _args, flags) => {
       if (flags.includes("-t") || flags.includes("--tree")) {
         renderWebPaths(webPaths, "").forEach((path) => {
-          AddConsoleLog([path]);
+          AddConsoleLog(path);
         });
         return;
       }
       if (flags.includes("-a") || flags.includes("--all")) {
-        AddConsoleLog([["./", "../", ...ctx.availablePaths].join(" ")]);
+        AddConsoleLog(["./", "../", ...ctx.availablePaths].join(" "));
         return;
       }
       if (flags.includes("-l") || flags.includes("--long")) {
-        AddConsoleLog(["Available paths:", ...ctx.availablePaths]);
+        AddConsoleLog("Available paths:", ...ctx.availablePaths);
         return;
       }
-      AddConsoleLog([ctx.availablePaths.join(" ")]);
+      AddConsoleLog(ctx.availablePaths.join(" "));
     },
     background: (_cmd, args) => {
       const url = args[0] ?? "";
       if (!url) {
-        AddConsoleLog(["URL invalid! Usage: background [url]"]);
+        AddConsoleLog("URL invalid! Usage: background [url]");
         return;
       }
       ctx.setBackgroundImageUrl(url);
@@ -126,15 +126,15 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
     username: (_cmd, args) => {
       const name = args[0] ?? "";
       if (!name) {
-        AddConsoleLog(["Usage: setname [name]"]);
+        AddConsoleLog("Usage: setname [name]");
         return;
       }
       if (name.length > 20) {
-        AddConsoleLog(["Name too long (max 20 characters)"]);
+        AddConsoleLog("Name too long (max 20 characters)");
         return;
       }
       ctx.setUsername(name);
-      AddConsoleLog([`Set username to ${name}`]);
+      AddConsoleLog(`Set username to ${name}`);
     },
   };
 }
@@ -163,7 +163,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     if (handler) {
       handler(command, args, flags);
     } else {
-      AddConsoleLog([`Command not found: @#fff700${command}`]);
+      AddConsoleLog(`Command not found: @#fff700${command}`);
     }
 
     store.dispatch(setCommand(""));
