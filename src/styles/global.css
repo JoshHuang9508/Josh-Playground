@@ -1,39 +1,40 @@
 @font-face {
-  font-family: "StandardFont";
+  font-family: StandardFont;
+  font-style: normal;
+  font-weight: normal;
   src: url("/fonts/zh-tw.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
 }
+
 @font-face {
-  font-family: "SignatureFont";
-  src: url("/fonts/signature-us.otf") format("opentype");
-  font-weight: normal;
+  font-family: SignatureFont;
   font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/signature-us.otf") format("opentype");
 }
 
 * {
   box-sizing: border-box;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 html,
 body {
-  background-color: rgba(46, 36, 36, 0.82);
-  color: white;
   width: 100vw;
   height: 100vh;
-  font-family: "Consolas", "Noto Sans TC", sans-serif;
-  font-size: clamp(12px, 0.75vw, 18px);
   overflow: hidden;
+  font-family: Consolas, "Noto Sans TC", sans-serif;
+  font-size: clamp(12px, 0.75vw, 18px);
+  color: white;
+  background-color: rgb(46 36 36 / 82%);
 }
 
 span,
 p {
-  padding: 0;
   min-height: 1rem;
+  padding: 0;
+  overflow-wrap: break-word;
   white-space: pre-wrap;
-  word-wrap: break-word;
 }
 
 input {
@@ -59,41 +60,41 @@ div.col {
 }
 
 div.content-div {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: row;
   gap: 1rem;
-  padding: 1rem 10rem;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   width: 100%;
+  padding: 1rem 10rem;
   overflow: visible;
 }
 
 div.content-div div.container1 {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   width: 100%;
   height: 35rem;
   border-radius: 1rem;
   opacity: 0;
-  animation: fadeIn 2s ease-in forwards;
+  animation: fade-in 2s ease-in forwards;
 }
 
 div.content-div div.container2 {
-  flex: 0.5;
   display: flex;
+  flex: 0.5;
   flex-direction: column;
   height: 35rem;
   border-radius: 1rem;
   opacity: 0;
-  animation: fadeIn 2s ease-in forwards;
+  animation: fade-in 2s ease-in forwards;
 }
 
 div.content-div div div.sub-container1 {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   padding: 1rem;
   background-color: #00000020;
@@ -101,18 +102,19 @@ div.content-div div div.sub-container1 {
 }
 
 div.content-div div div.sub-container2 {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: row;
-  padding: 1rem;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
-@keyframes fadeIn {
+@keyframes fade-in {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -133,7 +135,7 @@ p.p1 {
   font-size: 1rem;
 }
 
-@media (max-width: 1200px) {
+@media (width <= 1200px) {
   html,
   body {
     font-size: clamp(12px, 1vh, 16px);
@@ -151,16 +153,16 @@ p.p1 {
 
   div.content-div div.container1 {
     flex: none;
-    height: 35rem;
     width: 100%;
+    height: 35rem;
     height: 100%;
   }
 
   div.content-div div.container2 {
     display: flex;
     flex: none;
-    height: 35rem;
     width: 100%;
+    height: 35rem;
   }
 
   div.content-div div div.sub-container2 {
@@ -170,6 +172,7 @@ p.p1 {
   p.title {
     font-size: 2.4rem;
   }
+
   p.subtitle {
     font-size: 1.6rem;
   }

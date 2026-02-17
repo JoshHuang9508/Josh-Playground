@@ -1,0 +1,34 @@
+{
+    "extends": [
+        "stylelint-config-standard",
+        "stylelint-config-recess-order"
+    ],
+    "rules": {
+        "comment-empty-line-before": null,
+        "custom-property-pattern": [
+            "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+            {
+                "message": "Variable names must be kebab-case (e.g. --my-variable)"
+            }
+        ],
+        "selector-pseudo-class-no-unknown": [
+            true,
+            {
+                "ignorePseudoClasses": [
+                    "global",
+                    "local",
+                    "export"
+                ]
+            }
+        ],
+        "property-no-unknown": [
+            true,
+            {
+                "ignoreProperties": [
+                    "composes"
+                ]
+            }
+        ],
+        "selector-class-pattern": "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$"
+    }
+}

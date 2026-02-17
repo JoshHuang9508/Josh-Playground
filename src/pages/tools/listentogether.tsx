@@ -496,7 +496,7 @@ export default function Page() {
         <p className={"header2"}>點我一下</p>
       </div>
 
-      <div className={styles["loggerContainer"]}>
+      <div className={styles["logger-container"]}>
         <p className={"header2"}>房間日誌</p>
         <div className={styles["log-list"]}>
           {logs.map((log, index) => (
@@ -507,7 +507,7 @@ export default function Page() {
         </div>
       </div>
 
-      <div className={styles["playerContainer"]}>
+      <div className={styles["player-container"]}>
         {playerState && (
           <ReactPlayer
             style={playerState.trackQueue.length > 0 ? {} : { display: "none" }}
@@ -562,7 +562,7 @@ export default function Page() {
         )}
       </div>
 
-      <div className={styles["playlistContainer"]}>
+      <div className={styles["playlist-container"]}>
         <p className={"header2"}>
           {"Playlist" +
             (playerState.trackQueue.length > 0

@@ -1,117 +1,117 @@
 div.content {
   display: flex;
   flex-direction: row;
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
-div.loggerContainer {
-  z-index: 10;
+div.logger-container {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 10;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 1rem;
   align-items: center;
-  height: 100%;
+  justify-content: center;
   width: 20%;
   min-width: 300px;
+  height: 100%;
   padding: 0.25rem;
-  gap: 1rem;
   background-color: #ffffff10;
   border-top-right-radius: 2rem;
   border-bottom-right-radius: 2rem;
   box-shadow: 10px 0 10px -10px #00000040;
+  backdrop-filter: blur(0.5rem);
   transform: translateX(-80%);
   transition: transform 0.3s ease-in-out;
-  backdrop-filter: blur(0.5rem);
 }
 
-div.loggerContainer:hover {
+div.logger-container:hover {
   transform: translateX(0);
 }
 
 div.log-list {
   display: flex;
   flex-direction: column;
-  overflow: scroll;
-  scrollbar-width: none;
   width: 100%;
   height: 80%;
   padding: 0 1rem;
+  overflow: scroll;
+  scrollbar-width: none;
 }
 
-div.playerContainer {
+div.player-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 1rem;
+  width: 100%;
   pointer-events: none;
-  opacity: 0.5;
   user-select: none;
+  opacity: 0.5;
 }
 
-div.playlistContainer {
-  z-index: 10;
+div.playlist-container {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 10;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 1rem;
   align-items: center;
-  height: 100%;
+  justify-content: center;
   width: 20%;
   min-width: 300px;
+  height: 100%;
   padding: 0.25rem;
-  gap: 1rem;
   background-color: #ffffff10;
   border-top-left-radius: 2rem;
   border-bottom-left-radius: 2rem;
   box-shadow: -10px 0 10px -10px #00000040;
+  backdrop-filter: blur(0.5rem);
   transform: translateX(80%);
   transition: transform 0.3s ease-in-out;
-  backdrop-filter: blur(0.5rem);
 }
 
-div.playlistContainer:hover {
+div.playlist-container:hover {
   transform: translateX(0);
 }
 
 div.track-card-list {
   display: flex;
-  height: fit-content;
   flex-direction: column;
   justify-content: center;
+  height: fit-content;
 }
 
 div.track-card.selected {
-  border: 1px solid rgb(0, 150, 40);
-  box-shadow: 0 0 0.6rem rgb(70, 255, 70);
+  border: 1px solid rgb(0 150 40);
+  box-shadow: 0 0 0.6rem rgb(70 255 70);
 }
 
 div.track-card {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  height: 5.5rem;
   padding: 1rem;
   margin: 0.5rem;
-  height: 5.5rem;
-  opacity: 1;
-  background-color: #00000022;
-  border: 1px solid #999999;
+  cursor: pointer;
+  background-color: #0002;
+  border: 1px solid #999;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.6rem #505050;
-  cursor: pointer;
+  opacity: 1;
 }
 
 div.track-card div.track-info {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
   gap: 0.5rem;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 div.track-card div.track-info p.track-title {
@@ -127,39 +127,43 @@ div.track-card div.track-info p.track-subtitle {
 p.online-user {
   color: #00ca00;
 }
+
 p.log {
   height: fit-content;
 }
 
 @keyframes rgb-shadow {
   0% {
-    box-shadow: 0 0 2rem rgb(255, 0, 0);
+    box-shadow: 0 0 2rem rgb(255 0 0);
   }
+
   33% {
-    box-shadow: 0 0 2rem rgb(0, 255, 0);
+    box-shadow: 0 0 2rem rgb(0 255 0);
   }
+
   66% {
-    box-shadow: 0 0 2rem rgb(0, 0, 255);
+    box-shadow: 0 0 2rem rgb(0 0 255);
   }
+
   100% {
-    box-shadow: 0 0 2rem rgb(255, 0, 0);
+    box-shadow: 0 0 2rem rgb(255 0 0);
   }
 }
 
 div.unmute-container {
-  z-index: 200;
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  cursor: pointer;
+  user-select: none;
   background-color: #000000a0;
   backdrop-filter: blur(1rem);
-  user-select: none;
-  cursor: pointer;
 }
 
 div.unmute-container.active {
@@ -170,8 +174,9 @@ div.unmute-container.active {
   from {
     opacity: 1;
   }
+
   to {
-    opacity: 0;
     display: none;
+    opacity: 0;
   }
 }

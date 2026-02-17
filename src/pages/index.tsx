@@ -120,16 +120,14 @@ export default function Page() {
         >
           <img
             ref={imageRef}
-            className={`${styles["profile-picture"]} ${
-              showMusicInfo ? styles["spin"] : ""
-            }`}
+            className={`${styles["profile-picture"]} ${showMusicInfo ? styles["spin"] : ""
+              }`}
             src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
-            className={`${styles["music-info"]} ${
-              showMusicInfo ? styles["show"] : styles["hidden"]
-            }`}
+            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]
+              }`}
           >
             <ColorSpan
               str={`Now playing: @#FFF700${musics[musicIndex].name}@#...`}
@@ -161,14 +159,13 @@ export default function Page() {
         </div>
       </div>
 
-      <div className={styles["projectList"]}>
+      <div className={styles["project-list"]}>
         {Array.from({ length: 3 }).map((_, index) => {
           return (
             <div
               key={index}
-              className={`${styles["column"]} ${
-                styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
-              }`}
+              className={`${styles["column"]} ${styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
+                }`}
             >
               {Array.from({ length: 2 }).map((_, index) => {
                 return (

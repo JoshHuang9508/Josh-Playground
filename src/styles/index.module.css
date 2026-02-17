@@ -2,67 +2,79 @@ img.profile-picture {
   display: inline-block;
   width: 15rem;
   height: 15rem;
-  border-radius: 50%;
   margin: 2rem;
+  border-radius: 50%;
   box-shadow: 0 0 1rem white;
   animation:
     rgb-shadow 10s infinite linear,
-    spinBack 1s linear;
+    spin-back 1s linear;
 }
+
 img.profile-picture.spin {
   animation:
     rgb-shadow 10s infinite linear,
     spin 5s infinite linear;
 }
+
 @keyframes rgb-shadow {
   0% {
     box-shadow:
-      0 0 2rem rgb(255, 0, 0),
-      inset 0 0 2rem rgb(255, 0, 0);
+      0 0 2rem rgb(255 0 0),
+      inset 0 0 2rem rgb(255 0 0);
   }
+
   16% {
     box-shadow:
-      0 0 2rem rgb(255, 165, 0),
-      inset 0 0 2rem rgb(255, 165, 0);
+      0 0 2rem rgb(255 165 0),
+      inset 0 0 2rem rgb(255 165 0);
   }
+
   33% {
     box-shadow:
-      0 0 2rem rgb(255, 255, 0),
-      inset 0 0 2rem rgb(255, 255, 0);
+      0 0 2rem rgb(255 255 0),
+      inset 0 0 2rem rgb(255 255 0);
   }
+
   50% {
     box-shadow:
-      0 0 2rem rgb(0, 255, 0),
-      inset 0 0 2rem rgb(0, 255, 0);
+      0 0 2rem rgb(0 255 0),
+      inset 0 0 2rem rgb(0 255 0);
   }
+
   66% {
     box-shadow:
-      0 0 2rem rgb(0, 0, 255),
-      inset 0 0 2rem rgb(0, 0, 255);
+      0 0 2rem rgb(0 0 255),
+      inset 0 0 2rem rgb(0 0 255);
   }
+
   83% {
     box-shadow:
-      0 0 2rem rgb(255, 0, 255),
-      inset 0 0 2rem rgb(255, 0, 255);
+      0 0 2rem rgb(255 0 255),
+      inset 0 0 2rem rgb(255 0 255);
   }
+
   100% {
     box-shadow:
-      0 0 2rem rgb(255, 0, 0),
-      inset 0 0 2rem rgb(255, 0, 0);
+      0 0 2rem rgb(255 0 0),
+      inset 0 0 2rem rgb(255 0 0);
   }
 }
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
-@keyframes spinBack {
+
+@keyframes spin-back {
   from {
     transform: rotate(var(--current-rotation)); /* 保持當前旋轉角度 */
   }
+
   to {
     transform: rotate(0deg);
   }
@@ -71,124 +83,127 @@ img.profile-picture.spin {
 div.music-info {
   display: flex;
   justify-content: flex-start;
-  transition: all 1s ease-in-out;
   margin-bottom: 1rem;
+  transition: all 1s ease-in-out;
 }
+
 div.music-info.show {
   width: 30%;
 }
+
 div.music-info.hidden {
   width: 0;
 }
 
-div.projectList {
+div.project-list {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: -1;
   display: flex;
   flex-direction: row;
+  gap: 1rem;
   width: 100%;
   height: 100%;
-  gap: 1rem;
   padding: 0 1rem;
   overflow: visible;
   opacity: 0.5;
-  z-index: -1;
 }
 
-div.projectList.hidden {
+div.project-list.hidden {
   top: 100%;
 }
 
-div.projectList div.column {
+div.project-list div.column {
   position: relative;
-  display: flex;
-  flex-direction: column;
   top: 0;
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: 1rem;
   width: 100%;
   height: fit-content;
-  gap: 1rem;
   overflow: visible;
 }
 
-div.projectList div.column::last-child {
+div.project-list div.column:last-child {
   top: 100%;
 }
 
-div.projectList div.column.scroll-speed-1 {
-  animation: autoScroll 20s linear infinite;
+div.project-list div.column.scroll-speed-1 {
+  animation: auto-scroll 20s linear infinite;
 }
 
-div.projectList div.column.scroll-speed-2 {
-  animation: autoScroll 25s linear infinite;
+div.project-list div.column.scroll-speed-2 {
+  animation: auto-scroll 25s linear infinite;
 }
 
-div.projectList div.column.scroll-speed-3 {
-  animation: autoScroll 30s linear infinite;
+div.project-list div.column.scroll-speed-3 {
+  animation: auto-scroll 30s linear infinite;
 }
 
-div.projectList div.column.scroll-speed-4 {
-  animation: autoScroll 45s linear infinite;
+div.project-list div.column.scroll-speed-4 {
+  animation: auto-scroll 45s linear infinite;
 }
 
-div.projectList div.column.scroll-speed-5 {
-  animation: autoScroll 40s linear infinite;
+div.project-list div.column.scroll-speed-5 {
+  animation: auto-scroll 40s linear infinite;
 }
 
-div.projectList div.column div {
+div.project-list div.column div {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-@keyframes autoScroll {
+@keyframes auto-scroll {
   from {
     transform: translateY(0);
   }
+
   to {
     transform: translateY(-50%);
   }
 }
 
-div.projectList div.project {
+div.project-list div.project {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   height: fit-content;
+  padding: 1rem;
   overflow: visible;
+  background-color: #0002;
   border: 2px solid white;
   border-radius: 1rem;
-  padding: 1rem;
-  background-color: #00000022;
 }
 
-div.projectList div.project div.project-title {
+div.project-list div.project div.project-title {
   display: flex;
   flex-direction: row;
   gap: 1rem;
   align-items: center;
 }
 
-div.projectList div.project div.project-title::before {
-  content: "";
-  background-image: url("/assets/github.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+div.project-list div.project div.project-title::before {
   min-width: 3rem;
   min-height: 3rem;
+  content: "";
+  background-image: url("/assets/github.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   filter: invert(1);
 }
 
-div.projectList div.project div.project-description {
+div.project-list div.project div.project-description {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-@media (max-width: 1200px) {
+@media (width <= 1200px) {
   img.profile-picture {
     width: 10rem;
     height: 10rem;
@@ -199,18 +214,20 @@ div.projectList div.project div.project-description {
   div.music-info {
     justify-content: center;
   }
+
   div.music-info.show {
     width: 100%;
   }
+
   div.music-info.hidden {
     width: 0;
   }
 
-  div.projectList {
+  div.project-list {
     flex-direction: column;
   }
 
-  div.projectList div.column {
+  div.project-list div.column {
     flex: none;
   }
 }
