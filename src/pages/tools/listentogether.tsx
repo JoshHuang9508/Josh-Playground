@@ -23,7 +23,6 @@ export default function Page() {
   // States
   const [mute, setMute] = useState(true);
   const [socketInstance, setSocketInstance] = useState<Socket>();
-  const [users, setUsers] = useState<User>({});
   const [playerState, setPlayerState] = useState<PlayerState>({
     playing: false,
     played: 0,
@@ -49,6 +48,8 @@ export default function Page() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [logs, setLogs] = useState<string[]>([]);
   const [cachedLogs, setCachedLogs] = useState<string[]>([]);
+  const [users, setUsers] = useState<User>({});
+  const [cachedUsers, setCachedUsers] = useState<User>({});
 
   // Functions
   const SetUsername = (username: string) => {
@@ -193,11 +194,13 @@ export default function Page() {
           const tracks = await getPlaylist(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog(
-            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -507,19 +510,48 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    if (cachedLogs.length === 0) {
+      setCachedLogs(logs);
+      return;
+    }
+
     const diff = logs.filter((log) => !cachedLogs.includes(log));
     setCachedLogs(logs);
 
     if (diff.length > 0) {
-      AddConsoleLog(...diff.map((log) => `[${new Date().toLocaleDateString()}] ${log}`));
+      AddConsoleLog(
+        ...diff.map((log) => `[${new Date().toLocaleTimeString()}] ${log}`),
+      );
     }
   }, [logs]);
+
+  useEffect(() => {
+    if (Object.keys(cachedUsers).length === 0) {
+      setCachedUsers(users);
+      return;
+    }
+
+    const diff = Object.entries(users).filter(
+      ([id]) => !Object.keys(cachedUsers).includes(id),
+    );
+    setCachedUsers(users);
+
+    if (diff.length > 0) {
+      AddConsoleLog(
+        ...diff.map(
+          ([, user]) =>
+            `[${new Date().toLocaleTimeString()}] ${user} joined the room`,
+        ),
+      );
+    }
+  }, [users]);
 
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${mute ? styles["active"] : ""
-          }`}
+        className={`${styles["unmute-container"]} ${
+          mute ? styles["active"] : ""
+        }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
