@@ -7,8 +7,10 @@ import { AddConsoleLog } from "@/redux";
 import { Music } from "@/lib/types";
 
 import ColorSpan from "@/components/ColorSpan";
+import GitHubRepoCard from "@/components/GitHubRepoCard";
 
 import useCommandHandler from "@/hooks/useCommandHandler";
+import useGitHubRepos from "@/hooks/useGitHubRepos";
 
 import textContent from "@/lib/text-content.json";
 
@@ -24,9 +26,21 @@ const musics: Music[] = [
 ];
 
 export default function Page() {
+  // GitHub repos
+  const { repos } = useGitHubRepos("JoshHuang9508");
+
   // Refs
   const scrollSpeedRef = useRef<number[]>(
-    Array.from({ length: 3 }, () => Math.floor(Math.random() * 5) + 1),
+    Array.from({ length: 3 }).reduce<number[]>((acc, _) => {
+      const getRandomSpeed = () => {
+        const speed = Math.floor(Math.random() * 5) + 1;
+        if (acc.includes(speed)) {
+          return getRandomSpeed();
+        }
+        return speed;
+      };
+      return acc.concat(getRandomSpeed());
+    }, []),
   );
   const imageRef = useRef<HTMLImageElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
@@ -176,39 +190,26 @@ export default function Page() {
         </div>
       </div>
 
-      <div className={styles["project-list"]}>
-        {Array.from({ length: 3 }).map((_, index) => {
-          return (
-            <div
-              key={index}
-              className={`${styles["column"]} ${
-                styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
-              }`}
-            >
-              {Array.from({ length: 2 }).map((_, index) => {
-                return (
-                  <div key={index}>
-                    {textContent["/"].projects.map((project, index) => {
-                      return (
-                        <div key={index} className={styles["project"]}>
-                          <div className={styles["project-title"]}>
-                            <ColorSpan str={project.name} className="header2" />
-                          </div>
-                          <div className={styles["project-description"]}>
-                            <ColorSpan
-                              str={project.description}
-                              className="p3"
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
+      <div className={styles["repo-wall"]}>
+        {Array.from({ length: 3 }).map((_, colIndex) => (
+          <div
+            key={colIndex}
+            className={`${styles["column"]} ${
+              styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
+            }`}
+          >
+            {Array.from({ length: 3 }).map((_, dupIndex) => (
+              <div key={dupIndex}>
+                {repos.map((repo, repoIndex) => (
+                  <GitHubRepoCard
+                    key={`${dupIndex}-${repoIndex}`}
+                    repo={repo}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -387,8 +387,9 @@ function PageComponent({ Component, pageProps }) {
           ) : (
             <div
               ref={consoleBox}
-              className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
-                }`}
+              className={`${styles[`console`]} ${
+                consoleVisible ? "" : styles[`hidden`]
+              }`}
             >
               <div
                 tabIndex={-1}

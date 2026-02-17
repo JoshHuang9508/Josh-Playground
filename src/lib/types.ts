@@ -57,3 +57,16 @@ export type Music = {
   name: string;
   path: string;
 };
+
+export type GitHubRepo = {
+  name: string; // e.g. "RiceCall"
+  owner: string; // e.g. "NerdyHomeReOpen"
+  description: string;
+  language: string | null; // e.g. "TypeScript", "Go", "Vue", null
+  stars: number;
+  forks: number;
+  watchers: number;
+  visibility: "Public" | "Private";
+  updatedAt: string; // e.g. "Updated 4 hours ago"
+  url?: string; // e.g. "https://github.com/NerdyHomeReOpen/RiceCall"
+};
