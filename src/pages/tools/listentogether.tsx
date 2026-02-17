@@ -23,7 +23,6 @@ export default function Page() {
   const username = useSelector((state: { user: string }) => state.user);
 
   // States
-  const [isClient, setIsClient] = useState(false);
   const [isAllowedToUnmute, setIsAllowedToUnmute] = useState(false);
   const [socketInstance, setSocketInstance] = useState<Socket>();
   const [users, setUsers] = useState<User>({});
@@ -196,13 +195,11 @@ export default function Page() {
           const tracks = await getPlaylistAPI(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog([
-            `Added ${tracks.length} tracks to queue (#${
-              playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           ]);
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
-              playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -261,13 +258,13 @@ export default function Page() {
         return;
       }
       if (flags.includes("-n") || flags.includes("--next")) {
-        SetTrackIndex(playerState.index + 1);
+        NextTrack();
         AddConsoleLog([`Switch to next track`]);
         AddRoomLog(`${username} 切換到下一首歌曲`);
         return;
       }
       if (flags.includes("-p") || flags.includes("--prev")) {
-        SetTrackIndex(playerState.index - 1);
+        PrevTrack();
         AddConsoleLog([`Switch to previous track`]);
         AddRoomLog(`${username} 切換到上一首歌曲`);
         return;
@@ -402,10 +399,6 @@ export default function Page() {
 
   // Effects
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
     const enablePlay = () => {
       if (PlayerStateClientState.isReady) setIsAllowedToUnmute(true);
     };
@@ -439,21 +432,16 @@ export default function Page() {
       AddConsoleLog([`Disconnect from server`]);
     });
     socket.on("receivePlayerState", (state) => {
-      console.log("Receive player state");
       setPlayerState({ ...playerState, ...state });
     });
     socket.on("receiveLog", (logs) => {
-      console.log("Receive logs");
       setLogs(logs);
     });
     socket.on("receiveUsers", (users) => {
-      console.log("Receive users");
       setUsers(users);
     });
     socket.on("seek", (time) => {
-      if (!playerRef.current) return;
-      console.log("Seek to: ", time);
-      playerRef.current.seekTo(time);
+      if (playerRef.current) playerRef.current.seekTo(time);
     });
 
     return () => {
@@ -502,9 +490,8 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${
-          isAllowedToUnmute ? styles["active"] : ""
-        }`}
+        className={`${styles["unmute-container"]} ${isAllowedToUnmute ? styles["active"] : ""
+          }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
@@ -521,7 +508,7 @@ export default function Page() {
       </div>
 
       <div className={styles["playerContainer"]}>
-        {isClient && playerState && (
+        {playerState && (
           <ReactPlayer
             style={playerState.trackQueue.length > 0 ? {} : { display: "none" }}
             ref={playerRef}
@@ -586,12 +573,11 @@ export default function Page() {
           {playlist[currentPage - 1]?.map((track, index) => (
             <div
               key={index + (currentPage - 1) * MAX_TRACKS_PER_PAGE}
-              className={`${styles["track-card"]} ${
-                index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
+              className={`${styles["track-card"]} ${index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
                 playerState.index
-                  ? styles["selected"]
-                  : ""
-              }`}
+                ? styles["selected"]
+                : ""
+                }`}
             >
               <div className={styles["track-info"]}>
                 <img style={{ height: "100%" }} src={track.img} />

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Provider } from "react-redux";
 import dotenv from "dotenv";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 
 dotenv.config({ path: ".env" });
 
@@ -20,7 +21,7 @@ import { AppContext } from "@/hooks/useCommandHandler";
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
 
-export default function Page({ Component, pageProps }) {
+function PageComponent({ Component, pageProps }) {
   // Refs
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
@@ -43,7 +44,78 @@ export default function Page({ Component, pageProps }) {
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
 
   // Variables
-  const prefix = `@#FF77B7${username}@#@@#FFA24C${window.location.hostname}@#:~${currentURL}$ `;
+  const prefix = window ? `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ ` : `@#FF77B7${username}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
+
+  // Functions
+  const replaceInput = (input: string, replace: string) => {
+    for (let i = 0; i < input.length; i++) {
+      if (replace.startsWith(input.slice(i, input.length))) {
+        return input.slice(0, i) + replace;
+      }
+    }
+    return input + replace;
+  };
+
+  const findAvailable = (input: string, commands: Command[]): string[] => {
+    const parts = input.split(" ");
+    const lastPart = parts[parts.length - 1];
+    const command =
+      parts.length <= 1 ? "" : commands.find((cmd) => cmd.name === parts[0]);
+    let availables: string[] = [];
+
+    if (input == "" || input == " ") {
+      return availables;
+    }
+    if (
+      !command &&
+      !input.endsWith(" ") &&
+      commands.filter((_) => _.name.startsWith(parts[0])).length != 0
+    ) {
+      availables.push(
+        ...commands
+          .filter(
+            (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart,
+          )
+          .map((cmd) => cmd.name),
+      );
+    } else if (command) {
+      if (command.options) {
+        availables.push(
+          ...command.options.filter(
+            (opt) => opt.startsWith(lastPart) && opt != lastPart,
+          ),
+        );
+      }
+    }
+    if (
+      lastPart.endsWith("/") ||
+      input.endsWith(" ")
+    ) {
+      availables.push(...findAvailablePath(lastPart));
+    }
+
+    return availables;
+  };
+
+  const findAvailablePath = (input: string) => {
+    const paths = input.split("/");
+    const lastPath = paths.pop();
+    const pagePaths = window.location.pathname.split("/").filter(Boolean);
+    paths.forEach((element) => {
+      if (element === ".") {
+        return;
+      } else if (element === "..") {
+        pagePaths.pop();
+      } else {
+        pagePaths.push(element);
+      }
+    });
+    return (
+      pathList[`${pagePaths.join("/")}/`]?.filter((_) =>
+        _.startsWith(lastPath),
+      ) ?? []
+    );
+  };
 
   // Handlers
   const handleInputChange = (event) => {
@@ -115,79 +187,6 @@ export default function Page({ Component, pageProps }) {
       setInputTemp("");
       setAvailableIndex(0);
     }
-  };
-
-  const replaceInput = (input: string, replace: string) => {
-    for (let i = 0; i < input.length; i++) {
-      if (replace.startsWith(input.slice(i, input.length))) {
-        return input.slice(0, i) + replace;
-      }
-    }
-    return input + replace;
-  };
-
-  const findAvailable = (input: string, commands: Command[]): string[] => {
-    const parts = input.split(" ");
-    const lastPart = parts[parts.length - 1];
-    const command =
-      parts.length <= 1 ? "" : commands.find((cmd) => cmd.name === parts[0]);
-    let availables: string[] = [];
-
-    if (input == "" || input == " ") {
-      return availables;
-    }
-    if (
-      !command &&
-      !input.endsWith(" ") &&
-      commands.filter((_) => _.name.startsWith(parts[0])).length != 0
-    ) {
-      availables.push(
-        ...commands
-          .filter(
-            (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart,
-          )
-          .map((cmd) => cmd.name),
-      );
-    } else if (command) {
-      if (command.options) {
-        availables.push(
-          ...command.options.filter(
-            (opt) => opt.startsWith(lastPart) && opt != lastPart,
-          ),
-        );
-      }
-    }
-    if (
-      lastPart.startsWith("../") ||
-      lastPart.startsWith("./") ||
-      lastPart.startsWith("/") ||
-      lastPart.includes("\\") ||
-      input.endsWith(" ")
-    ) {
-      availables.push(...findAvailablePath(lastPart));
-    }
-
-    return availables;
-  };
-
-  const findAvailablePath = (input: string) => {
-    const paths = input.split("/");
-    const lastPath = paths.pop();
-    const pagePaths = window.location.pathname.split("/").filter(Boolean);
-    paths.forEach((element) => {
-      if (element === ".") {
-        return;
-      } else if (element === "..") {
-        pagePaths.pop();
-      } else {
-        pagePaths.push(element);
-      }
-    });
-    return (
-      pathList[`${pagePaths.join("/")}/`]?.filter((_) =>
-        _.startsWith(lastPath),
-      ) ?? []
-    );
   };
 
   const handleOutputBoxScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -341,7 +340,7 @@ export default function Page({ Component, pageProps }) {
             className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
               }`}
           >
-            <div className={styles[`output`]} onScroll={handleOutputBoxScroll}>
+            <div tabIndex={-1} className={styles[`output`]} onScroll={handleOutputBoxScroll}>
               {consoleContents.map((content, index) => (
                 <div key={index} className={styles[`output-line`]}>
                   <ColorSpan str={content} />
@@ -384,3 +383,7 @@ export default function Page({ Component, pageProps }) {
     </Provider>
   );
 }
+
+const Page = dynamic(() => Promise.resolve(PageComponent), { ssr: false });
+
+export default Page;
