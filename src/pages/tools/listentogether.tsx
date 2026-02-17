@@ -3,15 +3,13 @@ import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 import { io, Socket } from "socket.io-client";
 
-// Styles
 import styles from "@/styles/listentogether.module.css";
 
-// Redux
-import store, { AddConsoleLog } from "@/redux";
-import { setCommand } from "@/redux/commandSlice";
+import { AddConsoleLog } from "@/redux";
 
-// Types
 import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
+
+import useCommandHandler from "@/hooks/useCommandHandler";
 
 export default function Page() {
   // Constants
@@ -22,7 +20,6 @@ export default function Page() {
   const playerRef = useRef<ReactPlayer>(null);
 
   // Redux
-  const command = useSelector((state: { command: string }) => state.command);
   const username = useSelector((state: { user: string }) => state.user);
 
   // States
@@ -45,13 +42,12 @@ export default function Page() {
     index: 0,
     isEnd: false,
   });
-  const [PlayerStateClient, setPlayerStateClient] = useState<PlayerStateClient>(
-    {
+  const [PlayerStateClientState, setPlayerStateClient] =
+    useState<PlayerStateClient>({
       volume: 0.5,
       seeking: false,
       isReady: false,
-    }
-  );
+    });
   const [playlist, setPlaylist] = useState<Track[][]>([]);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -174,6 +170,234 @@ export default function Page() {
     return tracks;
   };
 
+  // Command handler
+  useCommandHandler({
+    send: (_cmd, args) => {
+      const message = args.join(" ") ?? "";
+      if (!message) {
+        AddConsoleLog(["Usage: send [message]"]);
+        return;
+      }
+      AddConsoleLog([`Send message: ${message}`]);
+      AddRoomLog(`${username}: ${message}`);
+    },
+    queue: (_cmd, args, flags) => {
+      const URL = args[0] ?? "";
+      if (!URL) {
+        AddConsoleLog(["Usage: queue [video_URL|playlist_URL]"]);
+        return;
+      }
+      if (!ReactPlayer.canPlay(URL)) {
+        AddConsoleLog(["Can not play this URL"]);
+        return;
+      }
+      const updateTrackQueue = async () => {
+        if (URL.includes("playlist?list=")) {
+          const tracks = await getPlaylistAPI(URL.split("list=")[1]);
+          AddTracks(tracks);
+          AddConsoleLog([
+            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
+            } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
+          ]);
+          AddRoomLog(
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
+            } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
+          );
+        }
+        if (URL.includes("watch?v=")) {
+          const track = await getVideoInfoAPI(URL.split("v=")[1]);
+          AddTrack(track);
+          AddConsoleLog([
+            `Added ${track.title} to queue (#${playerState.trackQueue.length})`,
+          ]);
+          AddRoomLog(
+            `${username} 在播放清單中新增了 ${track.title} (#${playerState.trackQueue.length})`,
+          );
+        }
+      };
+      updateTrackQueue();
+    },
+    remove: (_cmd, args) => {
+      const indexToRm = args[0] ?? "";
+      if (!indexToRm) {
+        AddConsoleLog(["Usage: remove [index]"]);
+        return;
+      }
+      if (indexToRm === "*") {
+        SetTrackQueue([]);
+        AddConsoleLog(["Removed all tracks"]);
+        AddRoomLog(`${username} 移除了所有歌曲`);
+        return;
+      }
+      if (isNaN(parseFloat(indexToRm))) {
+        AddConsoleLog(["Invalid index"]);
+        return;
+      }
+      if (parseInt(indexToRm) >= playerState.trackQueue.length) {
+        AddConsoleLog(["Index out of range"]);
+        return;
+      }
+      const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
+      RemoveTrack(parseInt(indexToRm));
+      AddConsoleLog([`Removed track ${indexToRm}`]);
+      AddRoomLog(`${username} 移除了 ${trackToRm.title} (#${indexToRm})`);
+    },
+    play: () => {
+      Play();
+      AddConsoleLog(["Start playing..."]);
+      AddRoomLog(`${username} 開始播放`);
+    },
+    pause: () => {
+      Pause();
+      AddConsoleLog(["Pause playing..."]);
+      AddRoomLog(`${username} 暫停播放`);
+    },
+    switch: (_cmd, args, flags) => {
+      const index = args[0] ?? "";
+      if (!index) {
+        AddConsoleLog(["Usage: switch [index|options]"]);
+        return;
+      }
+      if (flags.includes("-n") || flags.includes("--next")) {
+        SetTrackIndex(playerState.index + 1);
+        AddConsoleLog([`Switch to next track`]);
+        AddRoomLog(`${username} 切換到下一首歌曲`);
+        return;
+      }
+      if (flags.includes("-p") || flags.includes("--prev")) {
+        SetTrackIndex(playerState.index - 1);
+        AddConsoleLog([`Switch to previous track`]);
+        AddRoomLog(`${username} 切換到上一首歌曲`);
+        return;
+      }
+      if (isNaN(parseFloat(index))) {
+        AddConsoleLog(["Invalid index"]);
+        return;
+      }
+      if (
+        parseInt(index) >= playerState.trackQueue.length ||
+        parseInt(index) < 0
+      ) {
+        AddConsoleLog(["Index out of range"]);
+        return;
+      }
+      SetTrackIndex(parseInt(index));
+      AddConsoleLog([`Switch to track ${index}`]);
+      AddRoomLog(`${username} 切換到歌曲 #${index}`);
+    },
+    volume: (_cmd, args) => {
+      const volume = args[0] ?? "";
+      if (!volume) {
+        AddConsoleLog(["Usage: volume [value]"]);
+        return;
+      }
+      if (isNaN(parseFloat(volume))) {
+        AddConsoleLog(["Invalid volume"]);
+        return;
+      }
+      setPlayerStateClient((prev) => ({
+        ...prev,
+        volume: parseFloat(volume) / 100,
+      }));
+      localStorage.setItem("volume", volume);
+      AddConsoleLog([`Set volume to ${volume}`]);
+    },
+    loop: (_cmd, _args, flags) => {
+      if (flags.includes("-t") || flags.includes("--true")) {
+        SetLoop(true);
+        AddConsoleLog(["Loop..."]);
+        AddRoomLog(`${username} 開啟循環播放`);
+        return;
+      }
+      if (flags.includes("-f") || flags.includes("--false")) {
+        SetLoop(false);
+        AddConsoleLog(["Unloop..."]);
+        AddRoomLog(`${username} 關閉循環播放`);
+        return;
+      }
+      AddConsoleLog(["Usage: loop [options]"]);
+    },
+    random: (_cmd, _args, flags) => {
+      if (flags.includes("-t") || flags.includes("--true")) {
+        SetPlayerState({ ...playerState, random: true });
+        AddConsoleLog(["Random..."]);
+        AddRoomLog(`${username} 開啟隨機播放`);
+        return;
+      }
+      if (flags.includes("-f") || flags.includes("--false")) {
+        SetPlayerState({ ...playerState, random: false });
+        AddConsoleLog(["Unrandom..."]);
+        AddRoomLog(`${username} 關閉隨機播放`);
+        return;
+      }
+      AddConsoleLog(["Usage: random [options]"]);
+    },
+    rate: (_cmd, args) => {
+      const rate = args[0] ?? "";
+      if (!rate) {
+        AddConsoleLog(["Usage: rate [value]"]);
+        return;
+      }
+      if (isNaN(parseFloat(rate))) {
+        AddConsoleLog(["Invalid rate"]);
+        return;
+      }
+      SetPlayBackRate(parseFloat(rate) / 100);
+      AddConsoleLog([`Set rate to ${rate}%`]);
+      AddRoomLog(`${username} 設定播放速度為 ${rate}%`);
+    },
+    seek: (_cmd, args) => {
+      const seek = args[0] ?? "";
+      if (!seek) {
+        AddConsoleLog(["Usage: seek [time]"]);
+        return;
+      }
+      if (isNaN(parseFloat(seek))) {
+        AddConsoleLog(["Invalid time"]);
+        return;
+      }
+      if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
+        AddConsoleLog(["Time out of range"]);
+        return;
+      }
+      Seek(parseFloat(seek));
+      AddConsoleLog([`Seek to ${seek}`]);
+      AddRoomLog(`${username} 跳轉到 ${seek} 秒`);
+    },
+    refresh: () => {
+      Refresh();
+      AddConsoleLog(["Refresh player..."]);
+      AddRoomLog(`${username} 刷新播放器`);
+    },
+    page: (_cmd, args, flags) => {
+      const page = args[0] ?? "";
+      if (!page) {
+        AddConsoleLog(["Usage: page [page|options]"]);
+        return;
+      }
+      if (flags.includes("-n") || flags.includes("--next")) {
+        setCurrentPage(currentPage + 1);
+        AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+        return;
+      }
+      if (flags.includes("-p") || flags.includes("--prev")) {
+        setCurrentPage(currentPage - 1);
+        AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
+        return;
+      }
+      if (isNaN(parseFloat(page))) {
+        AddConsoleLog(["Invalid page"]);
+        return;
+      }
+      if (parseInt(page) > totalPage || parseInt(page) <= 0) {
+        AddConsoleLog(["Page out of range"]);
+        return;
+      }
+      setCurrentPage(parseInt(page));
+      AddConsoleLog([`Switch to playlist page ${page}`]);
+    },
+  });
+
   // Effects
   useEffect(() => {
     setIsClient(true);
@@ -181,7 +405,7 @@ export default function Page() {
 
   useEffect(() => {
     const enablePlay = () => {
-      if (PlayerStateClient.isReady) setIsAllowedToUnmute(true);
+      if (PlayerStateClientState.isReady) setIsAllowedToUnmute(true);
     };
     document.addEventListener("click", enablePlay);
     document.addEventListener("touchstart", enablePlay);
@@ -189,7 +413,7 @@ export default function Page() {
       document.removeEventListener("click", enablePlay);
       document.removeEventListener("touchstart", enablePlay);
     };
-  }, [PlayerStateClient.isReady]);
+  }, [PlayerStateClientState.isReady]);
 
   useEffect(() => {
     const socket = io(API_URL, {
@@ -240,250 +464,6 @@ export default function Page() {
   }, [username]);
 
   useEffect(() => {
-    if (!command || command == "") return;
-    const flags =
-      command
-        .split(" ")
-        .slice(1)
-        .filter((_) => _.startsWith("-")) ?? "";
-    switch (command.split(" ")[0]) {
-      case "log":
-        // Use for debugging
-        break;
-      case "send":
-        const message = command.split(" ").slice(1).join(" ") ?? "";
-        if (!message) {
-          AddConsoleLog(["Usage: send [message]"]);
-          break;
-        }
-        AddConsoleLog([`Send message: ${message}`]);
-        AddRoomLog(`${username}: ${message}`);
-        break;
-      case "queue":
-        const URL = command.split(" ").slice(1)[0] ?? "";
-        if (!URL) {
-          AddConsoleLog(["Usage: queue [video_URL|playlist_URL]"]);
-          break;
-        }
-        if (!ReactPlayer.canPlay(URL)) {
-          AddConsoleLog(["Can not play this URL"]);
-          break;
-        }
-        const updateTrackQueue = async () => {
-          if (URL.includes("playlist?list=")) {
-            const tracks = await getPlaylistAPI(URL.split("list=")[1]);
-            AddTracks(tracks);
-            AddConsoleLog([
-              `Added ${tracks.length} tracks to queue (#${
-                playerState.trackQueue.length
-              } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
-            ]);
-            AddRoomLog(
-              `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
-                playerState.trackQueue.length
-              } ~ #${playerState.trackQueue.length + tracks.length - 1})`
-            );
-          }
-          if (URL.includes("watch?v=")) {
-            const track = await getVideoInfoAPI(URL.split("v=")[1]);
-            AddTrack(track);
-            AddConsoleLog([
-              `Added ${track.title} to queue (#${playerState.trackQueue.length})`,
-            ]);
-            AddRoomLog(
-              `${username} 在播放清單中新增了 ${track.title} (#${playerState.trackQueue.length})`
-            );
-          }
-        };
-        updateTrackQueue();
-        break;
-      case "remove":
-        const indexToRm = command.split(" ").slice(1)[0] ?? "";
-        if (!indexToRm) {
-          AddConsoleLog(["Usage: remove [index]"]);
-          break;
-        }
-        if (indexToRm == "*") {
-          SetTrackQueue([]);
-          AddConsoleLog(["Removed all tracks"]);
-          AddRoomLog(`${username} 移除了所有歌曲`);
-          break;
-        }
-        if (isNaN(parseFloat(indexToRm))) {
-          AddConsoleLog(["Invalid index"]);
-          break;
-        }
-        if (parseInt(indexToRm) >= playerState.trackQueue.length) {
-          AddConsoleLog(["Index out of range"]);
-          break;
-        }
-        const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
-        RemoveTrack(parseInt(indexToRm));
-        AddConsoleLog([`Removed track ${indexToRm}`]);
-        AddRoomLog(`${username} 移除了 ${trackToRm.title} (#${indexToRm})`);
-        break;
-      case "play":
-        Play();
-        AddConsoleLog(["Start playing..."]);
-        AddRoomLog(`${username} 開始播放`);
-        break;
-      case "pause":
-        Pause();
-        AddConsoleLog(["Pause playing..."]);
-        AddRoomLog(`${username} 暫停播放`);
-        break;
-      case "switch":
-        const index = command.split(" ").slice(1)[0] ?? "";
-        if (!index) {
-          AddConsoleLog(["Usage: switch [index|options]"]);
-          break;
-        }
-        if (flags.includes("-n") || flags.includes("--next")) {
-          SetTrackIndex(playerState.index + 1);
-          AddConsoleLog([`Switch to next track`]);
-          AddRoomLog(`${username} 切換到下一首歌曲`);
-          break;
-        }
-        if (flags.includes("-p") || flags.includes("--prev")) {
-          SetTrackIndex(playerState.index - 1);
-          AddConsoleLog([`Switch to previous track`]);
-          AddRoomLog(`${username} 切換到上一首歌曲`);
-          break;
-        }
-        if (isNaN(parseFloat(index))) {
-          AddConsoleLog(["Invalid index"]);
-          break;
-        }
-        if (
-          parseInt(index) >= playerState.trackQueue.length ||
-          parseInt(index) < 0
-        ) {
-          AddConsoleLog(["Index out of range"]);
-          break;
-        }
-        SetTrackIndex(parseInt(index));
-        AddConsoleLog([`Switch to track ${index}`]);
-        AddRoomLog(`${username} 切換到歌曲 #${index}`);
-        break;
-      case "volume":
-        const volume = command.split(" ").slice(1)[0] ?? "";
-        if (!volume) {
-          AddConsoleLog(["Usage: volume [value]"]);
-          break;
-        }
-        if (isNaN(parseFloat(volume))) {
-          AddConsoleLog(["Invalid volume"]);
-          break;
-        }
-        setPlayerStateClient((prev) => ({
-          ...prev,
-          volume: parseFloat(volume) / 100,
-        }));
-        localStorage.setItem("volume", volume);
-        AddConsoleLog([`Set volume to ${volume}`]);
-        break;
-      case "loop":
-        if (flags.includes("-t") || flags.includes("--true")) {
-          SetLoop(true);
-          AddConsoleLog(["Loop..."]);
-          AddRoomLog(`${username} 開啟循環播放`);
-          break;
-        }
-        if (flags.includes("-f") || flags.includes("--false")) {
-          SetLoop(false);
-          AddConsoleLog(["Unloop..."]);
-          AddRoomLog(`${username} 關閉循環播放`);
-          break;
-        }
-        AddConsoleLog(["Usage: loop [options]"]);
-        break;
-      case "random":
-        if (flags.includes("-t") || flags.includes("--true")) {
-          SetPlayerState({ ...playerState, random: true });
-          AddConsoleLog(["Random..."]);
-          AddRoomLog(`${username} 開啟隨機播放`);
-          break;
-        }
-        if (flags.includes("-f") || flags.includes("--false")) {
-          SetPlayerState({ ...playerState, random: false });
-          AddConsoleLog(["Unrandom..."]);
-          AddRoomLog(`${username} 關閉隨機播放`);
-          break;
-        }
-        AddConsoleLog(["Usage: random [options]"]);
-        break;
-      case "rate":
-        const rate = command.split(" ").slice(1)[0] ?? "";
-        if (!rate) {
-          AddConsoleLog(["Usage: rate [value]"]);
-          break;
-        }
-        if (isNaN(parseFloat(rate))) {
-          AddConsoleLog(["Invalid rate"]);
-          break;
-        }
-        SetPlayBackRate(parseFloat(rate) / 100);
-        AddConsoleLog([`Set rate to ${rate}%`]);
-        AddRoomLog(`${username} 設定播放速度為 ${rate}%`);
-        break;
-      case "seek":
-        const seek = command.split(" ").slice(1)[0] ?? "";
-        if (!seek) {
-          AddConsoleLog(["Usage: seek [time]"]);
-          break;
-        }
-        if (isNaN(parseFloat(seek))) {
-          AddConsoleLog(["Invalid time"]);
-          break;
-        }
-        if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
-          AddConsoleLog(["Time out of range"]);
-          break;
-        }
-        Seek(parseFloat(seek));
-        AddConsoleLog([`Seek to ${seek}`]);
-        AddRoomLog(`${username} 跳轉到 ${seek} 秒`);
-        break;
-      case "refresh":
-        Refresh();
-        AddConsoleLog(["Refresh player..."]);
-        AddRoomLog(`${username} 刷新播放器`);
-        break;
-      case "page":
-        const page = command.split(" ").slice(1)[0] ?? "";
-        if (!page) {
-          AddConsoleLog(["Usage: page [page|options]"]);
-          break;
-        }
-        if (flags.includes("-n") || flags.includes("--next")) {
-          setCurrentPage(currentPage + 1);
-          AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
-          break;
-        }
-        if (flags.includes("-p") || flags.includes("--prev")) {
-          setCurrentPage(currentPage - 1);
-          AddConsoleLog([`Switch to playlist page ${currentPage + 1}`]);
-          break;
-        }
-        if (isNaN(parseFloat(page))) {
-          AddConsoleLog(["Invalid page"]);
-          break;
-        }
-        if (parseInt(page) > totalPage || parseInt(page) <= 0) {
-          AddConsoleLog(["Page out of range"]);
-          break;
-        }
-        setCurrentPage(parseInt(page));
-        AddConsoleLog([`Switch to playlist page ${page}`]);
-        break;
-      default:
-        AddConsoleLog([`Command not found: @#fff700${command}`]);
-        break;
-    }
-    store.dispatch(setCommand(""));
-  }, [command]);
-
-  useEffect(() => {
     const newPlaylist: Track[][] = [];
     for (
       let i = 0;
@@ -491,7 +471,7 @@ export default function Page() {
       i += MAX_TRACKS_PER_PAGE
     ) {
       newPlaylist.push(
-        playerState.trackQueue.slice(i, i + MAX_TRACKS_PER_PAGE)
+        playerState.trackQueue.slice(i, i + MAX_TRACKS_PER_PAGE),
       );
     }
     setPlaylist(newPlaylist);
@@ -499,7 +479,7 @@ export default function Page() {
 
   useEffect(() => {
     setTotalPage(
-      Math.ceil(playerState.trackQueue.length / MAX_TRACKS_PER_PAGE)
+      Math.ceil(playerState.trackQueue.length / MAX_TRACKS_PER_PAGE),
     );
   }, [playerState.trackQueue]);
 
@@ -507,8 +487,8 @@ export default function Page() {
     setCurrentPage(
       Math.min(
         totalPage,
-        Math.ceil((playerState.index + 1) / MAX_TRACKS_PER_PAGE)
-      )
+        Math.ceil((playerState.index + 1) / MAX_TRACKS_PER_PAGE),
+      ),
     );
   }, [playerState.index, totalPage]);
 
@@ -520,9 +500,8 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${
-          isAllowedToUnmute ? styles["active"] : ""
-        }`}
+        className={`${styles["unmute-container"]} ${isAllowedToUnmute ? styles["active"] : ""
+          }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
@@ -546,11 +525,11 @@ export default function Page() {
             url={playerState.currentTrack?.url ?? ""}
             playing={
               playerState.trackQueue.length > 0 &&
-              PlayerStateClient.isReady &&
-              !PlayerStateClient.seeking &&
+              PlayerStateClientState.isReady &&
+              !PlayerStateClientState.seeking &&
               playerState.playing
             }
-            volume={PlayerStateClient.volume}
+            volume={PlayerStateClientState.volume}
             muted={!isAllowedToUnmute}
             loop={playerState.loop}
             playbackRate={playerState.playbackRate}
@@ -568,7 +547,7 @@ export default function Page() {
               AddConsoleLog([`Error: ${error}`]);
             }}
             onReady={() => {
-              if (PlayerStateClient.isReady) return;
+              if (PlayerStateClientState.isReady) return;
               Refresh();
               setPlayerStateClient((prev) => ({
                 ...prev,
@@ -604,12 +583,11 @@ export default function Page() {
           {playlist[currentPage - 1]?.map((track, index) => (
             <div
               key={index + (currentPage - 1) * MAX_TRACKS_PER_PAGE}
-              className={`${styles["track-card"]} ${
-                index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
-                playerState.index
+              className={`${styles["track-card"]} ${index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
+                  playerState.index
                   ? styles["selected"]
                   : ""
-              }`}
+                }`}
             >
               <div className={styles["track-info"]}>
                 <img style={{ height: "100%" }} src={track.img} />

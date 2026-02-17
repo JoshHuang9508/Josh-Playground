@@ -18,11 +18,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
   "devDependencies": {
     "@types/node": "22.10.1",
     "@types/react": "18.3.13",
+    "prettier": "^3.8.1",
     "typescript": "5.7.2"
   }
 }

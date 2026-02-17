@@ -1,90 +1,20 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 import ReactPlayer from "react-player";
 
-// Redux
-import store, { AddConsoleLog } from "@/redux";
-import { setCommand } from "@/redux/commandSlice";
+import { AddConsoleLog } from "@/redux";
 
-// Types
 import ColorSpan from "@/components/ColorSpan";
 
-// JSON
-import textContent from "@/lib/textContent.json";
+import useCommandHandler from "@/hooks/useCommandHandler";
+
+import textContent from "@/lib/text-content.json";
 
 export default function Page() {
-  // API server
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-  // Command control
-  const command = useSelector((state: { command: string }) => state.command);
-
-  useEffect(() => {
-    if (!command || command == "") return;
-    const flags =
-      command
-        .split(" ")
-        .slice(1)
-        .filter((_) => _.startsWith("-")) ?? "";
-    switch (command.split(" ")[0]) {
-      case "log":
-        AddConsoleLog([API_URL]);
-        // Use for debugging
-        break;
-      case "download":
-        const URL = command.split(" ").slice(1)[0] ?? "";
-        if (!URL) {
-          AddConsoleLog(["Usage: download [video_URL]"]);
-          break;
-        }
-        if (!ReactPlayer.canPlay(URL)) {
-          AddConsoleLog(["Invalid video URL"]);
-          break;
-        }
-        if (
-          flags.includes("-v") ||
-          flags.includes("--video") ||
-          flags.length == 0
-        ) {
-          const downloadVideo = async () => {
-            AddConsoleLog([`Pending download: ${URL} (.mp4)`]);
-            const blob = await getVideoBlob(URL.split("v=")[1], "mp4");
-            AddConsoleLog(["Starting download..."]);
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `${URL.split("v=")[1]}.mp4`;
-            a.click();
-          };
-          downloadVideo();
-          break;
-        }
-        if (flags.includes("-a") || flags.includes("--audio")) {
-          const downloadAudio = async () => {
-            AddConsoleLog([`Pending download: ${URL} (.mp3)`]);
-            const blob = await getVideoBlob(URL.split("v=")[1], "mp3");
-            AddConsoleLog(["Starting download..."]);
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `${URL.split("v=")[1]}.mp3`;
-            a.click();
-          };
-          downloadAudio();
-          break;
-        }
-        break;
-      default:
-        AddConsoleLog([`Command not found: @#fff700${command}`]);
-        break;
-    }
-    store.dispatch(setCommand(""));
-  }, [command]);
-
-  // API control
   const getVideoBlob = async (
     videoId: string,
-    format: string
+    format: string,
   ): Promise<any> => {
     switch (format) {
       case "mp4":
@@ -95,7 +25,7 @@ export default function Page() {
             headers: {
               "ngrok-skip-browser-warning": "true",
             },
-          }
+          },
         )
           .then((response) => {
             const contentType = response.headers.get("Content-Type");
@@ -119,7 +49,7 @@ export default function Page() {
             headers: {
               "ngrok-skip-browser-warning": "true",
             },
-          }
+          },
         )
           .then((response) => {
             const contentType = response.headers.get("Content-Type");
@@ -137,6 +67,57 @@ export default function Page() {
         return blob_mp3;
     }
   };
+
+  // Command handler
+  useCommandHandler({
+    log: () => {
+      AddConsoleLog([API_URL]);
+      // Use for debugging
+    },
+    download: (_cmd, args, flags) => {
+      const URL = args[0] ?? "";
+      if (!URL) {
+        AddConsoleLog(["Usage: download [video_URL]"]);
+        return;
+      }
+      if (!ReactPlayer.canPlay(URL)) {
+        AddConsoleLog(["Invalid video URL"]);
+        return;
+      }
+      if (
+        flags.includes("-v") ||
+        flags.includes("--video") ||
+        flags.length === 0
+      ) {
+        const downloadVideo = async () => {
+          AddConsoleLog([`Pending download: ${URL} (.mp4)`]);
+          const blob = await getVideoBlob(URL.split("v=")[1], "mp4");
+          AddConsoleLog(["Starting download..."]);
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${URL.split("v=")[1]}.mp4`;
+          a.click();
+        };
+        downloadVideo();
+        return;
+      }
+      if (flags.includes("-a") || flags.includes("--audio")) {
+        const downloadAudio = async () => {
+          AddConsoleLog([`Pending download: ${URL} (.mp3)`]);
+          const blob = await getVideoBlob(URL.split("v=")[1], "mp3");
+          AddConsoleLog(["Starting download..."]);
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${URL.split("v=")[1]}.mp3`;
+          a.click();
+        };
+        downloadAudio();
+        return;
+      }
+    },
+  });
 
   return (
     <div className={"content-div"}>
@@ -162,7 +143,7 @@ export default function Page() {
                     <ColorSpan str={content} className="p1" />
                   </div>
                 );
-              }
+              },
             )}
           </div>
         </div>

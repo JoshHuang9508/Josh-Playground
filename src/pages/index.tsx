@@ -1,21 +1,16 @@
 import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
 
-// Styles
 import styles from "@/styles/index.module.css";
 
-// Redux
-import store, { AddConsoleLog } from "@/redux";
-import { setCommand } from "@/redux/commandSlice";
+import { AddConsoleLog } from "@/redux";
 
-// Types
 import { Music } from "@/lib/types";
 
-// Components
 import ColorSpan from "@/components/ColorSpan";
 
-// JSON
-import textContent from "@/lib/textContent.json";
+import useCommandHandler from "@/hooks/useCommandHandler";
+
+import textContent from "@/lib/text-content.json";
 
 const musics: Music[] = [
   {
@@ -29,11 +24,9 @@ const musics: Music[] = [
 ];
 
 export default function Page() {
-  const command = useSelector((state: { command: string }) => state.command);
-
   // Refs
   const scrollSpeedRef = useRef<number[]>(
-    Array.from({ length: 3 }, () => Math.floor(Math.random() * 5) + 1)
+    Array.from({ length: 3 }, () => Math.floor(Math.random() * 5) + 1),
   );
   const imageRef = useRef<HTMLImageElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
@@ -55,12 +48,49 @@ export default function Page() {
     const matrix = new DOMMatrixReadOnly(styles.transform);
     let currentRotation =
       Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
-    // @ts-ignore
+
     imageRef.current.style.setProperty(
       "--current-rotation",
-      `${currentRotation}deg`
+      `${currentRotation}deg`,
     );
   };
+
+  // Command handler
+  useCommandHandler({
+    github: () => {
+      window.open("https://github.com/JoshHuang9508", "_blank");
+      AddConsoleLog(["Opening my @#FFF700GitHub@# page..."]);
+    },
+    youtube: () => {
+      window.open("https://www.youtube.com/@whydog5555", "_blank");
+      AddConsoleLog(["Opening my @#FFF700YouTube@# channel..."]);
+    },
+    music: (_cmd, _args, flags) => {
+      if (flags.includes("-l") || flags.includes("--list")) {
+        AddConsoleLog([
+          "Music list:",
+          ...musics.map((_, index) => `${index + 1} - ${_.name}`),
+        ]);
+        return;
+      }
+      if (flags.includes("-p") || flags.includes("--play")) {
+        if (audioPlayerRef.current) audioPlayerRef.current.play();
+        return;
+      }
+      if (flags.includes("-s") || flags.includes("--stop")) {
+        if (audioPlayerRef.current) audioPlayerRef.current.pause();
+        return;
+      }
+      if (flags.includes("-i") || flags.includes("--info")) {
+        setShowMusicInfo(!showMusicInfo);
+        if (showMusicInfo) {
+          stopSpin();
+        }
+        return;
+      }
+      AddConsoleLog([`Usage: music [option]`]);
+    },
+  });
 
   // Effects
   useEffect(() => {
@@ -74,55 +104,6 @@ export default function Page() {
     audioPlayerRef.current.src = musics[musicIndex].path;
     audioPlayerRef.current.play();
   }, [musicIndex]);
-
-  useEffect(() => {
-    if (!command || command == "") return;
-    const flags =
-      command
-        .split(" ")
-        .slice(1)
-        .filter((_) => _.startsWith("-")) ?? "";
-    switch (command.split(" ")[0]) {
-      case "log":
-        // Use for debugging
-        break;
-      case "github":
-        window.open("https://github.com/JoshHuang9508", "_blank");
-        AddConsoleLog(["Opening my @#FFF700GitHub@# page..."]);
-      case "youtube":
-        window.open("https://www.youtube.com/@whydog5555", "_blank");
-        AddConsoleLog(["Opening my @#FFF700YouTube@# channel..."]);
-      case "music":
-        if (flags.includes("-l") || flags.includes("--list")) {
-          AddConsoleLog([
-            "Music list:",
-            ...musics.map((_, index) => `${index + 1} - ${_.name}`),
-          ]);
-          break;
-        }
-        if (flags.includes("-p") || flags.includes("--play")) {
-          if (audioPlayerRef.current) audioPlayerRef.current.play();
-          break;
-        }
-        if (flags.includes("-s") || flags.includes("--stop")) {
-          if (audioPlayerRef.current) audioPlayerRef.current.pause();
-          break;
-        }
-        if (flags.includes("-i") || flags.includes("--info")) {
-          setShowMusicInfo(!showMusicInfo);
-          if (showMusicInfo) {
-            stopSpin();
-          }
-          break;
-        }
-        AddConsoleLog([`Usage: music [option]`]);
-        break;
-      default:
-        AddConsoleLog([`Command not found: @#fff700${command}`]);
-        break;
-    }
-    store.dispatch(setCommand(""));
-  }, [command]);
 
   return (
     <div className={"col content-div"}>
@@ -139,16 +120,14 @@ export default function Page() {
         >
           <img
             ref={imageRef}
-            className={`${styles["profile-picture"]} ${
-              showMusicInfo ? styles["spin"] : ""
-            }`}
+            className={`${styles["profile-picture"]} ${showMusicInfo ? styles["spin"] : ""
+              }`}
             src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
-            className={`${styles["music-info"]} ${
-              showMusicInfo ? styles["show"] : styles["hidden"]
-            }`}
+            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]
+              }`}
           >
             <ColorSpan
               str={`Now playing: @#FFF700${musics[musicIndex].name}@#...`}
@@ -185,9 +164,8 @@ export default function Page() {
           return (
             <div
               key={index}
-              className={`${styles["column"]} ${
-                styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
-              }`}
+              className={`${styles["column"]} ${styles[`scroll-speed-${scrollSpeedRef.current[index]}`]
+                }`}
             >
               {Array.from({ length: 2 }).map((_, index) => {
                 return (

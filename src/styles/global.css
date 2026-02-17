@@ -19,12 +19,12 @@
 
 html,
 body {
-  background-color: #181818d0;
+  background-color: rgba(46, 36, 36, 0.82);
   color: white;
   width: 100vw;
   height: 100vh;
   font-family: "Consolas", "Noto Sans TC", sans-serif;
-  font-size: clamp(7px, 0.75vw, 18px);
+  font-size: clamp(12px, 0.75vw, 18px);
   overflow: hidden;
 }
 

@@ -1,34 +1,11 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 
-// Redux
-import store, { AddConsoleLog } from "@/redux";
-import { setCommand } from "@/redux/commandSlice";
-
-// Components
 import ColorSpan from "@/components/ColorSpan";
 
-export default function Page() {
-  // Command control
-  const command = useSelector((state: { command: string }) => state.command);
+import useCommandHandler from "@/hooks/useCommandHandler";
 
-  useEffect(() => {
-    if (!command || command == "") return;
-    const flags =
-      command
-        .split(" ")
-        .slice(1)
-        .filter((_) => _.startsWith("-")) ?? "";
-    switch (command.split(" ")[0]) {
-      case "log":
-        // Use for debugging
-        break;
-      default:
-        AddConsoleLog([`Command not found: @#fff700${command}`]);
-        break;
-    }
-    store.dispatch(setCommand(""));
-  }, [command]);
+export default function Page() {
+  useCommandHandler({});
 
   return (
     <div className={"content-div"}>

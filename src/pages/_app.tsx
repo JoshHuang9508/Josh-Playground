@@ -5,62 +5,20 @@ import Head from "next/head";
 
 dotenv.config({ path: ".env" });
 
-// Styles
 import "@/styles/global.css";
 import styles from "@/styles/_app.module.css";
 
-// Redux
 import store, { AddConsoleLog, SetUsername } from "@/redux";
-import { setConsoleContent } from "@/redux/consoleContentSlice";
 import { setCommand } from "@/redux/commandSlice";
 
-// Components
 import ColorSpan from "@/components/ColorSpan";
 
-// Types
 import { Command } from "@/lib/types";
 
-// JSON
-import textContent from "@/lib/textContent.json";
-import commandList from "@/lib/commandList.json";
-import pathList from "@/lib/pathList.json";
+import { AppContext } from "@/hooks/useCommandHandler";
 
-// import backgroundImage from "../../public/assets/bg.jpg";
-
-const webPaths = [
-  ["", ["tools", "listentogether", "ytdownloader"], ["games", "colorgame"]],
-];
-const renderWebPaths = (paths: any, prefix: string): string[] => {
-  const result: string[] = [];
-  paths.map((path, index) => {
-    if (Array.isArray(path)) {
-      if (index != paths.length - 1) {
-        result.push(`${prefix}├─ ${path[0]}/`);
-        result.push(
-          ...renderWebPaths(
-            path.filter((_, i) => i > 0),
-            prefix + "│　"
-          )
-        );
-      } else {
-        result.push(`${prefix}└─ ${path[0]}/`);
-        result.push(
-          ...renderWebPaths(
-            path.filter((_, i) => i > 0),
-            prefix + "　　"
-          )
-        );
-      }
-    } else {
-      if (index != paths.length - 1) {
-        result.push(`${prefix}├─ ${path}`);
-      } else {
-        result.push(`${prefix}└─ ${path}`);
-      }
-    }
-  });
-  return result;
-};
+import commandList from "@/lib/command-list.json";
+import pathList from "@/lib/path-list.json";
 
 export default function Page({ Component, pageProps }) {
   // Refs
@@ -104,87 +62,10 @@ export default function Page({ Component, pageProps }) {
         `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ @#fff700${command}`,
       ]);
       setCmdHistory([command, ...cmdHistory]);
-      // Catch basic command
-      const flags =
-        command
-          .split(" ")
-          .slice(1)
-          .filter((_) => _.startsWith("-")) ?? "";
-      switch (command.split(" ")[0]) {
-        case "help":
-          AddConsoleLog(["Available commands:", "---"]);
-          availableCommands.forEach((command: Command) => {
-            AddConsoleLog([
-              `@#00ffaa${command.usage}@# - ${command.description}`,
-            ]);
-          });
-          break;
-        case "cl":
-          store.dispatch(setConsoleContent([]));
-          break;
-        case "cd":
-          const page = command.split(" ")[1] ?? "";
-          const paths = window.location.href.split("/");
-          if (!page) {
-            window.location.href = "/";
-            break;
-          } else {
-            page.split("/").forEach((element) => {
-              if (element == ".") {
-                return;
-              } else if (element == "..") {
-                paths.pop();
-              } else if (element != "") {
-                paths.push(element);
-              }
-            });
-            window.location.href = paths.join("/");
-          }
-          break;
-        case "ls":
-          if (flags.includes("-t") || flags.includes("--tree")) {
-            renderWebPaths(webPaths, "").forEach((path) => {
-              AddConsoleLog([path]);
-            });
-            break;
-          }
-          if (flags.includes("-a") || flags.includes("--all")) {
-            AddConsoleLog([["./", "../", ...availablePaths].join(" ")]);
-            break;
-          }
-          if (flags.includes("-l") || flags.includes("--long")) {
-            AddConsoleLog(["Available paths:", ...availablePaths]);
-            break;
-          }
-          AddConsoleLog([availablePaths.join(" ")]);
-          break;
-        case "background":
-          const url = command.split(" ")[1] ?? "";
-          if (!url) {
-            AddConsoleLog(["URL invalid! Usage: background [url]"]);
-            break;
-          }
-          setBackgroundImageUrl(url);
-          break;
-        case "username":
-          const name = command.split(" ").slice(1)[0] ?? "";
-          if (!name) {
-            AddConsoleLog(["Usage: setname [name]"]);
-            break;
-          }
-          if (name.length > 20) {
-            AddConsoleLog(["Name too long (max 20 characters)"]);
-            break;
-          }
-          setUsername(name);
-          AddConsoleLog([`Set username to ${name}`]);
-          break;
-        // Set command
-        default:
-          store.dispatch(setCommand(command));
-          setCmdHistoryIndex(-1);
-          break;
-      }
+      setCmdHistoryIndex(-1);
+
+      store.dispatch(setCommand(command));
+
       handleInputChange({ target: { value: "" } });
       return;
     }
@@ -192,7 +73,7 @@ export default function Page({ Component, pageProps }) {
       const cmdHistoryLength = cmdHistory.length;
       const newIndex = Math.max(
         -1,
-        Math.min(cmdHistoryIndex + 1, cmdHistoryLength - 1)
+        Math.min(cmdHistoryIndex + 1, cmdHistoryLength - 1),
       );
       setCmdHistoryIndex(newIndex);
       handleInputChange({
@@ -203,7 +84,7 @@ export default function Page({ Component, pageProps }) {
       const cmdHistoryLength = cmdHistory.length;
       const newIndex = Math.max(
         -1,
-        Math.min(cmdHistoryIndex - 1, cmdHistoryLength - 1)
+        Math.min(cmdHistoryIndex - 1, cmdHistoryLength - 1),
       );
       setCmdHistoryIndex(newIndex);
       handleInputChange({
@@ -224,7 +105,7 @@ export default function Page({ Component, pageProps }) {
         setIsTabing(true);
         setInputTemp(input);
         setAvailableIndex(
-          availableIndex >= available.length - 1 ? 0 : availableIndex + 1
+          availableIndex >= available.length - 1 ? 0 : availableIndex + 1,
         );
       }
     } else if (isTabing) {
@@ -262,16 +143,16 @@ export default function Page({ Component, pageProps }) {
       availables.push(
         ...commands
           .filter(
-            (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart
+            (cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart,
           )
-          .map((cmd) => cmd.name)
+          .map((cmd) => cmd.name),
       );
     } else if (command) {
       if (command.options) {
         availables.push(
           ...command.options.filter(
-            (opt) => opt.startsWith(lastPart) && opt != lastPart
-          )
+            (opt) => opt.startsWith(lastPart) && opt != lastPart,
+          ),
         );
       }
     }
@@ -302,7 +183,7 @@ export default function Page({ Component, pageProps }) {
     });
     return (
       pathList[`${pagePaths.join("/")}/`]?.filter((_) =>
-        _.startsWith(lastPath)
+        _.startsWith(lastPath),
       ) ?? []
     );
   };
@@ -349,7 +230,7 @@ export default function Page({ Component, pageProps }) {
       localStorage.getItem("consoleContent")?.split(",") ?? [
         "Welcome to the console!",
         "Type @#00ffaa'help'@# for available commands",
-      ]
+      ],
     );
     store.subscribe(() => {
       setConsoleContents(store.getState().consoleContent);
@@ -366,7 +247,7 @@ export default function Page({ Component, pageProps }) {
       consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
     localStorage.setItem(
       "consoleContent",
-      consoleContents.slice(-100).join(",")
+      consoleContents.slice(-100).join(","),
     );
     localStorage.setItem("consoleVisible", consoleVisible.toString());
   }, [consoleContents, consoleVisible, inputValue]);
@@ -374,12 +255,12 @@ export default function Page({ Component, pageProps }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const paths = window.location.pathname.split("/").filter(Boolean);
-      setCurrentURL(`${paths.join("/")}/`); // Change current URL to window.location.pathname instead of `${paths.join("/")}/`
+      setCurrentURL(`${paths.join("/")}/`);
       setAvailableCommands(
         [
           ...commandList["*"],
           ...(commandList[`${paths.join("/")}/`] ?? []),
-        ].sort((a, b) => a.name.localeCompare(b.name))
+        ].sort((a, b) => a.name.localeCompare(b.name)),
       );
       setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
     }
@@ -426,70 +307,78 @@ export default function Page({ Component, pageProps }) {
         <link rel="manifest" href="/assets/site.webmanifest" />
       </Head>
 
-      <div
-        style={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          height: "100vh",
-          width: "100vw",
+      <AppContext.Provider
+        value={{
+          availableCommands,
+          availablePaths,
+          setBackgroundImageUrl,
+          setUsername,
         }}
       >
-        <img
-          src={backgroundImageUrl}
-          className={styles["background"]}
-          alt="background"
-        />
-
-        <div className={styles["container"]}>
-          <Component {...pageProps} />
-        </div>
-
         <div
-          ref={consoleBox}
-          className={`${styles[`console`]} ${
-            consoleVisible ? "" : styles[`hidden`]
-          }`}
+          style={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            width: "100vw",
+          }}
         >
-          <div className={styles[`output`]} onScroll={handleOutputBoxScroll}>
-            {consoleContents.map((content, index) => (
-              <div key={index} className={styles[`output-line`]}>
-                <ColorSpan str={content} />
-              </div>
-            ))}
-
-            <div ref={outputEndRef} />
-          </div>
-
-          {available[0] && (
-            <div className={styles["prompt"]}>
-              <ColorSpan str={"@#FFF700" + available.join("@#, @#FFF700")} />
-            </div>
-          )}
-
-          <div className={styles[`input`]}>
-            <ColorSpan
-              str={`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ `}
-            />
-            <input
-              ref={inputBox}
-              type="text"
-              value={`${inputValue}`}
-              placeholder="Feel confused? Type 'help' to get started! Press 'Escape' to hide/show the console."
-              onChange={handleInputChange}
-              onKeyDown={handleEnter}
-            />
-          </div>
-        </div>
-
-        <div className={styles["un-support"]}>
-          <ColorSpan
-            str={
-              "@#FF77B7Mobile device@# is @#FFA24Cnot supported.@# Please use a desktop browser. "
-            }
+          <img
+            src={backgroundImageUrl}
+            className={styles["background"]}
+            alt="background"
           />
+
+          <div className={styles["container"]}>
+            <Component {...pageProps} />
+          </div>
+
+          <div
+            ref={consoleBox}
+            className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
+              }`}
+          >
+            <div className={styles[`output`]} onScroll={handleOutputBoxScroll}>
+              {consoleContents.map((content, index) => (
+                <div key={index} className={styles[`output-line`]}>
+                  <ColorSpan str={content} />
+                </div>
+              ))}
+
+              <div ref={outputEndRef} />
+            </div>
+
+            {available[0] && (
+              <div className={styles["prompt"]}>
+                <ColorSpan str={"@#FFF700" + available.join("@#, @#FFF700")} />
+              </div>
+            )}
+
+            <div className={styles[`input`]}>
+              <ColorSpan
+                str={`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ `}
+              />
+              <input
+                ref={inputBox}
+                type="text"
+                value={`${inputValue}`}
+                placeholder="Feel confused? Type 'help' to get started! Press 'Escape' to hide/show the console."
+                onChange={handleInputChange}
+                onKeyDown={handleEnter}
+              />
+            </div>
+          </div>
+
+          <div className={styles["un-support"]}>
+            <ColorSpan
+              str={
+                "@#FF77B7Mobile device@# is @#FFA24Cnot supported.@# Please use a desktop browser. "
+              }
+            />
+          </div>
         </div>
-      </div>
+      </AppContext.Provider>
     </Provider>
   );
 }
