@@ -199,6 +199,25 @@ function PageComponent({ Component, pageProps }) {
 
   // Effects
   useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        inputBox?.current?.focus();
+        return;
+      }
+      if (event.key === "Tab") {
+        event.preventDefault();
+        inputBox?.current?.focus();
+        return;
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
     const cmdHistory = localStorage.getItem("cmdHistory")?.split(",") ?? [];
     setCmdHistory(cmdHistory);
   }, []);
