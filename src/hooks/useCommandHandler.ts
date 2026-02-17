@@ -13,6 +13,7 @@ export type AppContextType = {
   availableCommands: Command[];
   availablePaths: string[];
   setBackgroundImageUrl: (url: string) => void;
+  setBackgroundColor: (color: string) => void;
   setUsername: (name: string) => void;
 };
 
@@ -122,6 +123,16 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
         return;
       }
       ctx.setBackgroundImageUrl(url);
+    },
+    backgroundcolor: (_cmd, args) => {
+      const color = args[0] ?? "";
+      if (!color || !/^#([0-9a-fA-F]{6,8})$/.test(color)) {
+        AddConsoleLog(
+          "Color invalid! Must be a valid HEX color code. Usage: backgroundcolor [color]",
+        );
+        return;
+      }
+      ctx.setBackgroundColor(color);
     },
     username: (_cmd, args) => {
       const name = args[0] ?? "";

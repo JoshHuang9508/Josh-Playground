@@ -32,6 +32,11 @@
       "usage": "background [image_URL]"
     },
     {
+      "name": "backgroundcolor",
+      "description": "Change the background color",
+      "usage": "backgroundcolor [color]"
+    },
+    {
       "name": "username",
       "description": "Set your username",
       "usage": "username [name]"

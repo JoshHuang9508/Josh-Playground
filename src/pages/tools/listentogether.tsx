@@ -40,7 +40,8 @@ export default function Page() {
     index: 0,
     isEnd: false,
   });
-  const [cachedPlayerState, setCachedPlayerState] = useState<PlayerState | null>(null);
+  const [cachedPlayerState, setCachedPlayerState] =
+    useState<PlayerState | null>(null);
   const [PlayerStateClientState, setPlayerStateClient] =
     useState<PlayerStateClient>({
       volume: 0.5,
@@ -194,11 +195,13 @@ export default function Page() {
           const tracks = await getPlaylist(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog(
-            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -459,8 +462,14 @@ export default function Page() {
       return;
     }
 
-    const trackQueueDiff = IDiffArray(playerState.trackQueue, cachedPlayerState.trackQueue);
-    const currentTrackDiff = IDiffObject(playerState.currentTrack, cachedPlayerState.currentTrack);
+    const trackQueueDiff = IDiffArray(
+      playerState.trackQueue,
+      cachedPlayerState.trackQueue,
+    );
+    const currentTrackDiff = IDiffObject(
+      playerState.currentTrack,
+      cachedPlayerState.currentTrack,
+    );
     setCachedPlayerState(playerState);
 
     if (trackQueueDiff || currentTrackDiff) {
@@ -516,8 +525,9 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${!mute ? styles["active"] : ""
-          }`}
+        className={`${styles["unmute-container"]} ${
+          !mute ? styles["active"] : ""
+        }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>

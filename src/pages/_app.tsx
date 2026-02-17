@@ -42,6 +42,7 @@ function PageComponent({ Component, pageProps }) {
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
+  const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   // Variables
@@ -248,6 +249,15 @@ function PageComponent({ Component, pageProps }) {
   }, [backgroundImageUrl]);
 
   useEffect(() => {
+    const backgroundColor = localStorage.getItem("backgroundColor") ?? "";
+    setBackgroundColor(backgroundColor);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("backgroundColor", backgroundColor);
+  }, [backgroundColor]);
+
+  useEffect(() => {
     AddConsoleLog(
       ...(localStorage.getItem("consoleContent")?.split(",") ??
         "Welcome to the console!"),
@@ -288,7 +298,10 @@ function PageComponent({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      );
     setIsMobile(isMobile);
   }, []);
 
@@ -338,6 +351,7 @@ function PageComponent({ Component, pageProps }) {
           availableCommands,
           availablePaths,
           setBackgroundImageUrl,
+          setBackgroundColor,
           setUsername,
         }}
       >
@@ -348,6 +362,8 @@ function PageComponent({ Component, pageProps }) {
             flexDirection: "column",
             height: "100vh",
             width: "100vw",
+            backgroundColor: backgroundColor ? backgroundColor : undefined,
+            transition: "background-color 0.3s ease-in-out",
           }}
         >
           <img
@@ -390,7 +406,9 @@ function PageComponent({ Component, pageProps }) {
 
               {available[0] && (
                 <div className={styles["prompt"]}>
-                  <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
+                  <ColorSpan
+                    str={`@#FFF700${available.join("@#, @#FFF700")}`}
+                  />
                 </div>
               )}
 
