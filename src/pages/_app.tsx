@@ -317,15 +317,15 @@ function PageComponent({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <Head>
-        <title>Whydog - Developer & Designer</title>
+        <title>Whydog - Personal Website</title>
         <meta
           name="description"
-          content="18yo developer passionate about full-stack development, UI/UX design."
+          content="I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design."
         />
-        <meta property="og:title" content="Whydog - Developer & Designer" />
+        <meta property="og:title" content="Whydog - Personal Website" />
         <meta
           property="og:description"
-          content="Explore projects and passions of an 18-year-old full-stack developer and anime lover."
+          content="I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design."
         />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
@@ -387,9 +387,8 @@ function PageComponent({ Component, pageProps }) {
           ) : (
             <div
               ref={consoleBox}
-              className={`${styles[`console`]} ${
-                consoleVisible ? "" : styles[`hidden`]
-              }`}
+              className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
+                }`}
             >
               <div
                 tabIndex={-1}
