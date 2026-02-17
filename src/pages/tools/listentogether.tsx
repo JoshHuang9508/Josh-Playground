@@ -407,7 +407,6 @@ export default function Page() {
 
     socket.connect({
       connect: async () => {
-        AddConsoleLog(`Connect server success (id: ${socket.id})`);
         socket.join(localStorage.getItem("username") ?? "Anonymous");
         socket.ready();
       },

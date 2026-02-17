@@ -23,8 +23,11 @@
     "format:css": "stylelint \"src/**/*.css\" --fix"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
     "@types/node": "22.10.1",
     "@types/react": "18.3.13",
+    "eslint": "^10.0.0",
+    "eslint-config-next": "^16.1.6",
     "prettier": "^3.8.1",
     "stylelint": "^17.3.0",
     "stylelint-config-recess-order": "^7.6.1",

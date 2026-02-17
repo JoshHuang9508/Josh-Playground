@@ -12,6 +12,10 @@ export default class ListenTogetherSocket {
   constructor() {
     this.socket = io(API_URL, {
       transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
     });
     this.id = this.socket.id;
   }
