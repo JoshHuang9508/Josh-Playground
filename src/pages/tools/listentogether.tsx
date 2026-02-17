@@ -47,6 +47,8 @@ export default function Page() {
     });
   const [totalPage, setTotalPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [cachedLogs, setCachedLogs] = useState<string[]>([]);
 
   // Functions
   const SetUsername = (username: string) => {
@@ -191,13 +193,11 @@ export default function Page() {
           const tracks = await getPlaylist(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog(
-            `Added ${tracks.length} tracks to queue (#${
-              playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
-              playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -397,21 +397,21 @@ export default function Page() {
       if (flags.includes("-d") || flags.includes("--detail")) {
         AddConsoleLog(
           "Playlist detail:",
-          ...playerState.trackQueue.map((track) => {
+          ...playerState.trackQueue.map((track, index) => {
             if (track.id === playerState.currentTrack?.id) {
-              return `@#fff700#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+              return `@#fff700#${index + 1} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
             }
-            return `#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+            return `#${index + 1} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
           }),
         );
       } else {
         AddConsoleLog(
           "Playlist:",
-          ...playerState.trackQueue.map((track) => {
+          ...playerState.trackQueue.map((track, index) => {
             if (track.id === playerState.currentTrack?.id) {
-              return `@#fff700#${track.id} - ${track.title}`;
+              return `@#fff700#${index + 1} - ${track.title}`;
             }
-            return `#${track.id} - ${track.title}`;
+            return `#${index + 1} - ${track.title}`;
           }),
         );
       }
@@ -456,9 +456,7 @@ export default function Page() {
       setPlayerState({ ...playerState, ...state });
     });
     socket.on("receiveLog", (logs) => {
-      AddConsoleLog(
-        `[${new Date().toLocaleDateString()}] ${username}: ${logs}`,
-      );
+      setLogs(logs);
     });
     socket.on("receiveUsers", (users) => {
       setUsers(users);
@@ -479,11 +477,11 @@ export default function Page() {
   useEffect(() => {
     AddConsoleLog(
       "Playlist updated:",
-      ...playerState.trackQueue.map((track) => {
+      ...playerState.trackQueue.map((track, index) => {
         if (track.id === playerState.currentTrack?.id) {
-          return `@#fff700#${track.id} - ${track.title}`;
+          return `@#fff700#${index + 1} - ${track.title}`;
         }
-        return `#${track.id} - ${track.title}`;
+        return `#${index + 1} - ${track.title}`;
       }),
     );
   }, [playerState.trackQueue]);
@@ -508,12 +506,20 @@ export default function Page() {
     setPlayerStateClient((prev) => ({ ...prev, volume: volume / 100 }));
   }, []);
 
+  useEffect(() => {
+    const diff = logs.filter((log) => !cachedLogs.includes(log));
+    setCachedLogs(logs);
+
+    if (diff.length > 0) {
+      AddConsoleLog(...diff.map((log) => `[${new Date().toLocaleDateString()}] ${log}`));
+    }
+  }, [logs]);
+
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${
-          mute ? styles["active"] : ""
-        }`}
+        className={`${styles["unmute-container"]} ${mute ? styles["active"] : ""
+          }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
