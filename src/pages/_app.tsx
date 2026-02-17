@@ -142,6 +142,7 @@ function PageComponent({ Component, pageProps }) {
       return;
     }
     if (event.key === "ArrowUp") {
+      event.preventDefault();
       const cmdHistoryLength = cmdHistory.length;
       const newIndex = Math.max(
         -1,
@@ -153,6 +154,7 @@ function PageComponent({ Component, pageProps }) {
       });
     }
     if (event.key === "ArrowDown") {
+      event.preventDefault();
       const cmdHistoryLength = cmdHistory.length;
       const newIndex = Math.max(
         -1,
@@ -335,9 +337,8 @@ function PageComponent({ Component, pageProps }) {
 
           <div
             ref={consoleBox}
-            className={`${styles[`console`]} ${
-              consoleVisible ? "" : styles[`hidden`]
-            }`}
+            className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
+              }`}
           >
             <div
               tabIndex={-1}
