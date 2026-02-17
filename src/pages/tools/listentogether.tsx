@@ -192,13 +192,11 @@ export default function Page() {
           const tracks = await getPlaylist(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog(
-            `Added ${tracks.length} tracks to queue (#${
-              playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
-              playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -373,9 +371,9 @@ export default function Page() {
           "Playlist detail:",
           ...playerState.trackQueue.map((track, index) => {
             if (track.id === playerState.currentTrack?.id) {
-              return `@#fff700#${index + 1} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+              return `@#fff700#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
             }
-            return `#${index + 1} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+            return `#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
           }),
         );
       } else {
@@ -383,9 +381,9 @@ export default function Page() {
           "Playlist:",
           ...playerState.trackQueue.map((track, index) => {
             if (track.id === playerState.currentTrack?.id) {
-              return `@#fff700#${index + 1} - ${track.title}`;
+              return `@#fff700#${index} - ${track.title}`;
             }
-            return `#${index + 1} - ${track.title}`;
+            return `#${index} - ${track.title}`;
           }),
         );
       }
@@ -459,9 +457,9 @@ export default function Page() {
       "Playlist updated:",
       ...playerState.trackQueue.map((track, index) => {
         if (track.id === playerState.currentTrack?.id) {
-          return `@#fff700#${index + 1} - ${track.title}`;
+          return `@#fff700#${index} - ${track.title}`;
         }
-        return `#${index + 1} - ${track.title}`;
+        return `#${index} - ${track.title}`;
       }),
     );
   }, [playerState.trackQueue]);
@@ -506,9 +504,8 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${
-          !mute ? styles["active"] : ""
-        }`}
+        className={`${styles["unmute-container"]} ${!mute ? styles["active"] : ""
+          }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
