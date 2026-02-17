@@ -550,7 +550,7 @@ export default function Page() {
     <div className={styles["content"]}>
       <div
         className={`${styles["unmute-container"]} ${
-          mute ? styles["active"] : ""
+          !mute ? styles["active"] : ""
         }`}
       >
         <p className={"header2"}>點我一下</p>
