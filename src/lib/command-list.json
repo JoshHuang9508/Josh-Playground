@@ -73,12 +73,6 @@
       "options": ["-t", "-f", "--true", "--false"]
     },
     {
-      "name": "page",
-      "description": "Change the playlist page",
-      "usage": "page [option]",
-      "options": ["-n", "-p", "--next", "--prev"]
-    },
-    {
       "name": "pause",
       "description": "Pause playing",
       "usage": "pause"

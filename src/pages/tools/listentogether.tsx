@@ -11,7 +11,7 @@ import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
 
 import useCommandHandler from "@/hooks/useCommandHandler";
 
-import { API_URL, MAX_TRACKS_PER_PAGE } from "@/constants";
+import { API_URL } from "@/constants";
 
 export default function Page() {
   // Refs
@@ -44,8 +44,6 @@ export default function Page() {
       seeking: false,
       isReady: false,
     });
-  const [totalPage, setTotalPage] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(0);
   const [logs, setLogs] = useState<string[]>([]);
   const [cachedLogs, setCachedLogs] = useState<string[]>([]);
   const [users, setUsers] = useState<User>({});
@@ -369,33 +367,6 @@ export default function Page() {
       AddConsoleLog("Refresh player...");
       AddRoomLog(`${username} 刷新播放器`);
     },
-    page: (_cmd, args, flags) => {
-      const page = args[0] ?? "";
-      if (!page) {
-        AddConsoleLog("Usage: page [page|options]");
-        return;
-      }
-      if (flags.includes("-n") || flags.includes("--next")) {
-        setCurrentPage(currentPage + 1);
-        AddConsoleLog(`Switch to playlist page ${currentPage + 1}`);
-        return;
-      }
-      if (flags.includes("-p") || flags.includes("--prev")) {
-        setCurrentPage(currentPage - 1);
-        AddConsoleLog(`Switch to playlist page ${currentPage + 1}`);
-        return;
-      }
-      if (isNaN(parseFloat(page))) {
-        AddConsoleLog("Invalid page");
-        return;
-      }
-      if (parseInt(page) > totalPage || parseInt(page) <= 0) {
-        AddConsoleLog("Page out of range");
-        return;
-      }
-      setCurrentPage(parseInt(page));
-      AddConsoleLog(`Switch to playlist page ${page}`);
-    },
     playlist: (_cmd, args, flags) => {
       if (flags.includes("-d") || flags.includes("--detail")) {
         AddConsoleLog(
@@ -478,6 +449,12 @@ export default function Page() {
   }, [username]);
 
   useEffect(() => {
+    const volume = parseFloat(localStorage.getItem("volume") ?? "50");
+    setPlayerStateClient((prev) => ({ ...prev, volume: volume / 100 }));
+  }, []);
+
+  useEffect(() => {
+    if (playerState.trackQueue.length === 0) return;
     AddConsoleLog(
       "Playlist updated:",
       ...playerState.trackQueue.map((track, index) => {
@@ -488,26 +465,6 @@ export default function Page() {
       }),
     );
   }, [playerState.trackQueue]);
-
-  useEffect(() => {
-    setTotalPage(
-      Math.ceil(playerState.trackQueue.length / MAX_TRACKS_PER_PAGE),
-    );
-  }, [playerState.trackQueue]);
-
-  useEffect(() => {
-    setCurrentPage(
-      Math.min(
-        totalPage,
-        Math.ceil((playerState.index + 1) / MAX_TRACKS_PER_PAGE),
-      ),
-    );
-  }, [playerState.index, totalPage]);
-
-  useEffect(() => {
-    const volume = parseFloat(localStorage.getItem("volume") ?? "50");
-    setPlayerStateClient((prev) => ({ ...prev, volume: volume / 100 }));
-  }, []);
 
   useEffect(() => {
     if (cachedLogs.length === 0) {
