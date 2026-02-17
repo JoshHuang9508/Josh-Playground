@@ -45,8 +45,8 @@ function PageComponent({ Component, pageProps }) {
 
   // Variables
   const prefix = window
-    ? `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
-    : `@#FF77B7${username}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
+    ? `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
+    : `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
 
   // Functions
   const replaceInput = (input: string, replace: string) => {
