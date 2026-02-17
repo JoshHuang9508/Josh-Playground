@@ -114,7 +114,7 @@ function PageComponent({ Component, pageProps }) {
       }
     });
     return (
-      pathList[`${pagePaths.join("/")}/`]?.filter((_) =>
+      pathList[`/${pagePaths.join("/")}`]?.filter((_) =>
         _.startsWith(lastPath),
       ) ?? []
     );
@@ -295,7 +295,7 @@ function PageComponent({ Component, pageProps }) {
           ...(commandList[`${paths.join("/")}/`] ?? []),
         ].sort((a, b) => a.name.localeCompare(b.name)),
       );
-      setAvailablePaths(pathList[`${paths.join("/")}/`] ?? []);
+      setAvailablePaths(pathList[`/${paths.join("/")}`] ?? []);
     }
   }, []);
 
