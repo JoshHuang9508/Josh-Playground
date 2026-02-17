@@ -196,11 +196,13 @@ export default function Page() {
           const tracks = await getPlaylistAPI(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog([
-            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           ]);
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -500,8 +502,9 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${isAllowedToUnmute ? styles["active"] : ""
-          }`}
+        className={`${styles["unmute-container"]} ${
+          isAllowedToUnmute ? styles["active"] : ""
+        }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
@@ -583,11 +586,12 @@ export default function Page() {
           {playlist[currentPage - 1]?.map((track, index) => (
             <div
               key={index + (currentPage - 1) * MAX_TRACKS_PER_PAGE}
-              className={`${styles["track-card"]} ${index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
-                  playerState.index
+              className={`${styles["track-card"]} ${
+                index + (currentPage - 1) * MAX_TRACKS_PER_PAGE ===
+                playerState.index
                   ? styles["selected"]
                   : ""
-                }`}
+              }`}
             >
               <div className={styles["track-info"]}>
                 <img style={{ height: "100%" }} src={track.img} />

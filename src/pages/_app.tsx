@@ -42,6 +42,9 @@ export default function Page({ Component, pageProps }) {
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
 
+  // Variables
+  const prefix = `@#FF77B7${username}@#@@#FFA24C${window.location.hostname}@#:~${currentURL}$ `;
+
   // Handlers
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -58,9 +61,7 @@ export default function Page({ Component, pageProps }) {
     if (event.key === "Enter") {
       if (!inputValue || inputValue == "") return;
       const command = inputValue;
-      AddConsoleLog([
-        `@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ @#fff700${command}`,
-      ]);
+      AddConsoleLog([`${prefix}@#fff700${command}`]);
       setCmdHistory([command, ...cmdHistory]);
       setCmdHistoryIndex(-1);
 
@@ -352,14 +353,14 @@ export default function Page({ Component, pageProps }) {
 
             {available[0] && (
               <div className={styles["prompt"]}>
-                <ColorSpan str={"@#FFF700" + available.join("@#, @#FFF700")} />
+                <ColorSpan
+                  str={`@#FFF700${available.join("@#, @#FFF700")}`}
+                />
               </div>
             )}
 
             <div className={styles[`input`]}>
-              <ColorSpan
-                str={`@#FF77B7${username}@#@@#FFA24Cwhydog@#:~${currentURL}$ `}
-              />
+              <ColorSpan str={prefix} />
               <input
                 ref={inputBox}
                 type="text"
