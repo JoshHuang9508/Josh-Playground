@@ -62,8 +62,8 @@ const renderWebPaths = (paths: any, prefix: string): string[] => {
 };
 
 const builtInHandlers: CommandHandlers = {
-  log: () => {
-    // Use for debugging
+  echo: (_cmd, args) => {
+    AddConsoleLog(args.join(" "));
   },
   cl: () => {
     store.dispatch(setConsoleContent([]));
@@ -96,6 +96,7 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
       ctx.availableCommands.forEach((cmd: Command) => {
         AddConsoleLog(`@#00ffaa${cmd.usage}@# - ${cmd.description}`);
       });
+      return;
     },
     ls: (_cmd, _args, flags) => {
       if (flags.includes("-t") || flags.includes("--tree")) {
@@ -103,47 +104,62 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
           AddConsoleLog(path);
         });
         return;
-      }
-      if (flags.includes("-a") || flags.includes("--all")) {
+      } else if (flags.includes("-a") || flags.includes("--all")) {
         AddConsoleLog(["./", "../", ...ctx.availablePaths].join(" "));
         return;
-      }
-      if (flags.includes("-l") || flags.includes("--long")) {
+      } else if (flags.includes("-l") || flags.includes("--long")) {
         AddConsoleLog("Available paths:", ...ctx.availablePaths);
         return;
-      }
-      AddConsoleLog(ctx.availablePaths.join(" "));
-    },
-    background: (_cmd, args) => {
-      const url = args[0] ?? "";
-      if (!url) {
-        AddConsoleLog("URL invalid! Usage: background [url]");
+      } else {
+        AddConsoleLog(ctx.availablePaths.join(" "));
         return;
       }
-      ctx.setBackgroundImageUrl(url);
     },
-    backgroundcolor: (_cmd, args) => {
+    background: (_cmd, args, flags) => {
+      const url = args[0] ?? "";
+      if (flags.includes("-r") || flags.includes("--reset")) {
+        AddConsoleLog("Reset background image...");
+        ctx.setBackgroundImageUrl("");
+        return;
+      } else if (!url) {
+        AddConsoleLog("URL invalid! Usage: background [url]");
+        return;
+      } else {
+        AddConsoleLog(`Set background image to ${url}`);
+        ctx.setBackgroundImageUrl(url);
+        return;
+      }
+    },
+    backgroundcolor: (_cmd, args, flags) => {
       const color = args[0] ?? "";
-      if (!color || !/^#([0-9a-fA-F]{6,8})$/.test(color)) {
+      if (flags.includes("-r") || flags.includes("--reset")) {
+        AddConsoleLog("Reset background color...");
+        ctx.setBackgroundColor("");
+        return;
+      } else if (!color || !/^#([0-9a-fA-F]{6,8})$/.test(color)) {
         AddConsoleLog(
           "Color invalid! Must be a valid HEX color code. Usage: backgroundcolor [color]",
         );
         return;
+      } else {
+        AddConsoleLog(`Set background color to ${color}`);
+        ctx.setBackgroundColor(color);
+        return;
       }
-      ctx.setBackgroundColor(color);
     },
     username: (_cmd, args) => {
       const name = args[0] ?? "";
       if (!name) {
         AddConsoleLog("Usage: setname [name]");
         return;
-      }
-      if (name.length > 20) {
+      } else if (name.length > 20) {
         AddConsoleLog("Name too long (max 20 characters)");
         return;
+      } else {
+        ctx.setUsername(name);
+        AddConsoleLog(`Set username to ${name}`);
+        return;
       }
-      ctx.setUsername(name);
-      AddConsoleLog(`Set username to ${name}`);
     },
   };
 }

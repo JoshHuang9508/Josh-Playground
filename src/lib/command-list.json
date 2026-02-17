@@ -16,9 +16,9 @@
       "usage": "help [command]"
     },
     {
-      "name": "log",
-      "description": "Show the log message",
-      "usage": "log [message]"
+      "name": "echo",
+      "description": "Print the message",
+      "usage": "echo [message]"
     },
     {
       "name": "ls",
@@ -29,12 +29,14 @@
     {
       "name": "background",
       "description": "Change the background",
-      "usage": "background [image_URL]"
+      "usage": "background [image_URL]",
+      "options": ["-r", "--reset"]
     },
     {
       "name": "backgroundcolor",
       "description": "Change the background color",
-      "usage": "backgroundcolor [color]"
+      "usage": "backgroundcolor [color]",
+      "options": ["-r", "--reset"]
     },
     {
       "name": "username",
