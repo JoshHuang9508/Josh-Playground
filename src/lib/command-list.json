@@ -89,6 +89,12 @@
       "usage": "play"
     },
     {
+      "name": "playlist",
+      "description": "Show the playlist",
+      "usage": "playlist [options]",
+      "options": ["-d", "--detail"]
+    },
+    {
       "name": "queue",
       "description": "Add a song or playlist to queue",
       "usage": "queue [song_URL|playlist_URL]"

@@ -191,11 +191,13 @@ export default function Page() {
           const tracks = await getPlaylist(URL.split("list=")[1]);
           AddTracks(tracks);
           AddConsoleLog(
-            `Added ${tracks.length} tracks to queue (#${playerState.trackQueue.length
+            `Added ${tracks.length} tracks to queue (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
           AddRoomLog(
-            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${playerState.trackQueue.length
+            `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
+              playerState.trackQueue.length
             } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
           );
         }
@@ -393,20 +395,25 @@ export default function Page() {
     },
     playlist: (_cmd, args, flags) => {
       if (flags.includes("-d") || flags.includes("--detail")) {
-        AddConsoleLog("Playlist detail:", ...playerState.trackQueue.map((track) => {
-          if (track.id === playerState.currentTrack?.id) {
-            return `@#fff700#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
-          }
-          return `#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`
-        }));
-      }
-      else {
-        AddConsoleLog("Playlist:", ...playerState.trackQueue.map((track) => {
-          if (track.id === playerState.currentTrack?.id) {
-            return `@#fff700#${track.id} - ${track.title}`;
-          }
-          return `#${track.id} - ${track.title}`;
-        }));
+        AddConsoleLog(
+          "Playlist detail:",
+          ...playerState.trackQueue.map((track) => {
+            if (track.id === playerState.currentTrack?.id) {
+              return `@#fff700#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+            }
+            return `#${track.id} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
+          }),
+        );
+      } else {
+        AddConsoleLog(
+          "Playlist:",
+          ...playerState.trackQueue.map((track) => {
+            if (track.id === playerState.currentTrack?.id) {
+              return `@#fff700#${track.id} - ${track.title}`;
+            }
+            return `#${track.id} - ${track.title}`;
+          }),
+        );
       }
     },
   });
@@ -470,12 +477,15 @@ export default function Page() {
   }, [username]);
 
   useEffect(() => {
-    AddConsoleLog("Playlist updated:", ...playerState.trackQueue.map((track) => {
-      if (track.id === playerState.currentTrack?.id) {
-        return `@#fff700#${track.id} - ${track.title}`;
-      }
-      return `#${track.id} - ${track.title}`;
-    }));
+    AddConsoleLog(
+      "Playlist updated:",
+      ...playerState.trackQueue.map((track) => {
+        if (track.id === playerState.currentTrack?.id) {
+          return `@#fff700#${track.id} - ${track.title}`;
+        }
+        return `#${track.id} - ${track.title}`;
+      }),
+    );
   }, [playerState.trackQueue]);
 
   useEffect(() => {
@@ -501,8 +511,9 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${mute ? styles["active"] : ""
-          }`}
+        className={`${styles["unmute-container"]} ${
+          mute ? styles["active"] : ""
+        }`}
       >
         <p className={"header2"}>點我一下</p>
       </div>
