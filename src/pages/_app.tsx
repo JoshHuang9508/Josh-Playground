@@ -20,6 +20,7 @@ import { AppContext } from "@/hooks/useCommandHandler";
 
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
+import textContent from "@/lib/text-content.json";
 
 function PageComponent({ Component, pageProps }) {
   // Refs
@@ -49,6 +50,7 @@ function PageComponent({ Component, pageProps }) {
   const prefix = window
     ? `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
     : `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
+  const path = window ? window.location.pathname : "/";
 
   // Functions
   const replaceInput = (input: string, replace: string) => {
@@ -317,16 +319,13 @@ function PageComponent({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <Head>
-        <title>Whydog - Personal Website</title>
+        <title>{`Whydog - ${textContent[path].title}`}</title>
+        <meta name="description" content={textContent[path].subtitle} />
         <meta
-          name="description"
-          content="I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design."
+          property="og:title"
+          content={`Whydog - ${textContent[path].title}`}
         />
-        <meta property="og:title" content="Whydog - Personal Website" />
-        <meta
-          property="og:description"
-          content="I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design."
-        />
+        <meta property="og:description" content={textContent[path].subtitle} />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/assets/preview.png" />
@@ -387,8 +386,9 @@ function PageComponent({ Component, pageProps }) {
           ) : (
             <div
               ref={consoleBox}
-              className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
-                }`}
+              className={`${styles[`console`]} ${
+                consoleVisible ? "" : styles[`hidden`]
+              }`}
             >
               <div
                 tabIndex={-1}

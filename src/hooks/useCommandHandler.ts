@@ -27,9 +27,7 @@ export function parseCommand(command: string) {
   return { cmdName, args, flags };
 }
 
-const webPaths = [
-  ["", ["tools", "listentogether", "ytdownloader"], ["games", "colorgame"]],
-];
+const webPaths = [["", ["tools", "listentogether", "ytdownloader"]]];
 
 const renderWebPaths = (paths: any, prefix: string): string[] => {
   const result: string[] = [];

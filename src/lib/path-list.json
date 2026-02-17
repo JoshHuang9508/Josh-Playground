@@ -1,7 +1,5 @@
 {
   "/": ["tools/", "games/"],
   "tools/": ["listentogether/", "ytdownloader/"],
-  "tools/listentogether/": [],
-  "games/": ["colorgame/"],
-  "games/colorgame/": []
+  "tools/listentogether/": []
 }

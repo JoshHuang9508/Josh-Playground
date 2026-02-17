@@ -79,24 +79,6 @@
       "@#f9f284Enjoy your download!"
     ]
   },
-  "games/": {
-    "title": "Game center",
-    "subtitle": "Here are some games I've made",
-    "item": [
-      {
-        "title": "@#FFF700./colorgame",
-        "description": "A simple color guessing game. Try to guess the color based on the RGB value given. Have fun!"
-      },
-      {
-        "title": "...coming soon",
-        "description": "This game is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
-      },
-      {
-        "title": "...coming soon",
-        "description": "This game is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
-      }
-    ]
-  },
   "*": {
     "title": "Oops!",
     "subtitle": "Page not found!"
