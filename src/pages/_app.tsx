@@ -160,7 +160,8 @@ export default function Page({ Component, pageProps }) {
       lastPart.startsWith("../") ||
       lastPart.startsWith("./") ||
       lastPart.startsWith("/") ||
-      lastPart.includes("\\")
+      lastPart.includes("\\") ||
+      input.endsWith(" ")
     ) {
       availables.push(...findAvailablePath(lastPart));
     }

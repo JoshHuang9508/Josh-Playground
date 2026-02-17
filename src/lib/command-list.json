@@ -3,8 +3,7 @@
     {
       "name": "cd",
       "description": "Change the directory",
-      "usage": "cd [directory]",
-      "options": ["./", "../"]
+      "usage": "cd [directory]"
     },
     {
       "name": "cl",
@@ -25,7 +24,14 @@
       "name": "ls",
       "description": "List the directory",
       "usage": "ls",
-      "options": ["-a", "-l", "-t", "--all", "--long", "--tree"]
+      "options": [
+        "-a",
+        "-l",
+        "-t",
+        "--all",
+        "--long",
+        "--tree"
+      ]
     },
     {
       "name": "background",
@@ -71,13 +77,23 @@
       "name": "loop",
       "description": "Loop the track",
       "usage": "loop [option]",
-      "options": ["-t", "-f", "--true", "--false"]
+      "options": [
+        "-t",
+        "-f",
+        "--true",
+        "--false"
+      ]
     },
     {
       "name": "page",
       "description": "Change the playlist page",
       "usage": "page [option]",
-      "options": ["-n", "-p", "--next", "--prev"]
+      "options": [
+        "-n",
+        "-p",
+        "--next",
+        "--prev"
+      ]
     },
     {
       "name": "pause",
@@ -98,7 +114,12 @@
       "name": "random",
       "description": "Random the track",
       "usage": "random [option]",
-      "options": ["-t", "-f", "--true", "--false"]
+      "options": [
+        "-t",
+        "-f",
+        "--true",
+        "--false"
+      ]
     },
     {
       "name": "rate",
@@ -129,7 +150,12 @@
       "name": "switch",
       "description": "Switch the track",
       "usage": "switch [index|option]",
-      "options": ["-n", "-p", "--next", "--prev"]
+      "options": [
+        "-n",
+        "-p",
+        "--next",
+        "--prev"
+      ]
     },
     {
       "name": "volume",
@@ -142,7 +168,12 @@
       "name": "download",
       "description": "Download the video",
       "usage": "download [video_URL] <option>",
-      "options": ["-v", "-a", "--video", "--audio"]
+      "options": [
+        "-v",
+        "-a",
+        "--video",
+        "--audio"
+      ]
     }
   ]
 }
