@@ -127,7 +127,7 @@ export default function Page() {
               justifyContent: "center",
             }}
           >
-            {textContent["tools/ytdownloader/"].tutorial.map(
+            {textContent["/tools/ytdownloader"].tutorial.map(
               (content, index) => {
                 if (index == 0)
                   return (

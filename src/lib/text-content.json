@@ -1,7 +1,7 @@
 {
   "/": {
-    "title": "Whydog's playground",
-    "subtitle": "A site dedicated to mouse-free navigation",
+    "title": "Personal site",
+    "subtitle": "I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design.",
     "about": [
       "@#FFF700Whitedog@#@@#00f3ffNTUST-CSIE@#, Taiwan",
       "(18yo) (a.k.a. Whydog)",
@@ -45,9 +45,9 @@
       }
     ]
   },
-  "tools/": {
-    "title": "Tool box",
-    "subtitle": "Here are some tools I've made",
+  "/tools": {
+    "title": "Tools",
+    "subtitle": "Here are some tools I've made. Try them out!",
     "item": [
       {
         "title": "@#FFF700./listentogether",
@@ -63,13 +63,13 @@
       }
     ]
   },
-  "tools/listentogether/": {
+  "/tools/listentogether": {
     "title": "Listen Together",
-    "subtitle": "A web-based music sync player"
+    "subtitle": "A web-based music sync player. Listen to music with your friends in real-time."
   },
-  "tools/ytdownloader/": {
+  "/tools/ytdownloader": {
     "title": "YouTube Downloader",
-    "subtitle": "A web-based YouTube video downloader",
+    "subtitle": "A web-based YouTube video downloader. Download YouTube videos in audio or video format.",
     "tutorial": [
       "@#FFF700How to use?",
       "1. @#FF77B7Copy@# the @#00ffaaURL@# of the @#00ffaaYouTube video@# you want to download.",

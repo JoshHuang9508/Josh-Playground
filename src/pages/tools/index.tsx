@@ -13,7 +13,7 @@ export default function Page() {
 
   return (
     <div className={"content-div"}>
-      {textContent["tools/"].item.map((item, index) => {
+      {textContent["/tools"].item.map((item, index) => {
         return (
           <div key={index} className={"container1"}>
             <div

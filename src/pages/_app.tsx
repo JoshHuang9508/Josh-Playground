@@ -319,13 +319,19 @@ function PageComponent({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <Head>
-        <title>{`Whydog - ${textContent[path].title}`}</title>
-        <meta name="description" content={textContent[path].subtitle} />
+        <title>{`Whydog - ${textContent[path]?.title ?? textContent["*"].title}`}</title>
+        <meta
+          name="description"
+          content={textContent[path]?.subtitle ?? textContent["*"].subtitle}
+        />
         <meta
           property="og:title"
-          content={`Whydog - ${textContent[path].title}`}
+          content={`Whydog - ${textContent[path]?.title ?? textContent["*"].title}`}
         />
-        <meta property="og:description" content={textContent[path].subtitle} />
+        <meta
+          property="og:description"
+          content={textContent[path]?.subtitle ?? textContent["*"].subtitle}
+        />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/assets/preview.png" />
