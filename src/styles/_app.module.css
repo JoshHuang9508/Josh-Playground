@@ -22,7 +22,7 @@ img.background {
   height: 100%;
   object-fit: cover;
   opacity: 0.25;
-  filter: blur(5px);
+  filter: blur(2px);
 }
 
 div.console {
