@@ -11,11 +11,9 @@ import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
 
 import useCommandHandler from "@/hooks/useCommandHandler";
 
-export default function Page() {
-  // Constants
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-  const MAX_TRACKS_PER_PAGE = 8;
+import { API_URL, MAX_TRACKS_PER_PAGE } from "@/constants";
 
+export default function Page() {
   // Refs
   const playerRef = useRef<ReactPlayer>(null);
 
@@ -23,7 +21,7 @@ export default function Page() {
   const username = useSelector((state: { user: string }) => state.user);
 
   // States
-  const [isAllowedToUnmute, setIsAllowedToUnmute] = useState(false);
+  const [mute, setMute] = useState(true);
   const [socketInstance, setSocketInstance] = useState<Socket>();
   const [users, setUsers] = useState<User>({});
   const [playerState, setPlayerState] = useState<PlayerState>({
@@ -399,14 +397,14 @@ export default function Page() {
 
   // Effects
   useEffect(() => {
-    const enablePlay = () => {
-      if (PlayerStateClientState.isReady) setIsAllowedToUnmute(true);
+    const onInteraction = () => {
+      if (PlayerStateClientState.isReady) setMute(false);
     };
-    document.addEventListener("click", enablePlay);
-    document.addEventListener("touchstart", enablePlay);
+    document.addEventListener("click", onInteraction);
+    document.addEventListener("touchstart", onInteraction);
     return () => {
-      document.removeEventListener("click", enablePlay);
-      document.removeEventListener("touchstart", enablePlay);
+      document.removeEventListener("click", onInteraction);
+      document.removeEventListener("touchstart", onInteraction);
     };
   }, [PlayerStateClientState.isReady]);
 
@@ -490,7 +488,7 @@ export default function Page() {
   return (
     <div className={styles["content"]}>
       <div
-        className={`${styles["unmute-container"]} ${isAllowedToUnmute ? styles["active"] : ""
+        className={`${styles["unmute-container"]} ${mute ? styles["active"] : ""
           }`}
       >
         <p className={"header2"}>點我一下</p>
@@ -520,7 +518,7 @@ export default function Page() {
               playerState.playing
             }
             volume={PlayerStateClientState.volume}
-            muted={!isAllowedToUnmute}
+            muted={mute}
             loop={playerState.loop}
             playbackRate={playerState.playbackRate}
             controls={false}

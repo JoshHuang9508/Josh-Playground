@@ -9,9 +9,10 @@ import useCommandHandler from "@/hooks/useCommandHandler";
 
 import textContent from "@/lib/text-content.json";
 
-export default function Page() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { API_URL } from "@/constants";
 
+export default function Page() {
+  // Functions
   const getVideoBlob = async (
     videoId: string,
     format: string,

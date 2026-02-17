@@ -35,12 +35,7 @@ export default function Page() {
   const [musicIndex, setMusicIndex] = React.useState(0);
   const [showMusicInfo, setShowMusicInfo] = React.useState(false);
 
-  // Handlers
-  const onMusicEnd = () => {
-    if (!audioPlayerRef.current) return;
-    setMusicIndex((musicIndex + 1) % musics.length);
-  };
-
+  // Functions
   const stopSpin = () => {
     if (!imageRef.current) return;
 
@@ -53,6 +48,12 @@ export default function Page() {
       "--current-rotation",
       `${currentRotation}deg`,
     );
+  };
+
+  // Handlers
+  const handleMusicEnd = () => {
+    if (!audioPlayerRef.current) return;
+    setMusicIndex((musicIndex + 1) % musics.length);
   };
 
   // Command handler
@@ -94,6 +95,20 @@ export default function Page() {
 
   // Effects
   useEffect(() => {
+    const onInteraction = () => {
+      if (!audioPlayerRef.current) return;
+      audioPlayerRef.current.play();
+      audioPlayerRef.current.volume = 0.05;
+    };
+    document.addEventListener("click", onInteraction);
+    document.addEventListener("touchstart", onInteraction);
+    return () => {
+      document.removeEventListener("click", onInteraction);
+      document.removeEventListener("touchstart", onInteraction);
+    };
+  }, [showMusicInfo]);
+
+  useEffect(() => {
     if (!audioPlayerRef.current) return;
     audioPlayerRef.current.play();
     audioPlayerRef.current.volume = 0.05;
@@ -111,7 +126,7 @@ export default function Page() {
         ref={audioPlayerRef}
         id="audio"
         src={musics[musicIndex].path}
-        onEnded={onMusicEnd}
+        onEnded={handleMusicEnd}
       />
       <div className={"container1"}>
         <div
