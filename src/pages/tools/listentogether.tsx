@@ -13,6 +13,8 @@ import useCommandHandler from "@/hooks/useCommandHandler";
 
 import { API_URL } from "@/constants";
 
+import { IDiffArray, IDiffObject } from "@/utils";
+
 export default function Page() {
   // Refs
   const playerRef = useRef<ReactPlayer>(null);
@@ -38,6 +40,7 @@ export default function Page() {
     index: 0,
     isEnd: false,
   });
+  const [cachedPlayerState, setCachedPlayerState] = useState<PlayerState | null>(null);
   const [PlayerStateClientState, setPlayerStateClient] =
     useState<PlayerStateClient>({
       volume: 0.5,
@@ -174,7 +177,6 @@ export default function Page() {
         AddConsoleLog("Usage: send [message]");
         return;
       }
-      AddConsoleLog(`Send message: ${message}`);
       AddRoomLog(`${username}: ${message}`);
     },
     queue: (_cmd, args, flags) => {
@@ -425,7 +427,7 @@ export default function Page() {
       AddConsoleLog("Disconnect from server");
     });
     socket.on("receivePlayerState", (state) => {
-      setPlayerState({ ...playerState, ...state });
+      setPlayerState((prev) => ({ ...prev, ...state }));
     });
     socket.on("receiveLog", (logs) => {
       setLogs(logs);
@@ -452,17 +454,27 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    if (playerState.trackQueue.length === 0) return;
-    AddConsoleLog(
-      "Playlist updated:",
-      ...playerState.trackQueue.map((track, index) => {
-        if (track.id === playerState.currentTrack?.id) {
-          return `@#fff700#${index} - ${track.title}`;
-        }
-        return `#${index} - ${track.title}`;
-      }),
-    );
-  }, [playerState.trackQueue]);
+    if (cachedPlayerState === null) {
+      setCachedPlayerState(playerState);
+      return;
+    }
+
+    const trackQueueDiff = IDiffArray(playerState.trackQueue, cachedPlayerState.trackQueue);
+    const currentTrackDiff = IDiffObject(playerState.currentTrack, cachedPlayerState.currentTrack);
+    setCachedPlayerState(playerState);
+
+    if (trackQueueDiff || currentTrackDiff) {
+      AddConsoleLog(
+        "Playlist updated:",
+        ...playerState.trackQueue.map((track, index) => {
+          if (track.id === playerState.currentTrack?.id) {
+            return `@#fff700#${index} - ${track.title}`;
+          }
+          return `#${index} - ${track.title}`;
+        }),
+      );
+    }
+  }, [playerState.trackQueue, playerState.currentTrack]);
 
   useEffect(() => {
     if (cachedLogs.length === 0) {
@@ -510,7 +522,7 @@ export default function Page() {
         <p className={"header2"}>點我一下</p>
       </div>
 
-      <div className={styles["player-container"]}>
+      <div tabIndex={-1} className={styles["player-container"]}>
         {playerState && (
           <ReactPlayer
             style={playerState.trackQueue.length > 0 ? {} : { display: "none" }}
