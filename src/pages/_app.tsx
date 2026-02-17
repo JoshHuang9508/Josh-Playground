@@ -42,6 +42,7 @@ function PageComponent({ Component, pageProps }) {
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   // Variables
   const prefix = window
@@ -287,6 +288,11 @@ function PageComponent({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    setIsMobile(isMobile);
+  }, []);
+
+  useEffect(() => {
     if (outputEndRef.current) {
       outputEndRef.current.scrollIntoView({
         behavior: "smooth",
@@ -354,51 +360,53 @@ function PageComponent({ Component, pageProps }) {
             <Component {...pageProps} />
           </div>
 
-          <div
-            ref={consoleBox}
-            className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
-              }`}
-          >
-            <div
-              tabIndex={-1}
-              className={styles[`output`]}
-              onScroll={handleOutputBoxScroll}
-            >
-              {consoleContents.map((content, index) => (
-                <div key={index} className={styles[`output-line`]}>
-                  <ColorSpan str={content} />
-                </div>
-              ))}
-
-              <div ref={outputEndRef} />
-            </div>
-
-            {available[0] && (
-              <div className={styles["prompt"]}>
-                <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
-              </div>
-            )}
-
-            <div className={styles[`input`]}>
-              <ColorSpan str={prefix} />
-              <input
-                ref={inputBox}
-                type="text"
-                value={`${inputValue}`}
-                placeholder="Feel confused? Type 'help' to get started! Press 'Escape' to hide/show the console."
-                onChange={handleInputChange}
-                onKeyDown={handleEnter}
+          {isMobile ? (
+            <div className={styles["un-support"]}>
+              <ColorSpan
+                str={
+                  "@#FF77B7Mobile device@# is @#FFA24Cnot supported.@# Please use a desktop browser. "
+                }
               />
             </div>
-          </div>
+          ) : (
+            <div
+              ref={consoleBox}
+              className={`${styles[`console`]} ${consoleVisible ? "" : styles[`hidden`]
+                }`}
+            >
+              <div
+                tabIndex={-1}
+                className={styles[`output`]}
+                onScroll={handleOutputBoxScroll}
+              >
+                {consoleContents.map((content, index) => (
+                  <div key={index} className={styles[`output-line`]}>
+                    <ColorSpan str={content} />
+                  </div>
+                ))}
 
-          <div className={styles["un-support"]}>
-            <ColorSpan
-              str={
-                "@#FF77B7Mobile device@# is @#FFA24Cnot supported.@# Please use a desktop browser. "
-              }
-            />
-          </div>
+                <div ref={outputEndRef} />
+              </div>
+
+              {available[0] && (
+                <div className={styles["prompt"]}>
+                  <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
+                </div>
+              )}
+
+              <div className={styles[`input`]}>
+                <ColorSpan str={prefix} />
+                <input
+                  ref={inputBox}
+                  type="text"
+                  value={`${inputValue}`}
+                  placeholder="Feel confused? Type 'help' to get started! Press 'Escape' to hide/show the console."
+                  onChange={handleInputChange}
+                  onKeyDown={handleEnter}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </AppContext.Provider>
     </Provider>
