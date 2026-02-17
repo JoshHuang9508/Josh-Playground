@@ -74,14 +74,12 @@ export default function Page() {
     download: (_cmd, args, flags) => {
       const URL = args[0] ?? "";
       if (!URL) {
-        AddConsoleLog("Usage: download [video_URL]");
+        AddConsoleLog("Usage: download [video_URL] <options>");
         return;
-      }
-      if (!ReactPlayer.canPlay(URL)) {
+      } else if (!ReactPlayer.canPlay(URL)) {
         AddConsoleLog("Invalid video URL");
         return;
-      }
-      if (
+      } else if (
         flags.includes("-v") ||
         flags.includes("--video") ||
         flags.length === 0
@@ -98,8 +96,7 @@ export default function Page() {
         };
         downloadVideo();
         return;
-      }
-      if (flags.includes("-a") || flags.includes("--audio")) {
+      } else if (flags.includes("-a") || flags.includes("--audio")) {
         const downloadAudio = async () => {
           AddConsoleLog(`Pending download: ${URL} (.mp3)`);
           const blob = await getVideoBlob(URL.split("v=")[1], "mp3");
