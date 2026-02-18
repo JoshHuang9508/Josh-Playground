@@ -5,6 +5,7 @@ import store, { AddConsoleLog } from "@/redux";
 import { setCommand } from "@/redux/commandSlice";
 
 import { clearActiveConsole, setActiveConsole } from "@/lib/consoleLog";
+import { t } from "@/lib/i18n";
 import { Command, CommandHandler } from "@/lib/types";
 
 export type CommandHandlers = Record<string, CommandHandler>;
@@ -99,9 +100,9 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
   if (!ctx) return {};
   return {
     help: () => {
-      AddConsoleLog("Available commands:", "---");
+      AddConsoleLog(t("commands.availableCommands"), t("commands.separator"));
       ctx.availableCommands.forEach((cmd: Command) => {
-        AddConsoleLog(`@#00ffaa${cmd.usage}@# - ${cmd.description}`);
+        AddConsoleLog(t("commands.help.usage", cmd.usage, cmd.description));
       });
       return;
     },
@@ -115,7 +116,7 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
         AddConsoleLog(["./", "../", ...ctx.availablePaths].join(" "));
         return;
       } else if (flags.includes("-l") || flags.includes("--long")) {
-        AddConsoleLog("Available paths:", ...ctx.availablePaths);
+        AddConsoleLog(t("commands.availablePaths"), ...ctx.availablePaths);
         return;
       } else {
         AddConsoleLog(ctx.availablePaths.join(" "));
@@ -125,14 +126,14 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
     background: (_cmd, args, flags) => {
       const url = args[0] ?? "";
       if (flags.includes("-r") || flags.includes("--reset")) {
-        AddConsoleLog("Reset background image...");
+        AddConsoleLog(t("commands.background.reset"));
         ctx.setBackgroundImageUrl("");
         return;
       } else if (!url) {
-        AddConsoleLog("URL invalid! Usage: background [url]");
+        AddConsoleLog(t("commands.background.urlInvalid"));
         return;
       } else {
-        AddConsoleLog(`Set background image to ${url}`);
+        AddConsoleLog(t("commands.background.set", url));
         ctx.setBackgroundImageUrl(url);
         return;
       }
@@ -140,16 +141,14 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
     backgroundcolor: (_cmd, args, flags) => {
       const color = args[0] ?? "";
       if (flags.includes("-r") || flags.includes("--reset")) {
-        AddConsoleLog("Reset background color...");
+        AddConsoleLog(t("commands.backgroundcolor.reset"));
         ctx.setBackgroundColor("");
         return;
       } else if (!color || !/^#([0-9a-fA-F]{6,8})$/.test(color)) {
-        AddConsoleLog(
-          "Color invalid! Must be a valid HEX color code. Usage: backgroundcolor [color]",
-        );
+        AddConsoleLog(t("commands.backgroundcolor.colorInvalid"));
         return;
       } else {
-        AddConsoleLog(`Set background color to ${color}`);
+        AddConsoleLog(t("commands.backgroundcolor.set", color));
         ctx.setBackgroundColor(color);
         return;
       }
@@ -157,14 +156,14 @@ function createContextHandlers(ctx: AppContextType | null): CommandHandlers {
     username: (_cmd, args) => {
       const name = args[0] ?? "";
       if (!name) {
-        AddConsoleLog("Usage: setname [name]");
+        AddConsoleLog(t("commands.username.usage"));
         return;
       } else if (name.length > 20) {
-        AddConsoleLog("Name too long (max 20 characters)");
+        AddConsoleLog(t("commands.username.tooLong"));
         return;
       } else {
         ctx.setUsername(name);
-        AddConsoleLog(`Set username to ${name}`);
+        AddConsoleLog(t("commands.username.set", name));
         return;
       }
     },
@@ -195,7 +194,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     if (handler) {
       handler(command, args, flags);
     } else {
-      AddConsoleLog(`Command not found: @#fff700${command}`);
+      AddConsoleLog(t("commands.commandNotFound", command));
     }
 
     store.dispatch(setCommand(""));

@@ -1,4 +1,194 @@
 {
+  "global": {
+    "siteName": "Whydog",
+    "siteTitle": "Whydog - {0}",
+    "defaultUsername": "Anonymous"
+  },
+  "console": {
+    "title": "Console {0}",
+    "placeholder": "Feel confused? Type 'help' to get started!",
+    "welcome": [
+      " ",
+      "  @#FFF700██╗    ██╗██╗  ██╗██╗   ██╗██████╗  ██████╗  ██████╗",
+      "  @#FFF700██║    ██║██║  ██║╚██╗ ██╔╝██╔══██╗██╔═══██╗██╔════╝",
+      "  @#FFF700██║ █╗ ██║███████║ ╚████╔╝ ██║  ██║██║   ██║██║  ███╗",
+      "  @#FFF700██║███╗██║██╔══██║  ╚██╔╝  ██║  ██║██║   ██║██║   ██║",
+      "  @#FFF700╚███╔███╔╝██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝",
+      "  @#FFF700 ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝",
+      " ",
+      "  @#bababaWhydog's Playground — Personal Terminal v1.0",
+      "  @#bababa─────────────────────────────────────────────",
+      " ",
+      "  @#FF77B7Quick Start:@#",
+      "    @#00ffaahelp@#            Show all available commands",
+      "    @#00ffaacd@# @#FFF700[path]@#       Navigate to a different page",
+      "    @#00ffaals@#              List available paths",
+      "    @#00ffaacl@#              Clear console output",
+      " ",
+      "  @#FF77B7Shortcuts:@#",
+      "    @#FFF700Ctrl + `@#        Open a new console window",
+      "    @#FFF700Esc@#             Restore last minimized console",
+      "    @#FFF700Tab@#             Auto-complete commands",
+      "    @#FFF700↑ / ↓@#           Browse command history",
+      " ",
+      "  @#f9f284Ready. Type a command to get started.",
+      " "
+    ]
+  },
+  "commands": {
+    "commandNotFound": "Command not found: @#fff700{0}",
+    "availableCommands": "Available commands:",
+    "separator": "---",
+    "availablePaths": "Available paths:",
+    "help": {
+      "usage": "@#00ffaa{0}@# - {1}"
+    },
+    "background": {
+      "reset": "Reset background image...",
+      "urlInvalid": "URL invalid! Usage: background [url]",
+      "set": "Set background image to {0}"
+    },
+    "backgroundcolor": {
+      "reset": "Reset background color...",
+      "colorInvalid": "Color invalid! Must be a valid HEX color code. Usage: backgroundcolor [color]",
+      "set": "Set background color to {0}"
+    },
+    "username": {
+      "usage": "Usage: setname [name]",
+      "tooLong": "Name too long (max 20 characters)",
+      "set": "Set username to {0}"
+    },
+    "music": {
+      "usage": "Usage: music [option]",
+      "list": "Music list:",
+      "nowPlaying": "Now playing: @#FFF700{0}@#..."
+    }
+  },
+  "home": {
+    "commands": {
+      "github": "Opening my @#FFF700GitHub@# profile...",
+      "youtube": "Opening my @#FFF700YouTube@# channel...",
+      "twitter": "Opening my @#FFF700Twitter@# channel...",
+      "instagram": "Opening my @#FFF700Instagram@# profile...",
+      "twitch": "Opening my @#FFF700Twitch@# profile...",
+      "discord": "Adding me on @#FFF700Discord@#...",
+      "email": "Sending an @#FFF700email@# to me...",
+      "osu": "Opening my @#FFF700osu!@# profile..."
+    }
+  },
+  "listentogether": {
+    "unmute": "點我一下",
+    "commands": {
+      "send": {
+        "usage": "Usage: send [message]"
+      },
+      "queue": {
+        "usage": "Usage: queue [video_URL|playlist_URL]",
+        "cannotPlay": "Can not play this URL",
+        "addedTracks": "Added {0} tracks to queue (#{1} ~ #{2})",
+        "addedTrack": "Added {0} to queue (#{1})",
+        "invalidUrl": "Invalid URL"
+      },
+      "remove": {
+        "usage": "Usage: remove [index]",
+        "removedAll": "Removed all tracks",
+        "invalidIndex": "Invalid index",
+        "indexOutOfRange": "Index out of range",
+        "removed": "Removed track {0}"
+      },
+      "play": {
+        "start": "Start playing..."
+      },
+      "pause": {
+        "pause": "Pause playing..."
+      },
+      "switch": {
+        "usage": "Usage: switch [index|options]",
+        "next": "Switch to next track",
+        "prev": "Switch to previous track",
+        "invalidIndex": "Invalid index",
+        "indexOutOfRange": "Index out of range",
+        "switchTo": "Switch to track {0}"
+      },
+      "volume": {
+        "usage": "Usage: volume [value]",
+        "invalid": "Invalid volume",
+        "set": "Set volume to {0}"
+      },
+      "loop": {
+        "usage": "Usage: loop [options]",
+        "on": "Loop...",
+        "off": "Unloop..."
+      },
+      "random": {
+        "usage": "Usage: random [options]",
+        "on": "Random...",
+        "off": "Unrandom..."
+      },
+      "rate": {
+        "usage": "Usage: rate [value]",
+        "invalid": "Invalid rate",
+        "set": "Set rate to {0}%"
+      },
+      "seek": {
+        "usage": "Usage: seek [time]",
+        "invalid": "Invalid time",
+        "outOfRange": "Time out of range",
+        "seekTo": "Seek to {0}"
+      },
+      "refresh": {
+        "message": "Refresh player..."
+      },
+      "playlist": {
+        "detail": "Playlist detail:",
+        "list": "Playlist:"
+      }
+    },
+    "logs": {
+      "addedTracks": "{0} 在播放清單中新增了 {1} 首歌曲 (#{2} ~ #{3})",
+      "addedTrack": "{0} 在播放清單中新增了 {1} (#{2})",
+      "removedAll": "{0} 移除了所有歌曲",
+      "removedTrack": "{0} 移除了 {1} (#{2})",
+      "play": "{0} 開始播放",
+      "pause": "{0} 暫停播放",
+      "switchNext": "{0} 切換到下一首歌曲",
+      "switchPrev": "{0} 切換到上一首歌曲",
+      "switchTo": "{0} 切換到歌曲 #{1}",
+      "loopOn": "{0} 開啟循環播放",
+      "loopOff": "{0} 關閉循環播放",
+      "randomOn": "{0} 開啟隨機播放",
+      "randomOff": "{0} 關閉隨機播放",
+      "rate": "{0} 設定播放速度為 {1}%",
+      "seek": "{0} 跳轉到 {1} 秒",
+      "refresh": "{0} 刷新播放器",
+      "playlistUpdated": "Playlist updated:",
+      "joined": "{0} joined the room"
+    },
+    "errors": {
+      "getVideoInfo": "Error getting video info: {0}",
+      "getPlaylist": "Error getting playlist info: {0}",
+      "connectError": "Connect server error (id: {0})",
+      "serverError": "Connect server error: {0}",
+      "disconnect": "Disconnect from server",
+      "playerError": "Error: {0}"
+    }
+  },
+  "ytdownloader": {
+    "commands": {
+      "download": {
+        "usage": "Usage: download [video_URL] <options>",
+        "invalidUrl": "Invalid video URL",
+        "pending": "Pending download: {0} ({1})",
+        "starting": "Starting download..."
+      }
+    },
+    "errors": {
+      "downloadVideo": "Error downloading video: {0}",
+      "downloadAudio": "Error downloading audio: {0}",
+      "mp4Failed": "Get .mp4 file failed!",
+      "mp3Failed": "Get .mp3 file failed!"
+    }
+  },
   "/": {
     "title": "Personal site",
     "subtitle": "I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design.",
@@ -63,6 +253,7 @@
   },
   "*": {
     "title": "Oops!",
-    "subtitle": "Page not found!"
+    "subtitle": "Page not found!",
+    "error": "@#FF77B7Error:@# This page doesn't exist. Use @#00ffaa'cd'@# back to home page"
   }
 }

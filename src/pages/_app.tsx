@@ -22,6 +22,7 @@ import { Command } from "@/lib/types";
 import { AppContext } from "@/hooks/useCommandHandler";
 
 import textContent from "@/lib/text-content.json";
+import { t } from "@/lib/i18n";
 
 function PageComponent() {
   // States
@@ -29,7 +30,7 @@ function PageComponent() {
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
   const [backgroundColor, setBackgroundColor] = useState<string>("");
-  const [username, setUsername] = useState<string>("Anonymous");
+  const [username, setUsername] = useState<string>(t("global.defaultUsername"));
   const [currentHash, setCurrentHash] = useState<string>("/");
 
   // Hash routing
@@ -59,7 +60,12 @@ function PageComponent() {
   return (
     <Provider store={store}>
       <Head>
-        <title>{`Whydog - ${textContent[currentHash]?.title ?? textContent["*"].title}`}</title>
+        <title>
+          {t(
+            "global.siteTitle",
+            textContent[currentHash]?.title ?? textContent["*"].title,
+          )}
+        </title>
         <meta
           name="description"
           content={
@@ -68,7 +74,10 @@ function PageComponent() {
         />
         <meta
           property="og:title"
-          content={`Whydog - ${textContent[currentHash]?.title ?? textContent["*"].title}`}
+          content={t(
+            "global.siteTitle",
+            textContent[currentHash]?.title ?? textContent["*"].title,
+          )}
         />
         <meta
           property="og:description"

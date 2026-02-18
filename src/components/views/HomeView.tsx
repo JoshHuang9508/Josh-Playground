@@ -13,6 +13,7 @@ import useCommandHandler from "@/hooks/useCommandHandler";
 import useGitHubRepos from "@/hooks/useGitHubRepos";
 
 import textContent from "@/lib/text-content.json";
+import { t } from "@/lib/i18n";
 
 const musics: Music[] = [
   {
@@ -76,40 +77,40 @@ export default function HomeView() {
   useCommandHandler({
     github: () => {
       window.open("https://github.com/JoshHuang9508", "_blank");
-      AddConsoleLog("Opening my @#FFF700GitHub@# profile...");
+      AddConsoleLog(t("home.commands.github"));
     },
     youtube: () => {
       window.open("https://www.youtube.com/@whydog5555", "_blank");
-      AddConsoleLog("Opening my @#FFF700YouTube@# channel...");
+      AddConsoleLog(t("home.commands.youtube"));
     },
     twitter: () => {
       window.open("https://x.com/whydog5555", "_blank");
-      AddConsoleLog("Opening my @#FFF700Twitter@# channel...");
+      AddConsoleLog(t("home.commands.twitter"));
     },
     instagram: () => {
       window.open("https://www.instagram.com/whydog5555/", "_blank");
-      AddConsoleLog("Opening my @#FFF700Instagram@# profile...");
+      AddConsoleLog(t("home.commands.instagram"));
     },
     twitch: () => {
       window.open("https://www.twitch.tv/whydog5555", "_blank");
-      AddConsoleLog("Opening my @#FFF700Twitch@# profile...");
+      AddConsoleLog(t("home.commands.twitch"));
     },
     discord: () => {
       window.open("https://discord.com/users/whydog5555", "_blank");
-      AddConsoleLog("Adding me on @#FFF700Discord@#...");
+      AddConsoleLog(t("home.commands.discord"));
     },
     email: () => {
       window.open("mailto:joshhuang9508@gmail.com", "_blank");
-      AddConsoleLog("Sending an @#FFF700email@# to me...");
+      AddConsoleLog(t("home.commands.email"));
     },
     osu: () => {
       window.open("https://osu.ppy.sh/users/15100005", "_blank");
-      AddConsoleLog("Opening my @#FFF700osu!@# profile...");
+      AddConsoleLog(t("home.commands.osu"));
     },
     music: (_cmd, _args, flags) => {
       if (flags.includes("-l") || flags.includes("--list")) {
         AddConsoleLog(
-          "Music list:",
+          t("commands.music.list"),
           ...musics.map((_, index) => `${index + 1} - ${_.name}`),
         );
         return;
@@ -129,7 +130,7 @@ export default function HomeView() {
         }
         return;
       }
-      AddConsoleLog(`Usage: music [option]`);
+      AddConsoleLog(t("commands.music.usage"));
     },
   });
 
@@ -182,17 +183,19 @@ export default function HomeView() {
         >
           <img
             ref={imageRef}
-            className={`${styles["profile-picture"]} ${showMusicInfo ? styles["spin"] : ""
-              }`}
+            className={`${styles["profile-picture"]} ${
+              showMusicInfo ? styles["spin"] : ""
+            }`}
             src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
-            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]
-              }`}
+            className={`${styles["music-info"]} ${
+              showMusicInfo ? styles["show"] : styles["hidden"]
+            }`}
           >
             <ColorSpan
-              str={`Now playing: @#FFF700${musics[musicIndex].name}@#...`}
+              str={t("commands.music.nowPlaying", musics[musicIndex].name)}
               className="p1"
               style={{ whiteSpace: "pre" }}
             />
@@ -239,8 +242,9 @@ export default function HomeView() {
         {Array.from({ length: 3 }).map((_, colIndex) => (
           <div
             key={colIndex}
-            className={`${styles["column"]} ${styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
-              }`}
+            className={`${styles["column"]} ${
+              styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
+            }`}
           >
             {Array.from({ length: 4 }).map((_, dupIndex) => (
               <div key={dupIndex}>

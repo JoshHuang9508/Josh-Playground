@@ -21,6 +21,7 @@ import { WindowState } from "@/components/ConsoleManager";
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
 import { subscribeConsole, setActiveConsole } from "@/lib/consoleLog";
+import { t, ta } from "@/lib/i18n";
 import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from "@/constants";
 
 interface ConsoleProps {
@@ -94,8 +95,8 @@ function Console({
 
   // Variables
   const prefix = window
-    ? `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
-    : `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
+    ? `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
+    : `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${t("global.siteName")}@#:~${currentURL}$ `;
 
   // Functions
   const findAvailablePath = (input: string) => {
@@ -394,7 +395,8 @@ function Console({
   }, [cmdHistory]);
 
   useEffect(() => {
-    const username = localStorage.getItem("username") ?? "Anonymous";
+    const username =
+      localStorage.getItem("username") ?? t("global.defaultUsername");
     setUsername(username);
     SetUsername(username);
   }, []);
@@ -432,33 +434,7 @@ function Console({
         setConsoleContents([]);
       },
     );
-    setConsoleContents([
-      " ",
-      "  @#FFF700██╗    ██╗██╗  ██╗██╗   ██╗██████╗  ██████╗  ██████╗",
-      "  @#FFF700██║    ██║██║  ██║╚██╗ ██╔╝██╔══██╗██╔═══██╗██╔════╝",
-      "  @#FFF700██║ █╗ ██║███████║ ╚████╔╝ ██║  ██║██║   ██║██║  ███╗",
-      "  @#FFF700██║███╗██║██╔══██║  ╚██╔╝  ██║  ██║██║   ██║██║   ██║",
-      "  @#FFF700╚███╔███╔╝██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝",
-      "  @#FFF700 ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝",
-      " ",
-      "  @#bababaWhydog's Playground — Personal Terminal v1.0",
-      "  @#bababa─────────────────────────────────────────────",
-      " ",
-      "  @#FF77B7Quick Start:@#",
-      "    @#00ffaahelp@#            Show all available commands",
-      "    @#00ffaacd@# @#FFF700[path]@#       Navigate to a different page",
-      "    @#00ffaals@#              List available paths",
-      "    @#00ffaacl@#              Clear console output",
-      " ",
-      "  @#FF77B7Shortcuts:@#",
-      "    @#FFF700Ctrl + `@#        Open a new console window",
-      "    @#FFF700Esc@#             Restore last minimized console",
-      "    @#FFF700Tab@#             Auto-complete commands",
-      "    @#FFF700↑ / ↓@#           Browse command history",
-      " ",
-      "  @#f9f284Ready. Type a command to get started.",
-      " ",
-    ]);
+    setConsoleContents(ta("console.welcome"));
     return unsubscribe;
   }, [id]);
 
@@ -552,7 +528,7 @@ function Console({
           <span className={styles["minimize"]} onClick={handleMinimize} />
           <span className={styles["maximize"]} onClick={handleMaximize} />
         </div>
-        <p className={styles["title"]}>Console {id}</p>
+        <p className={styles["title"]}>{t("console.title", id)}</p>
       </div>
 
       {/* Output */}
@@ -582,7 +558,7 @@ function Console({
           ref={inputBox}
           type="text"
           value={`${inputValue}`}
-          placeholder="Feel confused? Type 'help' to get started!"
+          placeholder={t("console.placeholder")}
           onChange={handleInputChange}
           onKeyDown={handleEnter}
         />

@@ -8,6 +8,7 @@ import ColorSpan from "@/components/ColorSpan";
 import useCommandHandler from "@/hooks/useCommandHandler";
 
 import textContent from "@/lib/text-content.json";
+import { t } from "@/lib/i18n";
 
 import { API_URL } from "@/constants";
 
@@ -34,12 +35,14 @@ export default function YtDownloaderView() {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             if (contentType === "application/json") {
-              throw new Error("Get .mp4 file failed!");
+              throw new Error(t("ytdownloader.errors.mp4Failed"));
             }
             return response.blob();
           })
           .catch((error) => {
-            AddConsoleLog(`Error downloading video: ${error}`);
+            AddConsoleLog(
+              t("ytdownloader.errors.downloadVideo", String(error)),
+            );
           });
         return blob_mp4;
       case "mp3":
@@ -58,12 +61,14 @@ export default function YtDownloaderView() {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             if (contentType === "application/json") {
-              throw new Error("Get .mp3 file failed!");
+              throw new Error(t("ytdownloader.errors.mp3Failed"));
             }
             return response.blob();
           })
           .catch((error) => {
-            AddConsoleLog(`Error downloading audio: ${error}`);
+            AddConsoleLog(
+              t("ytdownloader.errors.downloadAudio", String(error)),
+            );
           });
         return blob_mp3;
     }
@@ -74,10 +79,10 @@ export default function YtDownloaderView() {
     download: (_cmd, args, flags) => {
       const URL = args[0] ?? "";
       if (!URL) {
-        AddConsoleLog("Usage: download [video_URL] <options>");
+        AddConsoleLog(t("ytdownloader.commands.download.usage"));
         return;
       } else if (!ReactPlayer.canPlay(URL)) {
-        AddConsoleLog("Invalid video URL");
+        AddConsoleLog(t("ytdownloader.commands.download.invalidUrl"));
         return;
       } else if (
         flags.includes("-v") ||
@@ -85,9 +90,11 @@ export default function YtDownloaderView() {
         flags.length === 0
       ) {
         const downloadVideo = async () => {
-          AddConsoleLog(`Pending download: ${URL} (.mp4)`);
+          AddConsoleLog(
+            t("ytdownloader.commands.download.pending", URL, ".mp4"),
+          );
           const blob = await getVideoBlob(URL.split("v=")[1], "mp4");
-          AddConsoleLog("Starting download...");
+          AddConsoleLog(t("ytdownloader.commands.download.starting"));
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -98,9 +105,11 @@ export default function YtDownloaderView() {
         return;
       } else if (flags.includes("-a") || flags.includes("--audio")) {
         const downloadAudio = async () => {
-          AddConsoleLog(`Pending download: ${URL} (.mp3)`);
+          AddConsoleLog(
+            t("ytdownloader.commands.download.pending", URL, ".mp3"),
+          );
           const blob = await getVideoBlob(URL.split("v=")[1], "mp3");
-          AddConsoleLog("Starting download...");
+          AddConsoleLog(t("ytdownloader.commands.download.starting"));
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;

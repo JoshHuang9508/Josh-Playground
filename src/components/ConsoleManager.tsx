@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "@/styles/_app.module.css";
 
 import Console from "@/components/Console";
+import { t } from "@/lib/i18n";
 
 export type WindowState = "normal" | "minimized" | "maximized" | "closed";
 
@@ -85,7 +86,7 @@ function ConsoleManager() {
 
   return (
     <>
-      {consoles.map((c) =>
+      {consoles.map((c) => (
         <Console
           key={c.id}
           id={c.id}
@@ -93,7 +94,7 @@ function ConsoleManager() {
           onWindowStateChange={handleWindowStateChange}
           positionOffset={c.positionOffset}
         />
-      )}
+      ))}
 
       {minimizedConsoles.length > 0 && (
         <div className={styles["taskbar"]}>
@@ -103,7 +104,7 @@ function ConsoleManager() {
               className={styles["taskbar-item"]}
               onClick={() => handleWindowStateChange(c.id, "normal")}
             >
-              <span>Console {c.id}</span>
+              <span>{t("console.title", c.id)}</span>
             </div>
           ))}
         </div>

@@ -3,6 +3,7 @@ import React from "react";
 import ColorSpan from "@/components/ColorSpan";
 
 import useCommandHandler from "@/hooks/useCommandHandler";
+import { t } from "@/lib/i18n";
 
 export default function NotFoundView() {
   useCommandHandler({});
@@ -12,7 +13,7 @@ export default function NotFoundView() {
       <div className={"container1"}>
         <div className="sub-container2" style={{ fontFamily: "monospace" }}>
           <div>
-            <ColorSpan str="@#FF77B7Error:@# This page doesn't exist. Use @#00ffaa'cd'@# back to home page" />
+            <ColorSpan str={t("*.error")} />
           </div>
         </div>
       </div>

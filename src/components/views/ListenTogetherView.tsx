@@ -11,6 +11,7 @@ import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
 import useCommandHandler from "@/hooks/useCommandHandler";
 
 import { API_URL } from "@/constants";
+import { t } from "@/lib/i18n";
 
 import { IDiffArray, IDiffObject } from "@/utils";
 import ListenTogetherSocket from "@/socket";
@@ -69,7 +70,7 @@ export default function ListenTogetherView() {
         return response.json();
       })
       .catch((error) => {
-        AddConsoleLog(`Error getting video info: ${error}`);
+        AddConsoleLog(t("listentogether.errors.getVideoInfo", String(error)));
         throw error;
       });
     const track: Track = {
@@ -97,7 +98,7 @@ export default function ListenTogetherView() {
         return response.json();
       })
       .catch((error) => {
-        AddConsoleLog(`Error getting playlist info: ${error}`);
+        AddConsoleLog(t("listentogether.errors.getPlaylist", String(error)));
         throw error;
       });
     const tracks: Track[] = data.map((item: any, index) => {
@@ -127,7 +128,7 @@ export default function ListenTogetherView() {
   };
 
   const handlePlayerError = (error: any) => {
-    AddConsoleLog(`Error: ${error}`);
+    AddConsoleLog(t("listentogether.errors.playerError", String(error)));
   };
 
   const handlePlayerReady = () => {
@@ -157,7 +158,7 @@ export default function ListenTogetherView() {
     send: (_cmd, args) => {
       const message = args.join(" ") ?? "";
       if (!message) {
-        AddConsoleLog("Usage: send [message]");
+        AddConsoleLog(t("listentogether.commands.send.usage"));
         return;
       } else {
         socketInstance?.addRoomLog(`${username}: ${message}`);
@@ -167,116 +168,145 @@ export default function ListenTogetherView() {
     queue: async (_cmd, args, flags) => {
       const URL = args[0] ?? "";
       if (!URL) {
-        AddConsoleLog("Usage: queue [video_URL|playlist_URL]");
+        AddConsoleLog(t("listentogether.commands.queue.usage"));
         return;
       } else if (!ReactPlayer.canPlay(URL)) {
-        AddConsoleLog("Can not play this URL");
+        AddConsoleLog(t("listentogether.commands.queue.cannotPlay"));
         return;
       } else if (URL.includes("playlist?list=")) {
         const tracks = await getPlaylist(URL.split("list=")[1]);
         socketInstance?.addTracks(tracks);
         AddConsoleLog(
-          `Added ${tracks.length} tracks to queue (#${
-            playerState.trackQueue.length
-          } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
+          t(
+            "listentogether.commands.queue.addedTracks",
+            String(tracks.length),
+            String(playerState.trackQueue.length),
+            String(playerState.trackQueue.length + tracks.length - 1),
+          ),
         );
         socketInstance?.addRoomLog(
-          `${username} 在播放清單中新增了 ${tracks.length} 首歌曲 (#${
-            playerState.trackQueue.length
-          } ~ #${playerState.trackQueue.length + tracks.length - 1})`,
+          t(
+            "listentogether.logs.addedTracks",
+            username,
+            String(tracks.length),
+            String(playerState.trackQueue.length),
+            String(playerState.trackQueue.length + tracks.length - 1),
+          ),
         );
         return;
       } else if (URL.includes("watch?v=")) {
         const track = await getVideoInfo(URL.split("v=")[1]);
         socketInstance?.addTrack(track);
         AddConsoleLog(
-          `Added ${track.title} to queue (#${playerState.trackQueue.length})`,
+          t(
+            "listentogether.commands.queue.addedTrack",
+            track.title,
+            String(playerState.trackQueue.length),
+          ),
         );
         socketInstance?.addRoomLog(
-          `${username} 在播放清單中新增了 ${track.title} (#${playerState.trackQueue.length})`,
+          t(
+            "listentogether.logs.addedTrack",
+            username,
+            track.title,
+            String(playerState.trackQueue.length),
+          ),
         );
         return;
       } else {
-        AddConsoleLog("Invalid URL");
+        AddConsoleLog(t("listentogether.commands.queue.invalidUrl"));
         return;
       }
     },
     remove: (_cmd, args) => {
       const indexToRm = args[0] ?? "";
       if (!indexToRm) {
-        AddConsoleLog("Usage: remove [index]");
+        AddConsoleLog(t("listentogether.commands.remove.usage"));
         return;
       } else if (indexToRm === "*") {
         socketInstance?.setTrackQueue([]);
-        AddConsoleLog("Removed all tracks");
-        socketInstance?.addRoomLog(`${username} 移除了所有歌曲`);
+        AddConsoleLog(t("listentogether.commands.remove.removedAll"));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.removedAll", username),
+        );
         return;
       } else if (isNaN(parseFloat(indexToRm))) {
-        AddConsoleLog("Invalid index");
+        AddConsoleLog(t("listentogether.commands.remove.invalidIndex"));
         return;
       } else if (parseInt(indexToRm) >= playerState.trackQueue.length) {
-        AddConsoleLog("Index out of range");
+        AddConsoleLog(t("listentogether.commands.remove.indexOutOfRange"));
         return;
       } else {
         const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
         socketInstance?.removeTrack(parseInt(indexToRm));
-        AddConsoleLog(`Removed track ${indexToRm}`);
+        AddConsoleLog(t("listentogether.commands.remove.removed", indexToRm));
         socketInstance?.addRoomLog(
-          `${username} 移除了 ${trackToRm.title} (#${indexToRm})`,
+          t(
+            "listentogether.logs.removedTrack",
+            username,
+            trackToRm.title,
+            indexToRm,
+          ),
         );
         return;
       }
     },
     play: () => {
       socketInstance?.play();
-      AddConsoleLog("Start playing...");
-      socketInstance?.addRoomLog(`${username} 開始播放`);
+      AddConsoleLog(t("listentogether.commands.play.start"));
+      socketInstance?.addRoomLog(t("listentogether.logs.play", username));
       return;
     },
     pause: () => {
       socketInstance?.pause();
-      AddConsoleLog("Pause playing...");
-      socketInstance?.addRoomLog(`${username} 暫停播放`);
+      AddConsoleLog(t("listentogether.commands.pause.pause"));
+      socketInstance?.addRoomLog(t("listentogether.logs.pause", username));
       return;
     },
     switch: (_cmd, args, flags) => {
       const index = args[0] ?? "";
       if (!index) {
-        AddConsoleLog("Usage: switch [index|options]");
+        AddConsoleLog(t("listentogether.commands.switch.usage"));
         return;
       } else if (flags.includes("-n") || flags.includes("--next")) {
         socketInstance?.nextTrack();
-        AddConsoleLog("Switch to next track");
-        socketInstance?.addRoomLog(`${username} 切換到下一首歌曲`);
+        AddConsoleLog(t("listentogether.commands.switch.next"));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.switchNext", username),
+        );
         return;
       } else if (flags.includes("-p") || flags.includes("--prev")) {
         socketInstance?.prevTrack();
-        AddConsoleLog("Switch to previous track");
-        socketInstance?.addRoomLog(`${username} 切換到上一首歌曲`);
+        AddConsoleLog(t("listentogether.commands.switch.prev"));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.switchPrev", username),
+        );
         return;
       } else if (isNaN(parseFloat(index))) {
-        AddConsoleLog("Invalid index");
+        AddConsoleLog(t("listentogether.commands.switch.invalidIndex"));
         return;
       } else if (
         parseInt(index) >= playerState.trackQueue.length ||
         parseInt(index) < 0
       ) {
-        AddConsoleLog("Index out of range");
+        AddConsoleLog(t("listentogether.commands.switch.indexOutOfRange"));
         return;
       } else {
         socketInstance?.setTrackIndex(parseInt(index));
-        AddConsoleLog(`Switch to track ${index}`);
-        socketInstance?.addRoomLog(`${username} 切換到歌曲 #${index}`);
+        AddConsoleLog(t("listentogether.commands.switch.switchTo", index));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.switchTo", username, index),
+        );
         return;
       }
     },
     volume: (_cmd, args) => {
       const volume = args[0] ?? "";
       if (!volume) {
-        AddConsoleLog("Usage: volume [value]");
+        AddConsoleLog(t("listentogether.commands.volume.usage"));
         return;
       } else if (isNaN(parseFloat(volume))) {
-        AddConsoleLog("Invalid volume");
+        AddConsoleLog(t("listentogether.commands.volume.invalid"));
         return;
       } else {
         setPlayerStateClient((prev) => ({
@@ -284,88 +314,94 @@ export default function ListenTogetherView() {
           volume: parseFloat(volume) / 100,
         }));
         localStorage.setItem("volume", volume);
-        AddConsoleLog(`Set volume to ${volume}`);
+        AddConsoleLog(t("listentogether.commands.volume.set", volume));
         return;
       }
     },
     loop: (_cmd, _args, flags) => {
       if (flags.includes("-t") || flags.includes("--true")) {
         socketInstance?.setLoop(true);
-        AddConsoleLog("Loop...");
-        socketInstance?.addRoomLog(`${username} 開啟循環播放`);
+        AddConsoleLog(t("listentogether.commands.loop.on"));
+        socketInstance?.addRoomLog(t("listentogether.logs.loopOn", username));
         return;
       } else if (flags.includes("-f") || flags.includes("--false")) {
         socketInstance?.setLoop(false);
-        AddConsoleLog("Unloop...");
-        socketInstance?.addRoomLog(`${username} 關閉循環播放`);
+        AddConsoleLog(t("listentogether.commands.loop.off"));
+        socketInstance?.addRoomLog(t("listentogether.logs.loopOff", username));
         return;
       } else {
-        AddConsoleLog("Usage: loop [options]");
+        AddConsoleLog(t("listentogether.commands.loop.usage"));
         return;
       }
     },
     random: (_cmd, _args, flags) => {
       if (flags.includes("-t") || flags.includes("--true")) {
         socketInstance?.setPlayerState({ ...playerState, random: true });
-        AddConsoleLog("Random...");
-        socketInstance?.addRoomLog(`${username} 開啟隨機播放`);
+        AddConsoleLog(t("listentogether.commands.random.on"));
+        socketInstance?.addRoomLog(t("listentogether.logs.randomOn", username));
         return;
       } else if (flags.includes("-f") || flags.includes("--false")) {
         socketInstance?.setPlayerState({ ...playerState, random: false });
-        AddConsoleLog("Unrandom...");
-        socketInstance?.addRoomLog(`${username} 關閉隨機播放`);
+        AddConsoleLog(t("listentogether.commands.random.off"));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.randomOff", username),
+        );
         return;
       } else {
-        AddConsoleLog("Usage: random [options]");
+        AddConsoleLog(t("listentogether.commands.random.usage"));
         return;
       }
     },
     rate: (_cmd, args) => {
       const rate = args[0] ?? "";
       if (!rate) {
-        AddConsoleLog("Usage: rate [value]");
+        AddConsoleLog(t("listentogether.commands.rate.usage"));
         return;
       } else if (isNaN(parseFloat(rate))) {
-        AddConsoleLog("Invalid rate");
+        AddConsoleLog(t("listentogether.commands.rate.invalid"));
         return;
       } else {
         socketInstance?.setPlayBackRate(parseFloat(rate) / 100);
-        AddConsoleLog(`Set rate to ${rate}%`);
-        socketInstance?.addRoomLog(`${username} 設定播放速度為 ${rate}%`);
+        AddConsoleLog(t("listentogether.commands.rate.set", rate));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.rate", username, rate),
+        );
         return;
       }
     },
     seek: (_cmd, args) => {
       const seek = args[0] ?? "";
       if (!seek) {
-        AddConsoleLog("Usage: seek [time]");
+        AddConsoleLog(t("listentogether.commands.seek.usage"));
         return;
       } else if (isNaN(parseFloat(seek))) {
-        AddConsoleLog("Invalid time");
+        AddConsoleLog(t("listentogether.commands.seek.invalid"));
         return;
       } else if (
         parseFloat(seek) < 0 ||
         parseFloat(seek) > playerState.duration
       ) {
-        AddConsoleLog("Time out of range");
+        AddConsoleLog(t("listentogether.commands.seek.outOfRange"));
         return;
       } else {
         socketInstance?.seek(parseFloat(seek));
-        AddConsoleLog(`Seek to ${seek}`);
-        socketInstance?.addRoomLog(`${username} 跳轉到 ${seek} 秒`);
+        AddConsoleLog(t("listentogether.commands.seek.seekTo", seek));
+        socketInstance?.addRoomLog(
+          t("listentogether.logs.seek", username, seek),
+        );
         return;
       }
     },
     refresh: () => {
       socketInstance?.refresh();
-      AddConsoleLog("Refresh player...");
-      socketInstance?.addRoomLog(`${username} 刷新播放器`);
+      AddConsoleLog(t("listentogether.commands.refresh.message"));
+      socketInstance?.addRoomLog(t("listentogether.logs.refresh", username));
       return;
     },
     playlist: (_cmd, _args, flags) => {
       if (flags.includes("-d") || flags.includes("--detail")) {
         AddConsoleLog(
-          "Playlist detail:",
+          t("listentogether.commands.playlist.detail"),
           ...playerState.trackQueue.map((track, index) => {
             if (track.id === playerState.currentTrack?.id) {
               return `@#fff700#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`;
@@ -376,7 +412,7 @@ export default function ListenTogetherView() {
         return;
       } else {
         AddConsoleLog(
-          "Playlist:",
+          t("listentogether.commands.playlist.list"),
           ...playerState.trackQueue.map((track, index) => {
             if (track.id === playerState.currentTrack?.id) {
               return `@#fff700#${index} - ${track.title}`;
@@ -407,17 +443,21 @@ export default function ListenTogetherView() {
 
     socket.connect({
       connect: async () => {
-        socket.join(localStorage.getItem("username") ?? "Anonymous");
+        socket.join(
+          localStorage.getItem("username") ?? t("global.defaultUsername"),
+        );
         socket.ready();
       },
       connect_error: () => {
-        AddConsoleLog(`Connect server error (id: ${socket.id})`);
+        AddConsoleLog(
+          t("listentogether.errors.connectError", String(socket.id)),
+        );
       },
       error: (error) => {
-        AddConsoleLog(`Connect server error: ${error.message}`);
+        AddConsoleLog(t("listentogether.errors.serverError", error.message));
       },
       disconnect: () => {
-        AddConsoleLog("Disconnect from server");
+        AddConsoleLog(t("listentogether.errors.disconnect"));
       },
       receivePlayerState: (state) => {
         setPlayerState((prev) => ({ ...prev, ...state }));
@@ -467,7 +507,7 @@ export default function ListenTogetherView() {
 
     if (trackQueueDiff || currentTrackDiff) {
       AddConsoleLog(
-        "Playlist updated:",
+        t("listentogether.logs.playlistUpdated"),
         ...playerState.trackQueue.map((track, index) => {
           if (track.id === playerState.currentTrack?.id) {
             return `@#fff700#${index} - ${track.title}`;
@@ -509,7 +549,7 @@ export default function ListenTogetherView() {
       AddConsoleLog(
         ...diff.map(
           ([, user]) =>
-            `[${new Date().toLocaleTimeString()}] ${user} joined the room`,
+            `[${new Date().toLocaleTimeString()}] ${t("listentogether.logs.joined", user)}`,
         ),
       );
     }
@@ -522,7 +562,7 @@ export default function ListenTogetherView() {
           !mute ? styles["active"] : ""
         }`}
       >
-        <p className={"header2"}>{`點我一下`}</p>
+        <p className={"header2"}>{t("listentogether.unmute")}</p>
       </div>
 
       <div tabIndex={-1} className={styles["player-container"]}>
