@@ -433,8 +433,31 @@ function Console({
       },
     );
     setConsoleContents([
-      "Welcome to the console!",
-      "Type @#00ffaa'help'@# for available commands",
+      " ",
+      "  @#FFF700██╗    ██╗██╗  ██╗██╗   ██╗██████╗  ██████╗  ██████╗",
+      "  @#FFF700██║    ██║██║  ██║╚██╗ ██╔╝██╔══██╗██╔═══██╗██╔════╝",
+      "  @#FFF700██║ █╗ ██║███████║ ╚████╔╝ ██║  ██║██║   ██║██║  ███╗",
+      "  @#FFF700██║███╗██║██╔══██║  ╚██╔╝  ██║  ██║██║   ██║██║   ██║",
+      "  @#FFF700╚███╔███╔╝██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝",
+      "  @#FFF700 ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝",
+      " ",
+      "  @#bababaWhydog's Playground — Personal Terminal v1.0",
+      "  @#bababa─────────────────────────────────────────────",
+      " ",
+      "  @#FF77B7Quick Start:@#",
+      "    @#00ffaahelp@#            Show all available commands",
+      "    @#00ffaacd@# @#FFF700[path]@#      Navigate to a different page",
+      "    @#00ffaals@#              List available paths",
+      "    @#00ffaacl@#              Clear console output",
+      " ",
+      "  @#FF77B7Shortcuts:@#",
+      "    @#FFF700Ctrl + `@#        Open a new console window",
+      "    @#FFF700Esc@#             Restore last minimized console",
+      "    @#FFF700Tab@#             Auto-complete commands",
+      "    @#FFF700↑ / ↓@#           Browse command history",
+      " ",
+      "  @#f9f284Ready. Type a command to get started.",
+      " ",
     ]);
     return unsubscribe;
   }, [id]);
