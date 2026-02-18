@@ -366,7 +366,7 @@ function Console({ }: ConsoleProps) {
           ref={inputBox}
           type="text"
           value={`${inputValue}`}
-          placeholder="Feel confused? Type 'help' to get started! Press 'Escape' to hide/show the console."
+          placeholder="Feel confused? Type 'help' to get started!"
           onChange={handleInputChange}
           onKeyDown={handleEnter}
         />

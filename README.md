@@ -9,7 +9,7 @@
 - ### Command Line Interface (CLI)
 
   This website has no buttons like a normal website does. Instead, it is totally controlled by the built-in CLI at the bottom of the site.
-  Use [Tab] to focus, type `help` to find available commands, press [Esc] to close the console log.
+  Use [Tab] to focus, type `help` to find available commands.
 
   **Basic commands (available on all pages):**
 
