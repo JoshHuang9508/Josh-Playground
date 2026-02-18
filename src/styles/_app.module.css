@@ -114,6 +114,7 @@ div.console div.output.bottom {
 }
 
 div.console div.prompt {
+  min-height: fit-content;
   padding: 1rem 1rem 0;
 }
 
