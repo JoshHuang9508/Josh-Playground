@@ -12,8 +12,13 @@ export type CommandHandlers = Record<string, CommandHandler>;
 export type AppContextType = {
   availableCommands: Command[];
   availablePaths: string[];
+  setAvailableCommands: (cmds: Command[]) => void;
+  setAvailablePaths: (paths: string[]) => void;
+  backgroundImageUrl: string;
+  backgroundColor: string;
   setBackgroundImageUrl: (url: string) => void;
   setBackgroundColor: (color: string) => void;
+  username: string;
   setUsername: (name: string) => void;
 };
 
