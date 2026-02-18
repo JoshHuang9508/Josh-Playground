@@ -322,6 +322,24 @@ function Console({ }: ConsoleProps) {
       ref={consoleBox}
       className={styles[`console`]}
     >
+      <div className={styles["header"]}>
+        <div className={styles["traffic-lights"]}>
+          <span
+            className={styles["close"]}
+            onClick={() => { }}
+          />
+          <span
+            className={styles["minimize"]}
+            onClick={() => { }}
+          />
+          <span
+            className={styles["maximize"]}
+            onClick={() => { }}
+          />
+        </div>
+        <p className={styles["title"]}>Console</p>
+      </div>
+
       <div
         tabIndex={-1}
         className={styles[`output`]}

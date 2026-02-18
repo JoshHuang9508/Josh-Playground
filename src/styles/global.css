@@ -31,7 +31,6 @@ body {
 
 span,
 p {
-  min-height: 1rem;
   padding: 0;
   overflow-wrap: break-word;
   white-space: pre-wrap;
