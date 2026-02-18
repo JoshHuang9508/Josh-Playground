@@ -553,7 +553,7 @@ function Console({
       )}
 
       <div className={styles["input"]}>
-        <ColorSpan str={prefix} />
+        <ColorSpan str={prefix} style={{ minWidth: "fit-content" }} />
         <input
           ref={inputBox}
           type="text"
