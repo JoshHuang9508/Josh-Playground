@@ -16,7 +16,9 @@ function ConsoleManager() {
   const [consoles, setConsoles] = useState<ConsoleInstance[]>([
     { id: "1", windowState: "normal", positionOffset: 0 },
   ]);
+
   const nextIdRef = useRef(2);
+  const nextZIndexRef = useRef(999);
 
   const addConsole = () => {
     const currentId = nextIdRef.current;
@@ -61,6 +63,18 @@ function ConsoleManager() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      const headerEl = (event.target as HTMLElement).closest("[data-header]") as HTMLDivElement;
+      if (headerEl) {
+        headerEl.style.zIndex = String(nextZIndexRef.current);
+        nextZIndexRef.current += 1;
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdownter", onPointerDown);
   }, []);
 
   const minimizedConsoles = consoles.filter(
