@@ -153,6 +153,7 @@ export default function HomeView() {
     if (!audioPlayerRef.current) return;
     audioPlayerRef.current.src = musics[musicIndex].path;
     audioPlayerRef.current.play();
+    audioPlayerRef.current.volume = 0.05;
   }, [musicIndex]);
 
   useEffect(() => {
@@ -181,16 +182,14 @@ export default function HomeView() {
         >
           <img
             ref={imageRef}
-            className={`${styles["profile-picture"]} ${
-              showMusicInfo ? styles["spin"] : ""
-            }`}
+            className={`${styles["profile-picture"]} ${showMusicInfo ? styles["spin"] : ""
+              }`}
             src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
-            className={`${styles["music-info"]} ${
-              showMusicInfo ? styles["show"] : styles["hidden"]
-            }`}
+            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]
+              }`}
           >
             <ColorSpan
               str={`Now playing: @#FFF700${musics[musicIndex].name}@#...`}
@@ -240,9 +239,8 @@ export default function HomeView() {
         {Array.from({ length: 3 }).map((_, colIndex) => (
           <div
             key={colIndex}
-            className={`${styles["column"]} ${
-              styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
-            }`}
+            className={`${styles["column"]} ${styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
+              }`}
           >
             {Array.from({ length: 4 }).map((_, dupIndex) => (
               <div key={dupIndex}>
