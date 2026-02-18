@@ -14,9 +14,9 @@ import ColorSpan from "@/components/ColorSpan";
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
 
-interface ConsoleProps {}
+interface ConsoleProps { }
 
-function Console({}: ConsoleProps) {
+function Console({ }: ConsoleProps) {
   // Context
   const {
     availableCommands,
@@ -320,7 +320,7 @@ function Console({}: ConsoleProps) {
   ) : (
     <div
       ref={consoleBox}
-      className={`${styles[`console`]} ${styles[`hidden`]}`}
+      className={styles[`console`]}
     >
       <div
         tabIndex={-1}
