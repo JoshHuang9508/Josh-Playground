@@ -3,60 +3,47 @@ img.profile-picture {
   width: 15rem;
   height: 15rem;
   margin: 2rem;
+  border: 2px solid white;
   border-radius: 50%;
-  box-shadow: 0 0 1rem white;
+  box-shadow: 0 0 1rem #00000040;
   animation:
-    rgb-shadow 10s infinite linear,
+    rgb-border 10s infinite linear,
     spin-back 1s linear;
 }
 
 img.profile-picture.spin {
   animation:
-    rgb-shadow 10s infinite linear,
+    rgb-border 10s infinite linear,
     spin 5s infinite linear;
 }
 
-@keyframes rgb-shadow {
+@keyframes rgb-border {
   0% {
-    box-shadow:
-      0 0 2rem rgb(255 0 0),
-      inset 0 0 2rem rgb(255 0 0);
+    border: 2px solid rgb(255 0 0);
   }
 
   16% {
-    box-shadow:
-      0 0 2rem rgb(255 165 0),
-      inset 0 0 2rem rgb(255 165 0);
+    border: 2px solid rgb(255 165 0);
   }
 
   33% {
-    box-shadow:
-      0 0 2rem rgb(255 255 0),
-      inset 0 0 2rem rgb(255 255 0);
+    border: 2px solid rgb(255 255 0);
   }
 
   50% {
-    box-shadow:
-      0 0 2rem rgb(0 255 0),
-      inset 0 0 2rem rgb(0 255 0);
+    border: 2px solid rgb(0 255 0);
   }
 
   66% {
-    box-shadow:
-      0 0 2rem rgb(0 0 255),
-      inset 0 0 2rem rgb(0 0 255);
+    border: 2px solid rgb(0 0 255);
   }
 
   83% {
-    box-shadow:
-      0 0 2rem rgb(255 0 255),
-      inset 0 0 2rem rgb(255 0 255);
+    border: 2px solid rgb(255 0 255);
   }
 
   100% {
-    box-shadow:
-      0 0 2rem rgb(255 0 0),
-      inset 0 0 2rem rgb(255 0 0);
+    border: 2px solid rgb(255 0 0);
   }
 }
 

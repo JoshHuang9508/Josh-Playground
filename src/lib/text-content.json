@@ -20,8 +20,8 @@
       "  @#bababa─────────────────────────────────────────────",
       " ",
       "  @#FF77B7Quick Start:@#",
-      "    @#00ffaahelp@#            Show all available commands",
-      "    @#00ffaacd@# @#FFF700[path]@#       Navigate to a different page",
+      "    @#00ffaahelp@#            List all available commands",
+      "    @#00ffaacd@# @#FFF700<path>@#       Navigate to a different page",
       "    @#00ffaals@#              List available paths",
       "    @#00ffaacl@#              Clear console output",
       " ",
@@ -36,157 +36,157 @@
     ]
   },
   "commands": {
-    "commandNotFound": "Command not found: @#fff700{0}",
+    "commandNotFound": "Unknown command: @#fff700{0}@#. Type @#00ffaahelp@# to see available commands.",
     "availableCommands": "Available commands:",
     "separator": "---",
     "availablePaths": "Available paths:",
     "help": {
-      "usage": "@#00ffaa{0}@# - {1}"
+      "usage": "{0} — {1}"
     },
     "background": {
-      "reset": "Reset background image...",
-      "urlInvalid": "URL invalid! Usage: background [url]",
-      "set": "Set background image to {0}"
+      "reset": "Background image has been reset.",
+      "urlInvalid": "Invalid URL. Usage: @#00ffaabackground@# @#fff700<image_url>@#",
+      "set": "Background image set to @#fff700{0}@#"
     },
     "backgroundcolor": {
-      "reset": "Reset background color...",
-      "colorInvalid": "Color invalid! Must be a valid HEX color code. Usage: backgroundcolor [color]",
-      "set": "Set background color to {0}"
+      "reset": "Background color has been reset.",
+      "colorInvalid": "Invalid color. Must be a hex code (e.g. #FF0000). Usage: @#00ffaabackgroundcolor@# @#fff700<#hex>@#",
+      "set": "Background color set to @#fff700{0}@#"
     },
     "username": {
-      "usage": "Usage: setname [name]",
-      "tooLong": "Name too long (max 20 characters)",
-      "set": "Set username to {0}"
+      "usage": "Usage: @#00ffaausername@# @#fff700<name>@#",
+      "tooLong": "Name too long — max 20 characters.",
+      "set": "Username changed to @#fff700{0}@#"
     },
     "music": {
-      "usage": "Usage: music [option]",
+      "usage": "Usage: @#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#",
       "list": "Music list:",
       "nowPlaying": "Now playing: @#FFF700{0}@#..."
     }
   },
   "home": {
     "commands": {
-      "github": "Opening my @#FFF700GitHub@# profile...",
-      "youtube": "Opening my @#FFF700YouTube@# channel...",
-      "twitter": "Opening my @#FFF700Twitter@# channel...",
-      "instagram": "Opening my @#FFF700Instagram@# profile...",
-      "twitch": "Opening my @#FFF700Twitch@# profile...",
-      "discord": "Adding me on @#FFF700Discord@#...",
-      "email": "Sending an @#FFF700email@# to me...",
-      "osu": "Opening my @#FFF700osu!@# profile..."
+      "github": "Opening @#FFF700GitHub@# profile...",
+      "youtube": "Opening @#FFF700YouTube@# channel...",
+      "twitter": "Opening @#FFF700Twitter@# profile...",
+      "instagram": "Opening @#FFF700Instagram@# profile...",
+      "twitch": "Opening @#FFF700Twitch@# channel...",
+      "discord": "Opening @#FFF700Discord@# profile...",
+      "email": "Opening email client...",
+      "osu": "Opening @#FFF700osu!@# profile..."
     }
   },
   "listentogether": {
     "unmute": "點我一下",
     "commands": {
       "send": {
-        "usage": "Usage: send [message]"
+        "usage": "Usage: @#00ffaasend@# @#fff700<message>@#"
       },
       "queue": {
-        "usage": "Usage: queue [video_URL|playlist_URL]",
-        "cannotPlay": "Can not play this URL",
-        "addedTracks": "Added {0} tracks to queue (#{1} ~ #{2})",
-        "addedTrack": "Added {0} to queue (#{1})",
-        "invalidUrl": "Invalid URL"
+        "usage": "Usage: @#00ffaaqueue@# @#fff700<video_url | playlist_url>@#",
+        "cannotPlay": "Unsupported URL — cannot play this link.",
+        "addedTracks": "Added @#fff700{0}@# tracks to queue (#{1} ~ #{2})",
+        "addedTrack": "Added @#fff700{0}@# to queue (#{1})",
+        "invalidUrl": "Invalid URL."
       },
       "remove": {
-        "usage": "Usage: remove [index]",
-        "removedAll": "Removed all tracks",
-        "invalidIndex": "Invalid index",
-        "indexOutOfRange": "Index out of range",
-        "removed": "Removed track {0}"
+        "usage": "Usage: @#00ffaaremove@# @#fff700<index | *>@#",
+        "removedAll": "All tracks removed from the queue.",
+        "invalidIndex": "Invalid index.",
+        "indexOutOfRange": "Index out of range.",
+        "removed": "Removed track #{0} from the queue."
       },
       "play": {
-        "start": "Start playing..."
+        "start": "Resuming playback..."
       },
       "pause": {
-        "pause": "Pause playing..."
+        "pause": "Playback paused."
       },
       "switch": {
-        "usage": "Usage: switch [index|options]",
-        "next": "Switch to next track",
-        "prev": "Switch to previous track",
-        "invalidIndex": "Invalid index",
-        "indexOutOfRange": "Index out of range",
-        "switchTo": "Switch to track {0}"
+        "usage": "Usage: @#00ffaaswitch@# @#fff700<index> | -n | -p@#",
+        "next": "Switched to the next track.",
+        "prev": "Switched to the previous track.",
+        "invalidIndex": "Invalid index.",
+        "indexOutOfRange": "Index out of range.",
+        "switchTo": "Switched to track #{0}."
       },
       "volume": {
-        "usage": "Usage: volume [value]",
-        "invalid": "Invalid volume",
-        "set": "Set volume to {0}"
+        "usage": "Usage: @#00ffaavolume@# @#fff700<0–100>@#",
+        "invalid": "Invalid volume value.",
+        "set": "Volume set to @#fff700{0}@#"
       },
       "loop": {
-        "usage": "Usage: loop [options]",
-        "on": "Loop...",
-        "off": "Unloop..."
+        "usage": "Usage: @#00ffaaloop@# @#fff700[-t | -f]@#",
+        "on": "Loop enabled.",
+        "off": "Loop disabled."
       },
       "random": {
-        "usage": "Usage: random [options]",
-        "on": "Random...",
-        "off": "Unrandom..."
+        "usage": "Usage: @#00ffaarandom@# @#fff700[-t | -f]@#",
+        "on": "Shuffle enabled.",
+        "off": "Shuffle disabled."
       },
       "rate": {
-        "usage": "Usage: rate [value]",
-        "invalid": "Invalid rate",
-        "set": "Set rate to {0}%"
+        "usage": "Usage: @#00ffaarate@# @#fff700<percent>@#",
+        "invalid": "Invalid rate value.",
+        "set": "Playback speed set to @#fff700{0}%@#"
       },
       "seek": {
-        "usage": "Usage: seek [time]",
-        "invalid": "Invalid time",
-        "outOfRange": "Time out of range",
-        "seekTo": "Seek to {0}"
+        "usage": "Usage: @#00ffaaseek@# @#fff700<seconds>@#",
+        "invalid": "Invalid time value.",
+        "outOfRange": "Time out of range.",
+        "seekTo": "Seeked to @#fff700{0}s@#"
       },
       "refresh": {
-        "message": "Refresh player..."
+        "message": "Player state refreshed."
       },
       "playlist": {
-        "detail": "Playlist detail:",
+        "detail": "Playlist (detailed):",
         "list": "Playlist:"
       }
     },
     "logs": {
       "addedTracks": "{0} 在播放清單中新增了 {1} 首歌曲 (#{2} ~ #{3})",
       "addedTrack": "{0} 在播放清單中新增了 {1} (#{2})",
-      "removedAll": "{0} 移除了所有歌曲",
+      "removedAll": "{0} 清空了播放清單",
       "removedTrack": "{0} 移除了 {1} (#{2})",
-      "play": "{0} 開始播放",
+      "play": "{0} 繼續播放",
       "pause": "{0} 暫停播放",
-      "switchNext": "{0} 切換到下一首歌曲",
-      "switchPrev": "{0} 切換到上一首歌曲",
-      "switchTo": "{0} 切換到歌曲 #{1}",
+      "switchNext": "{0} 切換到下一首",
+      "switchPrev": "{0} 切換到上一首",
+      "switchTo": "{0} 切換到 #{1}",
       "loopOn": "{0} 開啟循環播放",
       "loopOff": "{0} 關閉循環播放",
       "randomOn": "{0} 開啟隨機播放",
       "randomOff": "{0} 關閉隨機播放",
-      "rate": "{0} 設定播放速度為 {1}%",
+      "rate": "{0} 將播放速度設為 {1}%",
       "seek": "{0} 跳轉到 {1} 秒",
-      "refresh": "{0} 刷新播放器",
+      "refresh": "{0} 重新同步播放器",
       "playlistUpdated": "Playlist updated:",
       "joined": "{0} joined the room"
     },
     "errors": {
-      "getVideoInfo": "Error getting video info: {0}",
-      "getPlaylist": "Error getting playlist info: {0}",
-      "connectError": "Connect server error (id: {0})",
-      "serverError": "Connect server error: {0}",
-      "disconnect": "Disconnect from server",
-      "playerError": "Error: {0}"
+      "getVideoInfo": "Failed to fetch video info: {0}",
+      "getPlaylist": "Failed to fetch playlist info: {0}",
+      "connectError": "Server connection failed (id: {0})",
+      "serverError": "Server error: {0}",
+      "disconnect": "Disconnected from server.",
+      "playerError": "Player error: {0}"
     }
   },
   "ytdownloader": {
     "commands": {
       "download": {
-        "usage": "Usage: download [video_URL] <options>",
-        "invalidUrl": "Invalid video URL",
-        "pending": "Pending download: {0} ({1})",
-        "starting": "Starting download..."
+        "usage": "Usage: @#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
+        "invalidUrl": "Invalid video URL.",
+        "pending": "Preparing download: @#fff700{0}@# ({1})",
+        "starting": "Download started..."
       }
     },
     "errors": {
-      "downloadVideo": "Error downloading video: {0}",
-      "downloadAudio": "Error downloading audio: {0}",
-      "mp4Failed": "Get .mp4 file failed!",
-      "mp3Failed": "Get .mp3 file failed!"
+      "downloadVideo": "Video download failed: {0}",
+      "downloadAudio": "Audio download failed: {0}",
+      "mp4Failed": "Failed to retrieve .mp4 file.",
+      "mp3Failed": "Failed to retrieve .mp3 file."
     }
   },
   "/": {
@@ -203,35 +203,35 @@
     "social": [
       {
         "icon": "gmail",
-        "value": "joshhuang9508@gmail.com - Type @#FFF700email@# to send me an email"
+        "value": "joshhuang9508@gmail.com — Type @#FFF700email@# to send me an email"
       },
       {
         "icon": "twitter",
-        "value": "@whydog5555 > Type @#FFF700twitter@# to open my Twitter channel"
+        "value": "@whydog5555 — Type @#FFF700twitter@# to open my Twitter profile"
       },
       {
         "icon": "instagram",
-        "value": "@whydog5555 > Type @#FFF700instagram@# to open my Instagram profile"
+        "value": "@whydog5555 — Type @#FFF700instagram@# to open my Instagram profile"
       },
       {
         "icon": "github",
-        "value": "Joshhuang9508 > Type @#FFF700github@# to open my GitHub profile"
+        "value": "Joshhuang9508 — Type @#FFF700github@# to open my GitHub profile"
       },
       {
         "icon": "youtube",
-        "value": "Whydog > Type @#FFF700youtube@# to open my YouTube channel"
+        "value": "Whydog — Type @#FFF700youtube@# to open my YouTube channel"
       },
       {
         "icon": "twitch",
-        "value": "whydog5555 > Type @#FFF700twitch@# to open my Twitch profile"
+        "value": "whydog5555 — Type @#FFF700twitch@# to open my Twitch channel"
       },
       {
         "icon": "discord",
-        "value": "@whydog > Type @#FFF700discord@# to add me on Discord"
+        "value": "@whydog — Type @#FFF700discord@# to open my Discord profile"
       },
       {
         "icon": "osu",
-        "value": "-Whitedog- > Type @#FFF700osu@# to open my osu! profile"
+        "value": "-Whitedog- — Type @#FFF700osu@# to open my osu! profile"
       }
     ]
   },
@@ -246,7 +246,7 @@
       "@#FFF700How to use?",
       "1. @#FF77B7Copy@# the @#00ffaaURL@# of the @#00ffaaYouTube video@# you want to download.",
       "2. @#FF77B7Type@# @#00ffaa'download'@# and paste the @#00ffaaURL@#.",
-      "3. @#FF77B7Use@# flag @#00ffaa'-a'@# to download the @#00ffaaaudio@# only, or @#00ffaa'-v'@# to download the @#00ffaavideo@# only.",
+      "3. @#FF77B7Use@# flag @#00ffaa'-a'@# for @#00ffaaaudio@# only, or @#00ffaa'-v'@# for @#00ffaavideo@# only.",
       "4. @#FF77B7Wait@# for the download to complete.",
       "@#f9f284Enjoy your download!"
     ]
@@ -254,6 +254,6 @@
   "*": {
     "title": "Oops!",
     "subtitle": "Page not found!",
-    "error": "@#FF77B7Error:@# This page doesn't exist. Use @#00ffaa'cd'@# back to home page"
+    "error": "@#FF77B7Error:@# This page doesn't exist. Type @#00ffaa'cd'@# to go back to the home page."
   }
 }

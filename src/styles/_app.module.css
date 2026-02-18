@@ -113,6 +113,11 @@ div.console div.output.bottom {
   box-shadow: none;
 }
 
+div.console div.output-line {
+  display: flex;
+  padding: 1px 0;
+}
+
 div.console div.prompt {
   min-height: fit-content;
   padding: 1rem 1rem 0;

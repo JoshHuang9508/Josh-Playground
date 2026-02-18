@@ -111,7 +111,7 @@ export default function HomeView() {
       if (flags.includes("-l") || flags.includes("--list")) {
         AddConsoleLog(
           t("commands.music.list"),
-          ...musics.map((_, index) => `${index + 1} - ${_.name}`),
+          ...musics.map((_, index) => `#${index} - ${_.name}`),
         );
         return;
       }
