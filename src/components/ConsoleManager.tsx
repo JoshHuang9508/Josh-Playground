@@ -12,8 +12,6 @@ type ConsoleInstance = {
   positionOffset: number;
 };
 
-const POSITION_OFFSET = 30;
-
 function ConsoleManager() {
   const [consoles, setConsoles] = useState<ConsoleInstance[]>([
     { id: "1", windowState: "normal", positionOffset: 0 },
@@ -23,10 +21,9 @@ function ConsoleManager() {
   const addConsole = () => {
     const currentId = nextIdRef.current;
     nextIdRef.current += 1;
-    const offset = ((currentId - 1) * POSITION_OFFSET) % 200;
     setConsoles((prev) => [
       ...prev,
-      { id: String(currentId), windowState: "normal", positionOffset: offset },
+      { id: String(currentId), windowState: "normal", positionOffset: 0 },
     ]);
   };
 
