@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import consoleContentSlice, { addConsoleContent } from "./consoleContentSlice";
 import commandSlice from "./commandSlice";
 import userSlice, { setUsername } from "./userSlice";
 
+import { emitConsoleLog } from "@/lib/consoleLog";
+
 const store = configureStore({
   reducer: {
-    consoleContent: consoleContentSlice,
     command: commandSlice,
     user: userSlice,
   },
@@ -15,7 +15,7 @@ const store = configureStore({
 export default store;
 
 export const AddConsoleLog = (...messages: string[]) => {
-  store.dispatch(addConsoleContent(messages));
+  emitConsoleLog(...messages);
 };
 export const SetUsername = (username: string) => {
   store.dispatch(setUsername(username));

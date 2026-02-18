@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 
 import store, { AddConsoleLog } from "@/redux";
 import { setCommand } from "@/redux/commandSlice";
-import { setConsoleContent } from "@/redux/consoleContentSlice";
 
+import { clearActiveConsole, setActiveConsole } from "@/lib/consoleLog";
 import { Command, CommandHandler } from "@/lib/types";
 
 export type CommandHandlers = Record<string, CommandHandler>;
@@ -72,7 +72,7 @@ const builtInHandlers: CommandHandlers = {
     AddConsoleLog(args.join(" "));
   },
   cl: () => {
-    store.dispatch(setConsoleContent([]));
+    clearActiveConsole();
   },
   cd: (_cmd, args) => {
     const page = args[0] ?? "";
@@ -200,5 +200,6 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     }
 
     store.dispatch(setCommand(""));
+    setActiveConsole(null);
   }, [command]);
 }

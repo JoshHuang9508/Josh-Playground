@@ -14,6 +14,7 @@ import { WindowState } from "@/components/ConsoleManager";
 
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
+import { subscribeConsole, setActiveConsole } from "@/lib/consoleLog";
 import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from "@/constants";
 
 interface ConsoleProps {
@@ -169,6 +170,8 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
     if (event.key === "Enter") {
       if (!inputValue || inputValue == "") return;
       const command = inputValue;
+
+      setActiveConsole(id);
       AddConsoleLog(`${prefix}@#fff700${command}`);
       setCmdHistory([command, ...cmdHistory]);
       setCmdHistoryIndex(-1);
@@ -358,25 +361,6 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
   }, [handleMouseMove, handleMouseUp]);
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        inputBox?.current?.focus();
-        return;
-      }
-      if (event.key === "Tab") {
-        event.preventDefault();
-        inputBox?.current?.focus();
-        return;
-      }
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, []);
-
-  useEffect(() => {
     const cmdHistory = localStorage.getItem("cmdHistory")?.split(",") ?? [];
     setCmdHistory(cmdHistory);
   }, []);
@@ -415,23 +399,25 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
   }, [backgroundColor]);
 
   useEffect(() => {
-    AddConsoleLog(
-      ...(localStorage.getItem("consoleContent")?.split(",") ??
-        "Welcome to the console!"),
-      "Type @#00ffaa'help'@# for available commands",
+    const unsubscribe = subscribeConsole(
+      id,
+      (messages) => {
+        setConsoleContents((prev) => [...prev, ...messages]);
+      },
+      () => {
+        setConsoleContents([]);
+      },
     );
-    store.subscribe(() => {
-      setConsoleContents(store.getState().consoleContent);
-    });
-  }, []);
+    setConsoleContents([
+      "Welcome to the console!",
+      "Type @#00ffaa'help'@# for available commands",
+    ]);
+    return unsubscribe;
+  }, [id]);
 
   useEffect(() => {
     if (consoleBox.current)
       consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
-    localStorage.setItem(
-      "consoleContent",
-      consoleContents.slice(-100).join(","),
-    );
   }, [consoleContents, inputValue]);
 
   useEffect(() => {
