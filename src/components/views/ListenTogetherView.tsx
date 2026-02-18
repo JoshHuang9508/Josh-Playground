@@ -556,4 +556,3 @@ export default function ListenTogetherView() {
     </div>
   );
 }
-

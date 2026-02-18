@@ -124,25 +124,22 @@ export default function YtDownloaderView() {
               justifyContent: "center",
             }}
           >
-            {textContent["/ytdownloader"].tutorial.map(
-              (content, index) => {
-                if (index == 0)
-                  return (
-                    <div key={index}>
-                      <ColorSpan str={content} className="header2" />
-                    </div>
-                  );
+            {textContent["/ytdownloader"].tutorial.map((content, index) => {
+              if (index == 0)
                 return (
                   <div key={index}>
-                    <ColorSpan str={content} className="p1" />
+                    <ColorSpan str={content} className="header2" />
                   </div>
                 );
-              },
-            )}
+              return (
+                <div key={index}>
+                  <ColorSpan str={content} className="p1" />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
     </div>
   );
 }
-

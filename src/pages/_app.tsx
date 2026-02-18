@@ -62,7 +62,9 @@ function PageComponent() {
         <title>{`Whydog - ${textContent[currentHash]?.title ?? textContent["*"].title}`}</title>
         <meta
           name="description"
-          content={textContent[currentHash]?.subtitle ?? textContent["*"].subtitle}
+          content={
+            textContent[currentHash]?.subtitle ?? textContent["*"].subtitle
+          }
         />
         <meta
           property="og:title"
@@ -70,7 +72,9 @@ function PageComponent() {
         />
         <meta
           property="og:description"
-          content={textContent[currentHash]?.subtitle ?? textContent["*"].subtitle}
+          content={
+            textContent[currentHash]?.subtitle ?? textContent["*"].subtitle
+          }
         />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
@@ -123,9 +127,7 @@ function PageComponent() {
             alt="background"
           />
 
-          <div className={styles["container"]}>
-            {renderView()}
-          </div>
+          <div className={styles["container"]}>{renderView()}</div>
 
           <ConsoleManager />
         </div>

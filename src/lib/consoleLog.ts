@@ -35,4 +35,3 @@ export function clearActiveConsole() {
     clearSubscribers.get(activeConsoleId)?.();
   }
 }
-

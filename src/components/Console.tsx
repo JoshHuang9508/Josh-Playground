@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import styles from "@/styles/_app.module.css";
 
@@ -24,7 +30,12 @@ interface ConsoleProps {
   positionOffset: number;
 }
 
-function Console({ id, windowState, onWindowStateChange, positionOffset }: ConsoleProps) {
+function Console({
+  id,
+  windowState,
+  onWindowStateChange,
+  positionOffset,
+}: ConsoleProps) {
   // Context
   const {
     availableCommands,
@@ -242,8 +253,14 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
     const vh = window.innerHeight;
 
     if (ref.type === "drag") {
-      const newX = Math.min(Math.max(0, ref.startPosX + dx), vw - ref.startWidth);
-      const newY = Math.min(Math.max(0, ref.startPosY + dy), vh - ref.startHeight);
+      const newX = Math.min(
+        Math.max(0, ref.startPosX + dx),
+        vw - ref.startWidth,
+      );
+      const newY = Math.min(
+        Math.max(0, ref.startPosY + dy),
+        vh - ref.startHeight,
+      );
       setPosition({ x: newX, y: newY });
     } else if (ref.type === "resize") {
       let newX = ref.startPosX;
@@ -252,7 +269,10 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
       let newH = ref.startHeight;
 
       if (ref.resizeDir.includes("e")) {
-        newW = Math.min(Math.max(CONSOLE_MIN_WIDTH, ref.startWidth + dx), vw - newX);
+        newW = Math.min(
+          Math.max(CONSOLE_MIN_WIDTH, ref.startWidth + dx),
+          vw - newX,
+        );
       }
       if (ref.resizeDir.includes("w")) {
         const maxDx = ref.startPosX;
@@ -262,7 +282,10 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
         newX = ref.startPosX + finalDx;
       }
       if (ref.resizeDir.includes("s")) {
-        newH = Math.min(Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight + dy), vh - newY);
+        newH = Math.min(
+          Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight + dy),
+          vh - newY,
+        );
       }
       if (ref.resizeDir.includes("n")) {
         const maxDy = ref.startPosY;
@@ -314,7 +337,8 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
   };
 
   const handleDragStart = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest(`.${styles["traffic-lights"]}`)) return;
+    if ((e.target as HTMLElement).closest(`.${styles["traffic-lights"]}`))
+      return;
     if (windowState === "maximized") return;
     e.preventDefault();
     interactionRef.current = {
@@ -426,7 +450,9 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
     setAvailableCommands(
       [
         ...commandList["*"],
-        ...(commandList[hashPaths.length > 0 ? `${hashPaths.join("/")}/` : "/"] ?? []),
+        ...(commandList[
+          hashPaths.length > 0 ? `${hashPaths.join("/")}/` : "/"
+        ] ?? []),
       ].sort((a, b) => a.name.localeCompare(b.name)),
     );
     setAvailablePaths(pathList[`/${hashPaths.join("/")}`] ?? []);
@@ -457,14 +483,38 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
       {/* Resize handles (hidden when maximized) */}
       {windowState !== "maximized" && (
         <>
-          <div className={`${styles["resize-handle"]} ${styles["resize-n"]}`} onMouseDown={(e) => handleResizeStart(e, "n")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-s"]}`} onMouseDown={(e) => handleResizeStart(e, "s")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-e"]}`} onMouseDown={(e) => handleResizeStart(e, "e")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-w"]}`} onMouseDown={(e) => handleResizeStart(e, "w")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-nw"]}`} onMouseDown={(e) => handleResizeStart(e, "nw")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-ne"]}`} onMouseDown={(e) => handleResizeStart(e, "ne")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-sw"]}`} onMouseDown={(e) => handleResizeStart(e, "sw")} />
-          <div className={`${styles["resize-handle"]} ${styles["resize-se"]}`} onMouseDown={(e) => handleResizeStart(e, "se")} />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-n"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "n")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-s"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "s")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-e"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "e")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-w"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "w")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-nw"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "nw")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-ne"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "ne")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-sw"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "sw")}
+          />
+          <div
+            className={`${styles["resize-handle"]} ${styles["resize-se"]}`}
+            onMouseDown={(e) => handleResizeStart(e, "se")}
+          />
         </>
       )}
 
@@ -474,18 +524,9 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
         onMouseDown={handleDragStart}
       >
         <div className={styles["traffic-lights"]}>
-          <span
-            className={styles["close"]}
-            onClick={handleClose}
-          />
-          <span
-            className={styles["minimize"]}
-            onClick={handleMinimize}
-          />
-          <span
-            className={styles["maximize"]}
-            onClick={handleMaximize}
-          />
+          <span className={styles["close"]} onClick={handleClose} />
+          <span className={styles["minimize"]} onClick={handleMinimize} />
+          <span className={styles["maximize"]} onClick={handleMaximize} />
         </div>
         <p className={styles["title"]}>Console {id}</p>
       </div>

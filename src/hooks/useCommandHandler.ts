@@ -90,8 +90,7 @@ const builtInHandlers: CommandHandlers = {
           paths.push(element);
         }
       });
-      window.location.hash =
-        paths.length > 0 ? `#/${paths.join("/")}` : "#/";
+      window.location.hash = paths.length > 0 ? `#/${paths.join("/")}` : "#/";
     }
   },
 };

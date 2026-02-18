@@ -67,7 +67,9 @@ function ConsoleManager() {
 
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
-      const headerEl = (event.target as HTMLElement).closest("[data-header]") as HTMLDivElement;
+      const headerEl = (event.target as HTMLElement).closest(
+        "[data-header]",
+      ) as HTMLDivElement;
       if (headerEl) {
         headerEl.style.zIndex = String(nextZIndexRef.current);
         nextZIndexRef.current += 1;
@@ -113,4 +115,3 @@ function ConsoleManager() {
 }
 
 export default ConsoleManager;
-
