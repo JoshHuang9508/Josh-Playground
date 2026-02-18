@@ -27,15 +27,9 @@ img.background {
 
 div.console {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
   z-index: 999;
   display: flex;
   flex-direction: column;
-  height: 300px;
-  max-height: 30%;
-  margin: 1% 10%;
   font-family: monospace;
   line-height: 1.25rem;
   color: #e6e6e6;
@@ -44,7 +38,7 @@ div.console {
   border-radius: 1rem;
   box-shadow: 0 0 1rem #00000040;
   backdrop-filter: blur(0.8rem);
-  transition: height 0.6s ease-in-out;
+  overflow: hidden;
 }
 
 div.console span {
@@ -59,7 +53,12 @@ div.console div.header {
   gap: 0.5rem;
   min-height: 3rem;
   padding: 0 0.75rem;
+  cursor: grab;
   border-bottom: 1px solid #ffffff10;
+}
+
+div.console div.header.dragging {
+  cursor: grabbing;
 }
 
 div.console div.header div.traffic-lights {
@@ -147,6 +146,77 @@ div.console div.input input::placeholder {
 
 div.console div.input input:focus {
   outline: none;
+}
+
+/* Resize handles */
+
+div.console div.resize-handle {
+  position: absolute;
+  z-index: 1001;
+}
+
+div.console div.resize-n {
+  top: 0;
+  right: 12px;
+  left: 12px;
+  height: 4px;
+  cursor: ns-resize;
+}
+
+div.console div.resize-s {
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  height: 4px;
+  cursor: ns-resize;
+}
+
+div.console div.resize-e {
+  top: 12px;
+  right: 0;
+  bottom: 12px;
+  width: 4px;
+  cursor: ew-resize;
+}
+
+div.console div.resize-w {
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  width: 4px;
+  cursor: ew-resize;
+}
+
+div.console div.resize-nw {
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nwse-resize;
+}
+
+div.console div.resize-ne {
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nesw-resize;
+}
+
+div.console div.resize-sw {
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nesw-resize;
+}
+
+div.console div.resize-se {
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nwse-resize;
 }
 
 div.un-support {

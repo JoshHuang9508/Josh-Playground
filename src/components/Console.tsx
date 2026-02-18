@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import styles from "@/styles/_app.module.css";
 
@@ -13,10 +13,9 @@ import ColorSpan from "@/components/ColorSpan";
 
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
+import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from "@/constants";
 
-interface ConsoleProps { }
-
-function Console({ }: ConsoleProps) {
+function Console() {
   // Context
   const {
     availableCommands,
@@ -35,8 +34,27 @@ function Console({ }: ConsoleProps) {
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
   const outputEndRef = useRef<HTMLDivElement>(null);
+  const interactionRef = useRef({
+    type: "" as "" | "drag" | "resize",
+    resizeDir: "",
+    startMouseX: 0,
+    startMouseY: 0,
+    startPosX: 0,
+    startPosY: 0,
+    startWidth: 0,
+    startHeight: 0,
+  });
 
   // States
+  const [position, setPosition] = useState(() => ({
+    x: window.innerWidth * 0.1,
+    y: window.innerHeight - 300 - window.innerHeight * 0.02,
+  }));
+  const [size, setSize] = useState(() => ({
+    width: window.innerWidth * 0.8,
+    height: 300,
+  }));
+  const [isDragging, setIsDragging] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [inputTemp, setInputTemp] = useState<string>("");
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
@@ -200,7 +218,89 @@ function Console({ }: ConsoleProps) {
     event.currentTarget.classList.toggle(styles["bottom"], isBottom);
   };
 
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const ref = interactionRef.current;
+    const dx = e.clientX - ref.startMouseX;
+    const dy = e.clientY - ref.startMouseY;
+
+    if (ref.type === "drag") {
+      setPosition({ x: ref.startPosX + dx, y: ref.startPosY + dy });
+    } else if (ref.type === "resize") {
+      let newX = ref.startPosX;
+      let newY = ref.startPosY;
+      let newW = ref.startWidth;
+      let newH = ref.startHeight;
+
+      if (ref.resizeDir.includes("e")) newW = Math.max(CONSOLE_MIN_WIDTH, ref.startWidth + dx);
+      if (ref.resizeDir.includes("w")) {
+        newW = Math.max(CONSOLE_MIN_WIDTH, ref.startWidth - dx);
+        newX = ref.startPosX + ref.startWidth - newW;
+      }
+      if (ref.resizeDir.includes("s")) newH = Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight + dy);
+      if (ref.resizeDir.includes("n")) {
+        newH = Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight - dy);
+        newY = ref.startPosY + ref.startHeight - newH;
+      }
+
+      setPosition({ x: newX, y: newY });
+      setSize({ width: newW, height: newH });
+    }
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    interactionRef.current.type = "";
+    setIsDragging(false);
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  }, [handleMouseMove]);
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest(`.${styles["traffic-lights"]}`)) return;
+    e.preventDefault();
+    interactionRef.current = {
+      type: "drag",
+      resizeDir: "",
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      startPosX: position.x,
+      startPosY: position.y,
+      startWidth: size.width,
+      startHeight: size.height,
+    };
+    setIsDragging(true);
+    document.body.style.cursor = "grabbing";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleResizeStart = (e: React.MouseEvent, dir: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    interactionRef.current = {
+      type: "resize",
+      resizeDir: dir,
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      startPosX: position.x,
+      startPosY: position.y,
+      startWidth: size.width,
+      startHeight: size.height,
+    };
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
   // Effects
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
@@ -320,9 +420,29 @@ function Console({ }: ConsoleProps) {
   ) : (
     <div
       ref={consoleBox}
-      className={styles[`console`]}
+      className={styles["console"]}
+      style={{
+        left: position.x,
+        top: position.y,
+        width: size.width,
+        height: size.height,
+      }}
     >
-      <div className={styles["header"]}>
+      {/* Resize handles */}
+      <div className={`${styles["resize-handle"]} ${styles["resize-n"]}`} onMouseDown={(e) => handleResizeStart(e, "n")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-s"]}`} onMouseDown={(e) => handleResizeStart(e, "s")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-e"]}`} onMouseDown={(e) => handleResizeStart(e, "e")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-w"]}`} onMouseDown={(e) => handleResizeStart(e, "w")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-nw"]}`} onMouseDown={(e) => handleResizeStart(e, "nw")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-ne"]}`} onMouseDown={(e) => handleResizeStart(e, "ne")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-sw"]}`} onMouseDown={(e) => handleResizeStart(e, "sw")} />
+      <div className={`${styles["resize-handle"]} ${styles["resize-se"]}`} onMouseDown={(e) => handleResizeStart(e, "se")} />
+
+      {/* Header */}
+      <div
+        className={`${styles["header"]} ${isDragging ? styles["dragging"] : ""}`}
+        onMouseDown={handleDragStart}
+      >
         <div className={styles["traffic-lights"]}>
           <span
             className={styles["close"]}
@@ -340,13 +460,14 @@ function Console({ }: ConsoleProps) {
         <p className={styles["title"]}>Console</p>
       </div>
 
+      {/* Output */}
       <div
         tabIndex={-1}
-        className={styles[`output`]}
+        className={styles["output"]}
         onScroll={handleOutputBoxScroll}
       >
         {consoleContents.map((content, index) => (
-          <div key={index} className={styles[`output-line`]}>
+          <div key={index} className={styles["output-line"]}>
             <ColorSpan str={content} />
           </div>
         ))}
@@ -360,7 +481,7 @@ function Console({ }: ConsoleProps) {
         </div>
       )}
 
-      <div className={styles[`input`]}>
+      <div className={styles["input"]}>
         <ColorSpan str={prefix} />
         <input
           ref={inputBox}
