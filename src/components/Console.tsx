@@ -44,8 +44,15 @@ function Console() {
     startWidth: 0,
     startHeight: 0,
   });
+  const prevLayoutRef = useRef({
+    x: window.innerWidth * 0.1,
+    y: window.innerHeight - 300 - window.innerHeight * 0.02,
+    width: window.innerWidth * 0.8,
+    height: 300,
+  });
 
   // States
+  const [windowState, setWindowState] = useState<"normal" | "minimized" | "maximized" | "closed">("normal");
   const [position, setPosition] = useState(() => ({
     x: window.innerWidth * 0.1,
     y: window.innerHeight - 300 - window.innerHeight * 0.02,
@@ -70,7 +77,6 @@ function Console() {
   const prefix = window
     ? `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
     : `@#FF77B7${username ?? "Anonymous"}@#@@#FFA24CWhydog@#:~${currentURL}$ `;
-  const path = window ? window.location.pathname : "/";
 
   // Functions
   const findAvailablePath = (input: string) => {
@@ -270,8 +276,38 @@ function Console() {
     document.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove]);
 
+  const handleClose = () => {
+    setWindowState("closed");
+  };
+
+  const handleMinimize = () => {
+    setWindowState("minimized");
+  };
+
+  const handleMaximize = () => {
+    if (windowState === "maximized") {
+      // Restore previous layout
+      const prev = prevLayoutRef.current;
+      setPosition({ x: prev.x, y: prev.y });
+      setSize({ width: prev.width, height: prev.height });
+      setWindowState("normal");
+    } else {
+      // Save current layout and maximize
+      prevLayoutRef.current = {
+        x: position.x,
+        y: position.y,
+        width: size.width,
+        height: size.height,
+      };
+      setPosition({ x: 0, y: 0 });
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+      setWindowState("maximized");
+    }
+  };
+
   const handleDragStart = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest(`.${styles["traffic-lights"]}`)) return;
+    if (windowState === "maximized") return;
     e.preventDefault();
     interactionRef.current = {
       type: "drag",
@@ -326,6 +362,11 @@ function Console() {
         event.preventDefault();
         inputBox?.current?.focus();
         return;
+      }
+      if (event.key === "Escape") {
+        setWindowState((prev) =>
+          prev === "closed" || prev === "minimized" ? "normal" : prev,
+        );
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -432,81 +473,103 @@ function Console() {
       />
     </div>
   ) : (
-    <div
-      ref={consoleBox}
-      className={styles["console"]}
-      style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-      }}
-    >
-      {/* Resize handles */}
-      <div className={`${styles["resize-handle"]} ${styles["resize-n"]}`} onMouseDown={(e) => handleResizeStart(e, "n")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-s"]}`} onMouseDown={(e) => handleResizeStart(e, "s")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-e"]}`} onMouseDown={(e) => handleResizeStart(e, "e")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-w"]}`} onMouseDown={(e) => handleResizeStart(e, "w")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-nw"]}`} onMouseDown={(e) => handleResizeStart(e, "nw")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-ne"]}`} onMouseDown={(e) => handleResizeStart(e, "ne")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-sw"]}`} onMouseDown={(e) => handleResizeStart(e, "sw")} />
-      <div className={`${styles["resize-handle"]} ${styles["resize-se"]}`} onMouseDown={(e) => handleResizeStart(e, "se")} />
+    <>
+      {/* Console window */}
+      {windowState !== "closed" && windowState !== "minimized" && (
+        <div
+          ref={consoleBox}
+          className={styles["console"]}
+          style={{
+            left: position.x,
+            top: position.y,
+            width: size.width,
+            height: size.height,
+            borderRadius: windowState === "maximized" ? 0 : undefined,
+          }}
+        >
+          {/* Resize handles (hidden when maximized) */}
+          {windowState !== "maximized" && (
+            <>
+              <div className={`${styles["resize-handle"]} ${styles["resize-n"]}`} onMouseDown={(e) => handleResizeStart(e, "n")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-s"]}`} onMouseDown={(e) => handleResizeStart(e, "s")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-e"]}`} onMouseDown={(e) => handleResizeStart(e, "e")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-w"]}`} onMouseDown={(e) => handleResizeStart(e, "w")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-nw"]}`} onMouseDown={(e) => handleResizeStart(e, "nw")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-ne"]}`} onMouseDown={(e) => handleResizeStart(e, "ne")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-sw"]}`} onMouseDown={(e) => handleResizeStart(e, "sw")} />
+              <div className={`${styles["resize-handle"]} ${styles["resize-se"]}`} onMouseDown={(e) => handleResizeStart(e, "se")} />
+            </>
+          )}
 
-      {/* Header */}
-      <div
-        className={`${styles["header"]} ${isDragging ? styles["dragging"] : ""}`}
-        onMouseDown={handleDragStart}
-      >
-        <div className={styles["traffic-lights"]}>
-          <span
-            className={styles["close"]}
-            onClick={() => { }}
-          />
-          <span
-            className={styles["minimize"]}
-            onClick={() => { }}
-          />
-          <span
-            className={styles["maximize"]}
-            onClick={() => { }}
-          />
-        </div>
-        <p className={styles["title"]}>Console</p>
-      </div>
-
-      {/* Output */}
-      <div
-        tabIndex={-1}
-        className={styles["output"]}
-        onScroll={handleOutputBoxScroll}
-      >
-        {consoleContents.map((content, index) => (
-          <div key={index} className={styles["output-line"]}>
-            <ColorSpan str={content} />
+          {/* Header */}
+          <div
+            className={`${styles["header"]} ${isDragging ? styles["dragging"] : ""}`}
+            onMouseDown={handleDragStart}
+          >
+            <div className={styles["traffic-lights"]}>
+              <span
+                className={styles["close"]}
+                onClick={handleClose}
+              />
+              <span
+                className={styles["minimize"]}
+                onClick={handleMinimize}
+              />
+              <span
+                className={styles["maximize"]}
+                onClick={handleMaximize}
+              />
+            </div>
+            <p className={styles["title"]}>Console</p>
           </div>
-        ))}
 
-        <div ref={outputEndRef} />
-      </div>
+          {/* Output */}
+          <div
+            tabIndex={-1}
+            className={styles["output"]}
+            onScroll={handleOutputBoxScroll}
+          >
+            {consoleContents.map((content, index) => (
+              <div key={index} className={styles["output-line"]}>
+                <ColorSpan str={content} />
+              </div>
+            ))}
 
-      {available[0] && (
-        <div className={styles["prompt"]}>
-          <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
+            <div ref={outputEndRef} />
+          </div>
+
+          {available[0] && (
+            <div className={styles["prompt"]}>
+              <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
+            </div>
+          )}
+
+          <div className={styles["input"]}>
+            <ColorSpan str={prefix} />
+            <input
+              ref={inputBox}
+              type="text"
+              value={`${inputValue}`}
+              placeholder="Feel confused? Type 'help' to get started!"
+              onChange={handleInputChange}
+              onKeyDown={handleEnter}
+            />
+          </div>
         </div>
       )}
 
-      <div className={styles["input"]}>
-        <ColorSpan str={prefix} />
-        <input
-          ref={inputBox}
-          type="text"
-          value={`${inputValue}`}
-          placeholder="Feel confused? Type 'help' to get started!"
-          onChange={handleInputChange}
-          onKeyDown={handleEnter}
-        />
-      </div>
-    </div>
+      {/* Taskbar for minimized windows */}
+      {windowState === "minimized" && (
+        <div className={styles["taskbar"]}>
+          <div
+            className={styles["taskbar-item"]}
+            onClick={() => setWindowState("normal")}
+          >
+            <span>Console</span>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

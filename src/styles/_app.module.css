@@ -43,7 +43,6 @@ div.console {
 
 div.console span {
   min-width: fit-content;
-  user-select: none;
   background: none;
 }
 
@@ -148,8 +147,6 @@ div.console div.input input:focus {
   outline: none;
 }
 
-/* Resize handles */
-
 div.console div.resize-handle {
   position: absolute;
   z-index: 1001;
@@ -217,6 +214,45 @@ div.console div.resize-se {
   width: 12px;
   height: 12px;
   cursor: nwse-resize;
+}
+
+div.taskbar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding: 0 1rem;
+  background-color: #ffffff08;
+  border-top: 1px solid #ffffff10;
+  backdrop-filter: blur(0.8rem);
+}
+
+div.taskbar div.taskbar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2rem;
+  padding: 0 1rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #e6e6e6;
+  cursor: pointer;
+  background-color: #ffffff15;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+
+div.taskbar div.taskbar-item:hover {
+  background-color: #ffffff25;
+}
+
+div.taskbar div.taskbar-item span {
+  user-select: none;
 }
 
 div.un-support {

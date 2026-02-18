@@ -123,6 +123,7 @@ div.repo-wall {
     transparent 100%
   );
   rotate: 10deg;
+  user-select: none;
 }
 
 div.repo-wall div.column {
