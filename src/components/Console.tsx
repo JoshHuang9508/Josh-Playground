@@ -446,7 +446,7 @@ function Console({
       " ",
       "  @#FF77B7Quick Start:@#",
       "    @#00ffaahelp@#            Show all available commands",
-      "    @#00ffaacd@# @#FFF700[path]@#      Navigate to a different page",
+      "    @#00ffaacd@# @#FFF700[path]@#       Navigate to a different page",
       "    @#00ffaals@#              List available paths",
       "    @#00ffaacl@#              Clear console output",
       " ",
