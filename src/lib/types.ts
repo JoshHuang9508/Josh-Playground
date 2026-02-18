@@ -70,3 +70,136 @@ export type GitHubRepo = {
   updatedAt: string; // e.g. "Updated 4 hours ago"
   url?: string; // e.g. "https://github.com/NerdyHomeReOpen/RiceCall"
 };
+
+export type YTPLReturnType = {
+  id: string;
+  url: string;
+  title: string;
+  estimatedItemCount: number;
+  views: number;
+  thumbnails: {
+    url: string;
+    width: number;
+    height: number;
+  }[];
+  bestThumbnail: {
+    url: string;
+    width: number;
+    height: number;
+  };
+  lastUpdated: string;
+  description: string;
+  visibility: string;
+  author: {
+    name: string;
+    url: string;
+    avatars: {
+      url: string;
+      width: number;
+      height: number;
+    }[];
+    bestAvatar: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    channelID: string;
+  }[];
+  items: {
+    title: string;
+    index: number;
+    id: string;
+    shortUrl: string;
+    url: string;
+    author: {
+      url: string;
+      channelID: string;
+      name: string;
+    };
+    thumbnails: {
+      url: string;
+      width: number;
+      height: number;
+    }[];
+    bestThumbnail: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    isLive: boolean;
+    duration: string;
+    durationSec: number;
+    isPlayable: boolean;
+  }[];
+  continuation: string | null;
+};
+
+export type YTDLReturnType = {
+  embed: {
+    iframeUrl: string;
+    width: number;
+    height: number;
+  };
+  title: string;
+  description: string;
+  lengthSeconds: string;
+  ownerProfileUrl: string;
+  externalChannelId: string;
+  isFamilySafe: boolean;
+  availableCountries: string[];
+  isUnlisted: boolean;
+  hasYpcMetadata: boolean;
+  viewCount: string;
+  category: string;
+  publishDate: string;
+  ownerChannelName: string;
+  liveBroadcastDetails: {
+    isLiveNow: boolean;
+    startTimestamp: string;
+    endTimestamp: string;
+  };
+  keywords: string[];
+  channelId: string;
+  isOwnerViewing: boolean;
+  isCrawlable: boolean;
+  allowRatings: boolean;
+  author: {
+    id: string;
+    name: string;
+    user: string;
+    channel_url: string;
+    external_channel_url: string;
+    user_url: string;
+    thumbnails: {
+      url: string;
+      width: number;
+      height: number;
+    }[];
+  };
+  isLowLatencyLiveStream: boolean;
+  isPrivate: boolean;
+  isUnpluggedCorpus: boolean;
+  latencyClass: string;
+  isLiveContent: boolean;
+  media: any;
+  likes: number | null;
+  dislikes: number | null;
+  age_restricted: boolean;
+  video_url: string;
+  storyboards: {
+    url: string;
+    thumbnailWidth: number;
+    thumbnailHeight: number;
+    thumbnailCount: number;
+    interval: number;
+    columns: number;
+    rows: number;
+    storyboardCount: number;
+  }[];
+  chapters: any[];
+  thumbnails: {
+    url: string;
+    width: number;
+    height: number;
+  }[];
+};
