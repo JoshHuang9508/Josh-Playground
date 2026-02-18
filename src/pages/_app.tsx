@@ -11,7 +11,7 @@ import styles from "@/styles/_app.module.css";
 
 import store from "@/redux";
 
-import Console from "@/components/Console";
+import ConsoleManager from "@/components/ConsoleManager";
 
 import { Command } from "@/lib/types";
 
@@ -100,7 +100,7 @@ function PageComponent({ Component, pageProps }) {
             <Component {...pageProps} />
           </div>
 
-          <Console />
+          <ConsoleManager />
         </div>
       </AppContext.Provider>
     </Provider>
