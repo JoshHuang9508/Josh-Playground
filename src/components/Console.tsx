@@ -74,12 +74,12 @@ function Console({
 
   // States
   const [position, setPosition] = useState(() => ({
-    x: window.innerWidth * 0.1 + positionOffset,
-    y: window.innerHeight - 300 - window.innerHeight * 0.02 + positionOffset,
+    x: window.innerWidth * 0.2 + positionOffset,
+    y: window.innerHeight - 600 - window.innerHeight * 0.02 + positionOffset,
   }));
   const [size, setSize] = useState(() => ({
-    width: window.innerWidth * 0.8,
-    height: 300,
+    width: window.innerWidth * 0.6,
+    height: 600,
   }));
   const [isDragging, setIsDragging] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
@@ -501,6 +501,7 @@ function Console({
         width: size.width,
         height: size.height,
         borderRadius: windowState === "maximized" ? 0 : undefined,
+        display: windowState === "minimized" ? "none" : undefined,
       }}
     >
       {/* Resize handles (hidden when maximized) */}

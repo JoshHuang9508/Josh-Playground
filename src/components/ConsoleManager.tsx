@@ -86,15 +86,13 @@ function ConsoleManager() {
   return (
     <>
       {consoles.map((c) =>
-        c.windowState !== "minimized" ? (
-          <Console
-            key={c.id}
-            id={c.id}
-            windowState={c.windowState}
-            onWindowStateChange={handleWindowStateChange}
-            positionOffset={c.positionOffset}
-          />
-        ) : null,
+        <Console
+          key={c.id}
+          id={c.id}
+          windowState={c.windowState}
+          onWindowStateChange={handleWindowStateChange}
+          positionOffset={c.positionOffset}
+        />
       )}
 
       {minimizedConsoles.length > 0 && (
