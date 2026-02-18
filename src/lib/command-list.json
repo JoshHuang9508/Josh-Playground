@@ -101,8 +101,7 @@
       ]
     }
   ],
-  "tools/": [],
-  "tools/listentogether/": [
+  "listentogether/": [
     {
       "name": "loop",
       "description": "Loop the track",
@@ -173,7 +172,7 @@
       "usage": "volume [value]"
     }
   ],
-  "tools/ytdownloader/": [
+  "ytdownloader/": [
     {
       "name": "download",
       "description": "Download the video",

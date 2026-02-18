@@ -4,7 +4,7 @@ import ColorSpan from "@/components/ColorSpan";
 
 import useCommandHandler from "@/hooks/useCommandHandler";
 
-export default function Page() {
+export default function NotFoundView() {
   useCommandHandler({});
 
   return (
@@ -19,3 +19,4 @@ export default function Page() {
     </div>
   );
 }
+

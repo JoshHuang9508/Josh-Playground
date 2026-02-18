@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import styles from "@/styles/index.module.css";
 
@@ -25,7 +25,7 @@ const musics: Music[] = [
   },
 ];
 
-export default function Page() {
+export default function HomeView() {
   // GitHub repos
   const { repos } = useGitHubRepos("JoshHuang9508");
 
@@ -260,3 +260,4 @@ export default function Page() {
     </div>
   );
 }
+

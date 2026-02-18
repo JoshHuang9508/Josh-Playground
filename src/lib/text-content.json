@@ -45,29 +45,11 @@
       }
     ]
   },
-  "/tools": {
-    "title": "Tools",
-    "subtitle": "Here are some tools I've made. Try them out!",
-    "item": [
-      {
-        "title": "@#FFF700./listentogether",
-        "description": "@#FFF700Listen Together@# is a web-based music player that allows you to listen to music with your friends in @#FFF700real-time@#. It supports @#00ffaaYouTube video@# and @#00ffaaplaylist@#."
-      },
-      {
-        "title": "@#FFF700./ytdownloader",
-        "description": "@#FFF700YouTube Downloader@# is a web-based tool that allows you to download @#00ffaaYouTube videos@# in @#FFF700audio@# or @#FFF700video@# format."
-      },
-      {
-        "title": "...coming soon",
-        "description": "This tool is still @#FF77B7under development@#. Maybe some day it will be released. @#f9f284^w^"
-      }
-    ]
-  },
-  "/tools/listentogether": {
+  "/listentogether": {
     "title": "Listen Together",
     "subtitle": "A web-based music sync player. Listen to music with your friends in real-time."
   },
-  "/tools/ytdownloader": {
+  "/ytdownloader": {
     "title": "YouTube Downloader",
     "subtitle": "A web-based YouTube video downloader. Download YouTube videos in audio or video format.",
     "tutorial": [

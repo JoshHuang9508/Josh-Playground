@@ -36,6 +36,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
     setBackgroundColor,
     username,
     setUsername,
+    currentHash,
   } = useContext(AppContext)!;
 
   // Refs
@@ -88,7 +89,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
   const findAvailablePath = (input: string) => {
     const paths = input.split("/");
     const lastPath = paths.pop();
-    const pagePaths = window.location.pathname.split("/").filter(Boolean);
+    const pagePaths = currentHash.split("/").filter(Boolean);
     paths.forEach((element) => {
       if (element === ".") {
         return;
@@ -434,18 +435,16 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
   }, [consoleContents, inputValue]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const paths = window.location.pathname.split("/").filter(Boolean);
-      setCurrentURL(`${paths.join("/")}/`);
-      setAvailableCommands(
-        [
-          ...commandList["*"],
-          ...(commandList[`${paths.join("/")}/`] ?? []),
-        ].sort((a, b) => a.name.localeCompare(b.name)),
-      );
-      setAvailablePaths(pathList[`/${paths.join("/")}`] ?? []);
-    }
-  }, []);
+    const hashPaths = currentHash.split("/").filter(Boolean);
+    setCurrentURL(hashPaths.length > 0 ? `/${hashPaths.join("/")}/` : "/");
+    setAvailableCommands(
+      [
+        ...commandList["*"],
+        ...(commandList[hashPaths.length > 0 ? `${hashPaths.join("/")}/` : "/"] ?? []),
+      ].sort((a, b) => a.name.localeCompare(b.name)),
+    );
+    setAvailablePaths(pathList[`/${hashPaths.join("/")}`] ?? []);
+  }, [currentHash]);
 
   useEffect(() => {
     if (outputEndRef.current) {
@@ -459,6 +458,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset }: Conso
   return (
     <div
       ref={consoleBox}
+      data-header
       className={styles["console"]}
       style={{
         left: position.x,

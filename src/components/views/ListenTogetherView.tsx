@@ -15,7 +15,7 @@ import { API_URL } from "@/constants";
 import { IDiffArray, IDiffObject } from "@/utils";
 import ListenTogetherSocket from "@/socket";
 
-export default function Page() {
+export default function ListenTogetherView() {
   // Refs
   const playerRef = useRef<ReactPlayer>(null);
 
@@ -556,3 +556,4 @@ export default function Page() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import dotenv from "dotenv";
 import Head from "next/head";
@@ -12,6 +12,10 @@ import styles from "@/styles/_app.module.css";
 import store from "@/redux";
 
 import ConsoleManager from "@/components/ConsoleManager";
+import HomeView from "@/components/views/HomeView";
+import ListenTogetherView from "@/components/views/ListenTogetherView";
+import YtDownloaderView from "@/components/views/YtDownloaderView";
+import NotFoundView from "@/components/views/NotFoundView";
 
 import { Command } from "@/lib/types";
 
@@ -19,32 +23,54 @@ import { AppContext } from "@/hooks/useCommandHandler";
 
 import textContent from "@/lib/text-content.json";
 
-function PageComponent({ Component, pageProps }) {
+function PageComponent() {
   // States
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
   const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [username, setUsername] = useState<string>("Anonymous");
+  const [currentHash, setCurrentHash] = useState<string>("/");
 
-  // Variables
-  const path = window ? window.location.pathname : "/";
+  // Hash routing
+  useEffect(() => {
+    const updateHash = () => {
+      const hash = window.location.hash.slice(1) || "/";
+      setCurrentHash(hash);
+    };
+    updateHash();
+    window.addEventListener("hashchange", updateHash);
+    return () => window.removeEventListener("hashchange", updateHash);
+  }, []);
+
+  const renderView = () => {
+    switch (currentHash) {
+      case "/":
+        return <HomeView />;
+      case "/listentogether":
+        return <ListenTogetherView />;
+      case "/ytdownloader":
+        return <YtDownloaderView />;
+      default:
+        return <NotFoundView />;
+    }
+  };
 
   return (
     <Provider store={store}>
       <Head>
-        <title>{`Whydog - ${textContent[path]?.title ?? textContent["*"].title}`}</title>
+        <title>{`Whydog - ${textContent[currentHash]?.title ?? textContent["*"].title}`}</title>
         <meta
           name="description"
-          content={textContent[path]?.subtitle ?? textContent["*"].subtitle}
+          content={textContent[currentHash]?.subtitle ?? textContent["*"].subtitle}
         />
         <meta
           property="og:title"
-          content={`Whydog - ${textContent[path]?.title ?? textContent["*"].title}`}
+          content={`Whydog - ${textContent[currentHash]?.title ?? textContent["*"].title}`}
         />
         <meta
           property="og:description"
-          content={textContent[path]?.subtitle ?? textContent["*"].subtitle}
+          content={textContent[currentHash]?.subtitle ?? textContent["*"].subtitle}
         />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
@@ -77,6 +103,7 @@ function PageComponent({ Component, pageProps }) {
           setBackgroundColor,
           username,
           setUsername,
+          currentHash,
         }}
       >
         <div
@@ -97,7 +124,7 @@ function PageComponent({ Component, pageProps }) {
           />
 
           <div className={styles["container"]}>
-            <Component {...pageProps} />
+            {renderView()}
           </div>
 
           <ConsoleManager />

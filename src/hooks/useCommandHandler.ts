@@ -20,6 +20,7 @@ export type AppContextType = {
   setBackgroundColor: (color: string) => void;
   username: string;
   setUsername: (name: string) => void;
+  currentHash: string;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -32,7 +33,7 @@ export function parseCommand(command: string) {
   return { cmdName, args, flags };
 }
 
-const webPaths = [["", ["tools", "listentogether", "ytdownloader"]]];
+const webPaths = ["listentogether", "ytdownloader"];
 
 const renderWebPaths = (paths: any, prefix: string): string[] => {
   const result: string[] = [];
@@ -75,20 +76,22 @@ const builtInHandlers: CommandHandlers = {
   },
   cd: (_cmd, args) => {
     const page = args[0] ?? "";
-    const paths = window.location.href.split("/");
+    const hash = window.location.hash.slice(1) || "/";
+    const paths = hash.split("/").filter(Boolean);
     if (!page) {
-      window.location.href = "/";
+      window.location.hash = "#/";
     } else {
       page.split("/").forEach((element) => {
-        if (element == ".") {
+        if (element === ".") {
           return;
-        } else if (element == "..") {
+        } else if (element === "..") {
           paths.pop();
-        } else if (element != "") {
+        } else if (element !== "") {
           paths.push(element);
         }
       });
-      window.location.href = paths.join("/");
+      window.location.hash =
+        paths.length > 0 ? `#/${paths.join("/")}` : "#/";
     }
   },
 };

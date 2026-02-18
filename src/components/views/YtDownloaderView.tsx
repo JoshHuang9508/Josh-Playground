@@ -11,7 +11,7 @@ import textContent from "@/lib/text-content.json";
 
 import { API_URL } from "@/constants";
 
-export default function Page() {
+export default function YtDownloaderView() {
   // Functions
   const getVideoBlob = async (
     videoId: string,
@@ -124,7 +124,7 @@ export default function Page() {
               justifyContent: "center",
             }}
           >
-            {textContent["/tools/ytdownloader"].tutorial.map(
+            {textContent["/ytdownloader"].tutorial.map(
               (content, index) => {
                 if (index == 0)
                   return (
@@ -145,3 +145,4 @@ export default function Page() {
     </div>
   );
 }
+
