@@ -51,7 +51,7 @@ div.console div.header {
   gap: 0.5rem;
   align-items: center;
   min-height: 3rem;
-  padding: 0 0.75rem;
+  padding: 0 1rem;
   cursor: grab;
   border-bottom: 1px solid #ffffff10;
 }
