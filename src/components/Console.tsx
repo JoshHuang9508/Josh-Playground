@@ -222,24 +222,38 @@ function Console() {
     const ref = interactionRef.current;
     const dx = e.clientX - ref.startMouseX;
     const dy = e.clientY - ref.startMouseY;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
 
     if (ref.type === "drag") {
-      setPosition({ x: ref.startPosX + dx, y: ref.startPosY + dy });
+      const newX = Math.min(Math.max(0, ref.startPosX + dx), vw - ref.startWidth);
+      const newY = Math.min(Math.max(0, ref.startPosY + dy), vh - ref.startHeight);
+      setPosition({ x: newX, y: newY });
     } else if (ref.type === "resize") {
       let newX = ref.startPosX;
       let newY = ref.startPosY;
       let newW = ref.startWidth;
       let newH = ref.startHeight;
 
-      if (ref.resizeDir.includes("e")) newW = Math.max(CONSOLE_MIN_WIDTH, ref.startWidth + dx);
-      if (ref.resizeDir.includes("w")) {
-        newW = Math.max(CONSOLE_MIN_WIDTH, ref.startWidth - dx);
-        newX = ref.startPosX + ref.startWidth - newW;
+      if (ref.resizeDir.includes("e")) {
+        newW = Math.min(Math.max(CONSOLE_MIN_WIDTH, ref.startWidth + dx), vw - newX);
       }
-      if (ref.resizeDir.includes("s")) newH = Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight + dy);
+      if (ref.resizeDir.includes("w")) {
+        const maxDx = ref.startPosX;
+        const clampedDx = Math.min(dx, ref.startWidth - CONSOLE_MIN_WIDTH);
+        const finalDx = Math.max(-maxDx, clampedDx);
+        newW = ref.startWidth - finalDx;
+        newX = ref.startPosX + finalDx;
+      }
+      if (ref.resizeDir.includes("s")) {
+        newH = Math.min(Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight + dy), vh - newY);
+      }
       if (ref.resizeDir.includes("n")) {
-        newH = Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight - dy);
-        newY = ref.startPosY + ref.startHeight - newH;
+        const maxDy = ref.startPosY;
+        const clampedDy = Math.min(dy, ref.startHeight - CONSOLE_MIN_HEIGHT);
+        const finalDy = Math.max(-maxDy, clampedDy);
+        newH = ref.startHeight - finalDy;
+        newY = ref.startPosY + finalDy;
       }
 
       setPosition({ x: newX, y: newY });
