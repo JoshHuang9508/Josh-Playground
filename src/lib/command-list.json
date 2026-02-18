@@ -2,93 +2,93 @@
   "*": [
     {
       "name": "cd",
-      "description": "Change the directory",
-      "usage": "cd [directory]"
+      "description": "Navigate to a different page",
+      "usage": "@#00ffaacd@# @#fff700<path>@#"
     },
     {
       "name": "cl",
-      "description": "Clear the console",
-      "usage": "cl"
+      "description": "Clear the console output",
+      "usage": "@#00ffaacl@#"
     },
     {
       "name": "help",
-      "description": "Show the help message",
-      "usage": "help [command]"
+      "description": "List all available commands",
+      "usage": "@#00ffaahelp@#"
     },
     {
       "name": "echo",
-      "description": "Print the message",
-      "usage": "echo [message]"
+      "description": "Print a message to the console",
+      "usage": "@#00ffaaecho@# @#fff700<message>@#"
     },
     {
       "name": "ls",
-      "description": "List the directory",
-      "usage": "ls",
+      "description": "List available paths in the current directory",
+      "usage": "@#00ffaals@# @#fff700[-a | -l | -t]@#",
       "options": ["-a", "-l", "-t", "--all", "--long", "--tree"]
     },
     {
       "name": "background",
-      "description": "Change the background",
-      "usage": "background [image_URL]",
+      "description": "Set or reset the background image",
+      "usage": "@#00ffaabackground@# @#fff700<image_url> | -r@#",
       "options": ["-r", "--reset"]
     },
     {
       "name": "backgroundcolor",
-      "description": "Change the background color",
-      "usage": "backgroundcolor [color]",
+      "description": "Set or reset the background color (hex code)",
+      "usage": "@#00ffaabackgroundcolor@# @#fff700<#hex_color> | -r@#",
       "options": ["-r", "--reset"]
     },
     {
       "name": "username",
-      "description": "Set your username",
-      "usage": "username [name]"
+      "description": "Change your display name (max 20 chars)",
+      "usage": "@#00ffaausername@# @#fff700<name>@#"
     }
   ],
   "/": [
     {
       "name": "github",
-      "description": "Open my GitHub profile",
-      "usage": "github"
+      "description": "Open my GitHub profile in a new tab",
+      "usage": "@#00ffaagithub@#"
     },
     {
       "name": "youtube",
-      "description": "Open my YouTube channel",
-      "usage": "youtube"
+      "description": "Open my YouTube channel in a new tab",
+      "usage": "@#00ffaayoutube@#"
     },
     {
       "name": "twitter",
-      "description": "Open my Twitter channel",
-      "usage": "twitter"
+      "description": "Open my Twitter profile in a new tab",
+      "usage": "@#00ffaatwitter@#"
     },
     {
       "name": "instagram",
-      "description": "Open my Instagram profile",
-      "usage": "instagram"
+      "description": "Open my Instagram profile in a new tab",
+      "usage": "@#00ffaainstagram@#"
     },
     {
       "name": "twitch",
-      "description": "Open my Twitch profile",
-      "usage": "twitch"
+      "description": "Open my Twitch channel in a new tab",
+      "usage": "@#00ffaatwitch@#"
     },
     {
       "name": "discord",
-      "description": "Add me on Discord",
-      "usage": "discord"
+      "description": "Open my Discord profile in a new tab",
+      "usage": "@#00ffaadiscord@#"
     },
     {
       "name": "email",
-      "description": "Send me an email",
-      "usage": "email"
+      "description": "Compose an email to me",
+      "usage": "@#00ffaaemail@#"
     },
     {
       "name": "osu",
-      "description": "Open my osu! profile",
-      "usage": "osu"
+      "description": "Open my osu! profile in a new tab",
+      "usage": "@#00ffaaosu@#"
     },
     {
       "name": "music",
-      "description": "Background music options",
-      "usage": "music [option]",
+      "description": "Control background music playback",
+      "usage": "@#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#",
       "options": [
         "-p",
         "-s",
@@ -104,79 +104,79 @@
   "listentogether/": [
     {
       "name": "loop",
-      "description": "Loop the track",
-      "usage": "loop [option]",
+      "description": "Toggle loop mode for the current track",
+      "usage": "@#00ffaaloop@# @#fff700[-t | -f]@#",
       "options": ["-t", "-f", "--true", "--false"]
     },
     {
       "name": "pause",
-      "description": "Pause playing",
-      "usage": "pause"
+      "description": "Pause the current playback",
+      "usage": "@#00ffaapause@#"
     },
     {
       "name": "play",
-      "description": "Strat playing",
-      "usage": "play"
+      "description": "Resume or start playback",
+      "usage": "@#00ffaaplay@#"
     },
     {
       "name": "playlist",
-      "description": "Show the playlist",
-      "usage": "playlist [options]",
+      "description": "Show the current playlist",
+      "usage": "@#00ffaaplaylist@# @#fff700[-d]@#",
       "options": ["-d", "--detail"]
     },
     {
       "name": "queue",
-      "description": "Add a song or playlist to queue",
-      "usage": "queue [song_URL|playlist_URL]"
+      "description": "Add a YouTube video or playlist to the queue",
+      "usage": "@#00ffaaqueue@# @#fff700<video_url | playlist_url>@#"
     },
     {
       "name": "random",
-      "description": "Random the track",
-      "usage": "random [option]",
+      "description": "Toggle shuffle / random playback",
+      "usage": "@#00ffaarandom@# @#fff700[-t | -f]@#",
       "options": ["-t", "-f", "--true", "--false"]
     },
     {
       "name": "rate",
-      "description": "Change the playback rate",
-      "usage": "rate [value]"
+      "description": "Set playback speed (e.g. 100 = normal)",
+      "usage": "@#00ffaarate@# @#fff700<percent>@#"
     },
     {
       "name": "refresh",
-      "description": "Refresh the queue",
-      "usage": "refresh"
+      "description": "Re-sync the player state from the server",
+      "usage": "@#00ffaarefresh@#"
     },
     {
       "name": "remove",
-      "description": "Remove a track from the queue",
-      "usage": "remove [index]"
+      "description": "Remove a track from the queue by index (* = all)",
+      "usage": "@#00ffaaremove@# @#fff700<index | *>@#"
     },
     {
       "name": "seek",
-      "description": "Seek the track",
-      "usage": "seek [value]"
+      "description": "Jump to a specific time in seconds",
+      "usage": "@#00ffaaseek@# @#fff700<seconds>@#"
     },
     {
       "name": "send",
-      "description": "Send the message to the server",
-      "usage": "send [message]"
+      "description": "Send a chat message to the room",
+      "usage": "@#00ffaasend@# @#fff700<message>@#"
     },
     {
       "name": "switch",
-      "description": "Switch the track",
-      "usage": "switch [index|option]",
+      "description": "Switch to a track by index, or next / previous",
+      "usage": "@#00ffaaswitch@# @#fff700<index> | -n | -p@#",
       "options": ["-n", "-p", "--next", "--prev"]
     },
     {
       "name": "volume",
-      "description": "Change the volume",
-      "usage": "volume [value]"
+      "description": "Set playback volume (0–100)",
+      "usage": "@#00ffaavolume@# @#fff700<value>@#"
     }
   ],
   "ytdownloader/": [
     {
       "name": "download",
-      "description": "Download the video",
-      "usage": "download [video_URL] <option>",
+      "description": "Download a YouTube video as mp4 or mp3",
+      "usage": "@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
       "options": ["-v", "-a", "--video", "--audio"]
     }
   ]
