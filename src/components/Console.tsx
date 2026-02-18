@@ -21,7 +21,7 @@ import { WindowState } from "@/components/ConsoleManager";
 import commandList from "@/lib/command-list.json";
 import pathList from "@/lib/path-list.json";
 import { subscribeConsole, setActiveConsole } from "@/lib/consoleLog";
-import { t, ta } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from "@/constants";
 
 interface ConsoleProps {
@@ -37,7 +37,7 @@ function Console({
   onWindowStateChange,
   positionOffset,
 }: ConsoleProps) {
-  // Context
+  // Hooks
   const {
     availableCommands,
     availablePaths,
@@ -434,7 +434,7 @@ function Console({
         setConsoleContents([]);
       },
     );
-    setConsoleContents(ta("console.welcome"));
+    setConsoleContents(t("console.welcome"));
     return unsubscribe;
   }, [id]);
 

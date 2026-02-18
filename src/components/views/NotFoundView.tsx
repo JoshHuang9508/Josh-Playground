@@ -6,6 +6,7 @@ import useCommandHandler from "@/hooks/useCommandHandler";
 import { t } from "@/lib/i18n";
 
 export default function NotFoundView() {
+  // Command handler
   useCommandHandler({});
 
   return (

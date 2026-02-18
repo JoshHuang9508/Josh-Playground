@@ -33,7 +33,7 @@ function PageComponent() {
   const [username, setUsername] = useState<string>(t("global.defaultUsername"));
   const [currentHash, setCurrentHash] = useState<string>("/");
 
-  // Hash routing
+  // Effects
   useEffect(() => {
     const updateHash = () => {
       const hash = window.location.hash.slice(1) || "/";
@@ -44,6 +44,7 @@ function PageComponent() {
     return () => window.removeEventListener("hashchange", updateHash);
   }, []);
 
+  // Functions
   const renderView = () => {
     switch (currentHash) {
       case "/":

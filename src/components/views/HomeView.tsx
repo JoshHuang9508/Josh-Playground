@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 import styles from "@/styles/index.module.css";
 
 import { AddConsoleLog } from "@/redux";
-
-import { Music } from "@/lib/types";
 
 import ColorSpan from "@/components/ColorSpan";
 import GitHubRepoCard from "@/components/GitHubRepoCard";
@@ -13,21 +11,11 @@ import useCommandHandler from "@/hooks/useCommandHandler";
 import useGitHubRepos from "@/hooks/useGitHubRepos";
 
 import textContent from "@/lib/text-content.json";
+import musicList from "@/lib/music-list.json";
 import { t } from "@/lib/i18n";
 
-const musics: Music[] = [
-  {
-    name: "Crywolf - Eyes Half Closed",
-    path: "/musics/eyes-half-closed.mp3",
-  },
-  {
-    name: "BlueArchive - The Promise at Sunset",
-    path: "/musics/the-promise-at-sunset.mp3",
-  },
-];
-
 export default function HomeView() {
-  // GitHub repos
+  // Hooks
   const { repos } = useGitHubRepos("JoshHuang9508");
 
   // Refs
@@ -70,7 +58,7 @@ export default function HomeView() {
   // Handlers
   const handleMusicEnd = () => {
     if (!audioPlayerRef.current) return;
-    setMusicIndex((musicIndex + 1) % musics.length);
+    setMusicIndex((musicIndex + 1) % musicList.length);
   };
 
   // Command handler
@@ -111,7 +99,7 @@ export default function HomeView() {
       if (flags.includes("-l") || flags.includes("--list")) {
         AddConsoleLog(
           t("commands.music.list"),
-          ...musics.map((_, index) => `#${index} - ${_.name}`),
+          ...musicList.map((_, index) => `#${index} - ${_.name}`),
         );
         return;
       }
@@ -152,7 +140,7 @@ export default function HomeView() {
 
   useEffect(() => {
     if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.src = musics[musicIndex].path;
+    audioPlayerRef.current.src = musicList[musicIndex].path;
     audioPlayerRef.current.play();
     audioPlayerRef.current.volume = 0.05;
   }, [musicIndex]);
@@ -173,7 +161,7 @@ export default function HomeView() {
       <audio
         ref={audioPlayerRef}
         id="audio"
-        src={musics[musicIndex].path}
+        src={musicList[musicIndex].path}
         onEnded={handleMusicEnd}
       />
       <div className={"container1"}>
@@ -183,19 +171,17 @@ export default function HomeView() {
         >
           <img
             ref={imageRef}
-            className={`${styles["profile-picture"]} ${
-              showMusicInfo ? styles["spin"] : ""
-            }`}
+            className={`${styles["profile-picture"]} ${showMusicInfo ? styles["spin"] : ""
+              }`}
             src={"/assets/pfp.png"}
             alt="Profile Picture"
           />
           <div
-            className={`${styles["music-info"]} ${
-              showMusicInfo ? styles["show"] : styles["hidden"]
-            }`}
+            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]
+              }`}
           >
             <ColorSpan
-              str={t("commands.music.nowPlaying", musics[musicIndex].name)}
+              str={t("commands.music.nowPlaying", musicList[musicIndex].name)}
               className="p1"
               style={{ whiteSpace: "pre" }}
             />
@@ -242,9 +228,8 @@ export default function HomeView() {
         {Array.from({ length: 3 }).map((_, colIndex) => (
           <div
             key={colIndex}
-            className={`${styles["column"]} ${
-              styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
-            }`}
+            className={`${styles["column"]} ${styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
+              }`}
           >
             {Array.from({ length: 4 }).map((_, dupIndex) => (
               <div key={dupIndex}>

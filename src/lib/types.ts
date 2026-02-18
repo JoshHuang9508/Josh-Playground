@@ -6,12 +6,6 @@ export type Command = {
   options?: string[];
 };
 
-/**
- * Command handler function type
- * @param fullCommand - The full command string (e.g. "music -p")
- * @param args - Arguments after the command name without "-" (e.g. ["arg1", "arg2"])
- * @param flags - Arguments that start with "-" (e.g. ["-p", "--play"])
- */
 export type CommandHandler = (
   fullCommand: string,
   args: string[],
@@ -51,11 +45,6 @@ export type PlayerStateClient = {
 
 export type User = {
   [id: string]: string;
-};
-
-export type Music = {
-  name: string;
-  path: string;
 };
 
 export type GitHubRepo = {

@@ -24,10 +24,12 @@ export const languageColors: Record<string, string> = {
 };
 
 export function useGitHubRepos(username?: string) {
+  // States
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Effects
   useEffect(() => {
     let cancelled = false;
 

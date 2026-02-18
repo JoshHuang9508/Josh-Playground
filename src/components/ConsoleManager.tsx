@@ -14,13 +14,21 @@ type ConsoleInstance = {
 };
 
 function ConsoleManager() {
+  // Refs
+  const nextIdRef = useRef(2);
+  const nextZIndexRef = useRef(999);
+
+  // States
   const [consoles, setConsoles] = useState<ConsoleInstance[]>([
     { id: "1", windowState: "normal", positionOffset: 0 },
   ]);
 
-  const nextIdRef = useRef(2);
-  const nextZIndexRef = useRef(999);
+  // Variables
+  const minimizedConsoles = consoles.filter(
+    (c) => c.windowState === "minimized",
+  );
 
+  // Functions
   const addConsole = () => {
     const currentId = nextIdRef.current;
     nextIdRef.current += 1;
@@ -30,6 +38,7 @@ function ConsoleManager() {
     ]);
   };
 
+  // Handlers
   const handleWindowStateChange = (id: string, state: WindowState) => {
     if (state === "closed") {
       setConsoles((prev) => prev.filter((c) => c.id !== id));
@@ -40,6 +49,7 @@ function ConsoleManager() {
     );
   };
 
+  // Effects
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "`") {
@@ -79,10 +89,6 @@ function ConsoleManager() {
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdownter", onPointerDown);
   }, []);
-
-  const minimizedConsoles = consoles.filter(
-    (c) => c.windowState === "minimized",
-  );
 
   return (
     <>

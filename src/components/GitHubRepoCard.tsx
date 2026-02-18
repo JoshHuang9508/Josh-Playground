@@ -8,6 +8,7 @@ interface GitHubRepoCardProps {
 }
 
 export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
+  // Variables
   const langColor = repo.language
     ? (languageColors[repo.language] ?? "#ccc")
     : null;
@@ -28,11 +29,10 @@ export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
           {repo.owner}/<strong>{repo.name}</strong>
         </span>
         <span
-          className={`${styles["repo-card-badge"]} ${
-            repo.visibility === "Public"
+          className={`${styles["repo-card-badge"]} ${repo.visibility === "Public"
               ? styles["badge-public"]
               : styles["badge-private"]
-          }`}
+            }`}
         >
           {repo.visibility}
         </span>
