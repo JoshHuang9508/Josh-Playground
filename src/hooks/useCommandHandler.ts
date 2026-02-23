@@ -36,8 +36,6 @@ export function parseCommand(command: string) {
 
 const webPaths = ["listentogether", "ytdownloader"];
 
-
-
 export default function useCommandHandler(handlers: CommandHandlers) {
   // Hooks
   const command = useSelector((state: { command: string }) => state.command);
@@ -76,7 +74,9 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     return result;
   };
 
-  const createContextHandlers = (ctx: AppContextType | null): CommandHandlers => {
+  const createContextHandlers = (
+    ctx: AppContextType | null,
+  ): CommandHandlers => {
     if (!ctx) return {};
     return {
       help: () => {
@@ -148,7 +148,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
         }
       },
     };
-  }
+  };
 
   // Variables
   const builtInHandlers: CommandHandlers = {

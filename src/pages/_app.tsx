@@ -8,11 +8,11 @@ dotenv.config({ path: ".env" });
 
 import "@/styles/global.css";
 import styles from "@/styles/_app.module.css";
-
 import store from "@/redux";
 
 import ConsoleManager from "@/components/ConsoleManager";
 import HomeView from "@/components/views/HomeView";
+import MobileView from "@/components/views/MobileView";
 import ListenTogetherView from "@/components/views/ListenTogetherView";
 import YtDownloaderView from "@/components/views/YtDownloaderView";
 import NotFoundView from "@/components/views/NotFoundView";
@@ -32,6 +32,7 @@ function PageComponent() {
   const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [username, setUsername] = useState<string>(t("global.defaultUsername"));
   const [currentHash, setCurrentHash] = useState<string>("/");
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   // Effects
   useEffect(() => {
@@ -44,17 +45,28 @@ function PageComponent() {
     return () => window.removeEventListener("hashchange", updateHash);
   }, []);
 
+  useEffect(() => {
+    const isMobile = ["Mobile", "iPhone", "iPad", "Android"].some((userAgent) =>
+      navigator.userAgent.includes(userAgent),
+    );
+    setIsMobile(isMobile);
+  }, []);
+
   // Functions
   const renderView = () => {
-    switch (currentHash) {
-      case "/":
-        return <HomeView />;
-      case "/listentogether":
-        return <ListenTogetherView />;
-      case "/ytdownloader":
-        return <YtDownloaderView />;
-      default:
-        return <NotFoundView />;
+    if (isMobile) {
+      return <MobileView />;
+    } else {
+      switch (currentHash) {
+        case "/":
+          return <HomeView />;
+        case "/listentogether":
+          return <ListenTogetherView />;
+        case "/ytdownloader":
+          return <YtDownloaderView />;
+        default:
+          return <NotFoundView />;
+      }
     }
   };
 
@@ -139,7 +151,7 @@ function PageComponent() {
 
           <div className={styles["container"]}>{renderView()}</div>
 
-          <ConsoleManager />
+          {!isMobile && <ConsoleManager />}
         </div>
       </AppContext.Provider>
     </Provider>

@@ -22,7 +22,9 @@ export function t(key: string, ...args: string[]): any {
   if (typeof value === "string") {
     return value.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? "");
   } else if (Array.isArray(value)) {
-    return value.map((item) => item.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? ""));
+    return value.map((item) =>
+      item.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? ""),
+    );
   } else {
     return key;
   }

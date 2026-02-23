@@ -14,7 +14,7 @@ import textContent from "@/lib/text-content.json";
 import musicList from "@/lib/music-list.json";
 import { t } from "@/lib/i18n";
 
-export default function HomeView() {
+export default function MobileView() {
   // Hooks
   const { repos } = useGitHubRepos("JoshHuang9508");
 
