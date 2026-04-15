@@ -9,9 +9,9 @@ div.taskbar {
   align-items: center;
   height: 3rem;
   padding: 0 1rem;
-  background-color: #ffffff08;
+  background-color: rgb(10 10 10 / 33%);
   border-top: 1px solid #ffffff10;
-  backdrop-filter: blur(0.8rem);
+  backdrop-filter: blur(2px);
 }
 
 div.taskbar div.taskbar-item {

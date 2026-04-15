@@ -218,7 +218,7 @@ export default function HomeView() {
           </div>
         </div>
       </div>
-      <div className={styles["repo-wall"]}>
+      {/* <div className={styles["repo-wall"]}>
         {Array.from({ length: 3 }).map((_, colIndex) => (
           <div
             key={colIndex}
@@ -238,7 +238,7 @@ export default function HomeView() {
             ))}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

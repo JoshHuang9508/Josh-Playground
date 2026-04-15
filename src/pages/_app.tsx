@@ -141,7 +141,7 @@ function PageComponent() {
           }}
         >
           <img
-            src={backgroundImageUrl}
+            src={backgroundImageUrl ? backgroundImageUrl : "/assets/bg.jpg"}
             className={styles["background"]}
             alt="background"
           />

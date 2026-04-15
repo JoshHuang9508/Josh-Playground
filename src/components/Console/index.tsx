@@ -70,18 +70,18 @@ function Console({
   });
   const prevLayoutRef = useRef({
     x: window.innerWidth * 0.1 + positionOffset,
-    y: window.innerHeight - 300 - window.innerHeight * 0.02 + positionOffset,
+    y: window.innerHeight - window.innerHeight * 0.9 + positionOffset,
     width: window.innerWidth * 0.8,
-    height: 300,
+    height: window.innerHeight * 0.8,
   });
 
   const [position, setPosition] = useState(() => ({
     x: window.innerWidth * 0.2 + positionOffset,
-    y: window.innerHeight - 600 - window.innerHeight * 0.02 + positionOffset,
+    y: window.innerHeight - window.innerHeight * 0.9 + positionOffset,
   }));
   const [size, setSize] = useState(() => ({
     width: window.innerWidth * 0.6,
-    height: 600,
+    height: window.innerHeight * 0.8,
   }));
   const [isDragging, setIsDragging] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
