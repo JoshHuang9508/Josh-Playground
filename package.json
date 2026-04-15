@@ -21,9 +21,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint && stylelint \"src/**/*.css\" --fix",
+    "lint": "stylelint \"src/**/*.css\" --fix",
     "postbuild": "next-sitemap",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,css}\""
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

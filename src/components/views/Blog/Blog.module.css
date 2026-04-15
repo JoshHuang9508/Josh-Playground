@@ -16,10 +16,21 @@ div.blog-page > * {
   animation: stagger-in 0.4s ease forwards;
 }
 
-div.blog-page > *:nth-child(1) { animation-delay: 0.05s; }
-div.blog-page > *:nth-child(2) { animation-delay: 0.12s; }
-div.blog-page > *:nth-child(3) { animation-delay: 0.19s; }
-div.blog-page > *:nth-child(4) { animation-delay: 0.26s; }
+div.blog-page > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+div.blog-page > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+div.blog-page > *:nth-child(3) {
+  animation-delay: 0.19s;
+}
+
+div.blog-page > *:nth-child(4) {
+  animation-delay: 0.26s;
+}
 
 div.blog-page::-webkit-scrollbar {
   width: 0;
@@ -46,8 +57,8 @@ div.timeline-entry {
 
 div.timeline-dot {
   position: absolute;
-  top: 0.2rem;
-  left: -1.25rem;
+  top: 0.3rem;
+  left: -1.4rem;
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 50%;

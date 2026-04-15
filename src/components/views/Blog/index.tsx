@@ -29,9 +29,7 @@ export default function BlogView() {
 
   return (
     <div className={styles["blog-page"]}>
-      <p className="page-subtitle">
-        Thoughts on development, life, and gaming
-      </p>
+      <p className="page-subtitle">Thoughts on development, life, and gaming</p>
       <hr className="divider" />
 
       {loading && <p style={{ color: "#888" }}>Loading posts...</p>}
