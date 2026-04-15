@@ -10,43 +10,47 @@ export type ProjectConfig = {
 
 export const FEATURED_PROJECTS: ProjectConfig[] = [
   {
-    slug: "josh-playground",
-    name: "Josh-Playground",
+    slug: "ricecall",
+    name: "RiceCall",
     description:
-      "My personal website built with Next.js — featuring a draggable terminal, bento-style homepage, blog, and osu! stats dashboard.",
-    github: { owner: "JoshHuang9508", repo: "Josh-Playground" },
-    images: ["/assets/bg.jpg"],
-    tags: ["TypeScript", "Next.js", "React"],
-    accent: "#00ffaa",
-  },
-  {
-    slug: "raidcall-clone",
-    name: "Raidcall Clone",
-    description:
-      "RC語音復刻版本 — a clone of the classic Raidcall voice chat application, rebuilt with modern web technologies.",
-    github: { owner: "JoshHuang9508", repo: "Raidcall-Clone" },
-    images: ["/assets/bg.jpg"],
-    tags: ["Full-Stack", "Voice Chat"],
+      "RiceCall, an un-official remake of Raidcall. \nCurrently in beta testing. \nDownload the latest version from https://ricecall.com/.",
+    github: { owner: "NerdyHomeReOpen", repo: "RiceCall" },
+    images: [
+      "/projects/ricecall_screenshot_1.png",
+      "/projects/ricecall_screenshot_2.png",
+      "/projects/ricecall_screenshot_3.png",
+      "/projects/ricecall_screenshot_4.png",
+    ],
+    tags: ["TypeScript", "Full-Stack", "Voice Chat", "WebRTC", "Electron"],
     accent: "#ff77b7",
   },
   {
     slug: "depth-of-origin",
     name: "Depth of Origin 2.0",
     description:
-      "源深 — a 2D game built with Unity. Currently in beta 2.0 development.",
+      "源深 — a 2D roguelike game built with Unity. \nI will be working on the 2.0 version, which is a complete rewrite of the game, only if I have time (lol).",
     github: { owner: "JoshHuang9508", repo: "Depth-of-Origin-2.0" },
-    images: ["/assets/bg.jpg"],
-    tags: ["C#", "Unity", "Game Dev"],
+    images: [
+      "/projects/depth-of-origin_screenshot_1.png",
+      "/projects/depth-of-origin_screenshot_2.png",
+      "/projects/depth-of-origin_screenshot_3.png",
+      "/projects/depth-of-origin_screenshot_4.png",
+    ],
+    tags: ["C#", "Unity", "Game Dev", "Roguelike", "School Project"],
     accent: "#ffa24c",
   },
   {
-    slug: "electron-audio-loopback",
-    name: "Electron Audio Loopback",
+    slug: "josh-playground",
+    name: "Josh-Playground",
     description:
-      "Capture system loopback audio on macOS 12.3+, Windows and Linux — an Electron-based audio routing tool.",
-    github: { owner: "JoshHuang9508", repo: "electron-audio-loopback" },
-    images: ["/assets/bg.jpg"],
-    tags: ["TypeScript", "Electron", "Audio"],
-    accent: "#00f3ff",
+      "My personal website built with Next.js — which you are currently on!",
+    github: { owner: "JoshHuang9508", repo: "Josh-Playground" },
+    images: [
+      "/projects/josh-playground_screenshot_1.png",
+      "/projects/josh-playground_screenshot_2.png",
+      "/projects/josh-playground_screenshot_3.png",
+    ],
+    tags: ["TypeScript", "Next.js", "React", "Vibe Coding"],
+    accent: "#00ffaa",
   },
 ];

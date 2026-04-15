@@ -35,7 +35,6 @@ function PageComponent() {
   const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [username, setUsername] = useState<string>(t("global.defaultUsername"));
   const [currentHash, setCurrentHash] = useState<string>("/");
-  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const updateHash = () => {
@@ -47,17 +46,14 @@ function PageComponent() {
     return () => window.removeEventListener("hashchange", updateHash);
   }, []);
 
-  useEffect(() => {
-    const isMobile = ["Mobile", "iPhone", "iPad", "Android"].some((userAgent) =>
-      navigator.userAgent.includes(userAgent),
-    );
-    setIsMobile(isMobile);
-  }, []);
+  // useEffect(() => {
+  //   const isMobile = ["Mobile", "iPhone", "iPad", "Android"].some((userAgent) =>
+  //     navigator.userAgent.includes(userAgent),
+  //   );
+  //   setIsMobile(isMobile);
+  // }, []);
 
   const renderView = () => {
-    // if (isMobile) {
-    //   return <MobileView />;
-    // } else {
     if (currentHash.startsWith("/blog/") && currentHash !== "/blog") {
       const slug = currentHash.slice("/blog/".length);
       return <BlogPostView slug={slug} />;
@@ -76,7 +72,6 @@ function PageComponent() {
       default:
         return <NotFoundView />;
     }
-    // }
   };
 
   return (
