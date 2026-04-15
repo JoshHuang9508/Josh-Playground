@@ -22,6 +22,8 @@ import ListenTogetherView from "@/components/views/ListenTogether";
 import YtDownloaderView from "@/components/views/YtDownloader";
 import NotFoundView from "@/components/views/NotFound";
 import ProjectsView from "@/components/views/Projects";
+import BlogView from "@/components/views/Blog";
+import BlogPostView from "@/components/views/BlogPost";
 import Navigation from "@/components/Navigation";
 
 import "@/global.css";
@@ -57,11 +59,17 @@ function PageComponent() {
     if (isMobile) {
       return <MobileView />;
     } else {
+      if (currentHash.startsWith("/blog/") && currentHash !== "/blog") {
+        const slug = currentHash.slice("/blog/".length);
+        return <BlogPostView slug={slug} />;
+      }
       switch (currentHash) {
         case "/":
           return <HomeView />;
         case "/projects":
           return <ProjectsView />;
+        case "/blog":
+          return <BlogView />;
         case "/listentogether":
           return <ListenTogetherView />;
         case "/ytdownloader":
