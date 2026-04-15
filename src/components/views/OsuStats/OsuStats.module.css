@@ -5,19 +5,25 @@ div.osu-page {
   gap: 1rem;
   width: 100%;
   max-width: 800px;
-  padding: 3rem 2rem 2rem;
+  padding: 0.5rem 2rem 2rem;
   margin: 0 auto;
   overflow-y: auto;
+  animation: page-enter 0.5s ease both;
 }
+
+div.osu-page > * {
+  opacity: 0;
+  animation: stagger-in 0.4s ease forwards;
+}
+
+div.osu-page > *:nth-child(1) { animation-delay: 0.05s; }
+div.osu-page > *:nth-child(2) { animation-delay: 0.12s; }
+div.osu-page > *:nth-child(3) { animation-delay: 0.19s; }
+div.osu-page > *:nth-child(4) { animation-delay: 0.26s; }
+div.osu-page > *:nth-child(5) { animation-delay: 0.33s; }
 
 div.osu-page::-webkit-scrollbar {
   width: 0;
-}
-
-div.header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
 }
 
 div.banner {
@@ -177,9 +183,33 @@ div.unavailable {
   color: #888;
 }
 
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (width <= 768px) {
   div.osu-page {
-    padding: 3rem 1rem 2rem;
+    padding: 0.5rem 1rem 2rem;
   }
 
   div.banner {

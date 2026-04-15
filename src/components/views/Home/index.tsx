@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { AddConsoleLog } from "@/redux";
 
-import ColorSpan from "@/components/ColorSpan";
-
 import { MUSIC_LIST } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
@@ -223,55 +221,68 @@ export default function HomeView() {
                 <span className="section-label" style={{ color: "#00ffaa" }}>
                   PROJECTS
                 </span>
-                <a className="view-all-link" href="#/projects">
+                <a
+                  className="view-all-link"
+                  href="#/projects"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   View All <span>&rarr;</span>
                 </a>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                }}
-              >
-                <div
-                  key={FEATURED_PROJECTS[activeProjectIndex].slug}
-                  className={styles["mini-project"]}
-                >
+              <div className={styles["project-carousel"]}>
+                {FEATURED_PROJECTS.map((project, i) => (
                   <div
-                    className={styles["mini-project-img"]}
+                    key={project.slug}
+                    className={`${styles["mini-project"]} ${i === activeProjectIndex ? styles["active"] : ""}`}
                     style={{
-                      borderColor: FEATURED_PROJECTS[activeProjectIndex].accent,
+                      position: i === 0 ? "relative" : "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
                     }}
                   >
-                    {FEATURED_PROJECTS[activeProjectIndex].images[0] ? (
-                      <img
-                        src={FEATURED_PROJECTS[activeProjectIndex].images[0]}
-                        alt={FEATURED_PROJECTS[activeProjectIndex].name}
-                      />
-                    ) : (
-                      <span style={{ color: "#555", fontSize: "0.8rem" }}>
-                        No image
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles["mini-project-info"]}>
-                    <span className={styles["mini-repo-name"]}>
-                      {FEATURED_PROJECTS[activeProjectIndex].name}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#888",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
+                    <div
+                      className={styles["mini-project-img"]}
+                      style={{ borderColor: project.accent }}
                     >
-                      {FEATURED_PROJECTS[activeProjectIndex].tags.join(" · ")}
-                    </span>
+                      {project.images[0] ? (
+                        <img src={project.images[0]} alt={project.name} />
+                      ) : (
+                        <span style={{ color: "#555", fontSize: "0.8rem" }}>
+                          No image
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles["mini-project-info"]}>
+                      <span className={styles["mini-repo-name"]}>
+                        {project.name}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "#888",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {project.tags.join(" · ")}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                ))}
+              </div>
+              <div className={styles["carousel-dots"]}>
+                {FEATURED_PROJECTS.map((project, i) => (
+                  <span
+                    key={project.slug}
+                    className={`${styles["carousel-dot"]} ${i === activeProjectIndex ? styles["active"] : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveProjectIndex(i);
+                    }}
+                  />
+                ))}
               </div>
             </div>
 

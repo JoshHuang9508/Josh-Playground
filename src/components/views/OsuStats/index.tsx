@@ -41,11 +41,6 @@ export default function OsuStatsView() {
   if (loading) {
     return (
       <div className={styles["osu-page"]}>
-        <div className={styles["header"]}>
-          <p className="page-header" style={{ color: "#ff77b7" }}>
-            ~/osu
-          </p>
-        </div>
         <p style={{ color: "#888" }}>Loading stats...</p>
       </div>
     );
@@ -54,14 +49,9 @@ export default function OsuStatsView() {
   if (error || !user) {
     return (
       <div className={styles["osu-page"]}>
-        <div className={styles["header"]}>
-          <p className="page-header" style={{ color: "#ff77b7" }}>
-            ~/osu
-          </p>
-        </div>
         <div className={styles["unavailable"]}>
           <p>Stats temporarily unavailable.</p>
-          <p style={{ fontSize: "0.75rem" }}>
+          <p style={{ fontSize: "0.85rem" }}>
             osu! API proxy not configured yet.
           </p>
         </div>
@@ -71,12 +61,6 @@ export default function OsuStatsView() {
 
   return (
     <div className={styles["osu-page"]}>
-      <div className={styles["header"]}>
-        <p className="page-header" style={{ color: "#ff77b7" }}>
-          ~/osu
-        </p>
-      </div>
-
       <hr className="divider" />
 
       <div className={styles["banner"]}>

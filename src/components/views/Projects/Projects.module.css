@@ -5,24 +5,32 @@ div.projects-page {
   gap: 1.5rem;
   width: 100%;
   max-width: 960px;
-  padding: 3rem 2rem 2rem;
+  padding: 0.5rem 2rem 2rem;
   margin: 0 auto;
   overflow-y: auto;
+  animation: page-enter 0.5s ease both;
 }
+
+div.projects-page > * {
+  opacity: 0;
+  animation: stagger-in 0.4s ease forwards;
+}
+
+div.projects-page > *:nth-child(1) { animation-delay: 0.05s; }
+div.projects-page > *:nth-child(2) { animation-delay: 0.12s; }
+div.projects-page > *:nth-child(3) { animation-delay: 0.19s; }
+div.projects-page > *:nth-child(4) { animation-delay: 0.26s; }
+div.projects-page > *:nth-child(5) { animation-delay: 0.33s; }
+div.projects-page > *:nth-child(6) { animation-delay: 0.40s; }
 
 div.projects-page::-webkit-scrollbar {
   width: 0;
 }
 
-div.header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
 /* Each project: left info + right gallery */
 div.project-row {
   display: flex;
+  flex-direction: column;
   gap: 1.25rem;
   padding: 1.25rem;
   background-color: rgb(255 255 255 / 6%);
@@ -72,6 +80,8 @@ div.github-card {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  justify-content: space-between;
+  height: 5rem;
   padding: 0.75rem 1rem;
   margin-top: auto;
   cursor: pointer;
@@ -140,7 +150,8 @@ div.project-gallery {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 320px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 0.4rem;
 }
@@ -201,9 +212,33 @@ div.gallery-placeholder {
   border-radius: 0.4rem;
 }
 
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (width <= 768px) {
   div.projects-page {
-    padding: 3rem 1rem 2rem;
+    padding: 0.5rem 1rem 2rem;
   }
 
   div.project-row {

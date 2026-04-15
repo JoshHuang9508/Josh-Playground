@@ -34,7 +34,36 @@ function ProjectCard({ project }: { project: ProjectConfig }) {
       className={styles["project-row"]}
       style={{ borderLeftColor: project.accent }}
     >
-      {/* Left: info + GitHub card */}
+      {/* Top: image gallery */}
+      <div className={styles["project-gallery"]}>
+        {project.images.length > 0 ? (
+          <div className={styles["gallery-wrapper"]}>
+            {project.images.map((img, i) => (
+              <img
+                key={img}
+                src={img}
+                alt={`${project.name} screenshot ${i + 1}`}
+                className={i === activeImage ? styles["active"] : ""}
+              />
+            ))}
+            {project.images.length > 1 && (
+              <div className={styles["gallery-dots"]}>
+                {project.images.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`${styles["gallery-dot"]} ${i === activeImage ? styles["active"] : ""}`}
+                    onClick={() => setActiveImage(i)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className={styles["gallery-placeholder"]}>No images yet</div>
+        )}
+      </div>
+
+      {/* Bottom: info + GitHub card */}
       <div className={styles["project-info"]}>
         <span className={styles["project-name"]}>{project.name}</span>
         <p className={styles["project-desc"]}>{project.description}</p>
@@ -86,35 +115,6 @@ function ProjectCard({ project }: { project: ProjectConfig }) {
           </div>
         </div>
       </div>
-
-      {/* Right: image gallery */}
-      <div className={styles["project-gallery"]}>
-        {project.images.length > 0 ? (
-          <div className={styles["gallery-wrapper"]}>
-            {project.images.map((img, i) => (
-              <img
-                key={img}
-                src={img}
-                alt={`${project.name} screenshot ${i + 1}`}
-                className={i === activeImage ? styles["active"] : ""}
-              />
-            ))}
-            {project.images.length > 1 && (
-              <div className={styles["gallery-dots"]}>
-                {project.images.map((_, i) => (
-                  <span
-                    key={i}
-                    className={`${styles["gallery-dot"]} ${i === activeImage ? styles["active"] : ""}`}
-                    onClick={() => setActiveImage(i)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className={styles["gallery-placeholder"]}>No images yet</div>
-        )}
-      </div>
     </div>
   );
 }
@@ -144,15 +144,6 @@ export default function ProjectsView() {
 
   return (
     <div className={styles["projects-page"]}>
-      <div className={styles["header"]}>
-        <p className="page-header" style={{ color: "#00ffaa" }}>
-          ~/projects
-        </p>
-        <p className="page-subtitle">My open-source work and side projects</p>
-      </div>
-
-      <hr className="divider" />
-
       {FEATURED_PROJECTS.map((project) => (
         <ProjectCard key={project.slug} project={project} />
       ))}

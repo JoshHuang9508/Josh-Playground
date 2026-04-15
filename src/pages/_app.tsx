@@ -57,30 +57,30 @@ function PageComponent() {
   }, []);
 
   const renderView = () => {
-    if (isMobile) {
-      return <MobileView />;
-    } else {
-      if (currentHash.startsWith("/blog/") && currentHash !== "/blog") {
-        const slug = currentHash.slice("/blog/".length);
-        return <BlogPostView slug={slug} />;
-      }
-      switch (currentHash) {
-        case "/":
-          return <HomeView />;
-        case "/projects":
-          return <ProjectsView />;
-        case "/blog":
-          return <BlogView />;
-        case "/listentogether":
-          return <ListenTogetherView />;
-        case "/ytdownloader":
-          return <YtDownloaderView />;
-        case "/osu":
-          return <OsuStatsView />;
-        default:
-          return <NotFoundView />;
-      }
+    // if (isMobile) {
+    //   return <MobileView />;
+    // } else {
+    if (currentHash.startsWith("/blog/") && currentHash !== "/blog") {
+      const slug = currentHash.slice("/blog/".length);
+      return <BlogPostView slug={slug} />;
     }
+    switch (currentHash) {
+      case "/":
+        return <HomeView />;
+      case "/projects":
+        return <ProjectsView />;
+      case "/blog":
+        return <BlogView />;
+      case "/listentogether":
+        return <ListenTogetherView />;
+      case "/ytdownloader":
+        return <YtDownloaderView />;
+      case "/osu":
+        return <OsuStatsView />;
+      default:
+        return <NotFoundView />;
+    }
+    // }
   };
 
   return (
@@ -160,9 +160,11 @@ function PageComponent() {
             className={styles["background"]}
             alt="background"
           />
-          <Navigation currentHash={currentHash} />
-          <div className={styles["container"]}>{renderView()}</div>
-          {!isMobile && <ConsoleManager />}
+          <div className={styles["container"]}>
+            <Navigation currentHash={currentHash} />
+            {renderView()}
+          </div>
+          <ConsoleManager />
         </div>
       </AppContext.Provider>
     </Provider>

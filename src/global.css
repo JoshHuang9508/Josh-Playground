@@ -222,6 +222,19 @@ span.section-label {
   letter-spacing: 0.05em;
 }
 
+/* Page entrance animation */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Staggered fade-in for cards */
 @keyframes card-enter {
   from {
@@ -238,6 +251,19 @@ span.section-label {
 div.card-enter {
   opacity: 0;
   animation: card-enter 0.5s ease forwards;
+}
+
+/* Stagger children: each direct child fades in with delay */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Decorative divider */
