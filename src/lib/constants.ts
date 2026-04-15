@@ -175,11 +175,41 @@ export const COMMAND_LIST = {
       options: ["-v", "-a", "--video", "--audio"],
     },
   ],
+  "projects/": [
+    {
+      name: "open",
+      description: "Open a GitHub repo in a new tab",
+      usage: "@#00ffaaopen@# @#fff700<repo-name>@#",
+    },
+  ],
+  "osu/": [
+    {
+      name: "stats",
+      description: "Show osu! stats summary in console",
+      usage: "@#00ffaastats@#",
+    },
+  ],
+  "blog/": [
+    {
+      name: "read",
+      description: "Open a blog post by slug",
+      usage: "@#00ffaaread@# @#fff700<slug>@#",
+    },
+  ],
 };
 export const PATH_LIST = {
-  "/": ["listentogether/", "ytdownloader/"],
+  "/": ["projects/", "osu/", "blog/", "listentogether/", "ytdownloader/"],
+  "/projects": [],
+  "/osu": [],
+  "/blog": [],
   "/listentogether": [],
   "/ytdownloader": [],
+};
+export const TAG_COLORS: Record<string, string> = {
+  dev: "#00ffaa",
+  life: "#ff77b7",
+  gaming: "#00f3ff",
+  design: "#ffa24c",
 };
 export const MUSIC_LIST = [
   {
@@ -454,6 +484,18 @@ export const TEXT_CONTENT = {
       "4. @#FF77B7Wait@# for the download to complete.",
       "@#f9f284Enjoy your download!",
     ],
+  },
+  "/projects": {
+    title: "Projects",
+    subtitle: "My open-source work and side projects.",
+  },
+  "/osu": {
+    title: "osu! Stats",
+    subtitle: "My osu! profile and gameplay statistics.",
+  },
+  "/blog": {
+    title: "Blog",
+    subtitle: "Thoughts on development, life, and gaming.",
   },
   "*": {
     title: "Oops!",
