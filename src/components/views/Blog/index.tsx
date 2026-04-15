@@ -38,6 +38,8 @@ export default function BlogView() {
         </p>
       </div>
 
+      <hr className="divider" />
+
       {loading && <p style={{ color: "#888" }}>Loading posts...</p>}
 
       {!loading && posts.length === 0 && (

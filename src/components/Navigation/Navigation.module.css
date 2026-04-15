@@ -8,8 +8,9 @@ nav.breadcrumb {
   align-items: center;
   padding: 0.4rem 0.8rem;
   font-family: Consolas, monospace;
-  font-size: 0.85rem;
-  background-color: #16213e99;
+  font-size: 1rem;
+  background-color: rgb(10 10 10 / 50%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 2rem;
   backdrop-filter: blur(8px);
 }

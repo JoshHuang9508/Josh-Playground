@@ -11,29 +11,34 @@ type ConsoleInstance = {
 };
 
 function ConsoleManager() {
-  const nextIdRef = useRef(2);
   const nextZIndexRef = useRef(999);
 
   const [consoles, setConsoles] = useState<ConsoleInstance[]>([
-    { id: "1", windowState: "normal", positionOffset: 0 },
+    { id: "1", windowState: "minimized", positionOffset: 0 },
   ]);
 
   const minimizedIds = consoles
     .filter((c) => c.windowState === "minimized")
     .map((c) => c.id);
 
-  const addConsole = () => {
-    const currentId = nextIdRef.current;
-    nextIdRef.current += 1;
-    setConsoles((prev) => [
-      ...prev,
-      { id: String(currentId), windowState: "normal", positionOffset: 0 },
-    ]);
+  const toggleConsole = () => {
+    setConsoles((prev) => {
+      if (prev.length === 0) {
+        return [{ id: "1", windowState: "normal", positionOffset: 0 }];
+      }
+      const c = prev[0];
+      if (c.windowState === "minimized" || c.windowState === "closed") {
+        return [{ ...c, windowState: "normal" }];
+      }
+      return [{ ...c, windowState: "minimized" }];
+    });
   };
 
   const handleWindowStateChange = (id: string, state: WindowState) => {
     if (state === "closed") {
-      setConsoles((prev) => prev.filter((c) => c.id !== id));
+      setConsoles((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, windowState: "minimized" } : c)),
+      );
       return;
     }
     setConsoles((prev) =>
@@ -45,22 +50,18 @@ function ConsoleManager() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "`") {
         event.preventDefault();
-        addConsole();
+        toggleConsole();
         return;
       }
 
       if (event.key === "Escape") {
-        setConsoles((prev) => {
-          const lastMinimized = [...prev]
-            .reverse()
-            .find((c) => c.windowState === "minimized");
-          if (!lastMinimized) return prev;
-          return prev.map((c) =>
-            c.id === lastMinimized.id
-              ? { ...c, windowState: "normal" as WindowState }
+        setConsoles((prev) =>
+          prev.map((c) =>
+            c.windowState === "normal"
+              ? { ...c, windowState: "minimized" as WindowState }
               : c,
-          );
-        });
+          ),
+        );
       }
     };
     document.addEventListener("keydown", onKeyDown);

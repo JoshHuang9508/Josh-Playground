@@ -4,12 +4,12 @@ import { AddConsoleLog } from "@/redux";
 
 import ColorSpan from "@/components/ColorSpan";
 
-import { MUSIC_LIST, TEXT_CONTENT } from "@/lib/constants";
+import { MUSIC_LIST } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
-import useGitHubRepos, { languageColors } from "@/lib/hooks/GitHubRepos";
 import useOsuStats from "@/lib/hooks/OsuStats";
 import { useBlogPosts } from "@/lib/hooks/BlogPosts";
+import { FEATURED_PROJECTS } from "@/lib/projects";
 
 import styles from "./Home.module.css";
 
@@ -24,8 +24,6 @@ const SOCIAL_LINKS = [
 ];
 
 export default function HomeView() {
-  const { repos } = useGitHubRepos("JoshHuang9508");
-
   const imageRef = useRef<HTMLImageElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
@@ -33,7 +31,7 @@ export default function HomeView() {
   const [musicIndex, setMusicIndex] = useState(0);
   const [showMusicInfo, setShowMusicInfo] = useState(false);
 
-  const topRepos = repos.slice(0, 3);
+  const topProjects = FEATURED_PROJECTS.slice(0, 3);
 
   const { user: osuUser } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
@@ -242,31 +240,48 @@ export default function HomeView() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.4rem",
+                gap: "0.5rem",
               }}
             >
-              {topRepos.map((repo) => (
+              {topProjects.map((project) => (
                 <div
-                  key={repo.name}
-                  className={styles["mini-repo"]}
-                  onClick={() => repo.url && window.open(repo.url, "_blank")}
+                  key={project.slug}
+                  className={styles["mini-project"]}
+                  onClick={() =>
+                    (window.location.hash = `#/projects`)
+                  }
                   style={{ cursor: "pointer" }}
                 >
-                  {repo.language && (
+                  <div
+                    className={styles["mini-project-img"]}
+                    style={{ borderColor: project.accent }}
+                  >
+                    {project.images[0] ? (
+                      <img src={project.images[0]} alt={project.name} />
+                    ) : (
+                      <span style={{ color: "#555", fontSize: "0.8rem" }}>
+                        No image
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles["mini-project-info"]}>
+                    <span className={styles["mini-repo-name"]}>
+                      {project.name}
+                    </span>
                     <span
-                      className={styles["mini-lang-dot"]}
                       style={{
-                        backgroundColor:
-                          languageColors[repo.language] ?? "#ccc",
+                        fontSize: "0.8rem",
+                        color: "#888",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
-                    />
-                  )}
-                  <span className={styles["mini-repo-name"]}>{repo.name}</span>
+                    >
+                      {project.tags.join(" · ")}
+                    </span>
+                  </div>
                 </div>
               ))}
-              {topRepos.length === 0 && (
-                <p style={{ color: "#888", fontSize: "0.8rem" }}>Loading...</p>
-              )}
             </div>
           </div>
 
@@ -314,6 +329,66 @@ export default function HomeView() {
         </div>
       </div>
 
+      <hr className="divider" />
+
+      {/* Feature showcase & console tutorial */}
+      <div className={styles["feature-section"]}>
+        <span className="section-label" style={{ color: "#fff700" }}>
+          ABOUT THIS SITE
+        </span>
+        <div className={styles["feature-card"]}>
+          <p className={styles["feature-title"]}>
+            <span style={{ color: "#00ffaa" }}>&gt;_</span> Built-in Terminal
+          </p>
+          <p className={styles["feature-desc"]}>
+            This site comes with a draggable, resizable console — a real
+            terminal you can use to navigate pages, open links, and explore
+            hidden commands. Try it out!
+          </p>
+          <div className={styles["shortcut-list"]}>
+            <span className={styles["shortcut"]}>
+              <span className={styles["shortcut-key"]}>Ctrl</span>+
+              <span className={styles["shortcut-key"]}>`</span> Toggle console
+            </span>
+            <span className={styles["shortcut"]}>
+              <span className={styles["shortcut-key"]}>Esc</span> Minimize
+            </span>
+            <span className={styles["shortcut"]}>
+              <span className={styles["shortcut-key"]}>Tab</span> Autocomplete
+            </span>
+          </div>
+        </div>
+        <div className={styles["feature-card"]}>
+          <p className={styles["feature-title"]}>
+            <span style={{ color: "#ffa24c" }}>$</span> Quick Commands
+          </p>
+          <p className={styles["feature-desc"]}>
+            Type{" "}
+            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+              help
+            </span>{" "}
+            to see all available commands. Use{" "}
+            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+              cd
+            </span>{" "}
+            to navigate between pages, or{" "}
+            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+              github
+            </span>
+            ,{" "}
+            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+              osu
+            </span>
+            ,{" "}
+            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+              music -i
+            </span>{" "}
+            to interact directly.
+          </p>
+        </div>
+      </div>
+
+      <hr className="divider" />
       <p className={styles["footer"]}>built with next.js + too much coffee</p>
     </div>
   );

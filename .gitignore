@@ -20,3 +20,6 @@ web-build/
 
 # Environment variables
 *.env
+
+# Claude
+.superpowers

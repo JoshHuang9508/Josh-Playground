@@ -31,7 +31,7 @@ div.article-header {
 }
 
 h1.article-title {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: bold;
   line-height: 1.3;
   color: #fff;
@@ -46,25 +46,25 @@ div.article-meta {
 
 span.article-date {
   font-family: Consolas, monospace;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: #888;
 }
 
 span.article-tag {
   padding: 0.1rem 0.4rem;
-  font-size: 0.65rem;
-  background-color: #0f3460;
+  font-size: 0.8rem;
+  background-color: rgb(0 0 0 / 30%);
   border-radius: 0.75rem;
 }
 
 span.article-read-time {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #888;
 }
 
 div.article-body {
   font-family: "Noto Sans TC", sans-serif;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   line-height: 1.7;
   color: #ccc;
 }
@@ -78,9 +78,9 @@ div.article-body h3 {
   color: #fff;
 }
 
-div.article-body h1 { font-size: 1.4rem; }
-div.article-body h2 { font-size: 1.2rem; }
-div.article-body h3 { font-size: 1rem; }
+div.article-body h1 { font-size: 1.6rem; }
+div.article-body h2 { font-size: 1.35rem; }
+div.article-body h3 { font-size: 1.15rem; }
 
 div.article-body p {
   margin-bottom: 0.75rem;
@@ -109,9 +109,9 @@ div.article-body li {
 div.article-body code {
   padding: 0.15rem 0.35rem;
   font-family: Consolas, monospace;
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #fff700;
-  background-color: #0f3460;
+  background-color: rgb(0 0 0 / 30%);
   border-radius: 0.25rem;
 }
 
@@ -120,7 +120,7 @@ div.article-body pre {
   margin-bottom: 0.75rem;
   overflow-x: auto;
   font-family: Consolas, monospace;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   line-height: 1.5;
   background-color: #0d1117;
   border: 1px solid #30363d;
@@ -157,7 +157,7 @@ div.article-nav {
 
 a.back-link {
   font-family: Consolas, monospace;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: #fff700;
   text-decoration: none;
 }
@@ -180,6 +180,6 @@ div.loading {
   }
 
   h1.article-title {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 }

@@ -77,6 +77,8 @@ export default function OsuStatsView() {
         </p>
       </div>
 
+      <hr className="divider" />
+
       <div className={styles["banner"]}>
         <img
           className={styles["osu-avatar"]}
@@ -152,6 +154,8 @@ export default function OsuStatsView() {
           <span className={styles["stat-label"]}>Play Time</span>
         </div>
       </div>
+
+      <hr className="divider" />
 
       <div className={styles["grade-card"]}>
         <span className={styles["grade-title"]}>Grade Distribution</span>

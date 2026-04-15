@@ -25,8 +25,10 @@ div.banner {
   gap: 1rem;
   align-items: center;
   padding: 1.25rem;
-  background: linear-gradient(135deg, #16213e, #1a1a3e);
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
 }
 
 img.osu-avatar {
@@ -43,13 +45,13 @@ div.banner-info {
 }
 
 span.osu-username {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
 }
 
 span.osu-details {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: #888;
 }
 
@@ -66,13 +68,13 @@ div.rank-item {
 
 span.rank-value {
   font-family: Consolas, monospace;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
 }
 
 span.rank-label {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #888;
 }
 
@@ -80,7 +82,7 @@ div.level-bar {
   height: 3px;
   margin-top: 0.5rem;
   overflow: hidden;
-  background-color: #0f3460;
+  background-color: rgb(0 0 0 / 30%);
   border-radius: 2px;
 }
 
@@ -92,7 +94,7 @@ div.level-fill {
 }
 
 span.level-text {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #888;
 }
 
@@ -108,30 +110,34 @@ div.stat-card {
   gap: 0.2rem;
   align-items: center;
   padding: 1rem;
-  background-color: #16213e;
+  background-color: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
 }
 
 span.stat-number {
   font-family: Consolas, monospace;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: bold;
   color: #fff;
 }
 
 span.stat-label {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #888;
 }
 
 div.grade-card {
   padding: 1rem;
-  background-color: #16213e;
+  background-color: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
 }
 
 span.grade-title {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: #888;
 }
 
@@ -157,7 +163,7 @@ div.grade-labels {
 
 span.grade-label {
   font-family: Consolas, monospace;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
 }
 
 div.unavailable {
@@ -167,7 +173,7 @@ div.unavailable {
   align-items: center;
   justify-content: center;
   min-height: 30vh;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #888;
 }
 

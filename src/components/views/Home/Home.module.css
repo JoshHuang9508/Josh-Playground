@@ -29,8 +29,10 @@ div.hero-card {
   gap: 1rem;
   align-items: center;
   padding: 1.25rem;
-  background-color: #16213e;
+  background-color: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
 }
 
 img.avatar {
@@ -57,7 +59,7 @@ div.hero-info {
 }
 
 span.hero-name {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: bold;
   color: #fff;
 }
@@ -66,14 +68,14 @@ span.hero-school {
   display: inline-block;
   width: fit-content;
   padding: 0.1rem 0.5rem;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #00f3ff;
   background-color: #00f3ff15;
   border-radius: 1rem;
 }
 
 p.hero-bio {
-  font-size: 0.8rem;
+  font-size: 1rem;
   line-height: 1.5;
   color: #bababa;
 }
@@ -102,15 +104,17 @@ div.preview-card {
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  background-color: #16213e;
+  background-color: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 div.preview-card:hover {
-  box-shadow: 0 4px 12px #00000060;
+  box-shadow: 0 4px 16px #00000050;
   transform: translateY(-2px);
 }
 
@@ -125,17 +129,17 @@ div.mini-repo {
   gap: 0.5rem;
   align-items: center;
   padding: 0.4rem 0.6rem;
-  background-color: #0f3460;
+  background-color: rgb(0 0 0 / 20%);
   border-radius: 0.35rem;
   transition: background-color 0.2s ease;
 }
 
 div.mini-repo:hover {
-  background-color: #0f346099;
+  background-color: rgb(0 0 0 / 30%);
 }
 
 span.mini-repo-name {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #fff;
 }
 
@@ -144,6 +148,44 @@ span.mini-lang-dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
+}
+
+div.mini-project {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  background-color: rgb(0 0 0 / 20%);
+  border-radius: 0.35rem;
+  transition: background-color 0.2s ease;
+}
+
+div.mini-project:hover {
+  background-color: rgb(0 0 0 / 30%);
+}
+
+div.mini-project-img {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 2rem;
+  overflow: hidden;
+  border-left: 2px solid;
+  border-radius: 0.25rem;
+}
+
+div.mini-project-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+div.mini-project-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 div.stat-row {
@@ -158,30 +200,30 @@ div.stat-item {
 
 span.stat-value {
   font-family: Consolas, monospace;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: #fff;
 }
 
 span.stat-label {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #888;
 }
 
 span.post-title {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: bold;
   color: #fff;
 }
 
 p.post-excerpt {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   line-height: 1.4;
   color: #888;
 }
 
 span.post-date {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #ffa24c;
 }
 
@@ -202,9 +244,68 @@ div.music-info.hidden {
   opacity: 0;
 }
 
+div.feature-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+div.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  background-color: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
+}
+
+p.feature-title {
+  font-family: Consolas, monospace;
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+p.feature-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #bababa;
+}
+
+div.shortcut-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+span.shortcut {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  font-family: Consolas, monospace;
+  font-size: 0.9rem;
+  color: #e6e6e6;
+  background-color: rgb(0 0 0 / 25%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 0.35rem;
+}
+
+span.shortcut-key {
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85rem;
+  color: #fff700;
+  background-color: rgb(0 0 0 / 30%);
+  border-radius: 0.2rem;
+}
+
 p.footer {
   font-family: Consolas, monospace;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #555;
 }
 

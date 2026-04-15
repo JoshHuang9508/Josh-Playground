@@ -65,7 +65,7 @@ div.timeline-dot {
 
 span.timeline-date {
   font-family: Consolas, monospace;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #888;
 }
 
@@ -76,26 +76,28 @@ div.post-card {
   padding: 0.75rem 1rem;
   margin-top: 0.35rem;
   cursor: pointer;
-  background-color: #16213e;
+  background-color: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 div.post-card:hover {
-  box-shadow: 0 4px 12px #00000060;
+  box-shadow: 0 4px 16px #00000050;
   transform: translateY(-2px);
 }
 
 span.post-title {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: bold;
   color: #fff;
 }
 
 p.post-excerpt {
-  font-size: 0.8rem;
+  font-size: 1rem;
   line-height: 1.4;
   color: #888;
 }
@@ -108,19 +110,19 @@ div.post-meta {
 
 span.tag-badge {
   padding: 0.1rem 0.4rem;
-  font-size: 0.65rem;
-  background-color: #0f3460;
+  font-size: 0.8rem;
+  background-color: rgb(0 0 0 / 30%);
   border-radius: 0.75rem;
 }
 
 span.read-time {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #888;
 }
 
 div.empty {
   padding: 2rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #888;
   text-align: center;
 }
