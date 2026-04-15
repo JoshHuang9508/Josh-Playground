@@ -1,0 +1,102 @@
+div.projects-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+  padding: 3rem 2rem 2rem;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
+div.projects-page::-webkit-scrollbar {
+  width: 0;
+}
+
+div.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+div.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+div.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  background-color: #16213e;
+  border-left: 3px solid #00ffaa;
+  border-radius: 0.5rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-left-width 0.2s ease;
+}
+
+div.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #00000060;
+  border-left-width: 5px;
+}
+
+span.repo-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+p.repo-desc {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 2;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #888;
+  -webkit-box-orient: vertical;
+}
+
+div.repo-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: auto;
+}
+
+span.lang {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+span.lang-dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+}
+
+span.stars {
+  font-size: 0.75rem;
+  color: #fff700;
+}
+
+@media (width <= 768px) {
+  div.grid {
+    grid-template-columns: 1fr;
+  }
+
+  div.projects-page {
+    padding: 3rem 1rem 2rem;
+  }
+}
