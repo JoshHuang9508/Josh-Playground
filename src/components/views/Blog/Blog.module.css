@@ -1,0 +1,132 @@
+div.blog-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  padding: 3rem 2rem 2rem;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
+div.blog-page::-webkit-scrollbar {
+  width: 0;
+}
+
+div.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+div.timeline {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+div.timeline-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0.35rem;
+  width: 1px;
+  background-color: #333;
+}
+
+div.timeline-entry {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+div.timeline-dot {
+  position: absolute;
+  top: 0.2rem;
+  left: -1.25rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  animation: pulse 0.6s ease forwards;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.4);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+span.timeline-date {
+  font-family: Consolas, monospace;
+  font-size: 0.7rem;
+  color: #888;
+}
+
+div.post-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 1rem;
+  margin-top: 0.35rem;
+  cursor: pointer;
+  background-color: #16213e;
+  border-radius: 0.5rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+div.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #00000060;
+}
+
+span.post-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+p.post-excerpt {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #888;
+}
+
+div.post-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+span.tag-badge {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.65rem;
+  background-color: #0f3460;
+  border-radius: 0.75rem;
+}
+
+span.read-time {
+  font-size: 0.65rem;
+  color: #888;
+}
+
+div.empty {
+  padding: 2rem;
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+}
+
+@media (width <= 768px) {
+  div.blog-page {
+    padding: 3rem 1rem 2rem;
+  }
+}
