@@ -66,7 +66,7 @@ export function useBlogPost(slug: string | null) {
         const { data, content } = matter.default(raw);
 
         const blogPost: BlogPost = {
-          slug,
+          slug: slug as string,
           title: data.title ?? slug,
           date: data.date ?? "",
           tags: data.tags ?? [],

@@ -91,19 +91,28 @@ export default function OsuStatsView() {
           </span>
           <div className={styles["rank-row"]}>
             <div className={styles["rank-item"]}>
-              <span className={styles["rank-value"]} style={{ color: "#fff700" }}>
+              <span
+                className={styles["rank-value"]}
+                style={{ color: "#fff700" }}
+              >
                 #{formatNumber(user.globalRank)}
               </span>
               <span className={styles["rank-label"]}>Global Rank</span>
             </div>
             <div className={styles["rank-item"]}>
-              <span className={styles["rank-value"]} style={{ color: "#00ffaa" }}>
+              <span
+                className={styles["rank-value"]}
+                style={{ color: "#00ffaa" }}
+              >
                 #{formatNumber(user.countryRank)}
               </span>
               <span className={styles["rank-label"]}>Country</span>
             </div>
             <div className={styles["rank-item"]}>
-              <span className={styles["rank-value"]} style={{ color: "#ffa24c" }}>
+              <span
+                className={styles["rank-value"]}
+                style={{ color: "#ffa24c" }}
+              >
                 {formatNumber(user.pp)}pp
               </span>
               <span className={styles["rank-label"]}>Performance</span>
@@ -147,9 +156,24 @@ export default function OsuStatsView() {
       <div className={styles["grade-card"]}>
         <span className={styles["grade-title"]}>Grade Distribution</span>
         <div className={styles["grade-bar"]}>
-          <div style={{ flex: user.gradeCounts.ss || 1, backgroundColor: "#fff700" }} />
-          <div style={{ flex: user.gradeCounts.s || 1, backgroundColor: "#ffa24c" }} />
-          <div style={{ flex: user.gradeCounts.a || 1, backgroundColor: "#00ffaa" }} />
+          <div
+            style={{
+              flex: user.gradeCounts.ss || 1,
+              backgroundColor: "#fff700",
+            }}
+          />
+          <div
+            style={{
+              flex: user.gradeCounts.s || 1,
+              backgroundColor: "#ffa24c",
+            }}
+          />
+          <div
+            style={{
+              flex: user.gradeCounts.a || 1,
+              backgroundColor: "#00ffaa",
+            }}
+          />
         </div>
         <div className={styles["grade-labels"]}>
           <span className={styles["grade-label"]} style={{ color: "#fff700" }}>

@@ -43,12 +43,8 @@ export default function HomeView() {
     if (!imageRef.current) return;
     const computed = window.getComputedStyle(imageRef.current);
     const matrix = new DOMMatrixReadOnly(computed.transform);
-    const rotation =
-      Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
-    imageRef.current.style.setProperty(
-      "--current-rotation",
-      `${rotation}deg`,
-    );
+    const rotation = Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
+    imageRef.current.style.setProperty("--current-rotation", `${rotation}deg`);
   };
 
   const handleMusicEnd = () => {
@@ -145,7 +141,9 @@ export default function HomeView() {
 
       <div className={styles["bento"]}>
         {/* Left column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+        >
           {/* Hero card */}
           <div className={styles["hero-card"]}>
             <img
@@ -227,7 +225,9 @@ export default function HomeView() {
         </div>
 
         {/* Right column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+        >
           {/* Projects preview */}
           <div className={styles["preview-card"]}>
             <div className={styles["preview-header"]}>
@@ -239,7 +239,11 @@ export default function HomeView() {
               </a>
             </div>
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.4rem",
+              }}
             >
               {topRepos.map((repo) => (
                 <div
@@ -287,7 +291,9 @@ export default function HomeView() {
             <div className={styles["stat-row"]}>
               <div className={styles["stat-item"]}>
                 <span className={styles["stat-value"]}>
-                  {osuUser ? `#${osuUser.globalRank?.toLocaleString() ?? "--"}` : "--"}
+                  {osuUser
+                    ? `#${osuUser.globalRank?.toLocaleString() ?? "--"}`
+                    : "--"}
                 </span>
                 <span className={styles["stat-label"]}>Global Rank</span>
               </div>
@@ -308,9 +314,7 @@ export default function HomeView() {
         </div>
       </div>
 
-      <p className={styles["footer"]}>
-        built with next.js + too much coffee
-      </p>
+      <p className={styles["footer"]}>built with next.js + too much coffee</p>
     </div>
   );
 }

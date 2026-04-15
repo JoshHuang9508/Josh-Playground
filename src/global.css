@@ -195,8 +195,8 @@ div.card {
 }
 
 div.card:hover {
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px #00000060;
+  transform: translateY(-2px);
 }
 
 /* Page header terminal-style */

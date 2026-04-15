@@ -50,10 +50,7 @@ export default function BlogView() {
           {posts.map((post, index) => {
             const tagColor = getTagColor(post.tags[0] ?? "");
             return (
-              <div
-                key={post.slug}
-                className={styles["timeline-entry"]}
-              >
+              <div key={post.slug} className={styles["timeline-entry"]}>
                 <div
                   className={styles["timeline-dot"]}
                   style={{
@@ -64,9 +61,7 @@ export default function BlogView() {
                 <span className={styles["timeline-date"]}>{post.date}</span>
                 <div
                   className={styles["post-card"]}
-                  onClick={() =>
-                    (window.location.hash = `#/blog/${post.slug}`)
-                  }
+                  onClick={() => (window.location.hash = `#/blog/${post.slug}`)}
                 >
                   <span className={styles["post-title"]}>{post.title}</span>
                   <p className={styles["post-excerpt"]}>{post.excerpt}</p>

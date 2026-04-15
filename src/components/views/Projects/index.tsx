@@ -37,9 +37,7 @@ export default function ProjectsView() {
         <p className="page-header" style={{ color: "#00ffaa" }}>
           ~/projects
         </p>
-        <p className="page-subtitle">
-          My open-source work and side projects
-        </p>
+        <p className="page-subtitle">My open-source work and side projects</p>
       </div>
 
       {loading && <p style={{ color: "#888" }}>Loading repos...</p>}
@@ -66,8 +64,7 @@ export default function ProjectsView() {
                   <span
                     className={styles["lang-dot"]}
                     style={{
-                      backgroundColor:
-                        languageColors[repo.language] ?? "#ccc",
+                      backgroundColor: languageColors[repo.language] ?? "#ccc",
                     }}
                   />
                   {repo.language}

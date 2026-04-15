@@ -78,7 +78,10 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
       </div>
 
       <div className={styles["article-body"]}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeHighlight]}
+        >
           {post.content}
         </ReactMarkdown>
       </div>

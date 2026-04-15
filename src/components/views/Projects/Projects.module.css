@@ -33,7 +33,7 @@ div.project-card {
   padding: 0.75rem 1rem;
   cursor: pointer;
   background-color: #16213e;
-  border-left: 3px solid #00ffaa;
+  border-left: 3px solid #0fa;
   border-radius: 0.5rem;
   transition:
     transform 0.2s ease,
@@ -42,9 +42,9 @@ div.project-card {
 }
 
 div.project-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px #00000060;
   border-left-width: 5px;
+  box-shadow: 0 4px 12px #00000060;
+  transform: translateY(-2px);
 }
 
 span.repo-name {

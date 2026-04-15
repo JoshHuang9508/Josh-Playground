@@ -29,11 +29,11 @@ span.segment.active {
 }
 
 span.home {
-  color: #00ffaa;
+  color: #0fa;
 }
 
 span.home:hover {
-  color: #00ffdd;
+  color: #0fd;
 }
 
 span.separator {
