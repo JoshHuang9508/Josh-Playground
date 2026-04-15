@@ -1,10 +1,10 @@
 [
   {
-    "slug": "2026-04-10-terminal-ui",
-    "title": "Building a Terminal UI for My Website",
-    "date": "2026-04-10",
+    "slug": "20260416",
+    "title": "第一次用 Claude Code 搭配 Plugins & Skill 寫個人網頁",
+    "date": "2026-04-16",
     "tags": ["dev"],
-    "excerpt": "How I built a draggable, resizable console component with React and made it a core part of my personal site.",
-    "readTime": 3
+    "excerpt": "紀錄一些在用 Claude Code Vibing 這個網站時的趣聞",
+    "readTime": 1
   }
 ]
