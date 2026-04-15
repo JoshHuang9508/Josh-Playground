@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Provider } from "react-redux";
 import dotenv from "dotenv";
 dotenv.config({ path: ".env" });
@@ -9,7 +9,7 @@ import store from "@/redux";
 
 import { Command } from "@/lib/types";
 
-import { TEXT_CONTENT } from "@/lib/constants";
+import { MUSIC_LIST, TEXT_CONTENT } from "@/lib/constants";
 
 import { t } from "@/lib/i18n";
 
@@ -29,12 +29,20 @@ import "@/global.css";
 import styles from "./_app.module.css";
 
 function PageComponent() {
+  const audioPlayerRef = useRef<HTMLAudioElement>(null);
+
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
   const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [username, setUsername] = useState<string>(t("global.defaultUsername"));
   const [currentHash, setCurrentHash] = useState<string>("/");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [musicIndex, setMusicIndex] = useState(0);
+
+  const handleMusicEnd = () => {
+    setMusicIndex((prev) => (prev + 1) % MUSIC_LIST.length);
+  };
 
   useEffect(() => {
     const updateHash = () => {
@@ -52,6 +60,28 @@ function PageComponent() {
   //   );
   //   setIsMobile(isMobile);
   // }, []);
+
+  useEffect(() => {
+    const onInteraction = () => {
+      if (!audioPlayerRef.current || isPlaying) return;
+      audioPlayerRef.current.play();
+      audioPlayerRef.current.volume = 0.05;
+      setIsPlaying(true);
+    };
+    document.addEventListener("click", onInteraction);
+    document.addEventListener("touchstart", onInteraction);
+    return () => {
+      document.removeEventListener("click", onInteraction);
+      document.removeEventListener("touchstart", onInteraction);
+    };
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (!audioPlayerRef.current) return;
+    audioPlayerRef.current.src = MUSIC_LIST[musicIndex].path;
+    audioPlayerRef.current.play();
+    audioPlayerRef.current.volume = 0.05;
+  }, [musicIndex]);
 
   const renderView = () => {
     if (currentHash.startsWith("/blog/") && currentHash !== "/blog") {
@@ -76,6 +106,12 @@ function PageComponent() {
 
   return (
     <Provider store={store}>
+      <audio
+        data-audio-player
+        ref={audioPlayerRef}
+        src={MUSIC_LIST[musicIndex].path}
+        onEnded={handleMusicEnd}
+      />
       <Head>
         <title>
           {t(

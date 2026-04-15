@@ -6,6 +6,8 @@ import { AddConsoleLog, SetCommand } from "@/redux";
 
 import { Command, CommandHandler } from "@/lib/types";
 
+import { MUSIC_LIST } from "@/lib/constants";
+
 import { t } from "@/lib/i18n";
 
 import { clearActiveConsole, setActiveConsole } from "@/lib/consoleLog";
@@ -216,6 +218,30 @@ export default function useCommandHandler(handlers: CommandHandlers) {
         downloadAudio();
         return;
       }
+    },
+    music: (_cmd, _args, flags) => {
+      if (flags.includes("-l") || flags.includes("--list")) {
+        AddConsoleLog(
+          t("commands.music.list"),
+          ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`),
+        );
+        return;
+      }
+      if (flags.includes("-p") || flags.includes("--play")) {
+        const audioPlayer = document.querySelector(
+          "[data-audio-player]",
+        ) as HTMLAudioElement;
+        if (audioPlayer) audioPlayer.play();
+        return;
+      }
+      if (flags.includes("-s") || flags.includes("--stop")) {
+        const audioPlayer = document.querySelector(
+          "[data-audio-player]",
+        ) as HTMLAudioElement;
+        if (audioPlayer) audioPlayer.pause();
+        return;
+      }
+      AddConsoleLog(t("commands.music.usage"));
     },
   };
 

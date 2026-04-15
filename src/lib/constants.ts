@@ -53,6 +53,12 @@ export const COMMAND_LIST = {
       usage: "@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
       options: ["-v", "-a", "--video", "--audio"],
     },
+    {
+      name: "music",
+      description: "Control background music playback",
+      usage: "@#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#",
+      options: ["-p", "-s", "-i", "-l", "--play", "--stop", "--info", "--list"],
+    },
   ],
   "/": [
     {
@@ -94,12 +100,6 @@ export const COMMAND_LIST = {
       name: "osu",
       description: "Open my osu! profile in a new tab",
       usage: "@#00ffaaosu@#",
-    },
-    {
-      name: "music",
-      description: "Control background music playback",
-      usage: "@#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#",
-      options: ["-p", "-s", "-i", "-l", "--play", "--stop", "--info", "--list"],
     },
   ],
   "listentogether/": [

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { AddConsoleLog } from "@/redux";
 
-import { MUSIC_LIST } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
 import useOsuStats from "@/lib/hooks/OsuStats";
@@ -23,19 +22,12 @@ const SOCIAL_LINKS = [
 
 export default function HomeView() {
   const imageRef = useRef<HTMLImageElement>(null);
-  const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [musicIndex, setMusicIndex] = useState(0);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
 
   const { user: osuUser } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
   const latestPost = blogPosts[0] ?? null;
-
-  const handleMusicEnd = () => {
-    setMusicIndex((prev) => (prev + 1) % MUSIC_LIST.length);
-  };
 
   useCommandHandler({
     github: () => {
@@ -70,40 +62,7 @@ export default function HomeView() {
       window.open("https://osu.ppy.sh/users/15100005", "_blank");
       AddConsoleLog(t("home.commands.osu"));
     },
-    music: (_cmd, _args, flags) => {
-      if (flags.includes("-l") || flags.includes("--list")) {
-        AddConsoleLog(
-          t("commands.music.list"),
-          ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`),
-        );
-        return;
-      }
-      if (flags.includes("-p") || flags.includes("--play")) {
-        if (audioPlayerRef.current) audioPlayerRef.current.play();
-        return;
-      }
-      if (flags.includes("-s") || flags.includes("--stop")) {
-        if (audioPlayerRef.current) audioPlayerRef.current.pause();
-        return;
-      }
-      AddConsoleLog(t("commands.music.usage"));
-    },
   });
-
-  useEffect(() => {
-    const onInteraction = () => {
-      if (!audioPlayerRef.current || isPlaying) return;
-      audioPlayerRef.current.play();
-      audioPlayerRef.current.volume = 0.05;
-      setIsPlaying(true);
-    };
-    document.addEventListener("click", onInteraction);
-    document.addEventListener("touchstart", onInteraction);
-    return () => {
-      document.removeEventListener("click", onInteraction);
-      document.removeEventListener("touchstart", onInteraction);
-    };
-  }, [isPlaying]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -112,21 +71,8 @@ export default function HomeView() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.src = MUSIC_LIST[musicIndex].path;
-    audioPlayerRef.current.play();
-    audioPlayerRef.current.volume = 0.05;
-  }, [musicIndex]);
-
   return (
     <div className={styles["home-page"]}>
-      <audio
-        ref={audioPlayerRef}
-        src={MUSIC_LIST[musicIndex].path}
-        onEnded={handleMusicEnd}
-      />
-
       <div className={styles["feature-section"]}>
         <span className="section-label" style={{ color: "#fff700" }}>
           ABOUT ME
