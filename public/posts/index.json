@@ -1,0 +1,10 @@
+[
+  {
+    "slug": "2026-04-10-terminal-ui",
+    "title": "Building a Terminal UI for My Website",
+    "date": "2026-04-10",
+    "tags": ["dev"],
+    "excerpt": "How I built a draggable, resizable console component with React and made it a core part of my personal site.",
+    "readTime": 3
+  }
+]
