@@ -21,6 +21,8 @@ import MobileView from "@/components/views/Mobile";
 import ListenTogetherView from "@/components/views/ListenTogether";
 import YtDownloaderView from "@/components/views/YtDownloader";
 import NotFoundView from "@/components/views/NotFound";
+import ProjectsView from "@/components/views/Projects";
+import Navigation from "@/components/Navigation";
 
 import "@/global.css";
 import styles from "./_app.module.css";
@@ -58,6 +60,8 @@ function PageComponent() {
       switch (currentHash) {
         case "/":
           return <HomeView />;
+        case "/projects":
+          return <ProjectsView />;
         case "/listentogether":
           return <ListenTogetherView />;
         case "/ytdownloader":
@@ -145,6 +149,7 @@ function PageComponent() {
             className={styles["background"]}
             alt="background"
           />
+          <Navigation currentHash={currentHash} />
           <div className={styles["container"]}>{renderView()}</div>
           {!isMobile && <ConsoleManager />}
         </div>
