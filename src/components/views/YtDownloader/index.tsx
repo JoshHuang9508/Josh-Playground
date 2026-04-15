@@ -3,17 +3,15 @@ import ReactPlayer from "react-player";
 
 import { AddConsoleLog } from "@/redux";
 
-import ColorSpan from "@/components/ColorSpan";
+import { API_URL, TEXT_CONTENT } from "@/lib/constants";
 
-import useCommandHandler from "@/hooks/useCommandHandler";
-
-import textContent from "@/lib/text-content.json";
 import { t } from "@/lib/i18n";
 
-import { API_URL } from "@/constants";
+import useCommandHandler from "@/lib/hooks/CommandHandler";
+
+import ColorSpan from "@/components/ColorSpan";
 
 export default function YtDownloaderView() {
-  // Functions
   const getVideoBlob = async (
     videoId: string,
     format: string,
@@ -74,7 +72,6 @@ export default function YtDownloaderView() {
     }
   };
 
-  // Command handler
   useCommandHandler({
     download: (_cmd, args, flags) => {
       const URL = args[0] ?? "";
@@ -133,7 +130,7 @@ export default function YtDownloaderView() {
               justifyContent: "center",
             }}
           >
-            {textContent["/ytdownloader"].tutorial.map((content, index) => {
+            {TEXT_CONTENT["/ytdownloader"].tutorial.map((content, index) => {
               if (index == 0)
                 return (
                   <div key={index}>

@@ -1,4 +1,4 @@
-import textContent from "@/lib/text-content.json";
+import { TEXT_CONTENT } from "@/lib/constants";
 
 type NestedRecord = { [key: string]: string | string[] | NestedRecord };
 
@@ -11,7 +11,7 @@ type NestedRecord = { [key: string]: string | string[] | NestedRecord };
  */
 export function t(key: string, ...args: string[]): any {
   const keys = key.split(".");
-  let value: unknown = textContent;
+  let value: unknown = TEXT_CONTENT;
   for (const k of keys) {
     if (value && typeof value === "object" && k in value) {
       value = (value as NestedRecord)[k];

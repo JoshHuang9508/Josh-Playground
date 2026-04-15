@@ -1,24 +1,22 @@
 import React, { useEffect, useRef } from "react";
 
-import styles from "@/styles/index.module.css";
-
 import { AddConsoleLog } from "@/redux";
+
+import { MUSIC_LIST, TEXT_CONTENT } from "@/lib/constants";
+
+import { t } from "@/lib/i18n";
+
+import useCommandHandler from "@/lib/hooks/CommandHandler";
+import useGitHubRepos from "@/lib/hooks/GitHubRepos";
 
 import ColorSpan from "@/components/ColorSpan";
 import GitHubRepoCard from "@/components/GitHubRepoCard";
 
-import useCommandHandler from "@/hooks/useCommandHandler";
-import useGitHubRepos from "@/hooks/useGitHubRepos";
-
-import textContent from "@/lib/text-content.json";
-import musicList from "@/lib/music-list.json";
-import { t } from "@/lib/i18n";
+import styles from "./Mobile.module.css";
 
 export default function MobileView() {
-  // Hooks
   const { repos } = useGitHubRepos("JoshHuang9508");
 
-  // Refs
   const scrollSpeedRef = useRef<number[]>(
     Array.from({ length: 3 }).reduce<number[]>((acc, _) => {
       const getRandomSpeed = () => {
@@ -34,13 +32,11 @@ export default function MobileView() {
   const imageRef = useRef<HTMLImageElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
-  // States
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [musicIndex, setMusicIndex] = React.useState(0);
   const [showMusicInfo, setShowMusicInfo] = React.useState(false);
   const [currentSocialIndex, setCurrentSocialIndex] = React.useState(0);
 
-  // Functions
   const stopSpin = () => {
     if (!imageRef.current) return;
 
@@ -55,13 +51,11 @@ export default function MobileView() {
     );
   };
 
-  // Handlers
   const handleMusicEnd = () => {
     if (!audioPlayerRef.current) return;
-    setMusicIndex((musicIndex + 1) % musicList.length);
+    setMusicIndex((musicIndex + 1) % MUSIC_LIST.length);
   };
 
-  // Command handler
   useCommandHandler({
     github: () => {
       window.open("https://github.com/JoshHuang9508", "_blank");
@@ -99,7 +93,7 @@ export default function MobileView() {
       if (flags.includes("-l") || flags.includes("--list")) {
         AddConsoleLog(
           t("commands.music.list"),
-          ...musicList.map((_, index) => `#${index} - ${_.name}`),
+          ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`),
         );
         return;
       }
@@ -122,7 +116,6 @@ export default function MobileView() {
     },
   });
 
-  // Effects
   useEffect(() => {
     const onInteraction = () => {
       if (!audioPlayerRef.current || isPlaying) return;
@@ -140,7 +133,7 @@ export default function MobileView() {
 
   useEffect(() => {
     if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.src = musicList[musicIndex].path;
+    audioPlayerRef.current.src = MUSIC_LIST[musicIndex].path;
     audioPlayerRef.current.play();
     audioPlayerRef.current.volume = 0.05;
   }, [musicIndex]);
@@ -148,7 +141,7 @@ export default function MobileView() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSocialIndex(
-        (prev) => (prev + 1) % textContent["/"].social.length,
+        (prev) => (prev + 1) % TEXT_CONTENT["/"].social.length,
       );
     }, 5000);
     return () => {
@@ -161,7 +154,7 @@ export default function MobileView() {
       <audio
         ref={audioPlayerRef}
         id="audio"
-        src={musicList[musicIndex].path}
+        src={MUSIC_LIST[musicIndex].path}
         onEnded={handleMusicEnd}
       />
       <div className={"container1"}>
@@ -183,7 +176,7 @@ export default function MobileView() {
             }`}
           >
             <ColorSpan
-              str={t("commands.music.nowPlaying", musicList[musicIndex].name)}
+              str={t("commands.music.nowPlaying", MUSIC_LIST[musicIndex].name)}
               className="p1"
               style={{ whiteSpace: "pre" }}
             />
@@ -195,7 +188,7 @@ export default function MobileView() {
               justifyContent: "center",
             }}
           >
-            {textContent["/"].about.map((content, index) => {
+            {TEXT_CONTENT["/"].about.map((content, index) => {
               if (index == 0)
                 return (
                   <div key={index}>
@@ -214,18 +207,17 @@ export default function MobileView() {
             >
               <img
                 className={styles["social-icon"]}
-                src={`/assets/${textContent["/"].social[currentSocialIndex].icon}.png`}
-                alt={textContent["/"].social[currentSocialIndex].icon}
+                src={`/assets/${TEXT_CONTENT["/"].social[currentSocialIndex].icon}.png`}
+                alt={TEXT_CONTENT["/"].social[currentSocialIndex].icon}
               />
               <ColorSpan
-                str={textContent["/"].social[currentSocialIndex].value}
+                str={TEXT_CONTENT["/"].social[currentSocialIndex].value}
                 className="p1"
               />
             </div>
           </div>
         </div>
       </div>
-
       <div className={styles["repo-wall"]}>
         {Array.from({ length: 3 }).map((_, colIndex) => (
           <div

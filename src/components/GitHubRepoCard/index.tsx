@@ -1,14 +1,16 @@
 import React from "react";
+
 import { GitHubRepo } from "@/lib/types";
-import { languageColors } from "@/hooks/useGitHubRepos";
-import styles from "@/styles/index.module.css";
+
+import { languageColors } from "@/lib/hooks/GitHubRepos";
+
+import styles from "./GitHubRepoCard.module.css";
 
 interface GitHubRepoCardProps {
   repo: GitHubRepo;
 }
 
 export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
-  // Variables
   const langColor = repo.language
     ? (languageColors[repo.language] ?? "#ccc")
     : null;
@@ -38,11 +40,9 @@ export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
           {repo.visibility}
         </span>
       </div>
-
       {repo.description && (
         <p className={styles["repo-card-desc"]}>{repo.description}</p>
       )}
-
       <div className={styles["repo-card-footer"]}>
         {repo.language && (
           <span className={styles["repo-card-meta"]}>
@@ -53,7 +53,6 @@ export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
             {repo.language}
           </span>
         )}
-
         {repo.stars > 0 && (
           <span className={styles["repo-card-meta"]}>
             <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
@@ -62,7 +61,6 @@ export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
             {repo.stars}
           </span>
         )}
-
         {repo.forks > 0 && (
           <span className={styles["repo-card-meta"]}>
             <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
@@ -71,7 +69,6 @@ export default function GitHubRepoCard({ repo }: GitHubRepoCardProps) {
             {repo.forks}
           </span>
         )}
-
         <span className={styles["repo-card-meta"]}>{repo.updatedAt}</span>
       </div>
     </div>

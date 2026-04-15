@@ -7,7 +7,6 @@ interface ColorSpanProps {
 }
 
 function ColorSpan({ str, className, style }: ColorSpanProps) {
-  // Functions
   const isValidColorCode = (color: string) => {
     const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
     return regex.test(color);

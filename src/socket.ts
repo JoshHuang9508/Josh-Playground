@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { PlayerState, Track, User } from "@/lib/types";
 
-import { API_URL } from "@/constants";
+import { API_URL } from "@/lib/constants";
 
 export default class ListenTogetherSocket {
   private socket: Socket;

@@ -6,23 +6,27 @@ import React, {
   useState,
 } from "react";
 
-import styles from "@/styles/_app.module.css";
+import { AddConsoleLog, SetCommand, SetUsername } from "@/redux";
 
-import store, { AddConsoleLog, SetUsername } from "@/redux";
-import { setCommand } from "@/redux/commandSlice";
-
-import { AppContext } from "@/hooks/useCommandHandler";
-
-import { Command } from "@/lib/types";
+import { AppContext } from "@/lib/hooks/CommandHandler";
 
 import ColorSpan from "@/components/ColorSpan";
 import { WindowState } from "@/components/ConsoleManager";
 
-import commandList from "@/lib/command-list.json";
-import pathList from "@/lib/path-list.json";
-import { subscribeConsole, setActiveConsole } from "@/lib/consoleLog";
+import { Command } from "@/lib/types";
+
+import {
+  CONSOLE_MIN_WIDTH,
+  CONSOLE_MIN_HEIGHT,
+  COMMAND_LIST,
+  PATH_LIST,
+} from "@/lib/constants";
+
 import { t } from "@/lib/i18n";
-import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from "@/constants";
+
+import { subscribeConsole, setActiveConsole } from "@/lib/consoleLog";
+
+import styles from "./Console.module.css";
 
 interface ConsoleProps {
   id: string;
@@ -37,7 +41,6 @@ function Console({
   onWindowStateChange,
   positionOffset,
 }: ConsoleProps) {
-  // Hooks
   const {
     availableCommands,
     availablePaths,
@@ -52,7 +55,6 @@ function Console({
     currentHash,
   } = useContext(AppContext)!;
 
-  // Refs
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
   const outputEndRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,6 @@ function Console({
     height: 300,
   });
 
-  // States
   const [position, setPosition] = useState(() => ({
     x: window.innerWidth * 0.2 + positionOffset,
     y: window.innerHeight - 600 - window.innerHeight * 0.02 + positionOffset,
@@ -93,12 +94,10 @@ function Console({
   const [availableIndex, setAvailableIndex] = useState<number>(0);
   const [isTabing, setIsTabing] = useState(false);
 
-  // Variables
   const prefix = window
     ? `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
     : `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${t("global.siteName")}@#:~${currentURL}$ `;
 
-  // Functions
   const findAvailablePath = (input: string) => {
     const paths = input.split("/");
     const lastPath = paths.pop();
@@ -113,7 +112,7 @@ function Console({
       }
     });
     return (
-      pathList[`/${pagePaths.join("/")}`]?.filter((_) =>
+      PATH_LIST[`/${pagePaths.join("/")}`]?.filter((_) =>
         _.startsWith(lastPath),
       ) ?? []
     );
@@ -166,7 +165,6 @@ function Console({
     return availables;
   };
 
-  // Handlers
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
@@ -188,7 +186,7 @@ function Console({
       setCmdHistory([command, ...cmdHistory]);
       setCmdHistoryIndex(-1);
 
-      store.dispatch(setCommand(command));
+      SetCommand(command);
 
       handleInputChange({ target: { value: "" } });
       return;
@@ -217,7 +215,6 @@ function Console({
         target: { value: newIndex !== -1 ? cmdHistory[newIndex] : "" },
       });
     }
-    // Auto complete
     if (event.key === "Tab") {
       event.preventDefault();
       let input = inputTemp;
@@ -377,7 +374,6 @@ function Console({
     document.addEventListener("mouseup", handleMouseUp);
   };
 
-  // Effects
   useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -448,13 +444,13 @@ function Console({
     setCurrentURL(hashPaths.length > 0 ? `/${hashPaths.join("/")}/` : "/");
     setAvailableCommands(
       [
-        ...commandList["*"],
-        ...(commandList[
+        ...COMMAND_LIST["*"],
+        ...(COMMAND_LIST[
           hashPaths.length > 0 ? `${hashPaths.join("/")}/` : "/"
         ] ?? []),
       ].sort((a, b) => a.name.localeCompare(b.name)),
     );
-    setAvailablePaths(pathList[`/${hashPaths.join("/")}`] ?? []);
+    setAvailablePaths(PATH_LIST[`/${hashPaths.join("/")}`] ?? []);
   }, [currentHash]);
 
   useEffect(() => {
@@ -480,7 +476,6 @@ function Console({
         display: windowState === "minimized" ? "none" : undefined,
       }}
     >
-      {/* Resize handles (hidden when maximized) */}
       {windowState !== "maximized" && (
         <>
           <div
@@ -517,8 +512,6 @@ function Console({
           />
         </>
       )}
-
-      {/* Header */}
       <div
         className={`${styles["header"]} ${isDragging ? styles["dragging"] : ""}`}
         onMouseDown={handleDragStart}
@@ -530,8 +523,6 @@ function Console({
         </div>
         <p className={styles["title"]}>{t("console.title", id)}</p>
       </div>
-
-      {/* Output */}
       <div
         tabIndex={-1}
         className={styles["output"]}
@@ -542,16 +533,13 @@ function Console({
             <ColorSpan str={content} />
           </div>
         ))}
-
         <div ref={outputEndRef} />
       </div>
-
       {available[0] && (
         <div className={styles["prompt"]}>
           <ColorSpan str={`@#FFF700${available.join("@#, @#FFF700")}`} />
         </div>
       )}
-
       <div className={styles["input"]}>
         <ColorSpan str={prefix} style={{ minWidth: "fit-content" }} />
         <input

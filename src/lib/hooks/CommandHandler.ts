@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 
-import store, { AddConsoleLog } from "@/redux";
-import { setCommand } from "@/redux/commandSlice";
+import { AddConsoleLog, SetCommand } from "@/redux";
+
+import { Command, CommandHandler } from "@/lib/types";
+
+import { t } from "@/lib/i18n";
 
 import { clearActiveConsole, setActiveConsole } from "@/lib/consoleLog";
-import { t } from "@/lib/i18n";
-import { Command, CommandHandler } from "@/lib/types";
 
 export type CommandHandlers = Record<string, CommandHandler>;
 
@@ -37,11 +38,9 @@ export function parseCommand(command: string) {
 const webPaths = ["listentogether", "ytdownloader"];
 
 export default function useCommandHandler(handlers: CommandHandlers) {
-  // Hooks
   const command = useSelector((state: { command: string }) => state.command);
   const appContext = useContext(AppContext);
 
-  // Functions
   const renderWebPaths = (paths: any, prefix: string): string[] => {
     const result: string[] = [];
     paths.map((path, index) => {
@@ -150,7 +149,6 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     };
   };
 
-  // Variables
   const builtInHandlers: CommandHandlers = {
     echo: (_cmd, args) => {
       AddConsoleLog(args.join(" "));
@@ -202,7 +200,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
       AddConsoleLog(t("commands.commandNotFound", command));
     }
 
-    store.dispatch(setCommand(""));
+    SetCommand("");
     setActiveConsole(null);
   }, [command]);
 }

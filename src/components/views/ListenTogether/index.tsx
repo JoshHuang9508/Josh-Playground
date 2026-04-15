@@ -2,28 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import ReactPlayer from "react-player";
 
-import styles from "@/styles/listentogether.module.css";
-
 import { AddConsoleLog } from "@/redux";
+
+import ListenTogetherSocket from "@/socket";
 
 import { PlayerState, Track, PlayerStateClient, User } from "@/lib/types";
 
-import useCommandHandler from "@/hooks/useCommandHandler";
+import { API_URL } from "@/lib/constants";
 
-import { API_URL } from "@/constants";
 import { t } from "@/lib/i18n";
 
+import useCommandHandler from "@/lib/hooks/CommandHandler";
+
 import { IDiffArray, IDiffObject } from "@/utils";
-import ListenTogetherSocket from "@/socket";
+
+import styles from "./ListenTogether.module.css";
 
 export default function ListenTogetherView() {
-  // Refs
   const playerRef = useRef<ReactPlayer>(null);
 
-  // Redux
   const username = useSelector((state: { user: string }) => state.user);
 
-  // States
   const [mute, setMute] = useState(true);
   const [socketInstance, setSocketInstance] =
     useState<ListenTogetherSocket | null>(null);
@@ -55,7 +54,6 @@ export default function ListenTogetherView() {
   const [users, setUsers] = useState<User>({});
   const [cachedUsers, setCachedUsers] = useState<User>({});
 
-  // Functions
   const getVideoInfo = async (videoId: string): Promise<Track> => {
     const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
       method: "GET",
@@ -114,7 +112,6 @@ export default function ListenTogetherView() {
     return tracks;
   };
 
-  // Handlers
   const handlePlayerEnded = () => {
     socketInstance?.onEnded();
   };
@@ -153,7 +150,6 @@ export default function ListenTogetherView() {
     }, 1000);
   };
 
-  // Command handler
   useCommandHandler({
     send: (_cmd, args) => {
       const message = args.join(" ") ?? "";
@@ -425,7 +421,6 @@ export default function ListenTogetherView() {
     },
   });
 
-  // Effects
   useEffect(() => {
     const onInteraction = () => {
       if (PlayerStateClientState.isReady) setMute(false);

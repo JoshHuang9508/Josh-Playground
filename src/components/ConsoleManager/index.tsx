@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import styles from "@/styles/_app.module.css";
+import { t } from "@/lib/i18n";
 
 import Console from "@/components/Console";
-import { t } from "@/lib/i18n";
+
+import styles from "./ConsoleManager.module.css";
 
 export type WindowState = "normal" | "minimized" | "maximized" | "closed";
 
@@ -14,21 +15,17 @@ type ConsoleInstance = {
 };
 
 function ConsoleManager() {
-  // Refs
   const nextIdRef = useRef(2);
   const nextZIndexRef = useRef(999);
 
-  // States
   const [consoles, setConsoles] = useState<ConsoleInstance[]>([
     { id: "1", windowState: "normal", positionOffset: 0 },
   ]);
 
-  // Variables
   const minimizedConsoles = consoles.filter(
     (c) => c.windowState === "minimized",
   );
 
-  // Functions
   const addConsole = () => {
     const currentId = nextIdRef.current;
     nextIdRef.current += 1;
@@ -38,7 +35,6 @@ function ConsoleManager() {
     ]);
   };
 
-  // Handlers
   const handleWindowStateChange = (id: string, state: WindowState) => {
     if (state === "closed") {
       setConsoles((prev) => prev.filter((c) => c.id !== id));
@@ -49,7 +45,6 @@ function ConsoleManager() {
     );
   };
 
-  // Effects
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "`") {
@@ -101,7 +96,6 @@ function ConsoleManager() {
           positionOffset={c.positionOffset}
         />
       ))}
-
       {minimizedConsoles.length > 0 && (
         <div className={styles["taskbar"]}>
           {minimizedConsoles.map((c) => (

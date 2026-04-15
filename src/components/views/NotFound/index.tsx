@@ -1,12 +1,12 @@
 import React from "react";
 
-import ColorSpan from "@/components/ColorSpan";
-
-import useCommandHandler from "@/hooks/useCommandHandler";
 import { t } from "@/lib/i18n";
 
+import useCommandHandler from "@/lib/hooks/CommandHandler";
+
+import ColorSpan from "@/components/ColorSpan";
+
 export default function NotFoundView() {
-  // Command handler
   useCommandHandler({});
 
   return (

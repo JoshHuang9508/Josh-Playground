@@ -13,10 +13,10 @@ export type CommandHandler = (
 ) => void;
 
 export type Track = {
-  url: string; //https://www.youtube.com/watch?v={ID}
+  url: string; // e.g. https://www.youtube.com/watch?v={ID}
   title: string;
   author: string;
-  img: string; //https://img.youtube.com/vi/{ID}/default.jpg
+  img: string; // e.g. https://img.youtube.com/vi/{ID}/default.jpg
   requestBy: string;
   id: number;
 };

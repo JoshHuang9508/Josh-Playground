@@ -24,7 +24,7 @@ body {
   height: 100vh;
   overflow: hidden;
   font-family: Consolas, "Noto Sans TC", sans-serif;
-  font-size: clamp(12px, 0.75vw, 18px);
+  font-size: clamp(12px, 0.75vw, 14px);
   color: white;
   background-color: rgb(48 48 48 / 80%);
 }

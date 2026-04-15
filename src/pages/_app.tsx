@@ -1,31 +1,31 @@
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import dotenv from "dotenv";
+dotenv.config({ path: ".env" });
 import Head from "next/head";
 import dynamic from "next/dynamic";
 
-dotenv.config({ path: ".env" });
-
-import "@/styles/global.css";
-import styles from "@/styles/_app.module.css";
 import store from "@/redux";
-
-import ConsoleManager from "@/components/ConsoleManager";
-import HomeView from "@/components/views/HomeView";
-import MobileView from "@/components/views/MobileView";
-import ListenTogetherView from "@/components/views/ListenTogetherView";
-import YtDownloaderView from "@/components/views/YtDownloaderView";
-import NotFoundView from "@/components/views/NotFoundView";
 
 import { Command } from "@/lib/types";
 
-import { AppContext } from "@/hooks/useCommandHandler";
+import { TEXT_CONTENT } from "@/lib/constants";
 
-import textContent from "@/lib/text-content.json";
 import { t } from "@/lib/i18n";
 
+import { AppContext } from "@/lib/hooks/CommandHandler";
+
+import ConsoleManager from "@/components/ConsoleManager";
+import HomeView from "@/components/views/Home";
+import MobileView from "@/components/views/Mobile";
+import ListenTogetherView from "@/components/views/ListenTogether";
+import YtDownloaderView from "@/components/views/YtDownloader";
+import NotFoundView from "@/components/views/NotFound";
+
+import "@/global.css";
+import styles from "./_app.module.css";
+
 function PageComponent() {
-  // States
   const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
@@ -34,7 +34,6 @@ function PageComponent() {
   const [currentHash, setCurrentHash] = useState<string>("/");
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
-  // Effects
   useEffect(() => {
     const updateHash = () => {
       const hash = window.location.hash.slice(1) || "/";
@@ -52,7 +51,6 @@ function PageComponent() {
     setIsMobile(isMobile);
   }, []);
 
-  // Functions
   const renderView = () => {
     if (isMobile) {
       return <MobileView />;
@@ -76,26 +74,26 @@ function PageComponent() {
         <title>
           {t(
             "global.siteTitle",
-            textContent[currentHash]?.title ?? textContent["*"].title,
+            TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT["*"].title,
           )}
         </title>
         <meta
           name="description"
           content={
-            textContent[currentHash]?.subtitle ?? textContent["*"].subtitle
+            TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT["*"].subtitle
           }
         />
         <meta
           property="og:title"
           content={t(
             "global.siteTitle",
-            textContent[currentHash]?.title ?? textContent["*"].title,
+            TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT["*"].title,
           )}
         />
         <meta
           property="og:description"
           content={
-            textContent[currentHash]?.subtitle ?? textContent["*"].subtitle
+            TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT["*"].subtitle
           }
         />
         <meta property="og:url" content="https://www.whydog.xyz/" />
@@ -116,7 +114,6 @@ function PageComponent() {
         />
         <link rel="manifest" href="/assets/site.webmanifest" />
       </Head>
-
       <AppContext.Provider
         value={{
           availableCommands,
@@ -148,9 +145,7 @@ function PageComponent() {
             className={styles["background"]}
             alt="background"
           />
-
           <div className={styles["container"]}>{renderView()}</div>
-
           {!isMobile && <ConsoleManager />}
         </div>
       </AppContext.Provider>
