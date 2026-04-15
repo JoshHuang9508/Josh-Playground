@@ -249,7 +249,7 @@ export const TEXT_CONTENT = {
       "    @#00ffaacl@#              Clear console output",
       " ",
       "  @#FF77B7Shortcuts:@#",
-      "    @#FFF700Ctrl + `@#        Open a new console window",
+      "    @#FFF700Ctrl + `@#        Toggle console window",
       "    @#FFF700Esc@#             Restore last minimized console",
       "    @#FFF700Tab@#             Auto-complete commands",
       "    @#FFF700↑ / ↓@#           Browse command history",

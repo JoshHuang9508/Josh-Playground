@@ -15,7 +15,7 @@ export const FEATURED_PROJECTS: ProjectConfig[] = [
     description:
       "My personal website built with Next.js — featuring a draggable terminal, bento-style homepage, blog, and osu! stats dashboard.",
     github: { owner: "JoshHuang9508", repo: "Josh-Playground" },
-    images: ["/projects/josh-playground-1.png"],
+    images: ["/assets/bg.jpg"],
     tags: ["TypeScript", "Next.js", "React"],
     accent: "#00ffaa",
   },
@@ -25,7 +25,7 @@ export const FEATURED_PROJECTS: ProjectConfig[] = [
     description:
       "RC語音復刻版本 — a clone of the classic Raidcall voice chat application, rebuilt with modern web technologies.",
     github: { owner: "JoshHuang9508", repo: "Raidcall-Clone" },
-    images: ["/projects/raidcall-clone-1.png"],
+    images: ["/assets/bg.jpg"],
     tags: ["Full-Stack", "Voice Chat"],
     accent: "#ff77b7",
   },
@@ -35,7 +35,7 @@ export const FEATURED_PROJECTS: ProjectConfig[] = [
     description:
       "源深 — a 2D game built with Unity. Currently in beta 2.0 development.",
     github: { owner: "JoshHuang9508", repo: "Depth-of-Origin-2.0" },
-    images: ["/projects/depth-of-origin-1.png"],
+    images: ["/assets/bg.jpg"],
     tags: ["C#", "Unity", "Game Dev"],
     accent: "#ffa24c",
   },
@@ -45,7 +45,7 @@ export const FEATURED_PROJECTS: ProjectConfig[] = [
     description:
       "Capture system loopback audio on macOS 12.3+, Windows and Linux — an Electron-based audio routing tool.",
     github: { owner: "JoshHuang9508", repo: "electron-audio-loopback" },
-    images: ["/projects/electron-audio-loopback-1.png"],
+    images: ["/assets/bg.jpg"],
     tags: ["TypeScript", "Electron", "Audio"],
     accent: "#00f3ff",
   },

@@ -101,7 +101,7 @@ function Console({
     : `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${t("global.siteName")}@#:~${currentURL}$ `;
   const isMinimized = windowState === "minimized";
   const iconX = 16 + minimizedIndex * 64;
-  const iconY = 16;
+  const iconY = window.innerHeight - 64;
 
   const findAvailablePath = (input: string) => {
     const paths = input.split("/");

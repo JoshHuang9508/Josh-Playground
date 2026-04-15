@@ -29,21 +29,11 @@ export default function HomeView() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
-  const [showMusicInfo, setShowMusicInfo] = useState(false);
-
-  const topProjects = FEATURED_PROJECTS.slice(0, 3);
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
 
   const { user: osuUser } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
   const latestPost = blogPosts[0] ?? null;
-
-  const stopSpin = () => {
-    if (!imageRef.current) return;
-    const computed = window.getComputedStyle(imageRef.current);
-    const matrix = new DOMMatrixReadOnly(computed.transform);
-    const rotation = Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
-    imageRef.current.style.setProperty("--current-rotation", `${rotation}deg`);
-  };
 
   const handleMusicEnd = () => {
     setMusicIndex((prev) => (prev + 1) % MUSIC_LIST.length);
@@ -98,11 +88,6 @@ export default function HomeView() {
         if (audioPlayerRef.current) audioPlayerRef.current.pause();
         return;
       }
-      if (flags.includes("-i") || flags.includes("--info")) {
-        setShowMusicInfo(!showMusicInfo);
-        if (showMusicInfo) stopSpin();
-        return;
-      }
       AddConsoleLog(t("commands.music.usage"));
     },
   });
@@ -120,7 +105,14 @@ export default function HomeView() {
       document.removeEventListener("click", onInteraction);
       document.removeEventListener("touchstart", onInteraction);
     };
-  }, [showMusicInfo, isPlaying]);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveProjectIndex((prev) => (prev + 1) % FEATURED_PROJECTS.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!audioPlayerRef.current) return;
@@ -137,127 +129,126 @@ export default function HomeView() {
         onEnded={handleMusicEnd}
       />
 
-      <div className={styles["bento"]}>
-        {/* Left column */}
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
-        >
-          {/* Hero card */}
-          <div className={styles["hero-card"]}>
-            <img
-              ref={imageRef}
-              className={`${styles["avatar"]} ${showMusicInfo ? styles["spin"] : ""}`}
-              src="/assets/pfp.png"
-              alt="Profile"
-            />
-            <div className={styles["hero-info"]}>
-              <span className={styles["hero-name"]}>Whitedog</span>
-              <span className={styles["hero-school"]}>NTUST-CSIE</span>
-              <p className={styles["hero-bio"]}>
-                18yo developer. I love playing games and coding. Passionate
-                about full-stack development and UI/UX design.
-              </p>
-              <div className={styles["social-row"]}>
-                {SOCIAL_LINKS.map((social) => (
-                  <img
-                    key={social.icon}
-                    className={styles["social-icon"]}
-                    src={`/assets/${social.icon}.png`}
-                    alt={social.icon}
-                    title={social.icon}
-                    onClick={() => window.open(social.url, "_blank")}
-                  />
-                ))}
+      <div className={styles["feature-section"]}>
+        <span className="section-label" style={{ color: "#fff700" }}>
+          ABOUT ME
+        </span>
+        <div className={styles["bento"]}>
+          {/* Left column */}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+          >
+            {/* Hero card */}
+            <div className={styles["hero-card"]}>
+              <img
+                ref={imageRef}
+                className={`${styles["avatar"]} ${false ? styles["spin"] : ""}`}
+                src="/assets/pfp.png"
+                alt="Profile"
+              />
+              <div className={styles["hero-info"]}>
+                <span className={styles["hero-name"]}>Whitedog</span>
+                <span className={styles["hero-school"]}>NTUST-CSIE</span>
+                <p className={styles["hero-bio"]}>
+                  18yo developer. I love playing games and coding. Passionate
+                  about full-stack development and UI/UX design.
+                </p>
+                <div className={styles["social-row"]}>
+                  {SOCIAL_LINKS.map((social) => (
+                    <img
+                      key={social.icon}
+                      className={styles["social-icon"]}
+                      src={`/assets/${social.icon}.png`}
+                      alt={social.icon}
+                      title={social.icon}
+                      onClick={() => window.open(social.url, "_blank")}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Music info */}
-          <div
-            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]}`}
-          >
-            <ColorSpan
-              str={t("commands.music.nowPlaying", MUSIC_LIST[musicIndex].name)}
-              className="p1"
-              style={{ whiteSpace: "pre" }}
-            />
-          </div>
-
-          {/* Latest post preview */}
-          <div
-            className={styles["preview-card"]}
-            style={{ cursor: "pointer" }}
-            onClick={() =>
-              (window.location.hash = latestPost
-                ? `#/blog/${latestPost.slug}`
-                : "#/blog")
-            }
-          >
-            <div className={styles["preview-header"]}>
-              <span className="section-label" style={{ color: "#ffa24c" }}>
-                LATEST POST
-              </span>
-              <a
-                className="view-all-link"
-                href="#/blog"
-                onClick={(e) => e.stopPropagation()}
-              >
-                All Posts <span>&rarr;</span>
-              </a>
-            </div>
-            {latestPost ? (
-              <>
-                <span className={styles["post-date"]}>{latestPost.date}</span>
-                <span className={styles["post-title"]}>{latestPost.title}</span>
-                <p className={styles["post-excerpt"]}>{latestPost.excerpt}</p>
-              </>
-            ) : (
-              <>
-                <span className={styles["post-title"]}>Coming soon...</span>
-                <p className={styles["post-excerpt"]}>
-                  Stay tuned for the first blog post.
-                </p>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Right column */}
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
-        >
-          {/* Projects preview */}
-          <div className={styles["preview-card"]}>
-            <div className={styles["preview-header"]}>
-              <span className="section-label" style={{ color: "#00ffaa" }}>
-                PROJECTS
-              </span>
-              <a className="view-all-link" href="#/projects">
-                View All <span>&rarr;</span>
-              </a>
-            </div>
+            {/* Latest post preview */}
             <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
+              className={styles["preview-card"]}
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                (window.location.hash = latestPost
+                  ? `#/blog/${latestPost.slug}`
+                  : "#/blog")
+              }
             >
-              {topProjects.map((project) => (
+              <div className={styles["preview-header"]}>
+                <span className="section-label" style={{ color: "#ffa24c" }}>
+                  LATEST POST
+                </span>
+                <a
+                  className="view-all-link"
+                  href="#/blog"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  All Posts <span>&rarr;</span>
+                </a>
+              </div>
+              {latestPost ? (
+                <>
+                  <span className={styles["post-date"]}>{latestPost.date}</span>
+                  <span className={styles["post-title"]}>
+                    {latestPost.title}
+                  </span>
+                  <p className={styles["post-excerpt"]}>{latestPost.excerpt}</p>
+                </>
+              ) : (
+                <>
+                  <span className={styles["post-title"]}>Coming soon...</span>
+                  <p className={styles["post-excerpt"]}>
+                    Stay tuned for the first blog post.
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Right column */}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+          >
+            {/* Projects preview */}
+            <div
+              className={styles["preview-card"]}
+              style={{ cursor: "pointer" }}
+              onClick={() => (window.location.hash = `#/projects`)}
+            >
+              <div className={styles["preview-header"]}>
+                <span className="section-label" style={{ color: "#00ffaa" }}>
+                  PROJECTS
+                </span>
+                <a className="view-all-link" href="#/projects">
+                  View All <span>&rarr;</span>
+                </a>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
                 <div
-                  key={project.slug}
+                  key={FEATURED_PROJECTS[activeProjectIndex].slug}
                   className={styles["mini-project"]}
-                  onClick={() =>
-                    (window.location.hash = `#/projects`)
-                  }
-                  style={{ cursor: "pointer" }}
                 >
                   <div
                     className={styles["mini-project-img"]}
-                    style={{ borderColor: project.accent }}
+                    style={{
+                      borderColor: FEATURED_PROJECTS[activeProjectIndex].accent,
+                    }}
                   >
-                    {project.images[0] ? (
-                      <img src={project.images[0]} alt={project.name} />
+                    {FEATURED_PROJECTS[activeProjectIndex].images[0] ? (
+                      <img
+                        src={FEATURED_PROJECTS[activeProjectIndex].images[0]}
+                        alt={FEATURED_PROJECTS[activeProjectIndex].name}
+                      />
                     ) : (
                       <span style={{ color: "#555", fontSize: "0.8rem" }}>
                         No image
@@ -266,7 +257,7 @@ export default function HomeView() {
                   </div>
                   <div className={styles["mini-project-info"]}>
                     <span className={styles["mini-repo-name"]}>
-                      {project.name}
+                      {FEATURED_PROJECTS[activeProjectIndex].name}
                     </span>
                     <span
                       style={{
@@ -277,52 +268,52 @@ export default function HomeView() {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {project.tags.join(" · ")}
+                      {FEATURED_PROJECTS[activeProjectIndex].tags.join(" · ")}
                     </span>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* osu! stats preview */}
-          <div
-            className={styles["preview-card"]}
-            style={{ cursor: "pointer" }}
-            onClick={() => (window.location.hash = "#/osu")}
-          >
-            <div className={styles["preview-header"]}>
-              <span className="section-label" style={{ color: "#ff77b7" }}>
-                OSU! STATS
-              </span>
-              <a
-                className="view-all-link"
-                href="#/osu"
-                onClick={(e) => e.stopPropagation()}
-              >
-                Details <span>&rarr;</span>
-              </a>
-            </div>
-            <div className={styles["stat-row"]}>
-              <div className={styles["stat-item"]}>
-                <span className={styles["stat-value"]}>
-                  {osuUser
-                    ? `#${osuUser.globalRank?.toLocaleString() ?? "--"}`
-                    : "--"}
+            {/* osu! stats preview */}
+            <div
+              className={styles["preview-card"]}
+              style={{ cursor: "pointer" }}
+              onClick={() => (window.location.hash = "#/osu")}
+            >
+              <div className={styles["preview-header"]}>
+                <span className="section-label" style={{ color: "#ff77b7" }}>
+                  OSU! STATS
                 </span>
-                <span className={styles["stat-label"]}>Global Rank</span>
+                <a
+                  className="view-all-link"
+                  href="#/osu"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Details <span>&rarr;</span>
+                </a>
               </div>
-              <div className={styles["stat-item"]}>
-                <span className={styles["stat-value"]}>
-                  {osuUser ? `${osuUser.pp.toLocaleString()}` : "--"}
-                </span>
-                <span className={styles["stat-label"]}>PP</span>
-              </div>
-              <div className={styles["stat-item"]}>
-                <span className={styles["stat-value"]}>
-                  {osuUser ? `${osuUser.accuracy.toFixed(1)}%` : "--"}
-                </span>
-                <span className={styles["stat-label"]}>Accuracy</span>
+              <div className={styles["stat-row"]}>
+                <div className={styles["stat-item"]}>
+                  <span className={styles["stat-value"]}>
+                    {osuUser
+                      ? `#${osuUser.globalRank?.toLocaleString() ?? "--"}`
+                      : "--"}
+                  </span>
+                  <span className={styles["stat-label"]}>Global Rank</span>
+                </div>
+                <div className={styles["stat-item"]}>
+                  <span className={styles["stat-value"]}>
+                    {osuUser ? `${osuUser.pp.toLocaleString()}` : "--"}
+                  </span>
+                  <span className={styles["stat-label"]}>PP</span>
+                </div>
+                <div className={styles["stat-item"]}>
+                  <span className={styles["stat-value"]}>
+                    {osuUser ? `${osuUser.accuracy.toFixed(1)}%` : "--"}
+                  </span>
+                  <span className={styles["stat-label"]}>Accuracy</span>
+                </div>
               </div>
             </div>
           </div>
@@ -364,23 +355,33 @@ export default function HomeView() {
           </p>
           <p className={styles["feature-desc"]}>
             Type{" "}
-            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+            <span
+              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
+            >
               help
             </span>{" "}
             to see all available commands. Use{" "}
-            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+            <span
+              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
+            >
               cd
             </span>{" "}
             to navigate between pages, or{" "}
-            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+            <span
+              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
+            >
               github
             </span>
             ,{" "}
-            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+            <span
+              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
+            >
               osu
             </span>
             ,{" "}
-            <span style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}>
+            <span
+              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
+            >
               music -i
             </span>{" "}
             to interact directly.
