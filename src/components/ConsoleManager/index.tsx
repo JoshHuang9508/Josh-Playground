@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { t } from "@/lib/i18n";
-
 import Console from "@/components/Console";
-
-import styles from "./ConsoleManager.module.css";
 
 export type WindowState = "normal" | "minimized" | "maximized" | "closed";
 
@@ -22,9 +18,9 @@ function ConsoleManager() {
     { id: "1", windowState: "normal", positionOffset: 0 },
   ]);
 
-  const minimizedConsoles = consoles.filter(
-    (c) => c.windowState === "minimized",
-  );
+  const minimizedIds = consoles
+    .filter((c) => c.windowState === "minimized")
+    .map((c) => c.id);
 
   const addConsole = () => {
     const currentId = nextIdRef.current;
@@ -94,21 +90,9 @@ function ConsoleManager() {
           windowState={c.windowState}
           onWindowStateChange={handleWindowStateChange}
           positionOffset={c.positionOffset}
+          minimizedIndex={minimizedIds.indexOf(c.id)}
         />
       ))}
-      {minimizedConsoles.length > 0 && (
-        <div className={styles["taskbar"]}>
-          {minimizedConsoles.map((c) => (
-            <div
-              key={c.id}
-              className={styles["taskbar-item"]}
-              onClick={() => handleWindowStateChange(c.id, "normal")}
-            >
-              <span>{t("console.title", c.id)}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </>
   );
 }

@@ -33,6 +33,7 @@ interface ConsoleProps {
   windowState: WindowState;
   onWindowStateChange: (id: string, state: WindowState) => void;
   positionOffset: number;
+  minimizedIndex: number;
 }
 
 function Console({
@@ -40,6 +41,7 @@ function Console({
   windowState,
   onWindowStateChange,
   positionOffset,
+  minimizedIndex,
 }: ConsoleProps) {
   const {
     availableCommands,
@@ -97,6 +99,9 @@ function Console({
   const prefix = window
     ? `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
     : `@#FF77B7${username ?? t("global.defaultUsername")}@#@@#FFA24C${t("global.siteName")}@#:~${currentURL}$ `;
+  const isMinimized = windowState === "minimized";
+  const iconX = 16 + minimizedIndex * 64;
+  const iconY = 16;
 
   const findAvailablePath = (input: string) => {
     const paths = input.split("/");
@@ -312,7 +317,20 @@ function Console({
   };
 
   const handleMinimize = () => {
+    prevLayoutRef.current = {
+      x: position.x,
+      y: position.y,
+      width: size.width,
+      height: size.height,
+    };
     onWindowStateChange(id, "minimized");
+  };
+
+  const handleRestore = () => {
+    const prev = prevLayoutRef.current;
+    setPosition({ x: prev.x, y: prev.y });
+    setSize({ width: prev.width, height: prev.height });
+    onWindowStateChange(id, "normal");
   };
 
   const handleMaximize = () => {
@@ -369,6 +387,7 @@ function Console({
       startWidth: size.width,
       startHeight: size.height,
     };
+    setIsDragging(true);
     document.body.style.userSelect = "none";
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
@@ -466,16 +485,19 @@ function Console({
     <div
       ref={consoleBox}
       data-header
-      className={styles["console"]}
+      className={`${styles["console"]} ${isMinimized ? styles["minimized"] : ""} ${isDragging ? styles["no-transition"] : ""}`}
       style={{
-        left: position.x,
-        top: position.y,
+        left: isMinimized ? iconX : position.x,
+        top: isMinimized ? iconY : position.y,
         width: size.width,
         height: size.height,
         borderRadius: windowState === "maximized" ? 0 : undefined,
-        display: windowState === "minimized" ? "none" : undefined,
       }}
+      onClick={isMinimized ? handleRestore : undefined}
     >
+      <div className={styles["minimize-icon"]}>
+        <span>{">_"}</span>
+      </div>
       {windowState !== "maximized" && (
         <>
           <div
