@@ -144,6 +144,9 @@ export default function ProjectsView() {
 
   return (
     <div className={styles["projects-page"]}>
+      <p className="page-subtitle">My open-source work and side projects</p>
+      <hr className="divider" />
+
       {FEATURED_PROJECTS.map((project) => (
         <ProjectCard key={project.slug} project={project} />
       ))}

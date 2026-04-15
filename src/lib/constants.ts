@@ -47,6 +47,12 @@ export const COMMAND_LIST = {
       description: "Change your display name (max 20 chars)",
       usage: "@#00ffaausername@# @#fff700<name>@#",
     },
+    {
+      name: "download",
+      description: "Download a YouTube video as mp4 or mp3",
+      usage: "@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
+      options: ["-v", "-a", "--video", "--audio"],
+    },
   ],
   "/": [
     {
@@ -167,14 +173,6 @@ export const COMMAND_LIST = {
       usage: "@#00ffaavolume@# @#fff700<value>@#",
     },
   ],
-  "ytdownloader/": [
-    {
-      name: "download",
-      description: "Download a YouTube video as mp4 or mp3",
-      usage: "@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
-      options: ["-v", "-a", "--video", "--audio"],
-    },
-  ],
   "projects/": [
     {
       name: "open",
@@ -198,12 +196,11 @@ export const COMMAND_LIST = {
   ],
 };
 export const PATH_LIST = {
-  "/": ["projects/", "osu/", "blog/", "listentogether/", "ytdownloader/"],
+  "/": ["projects/", "osu/", "blog/", "listentogether/"],
   "/projects": [],
   "/osu": [],
   "/blog": [],
   "/listentogether": [],
-  "/ytdownloader": [],
 };
 export const TAG_COLORS: Record<string, string> = {
   dev: "#00ffaa",
@@ -289,6 +286,19 @@ export const TEXT_CONTENT = {
       list: "Music list:",
       nowPlaying: "Now playing: @#FFF700{0}@#...",
     },
+    download: {
+      usage:
+        "Usage: @#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
+      invalidUrl: "Invalid video URL.",
+      pending: "Preparing download: @#fff700{0}@# ({1})",
+      starting: "Download started...",
+    },
+  },
+  errors: {
+    downloadVideo: "Video download failed: {0}",
+    downloadAudio: "Audio download failed: {0}",
+    mp4Failed: "Failed to retrieve .mp4 file.",
+    mp3Failed: "Failed to retrieve .mp3 file.",
   },
   home: {
     commands: {
@@ -397,23 +407,6 @@ export const TEXT_CONTENT = {
       serverError: "Server error: {0}",
       disconnect: "Disconnected from server.",
       playerError: "Player error: {0}",
-    },
-  },
-  ytdownloader: {
-    commands: {
-      download: {
-        usage:
-          "Usage: @#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#",
-        invalidUrl: "Invalid video URL.",
-        pending: "Preparing download: @#fff700{0}@# ({1})",
-        starting: "Download started...",
-      },
-    },
-    errors: {
-      downloadVideo: "Video download failed: {0}",
-      downloadAudio: "Audio download failed: {0}",
-      mp4Failed: "Failed to retrieve .mp4 file.",
-      mp3Failed: "Failed to retrieve .mp3 file.",
     },
   },
   "/": {

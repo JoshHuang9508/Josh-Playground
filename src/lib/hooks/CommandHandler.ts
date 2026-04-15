@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import ReactPlayer from "react-player";
 
 import { AddConsoleLog, SetCommand } from "@/redux";
 
@@ -8,6 +9,7 @@ import { Command, CommandHandler } from "@/lib/types";
 import { t } from "@/lib/i18n";
 
 import { clearActiveConsole, setActiveConsole } from "@/lib/consoleLog";
+import { getVideoBlob } from "@/lib/getVideoBlob";
 
 export type CommandHandlers = Record<string, CommandHandler>;
 
@@ -35,7 +37,7 @@ export function parseCommand(command: string) {
   return { cmdName, args, flags };
 }
 
-const webPaths = ["listentogether", "ytdownloader"];
+const webPaths = ["listentogether", "projects", "osu", ["blog", ":slug"]];
 
 export default function useCommandHandler(handlers: CommandHandlers) {
   const command = useSelector((state: { command: string }) => state.command);
@@ -173,6 +175,46 @@ export default function useCommandHandler(handlers: CommandHandlers) {
           }
         });
         window.location.hash = paths.length > 0 ? `#/${paths.join("/")}` : "#/";
+      }
+    },
+    download: (_cmd, args, flags) => {
+      const URL = args[0] ?? "";
+      if (!URL) {
+        AddConsoleLog(t("commands.download.usage"));
+        return;
+      } else if (!ReactPlayer.canPlay(URL)) {
+        AddConsoleLog(t("commands.download.invalidUrl"));
+        return;
+      } else if (
+        flags.includes("-v") ||
+        flags.includes("--video") ||
+        flags.length === 0
+      ) {
+        const downloadVideo = async () => {
+          AddConsoleLog(t("commands.download.pending", URL, ".mp4"));
+          const blob = await getVideoBlob(URL.split("v=")[1], "mp4");
+          AddConsoleLog(t("commands.download.starting"));
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${URL.split("v=")[1]}.mp4`;
+          a.click();
+        };
+        downloadVideo();
+        return;
+      } else if (flags.includes("-a") || flags.includes("--audio")) {
+        const downloadAudio = async () => {
+          AddConsoleLog(t("commands.download.pending", URL, ".mp3"));
+          const blob = await getVideoBlob(URL.split("v=")[1], "mp3");
+          AddConsoleLog(t("commands.download.starting"));
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${URL.split("v=")[1]}.mp3`;
+          a.click();
+        };
+        downloadAudio();
+        return;
       }
     },
   };
