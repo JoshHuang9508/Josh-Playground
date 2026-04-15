@@ -8,6 +8,8 @@ import { MUSIC_LIST, TEXT_CONTENT } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
 import useGitHubRepos, { languageColors } from "@/lib/hooks/GitHubRepos";
+import useOsuStats from "@/lib/hooks/OsuStats";
+import { useBlogPosts } from "@/lib/hooks/BlogPosts";
 
 import styles from "./Home.module.css";
 
@@ -32,6 +34,10 @@ export default function HomeView() {
   const [showMusicInfo, setShowMusicInfo] = useState(false);
 
   const topRepos = repos.slice(0, 3);
+
+  const { user: osuUser } = useOsuStats();
+  const { posts: blogPosts } = useBlogPosts();
+  const latestPost = blogPosts[0] ?? null;
 
   const stopSpin = () => {
     if (!imageRef.current) return;
@@ -185,7 +191,11 @@ export default function HomeView() {
           <div
             className={styles["preview-card"]}
             style={{ cursor: "pointer" }}
-            onClick={() => (window.location.hash = "#/blog")}
+            onClick={() =>
+              (window.location.hash = latestPost
+                ? `#/blog/${latestPost.slug}`
+                : "#/blog")
+            }
           >
             <div className={styles["preview-header"]}>
               <span className="section-label" style={{ color: "#ffa24c" }}>
@@ -196,13 +206,23 @@ export default function HomeView() {
                 href="#/blog"
                 onClick={(e) => e.stopPropagation()}
               >
-                Read <span>&rarr;</span>
+                All Posts <span>&rarr;</span>
               </a>
             </div>
-            <span className={styles["post-title"]}>Coming soon...</span>
-            <p className={styles["post-excerpt"]}>
-              Stay tuned for the first blog post.
-            </p>
+            {latestPost ? (
+              <>
+                <span className={styles["post-date"]}>{latestPost.date}</span>
+                <span className={styles["post-title"]}>{latestPost.title}</span>
+                <p className={styles["post-excerpt"]}>{latestPost.excerpt}</p>
+              </>
+            ) : (
+              <>
+                <span className={styles["post-title"]}>Coming soon...</span>
+                <p className={styles["post-excerpt"]}>
+                  Stay tuned for the first blog post.
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -266,15 +286,21 @@ export default function HomeView() {
             </div>
             <div className={styles["stat-row"]}>
               <div className={styles["stat-item"]}>
-                <span className={styles["stat-value"]}>--</span>
+                <span className={styles["stat-value"]}>
+                  {osuUser ? `#${osuUser.globalRank?.toLocaleString() ?? "--"}` : "--"}
+                </span>
                 <span className={styles["stat-label"]}>Global Rank</span>
               </div>
               <div className={styles["stat-item"]}>
-                <span className={styles["stat-value"]}>--</span>
+                <span className={styles["stat-value"]}>
+                  {osuUser ? `${osuUser.pp.toLocaleString()}` : "--"}
+                </span>
                 <span className={styles["stat-label"]}>PP</span>
               </div>
               <div className={styles["stat-item"]}>
-                <span className={styles["stat-value"]}>--</span>
+                <span className={styles["stat-value"]}>
+                  {osuUser ? `${osuUser.accuracy.toFixed(1)}%` : "--"}
+                </span>
                 <span className={styles["stat-label"]}>Accuracy</span>
               </div>
             </div>

@@ -24,6 +24,7 @@ import NotFoundView from "@/components/views/NotFound";
 import ProjectsView from "@/components/views/Projects";
 import BlogView from "@/components/views/Blog";
 import BlogPostView from "@/components/views/BlogPost";
+import OsuStatsView from "@/components/views/OsuStats";
 import Navigation from "@/components/Navigation";
 
 import "@/global.css";
@@ -74,6 +75,8 @@ function PageComponent() {
           return <ListenTogetherView />;
         case "/ytdownloader":
           return <YtDownloaderView />;
+        case "/osu":
+          return <OsuStatsView />;
         default:
           return <NotFoundView />;
       }
