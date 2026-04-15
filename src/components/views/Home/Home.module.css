@@ -1,224 +1,228 @@
-img.profile-picture {
-  display: inline-block;
-  width: 15rem;
-  height: 15rem;
-  margin: 2rem;
-  border: 2px solid white;
-  border-radius: 50%;
-  box-shadow: 0 0 1rem #00000040;
-  animation:
-    rgb-border 10s infinite linear,
-    spin-back 1s linear;
-}
-
-img.profile-picture.spin {
-  animation:
-    rgb-border 10s infinite linear,
-    spin 5s infinite linear;
-}
-
-@keyframes rgb-border {
-  0% {
-    border: 2px solid rgb(255 0 0);
-  }
-
-  16% {
-    border: 2px solid rgb(255 165 0);
-  }
-
-  33% {
-    border: 2px solid rgb(255 255 0);
-  }
-
-  50% {
-    border: 2px solid rgb(0 255 0);
-  }
-
-  66% {
-    border: 2px solid rgb(0 0 255);
-  }
-
-  83% {
-    border: 2px solid rgb(255 0 255);
-  }
-
-  100% {
-    border: 2px solid rgb(255 0 0);
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spin-back {
-  from {
-    transform: rotate(var(--current-rotation));
-  }
-
-  to {
-    transform: rotate(0deg);
-  }
-}
-
-div.repo-wall {
-  position: absolute;
-  top: 0;
-  left: -10%;
-  z-index: -1;
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  width: 120%;
-  height: 100%;
-  padding: 0 1rem;
-  overflow: visible;
-  user-select: none;
-  opacity: 0.6;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 15%,
-    black 85%,
-    transparent 100%
-  );
-  rotate: 10deg;
-}
-
-div.repo-wall div.column {
-  position: relative;
-  top: 0;
+div.home-page {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: fit-content;
-  overflow: visible;
+  max-width: 900px;
+  padding: 3rem 2rem 2rem;
+  margin: 0 auto;
+  overflow-y: auto;
 }
 
-div.repo-wall div.column.scroll-speed-1 {
-  animation: auto-scroll 20s linear infinite;
+div.home-page::-webkit-scrollbar {
+  width: 0;
 }
 
-div.repo-wall div.column.scroll-speed-2 {
-  animation: auto-scroll 25s linear infinite;
+div.bento {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-div.repo-wall div.column.scroll-speed-3 {
-  animation: auto-scroll 30s linear infinite;
+div.hero-card {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.25rem;
+  background-color: #16213e;
+  border-radius: 0.5rem;
 }
 
-div.repo-wall div.column.scroll-speed-4 {
-  animation: auto-scroll 45s linear infinite;
+img.avatar {
+  flex-shrink: 0;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #ff77b740;
 }
 
-div.repo-wall div.column.scroll-speed-5 {
-  animation: auto-scroll 40s linear infinite;
+img.avatar.spin {
+  animation: spin 5s infinite linear;
 }
 
-div.repo-wall div.column > div {
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+div.hero-info {
   display: flex;
   flex-direction: column;
+  gap: 0.3rem;
+}
+
+span.hero-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+span.hero-school {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.7rem;
+  color: #00f3ff;
+  background-color: #00f3ff15;
+  border-radius: 1rem;
+}
+
+p.hero-bio {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #bababa;
+}
+
+div.social-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+img.social-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+img.social-icon:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+div.preview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #16213e;
+  border-radius: 0.5rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+div.preview-card:hover {
+  box-shadow: 0 4px 12px #00000060;
+  transform: translateY(-2px);
+}
+
+div.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+div.mini-repo {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  background-color: #0f3460;
+  border-radius: 0.35rem;
+  transition: background-color 0.2s ease;
+}
+
+div.mini-repo:hover {
+  background-color: #0f346099;
+}
+
+span.mini-repo-name {
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+span.mini-lang-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+div.stat-row {
+  display: flex;
   gap: 1rem;
 }
 
-@keyframes auto-scroll {
-  from {
-    transform: translateY(0);
-  }
+div.stat-item {
+  display: flex;
+  flex-direction: column;
+}
 
-  to {
-    transform: translateY(-50%);
-  }
+span.stat-value {
+  font-family: Consolas, monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+span.stat-label {
+  font-size: 0.65rem;
+  color: #888;
+}
+
+span.post-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+p.post-excerpt {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #888;
+}
+
+span.post-date {
+  font-size: 0.7rem;
+  color: #ffa24c;
 }
 
 div.music-info {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 1rem;
-  transition: all 1s ease-in-out;
+  margin-top: -0.5rem;
+  transition: all 0.5s ease-in-out;
 }
 
 div.music-info.show {
-  width: 30%;
+  width: 100%;
+  opacity: 1;
 }
 
 div.music-info.hidden {
   width: 0;
+  opacity: 0;
 }
 
-span.badge-public {
-  color: #8b949e;
-}
-
-span.badge-private {
-  color: #8b949e;
+p.footer {
+  font-family: Consolas, monospace;
+  font-size: 0.65rem;
+  color: #555;
 }
 
 @media (width <= 768px) {
-  img.profile-picture {
-    width: 10rem;
-    height: 10rem;
-    margin: 1rem;
-    margin-bottom: 0;
+  div.bento {
+    grid-template-columns: 1fr;
   }
 
-  div.music-info {
+  div.hero-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  div.social-row {
     justify-content: center;
   }
 
-  div.music-info.show {
-    width: 100%;
+  div.home-page {
+    padding: 3rem 1rem 2rem;
   }
-
-  div.music-info.hidden {
-    width: 0;
-  }
-
-  div.repo-wall {
-    left: 0;
-    flex-direction: column;
-    width: 100%;
-    rotate: 0deg;
-  }
-}
-
-div.social-container {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
-  max-width: 100%;
-  opacity: 0;
-  animation: fade-in-out 5s;
-}
-
-@keyframes fade-in-out {
-  0% {
-    opacity: 0;
-  }
-
-  33% {
-    opacity: 1;
-  }
-
-  66% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-img.social-icon {
-  width: 2rem;
-  height: 2rem;
 }

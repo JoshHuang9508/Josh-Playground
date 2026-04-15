@@ -1,59 +1,52 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { AddConsoleLog } from "@/redux";
 
 import ColorSpan from "@/components/ColorSpan";
-import GitHubRepoCard from "@/components/GitHubRepoCard";
 
 import { MUSIC_LIST, TEXT_CONTENT } from "@/lib/constants";
-
 import { t } from "@/lib/i18n";
-
 import useCommandHandler from "@/lib/hooks/CommandHandler";
-import useGitHubRepos from "@/lib/hooks/GitHubRepos";
+import useGitHubRepos, { languageColors } from "@/lib/hooks/GitHubRepos";
 
 import styles from "./Home.module.css";
+
+const SOCIAL_LINKS = [
+  { icon: "github", url: "https://github.com/JoshHuang9508" },
+  { icon: "youtube", url: "https://www.youtube.com/@whydog5555" },
+  { icon: "twitter", url: "https://x.com/whydog5555" },
+  { icon: "instagram", url: "https://www.instagram.com/whydog5555/" },
+  { icon: "twitch", url: "https://www.twitch.tv/whydog5555" },
+  { icon: "discord", url: "https://discord.com/users/whydog5555" },
+  { icon: "osu", url: "https://osu.ppy.sh/users/15100005" },
+];
 
 export default function HomeView() {
   const { repos } = useGitHubRepos("JoshHuang9508");
 
-  const scrollSpeedRef = useRef<number[]>(
-    Array.from({ length: 3 }).reduce<number[]>((acc, _) => {
-      const getRandomSpeed = () => {
-        const speed = Math.floor(Math.random() * 5) + 1;
-        if (acc.includes(speed)) {
-          return getRandomSpeed();
-        }
-        return speed;
-      };
-      return acc.concat(getRandomSpeed());
-    }, []),
-  );
   const imageRef = useRef<HTMLImageElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const [musicIndex, setMusicIndex] = React.useState(0);
-  const [showMusicInfo, setShowMusicInfo] = React.useState(false);
-  const [currentSocialIndex, setCurrentSocialIndex] = React.useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [musicIndex, setMusicIndex] = useState(0);
+  const [showMusicInfo, setShowMusicInfo] = useState(false);
+
+  const topRepos = repos.slice(0, 3);
 
   const stopSpin = () => {
     if (!imageRef.current) return;
-
-    const styles = window.getComputedStyle(imageRef.current);
-    const matrix = new DOMMatrixReadOnly(styles.transform);
-    let currentRotation =
+    const computed = window.getComputedStyle(imageRef.current);
+    const matrix = new DOMMatrixReadOnly(computed.transform);
+    const rotation =
       Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI) * -1;
-
     imageRef.current.style.setProperty(
       "--current-rotation",
-      `${currentRotation}deg`,
+      `${rotation}deg`,
     );
   };
 
   const handleMusicEnd = () => {
-    if (!audioPlayerRef.current) return;
-    setMusicIndex((musicIndex + 1) % MUSIC_LIST.length);
+    setMusicIndex((prev) => (prev + 1) % MUSIC_LIST.length);
   };
 
   useCommandHandler({
@@ -107,9 +100,7 @@ export default function HomeView() {
       }
       if (flags.includes("-i") || flags.includes("--info")) {
         setShowMusicInfo(!showMusicInfo);
-        if (showMusicInfo) {
-          stopSpin();
-        }
+        if (showMusicInfo) stopSpin();
         return;
       }
       AddConsoleLog(t("commands.music.usage"));
@@ -138,42 +129,50 @@ export default function HomeView() {
     audioPlayerRef.current.volume = 0.05;
   }, [musicIndex]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSocialIndex(
-        (prev) => (prev + 1) % TEXT_CONTENT["/"].social.length,
-      );
-    }, 5000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
   return (
-    <div className={"col content-div"}>
+    <div className={styles["home-page"]}>
       <audio
         ref={audioPlayerRef}
-        id="audio"
         src={MUSIC_LIST[musicIndex].path}
         onEnded={handleMusicEnd}
       />
-      <div className={"container1"}>
-        <div
-          className="sub-container2"
-          style={{ fontFamily: "monospace", gap: "1rem" }}
-        >
-          <img
-            ref={imageRef}
-            className={`${styles["profile-picture"]} ${
-              showMusicInfo ? styles["spin"] : ""
-            }`}
-            src={"/assets/pfp.png"}
-            alt="Profile Picture"
-          />
+
+      <div className={styles["bento"]}>
+        {/* Left column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {/* Hero card */}
+          <div className={styles["hero-card"]}>
+            <img
+              ref={imageRef}
+              className={`${styles["avatar"]} ${showMusicInfo ? styles["spin"] : ""}`}
+              src="/assets/pfp.png"
+              alt="Profile"
+            />
+            <div className={styles["hero-info"]}>
+              <span className={styles["hero-name"]}>Whitedog</span>
+              <span className={styles["hero-school"]}>NTUST-CSIE</span>
+              <p className={styles["hero-bio"]}>
+                18yo developer. I love playing games and coding. Passionate
+                about full-stack development and UI/UX design.
+              </p>
+              <div className={styles["social-row"]}>
+                {SOCIAL_LINKS.map((social) => (
+                  <img
+                    key={social.icon}
+                    className={styles["social-icon"]}
+                    src={`/assets/${social.icon}.png`}
+                    alt={social.icon}
+                    title={social.icon}
+                    onClick={() => window.open(social.url, "_blank")}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Music info */}
           <div
-            className={`${styles["music-info"]} ${
-              showMusicInfo ? styles["show"] : styles["hidden"]
-            }`}
+            className={`${styles["music-info"]} ${showMusicInfo ? styles["show"] : styles["hidden"]}`}
           >
             <ColorSpan
               str={t("commands.music.nowPlaying", MUSIC_LIST[musicIndex].name)}
@@ -181,64 +180,111 @@ export default function HomeView() {
               style={{ whiteSpace: "pre" }}
             />
           </div>
+
+          {/* Latest post preview */}
           <div
-            className="col"
-            style={{
-              gap: "0.5rem",
-              justifyContent: "center",
-            }}
+            className={styles["preview-card"]}
+            style={{ cursor: "pointer" }}
+            onClick={() => (window.location.hash = "#/blog")}
           >
-            {TEXT_CONTENT["/"].about.map((content, index) => {
-              if (index == 0)
-                return (
-                  <div key={index}>
-                    <ColorSpan str={content} className="header2" />
-                  </div>
-                );
-              return (
-                <div key={index}>
-                  <ColorSpan str={content} className="p1" />
-                </div>
-              );
-            })}
+            <div className={styles["preview-header"]}>
+              <span className="section-label" style={{ color: "#ffa24c" }}>
+                LATEST POST
+              </span>
+              <a
+                className="view-all-link"
+                href="#/blog"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Read <span>&rarr;</span>
+              </a>
+            </div>
+            <span className={styles["post-title"]}>Coming soon...</span>
+            <p className={styles["post-excerpt"]}>
+              Stay tuned for the first blog post.
+            </p>
+          </div>
+        </div>
+
+        {/* Right column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {/* Projects preview */}
+          <div className={styles["preview-card"]}>
+            <div className={styles["preview-header"]}>
+              <span className="section-label" style={{ color: "#00ffaa" }}>
+                PROJECTS
+              </span>
+              <a className="view-all-link" href="#/projects">
+                View All <span>&rarr;</span>
+              </a>
+            </div>
             <div
-              className={styles["social-container"]}
-              key={currentSocialIndex}
+              style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}
             >
-              <img
-                className={styles["social-icon"]}
-                src={`/assets/${TEXT_CONTENT["/"].social[currentSocialIndex].icon}.png`}
-                alt={TEXT_CONTENT["/"].social[currentSocialIndex].icon}
-              />
-              <ColorSpan
-                str={TEXT_CONTENT["/"].social[currentSocialIndex].value}
-                className="p1"
-              />
+              {topRepos.map((repo) => (
+                <div
+                  key={repo.name}
+                  className={styles["mini-repo"]}
+                  onClick={() => repo.url && window.open(repo.url, "_blank")}
+                  style={{ cursor: "pointer" }}
+                >
+                  {repo.language && (
+                    <span
+                      className={styles["mini-lang-dot"]}
+                      style={{
+                        backgroundColor:
+                          languageColors[repo.language] ?? "#ccc",
+                      }}
+                    />
+                  )}
+                  <span className={styles["mini-repo-name"]}>{repo.name}</span>
+                </div>
+              ))}
+              {topRepos.length === 0 && (
+                <p style={{ color: "#888", fontSize: "0.8rem" }}>Loading...</p>
+              )}
+            </div>
+          </div>
+
+          {/* osu! stats preview */}
+          <div
+            className={styles["preview-card"]}
+            style={{ cursor: "pointer" }}
+            onClick={() => (window.location.hash = "#/osu")}
+          >
+            <div className={styles["preview-header"]}>
+              <span className="section-label" style={{ color: "#ff77b7" }}>
+                OSU! STATS
+              </span>
+              <a
+                className="view-all-link"
+                href="#/osu"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Details <span>&rarr;</span>
+              </a>
+            </div>
+            <div className={styles["stat-row"]}>
+              <div className={styles["stat-item"]}>
+                <span className={styles["stat-value"]}>--</span>
+                <span className={styles["stat-label"]}>Global Rank</span>
+              </div>
+              <div className={styles["stat-item"]}>
+                <span className={styles["stat-value"]}>--</span>
+                <span className={styles["stat-label"]}>PP</span>
+              </div>
+              <div className={styles["stat-item"]}>
+                <span className={styles["stat-value"]}>--</span>
+                <span className={styles["stat-label"]}>Accuracy</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {/* <div className={styles["repo-wall"]}>
-        {Array.from({ length: 3 }).map((_, colIndex) => (
-          <div
-            key={colIndex}
-            className={`${styles["column"]} ${
-              styles[`scroll-speed-${scrollSpeedRef.current[colIndex]}`]
-            }`}
-          >
-            {Array.from({ length: 4 }).map((_, dupIndex) => (
-              <div key={dupIndex}>
-                {repos.map((repo, repoIndex) => (
-                  <GitHubRepoCard
-                    key={`${dupIndex}-${repoIndex}`}
-                    repo={repo}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div> */}
+
+      <p className={styles["footer"]}>
+        built with next.js + too much coffee
+      </p>
     </div>
   );
 }
