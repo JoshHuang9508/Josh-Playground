@@ -60,6 +60,41 @@ export type GitHubRepo = {
   url?: string; // e.g. "https://github.com/NerdyHomeReOpen/RiceCall"
 };
 
+export type BlogPost = {
+  slug: string;
+  title: string;
+  date: string;
+  tags: string[];
+  excerpt: string;
+  color?: string;
+  content: string;
+  readTime: number;
+};
+
+export type BlogPostMeta = Omit<BlogPost, "content">;
+
+export type OsuUser = {
+  username: string;
+  avatarUrl: string;
+  countryCode: string;
+  joinDate: string;
+  globalRank: number | null;
+  countryRank: number | null;
+  pp: number;
+  accuracy: number;
+  playCount: number;
+  playTime: number;
+  level: number;
+  levelProgress: number;
+  gradeCounts: {
+    ss: number;
+    ssh: number;
+    s: number;
+    sh: number;
+    a: number;
+  };
+};
+
 export type YTPLReturnType = {
   id: string;
   url: string;
