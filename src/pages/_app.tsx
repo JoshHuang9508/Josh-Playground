@@ -17,9 +17,7 @@ import { AppContext } from "@/lib/hooks/CommandHandler";
 
 import ConsoleManager from "@/components/ConsoleManager";
 import HomeView from "@/components/views/Home";
-import MobileView from "@/components/views/Mobile";
 import ListenTogetherView from "@/components/views/ListenTogether";
-import YtDownloaderView from "@/components/views/YtDownloader";
 import NotFoundView from "@/components/views/NotFound";
 import ProjectsView from "@/components/views/Projects";
 import BlogView from "@/components/views/Blog";
@@ -73,8 +71,6 @@ function PageComponent() {
         return <BlogView />;
       case "/listentogether":
         return <ListenTogetherView />;
-      case "/ytdownloader":
-        return <YtDownloaderView />;
       case "/osu":
         return <OsuStatsView />;
       default:
