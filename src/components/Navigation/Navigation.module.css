@@ -1,0 +1,42 @@
+nav.breadcrumb {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  background-color: #16213e99;
+  border-radius: 2rem;
+  backdrop-filter: blur(8px);
+}
+
+span.segment {
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+span.segment:hover {
+  color: #fff;
+}
+
+span.segment.active {
+  color: #fff;
+}
+
+span.home {
+  color: #00ffaa;
+}
+
+span.home:hover {
+  color: #00ffdd;
+}
+
+span.separator {
+  color: #555;
+  user-select: none;
+}
