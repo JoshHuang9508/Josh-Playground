@@ -25,7 +25,7 @@ interface ConsoleProps {
 }
 
 export default function Console({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: ConsoleProps) {
-  const { availableCommands, setAvailableCommands, setAvailablePaths, username, setUsername, currentHash } = useContext(AppContext)!;
+  const { availableCommands, availableArgs, setAvailableCommands, setAvailablePaths, username, setUsername, currentHash } = useContext(AppContext)!;
 
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
@@ -115,6 +115,8 @@ export default function Console({ id, windowState, onWindowStateChange, position
       if (command.options) {
         availables.push(...command.options.filter((opt) => opt.startsWith(lastPart) && opt != lastPart));
       }
+      const argCompletions = availableArgs[command.name] ?? [];
+      availables.push(...argCompletions.filter((a) => a.startsWith(lastPart) && a !== lastPart));
     }
     availables.push(...findAvailablePath(lastPart));
 
