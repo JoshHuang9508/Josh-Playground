@@ -21,8 +21,8 @@
 html,
 body,
 #__next {
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   overflow: hidden;
   font-family: Consolas, 'Noto Sans TC', sans-serif;
   font-size: clamp(12px, 0.9vw, 14px);
