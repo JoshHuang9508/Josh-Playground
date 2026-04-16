@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -7,7 +7,7 @@ import { TAG_COLORS } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+import useCommandHandler, { AppContext } from '@/lib/hooks/CommandHandler';
 import useBlogPost from '@/lib/hooks/BlogPost';
 
 import styles from './BlogPost.module.css';
@@ -23,7 +23,16 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   const [progressBarHeight, setProgressBarHeight] = useState(0);
 
+  const appContext = useContext(AppContext);
+
   useCommandHandler({});
+
+  useEffect(() => {
+    if (post) appContext?.setDynamicTitle(post.title);
+    return () => {
+      appContext?.setDynamicTitle(null);
+    };
+  }, [post, appContext]);
 
   useEffect(() => {
     const el = pageRef.current;
