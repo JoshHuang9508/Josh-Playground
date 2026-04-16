@@ -14,6 +14,8 @@ import { AddConsoleLog, SetCommand } from '@/redux';
 
 import ColorSpan from '@/components/ColorSpan';
 
+import { IsMobile } from '@/utils';
+
 import styles from './Console.module.css';
 
 interface ConsoleProps {
@@ -41,19 +43,19 @@ export default function Console({ id, windowState, onWindowStateChange, position
     startHeight: 0,
   });
   const prevLayoutRef = useRef({
-    x: window.innerWidth * 0.1 + positionOffset,
-    y: window.innerHeight - window.innerHeight * 0.9 + positionOffset,
-    width: window.innerWidth * 0.8,
-    height: window.innerHeight * 0.8,
+    x: IsMobile() ? 0 : window.innerWidth * 0.1 + positionOffset,
+    y: IsMobile() ? 0 : window.innerHeight - window.innerHeight * 0.9 + positionOffset,
+    width: IsMobile() ? window.innerWidth : window.innerWidth * 0.8,
+    height: IsMobile() ? window.innerHeight : window.innerHeight * 0.8,
   });
 
   const [position, setPosition] = useState(() => ({
-    x: window.innerWidth * 0.2 + positionOffset,
-    y: window.innerHeight - window.innerHeight * 0.9 + positionOffset,
+    x: IsMobile() ? 0 : window.innerWidth * 0.1 + positionOffset,
+    y: IsMobile() ? 0 : window.innerHeight - window.innerHeight * 0.9 + positionOffset,
   }));
   const [size, setSize] = useState(() => ({
-    width: window.innerWidth * 0.6,
-    height: window.innerHeight * 0.8,
+    width: IsMobile() ? window.innerWidth : window.innerWidth * 0.8,
+    height: IsMobile() ? window.innerHeight : window.innerHeight * 0.8,
   }));
   const [isDragging, setIsDragging] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -74,7 +76,7 @@ export default function Console({ id, windowState, onWindowStateChange, position
     ? `@#FF77B7${username ?? t('global.defaultUsername')}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
     : `@#FF77B7${username ?? t('global.defaultUsername')}@#@@#FFA24C${t('global.siteName')}@#:~${currentURL}$ `;
   const isMinimized = windowState === 'minimized';
-  const iconX = 16 + minimizedIndex * 64;
+  const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
   const iconY = window.innerHeight - 64;
 
   const findAvailablePath = (input: string) => {

@@ -27,3 +27,9 @@ export function IDiffObject(a: Record<string, unknown> | null, b: Record<string,
   if (a === null || b === null) return true;
   return !IDeepEqual(a, b);
 }
+
+export function IsMobile(): boolean {
+  return ["Mobile", "iPhone", "iPad", "Android"].some((userAgent) =>
+    navigator.userAgent.includes(userAgent),
+  );
+}

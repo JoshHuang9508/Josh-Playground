@@ -58,13 +58,6 @@ function PageComponent() {
     return () => window.removeEventListener('hashchange', updateHash);
   }, []);
 
-  // useEffect(() => {
-  //   const isMobile = ["Mobile", "iPhone", "iPad", "Android"].some((userAgent) =>
-  //     navigator.userAgent.includes(userAgent),
-  //   );
-  //   setIsMobile(isMobile);
-  // }, []);
-
   useEffect(() => {
     const onInteraction = () => {
       if (!audioPlayerRef.current || isPlaying) return;
