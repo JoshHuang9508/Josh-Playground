@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import type * as Types from '@/lib/types';
 
-const OSU_USER_ID = '15100005';
+import { OSU_USER_ID } from '@/lib/constants';
 
 export function useOsuStats() {
   const [user, setUser] = useState<Types.OsuUser | null>(null);
