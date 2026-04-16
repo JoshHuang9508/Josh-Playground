@@ -1,5 +1,7 @@
 import React from 'react';
 
+import styles from './ColorSpan.module.css';
+
 interface ColorSpanProps {
   str: string;
   className?: string;
@@ -13,7 +15,7 @@ export default function ColorSpan({ str, className, style }: ColorSpanProps) {
   };
 
   return (
-    <div style={{ display: 'inline-block' }}>
+    <div className={styles['color-span']}>
       {str
         .split('@#')
         .filter((i) => i !== '')
@@ -21,12 +23,12 @@ export default function ColorSpan({ str, className, style }: ColorSpanProps) {
           const color = item.slice(0, 6);
           if (!isValidColorCode(color))
             return (
-              <span key={color + index} style={style} className={className}>
+              <span key={color + index} className={className} style={style}>
                 {item}
               </span>
             );
           return (
-            <span key={color + index} style={{ color: `#${color}`, ...style }} className={className}>
+            <span key={color + index} className={className} style={{ ...style, color: `#${color}` }}>
               {item.slice(6)}
             </span>
           );

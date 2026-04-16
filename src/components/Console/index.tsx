@@ -418,7 +418,7 @@ export default function Console({ id, windowState, onWindowStateChange, position
       )}
 
       <div className={styles['input']}>
-        <ColorSpan str={prefix} style={{ minWidth: 'fit-content' }} />
+        <ColorSpan className={styles['prefix']} str={prefix} />
         <input ref={inputBox} type="text" value={`${inputValue}`} placeholder={t('console.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
       </div>
     </div>

@@ -99,6 +99,21 @@ span.hero-name {
   color: #fff;
 }
 
+div.hero-title-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+span.hero-age {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.85rem;
+  color: #ffa24c;
+  background-color: #ffa24c15;
+  border-radius: 1rem;
+}
+
 span.hero-school {
   display: inline-block;
   width: fit-content;
@@ -109,7 +124,7 @@ span.hero-school {
   border-radius: 1rem;
 }
 
-p.hero-bio {
+span.hero-bio {
   font-size: 1rem;
   line-height: 1.5;
   color: #bababa;

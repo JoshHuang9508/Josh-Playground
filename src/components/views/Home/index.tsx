@@ -69,7 +69,7 @@ export default function HomeView() {
   return (
     <div className={styles['home-page']}>
       <div className={styles['feature-section']}>
-        <ColorSpan str={t('/.sections.aboutMe')} className="section-label" />
+        <ColorSpan className="section-label" str={t('/.sections.aboutMe')} />
         <div className={styles['bento']}>
           {/* Left column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -78,8 +78,11 @@ export default function HomeView() {
               <img ref={imageRef} className={`${styles['avatar']} ${false ? styles['spin'] : ''}`} src="/assets/pfp.png" alt="Profile" />
               <div className={styles['hero-info']}>
                 <span className={styles['hero-name']}>{t('/.hero.name')}</span>
-                <span className={styles['hero-school']}>{t('/.hero.school')}</span>
-                <p className={styles['hero-bio']}>{t('/.hero.bio')}</p>
+                <div className={styles['hero-title-container']}>
+                  <span className={styles['hero-age']}>{t('/.hero.age')}</span>
+                  <span className={styles['hero-school']}>{t('/.hero.school')}</span>
+                </div>
+                <ColorSpan className={styles['hero-bio']} str={t('/.hero.bio')} />
                 <div className={styles['social-row']}>
                   {SOCIAL_LINKS.map((social) => (
                     <img
@@ -98,7 +101,7 @@ export default function HomeView() {
             {/* Latest post preview */}
             <div className={styles['preview-card']} style={{ cursor: 'pointer' }} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
               <div className={styles['preview-header']}>
-                <ColorSpan str={t('/.sections.latestPost')} className="section-label" />
+                <ColorSpan className="section-label" str={t('/.sections.latestPost')} />
                 <a className="view-all-link" href="#/blog" onClick={(e) => e.stopPropagation()}>
                   {t('/.latestPost.allPosts')}
                 </a>
@@ -123,7 +126,7 @@ export default function HomeView() {
             {/* Projects preview */}
             <div className={styles['preview-card']} style={{ cursor: 'pointer' }} onClick={() => (window.location.hash = `#/projects`)}>
               <div className={styles['preview-header']}>
-                <ColorSpan str={t('/.sections.projects')} className="section-label" />
+                <ColorSpan className="section-label" str={t('/.sections.projects')} />
                 <a className="view-all-link" href="#/projects" onClick={(e) => e.stopPropagation()}>
                   {t('/.projects.viewAll')}
                 </a>
@@ -177,7 +180,7 @@ export default function HomeView() {
             {/* osu! stats preview */}
             <div className={styles['preview-card']} style={{ cursor: 'pointer' }} onClick={() => (window.location.hash = '#/osu')}>
               <div className={styles['preview-header']}>
-                <ColorSpan str={t('/.sections.osuStats')} className="section-label" />
+                <ColorSpan className="section-label" str={t('/.sections.osuStats')} />
                 <a className="view-all-link" href="#/osu" onClick={(e) => e.stopPropagation()}>
                   {t('/.osu.details')}
                 </a>
@@ -205,7 +208,7 @@ export default function HomeView() {
 
       {/* Feature showcase & console tutorial */}
       <div className={styles['feature-section']}>
-        <ColorSpan str={t('/.sections.aboutSite')} className="section-label" />
+        <ColorSpan className="section-label" str={t('/.sections.aboutSite')} />
         <div className={styles['feature-card']}>
           <p className={styles['feature-title']}>
             <ColorSpan str={t('/.features.terminal.title')} />

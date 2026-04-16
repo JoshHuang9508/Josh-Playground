@@ -5,7 +5,7 @@ div.console {
   flex-direction: column;
   overflow: hidden;
   font-family: monospace;
-  line-height: 1.25rem;
+  line-height: 1;
   color: #e6e6e6;
   background-color: rgb(10 10 10 / 33%);
   border: 1px solid #ffffff10;
@@ -64,7 +64,7 @@ div.console span {
   background: none;
 }
 
-div.console div.header {
+div.header {
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -74,17 +74,17 @@ div.console div.header {
   border-bottom: 1px solid #ffffff10;
 }
 
-div.console div.header.dragging {
+div.header.dragging {
   cursor: grabbing;
 }
 
-div.console div.header div.traffic-lights {
+div.traffic-lights {
   display: flex;
   gap: 0.75rem;
   align-items: center;
 }
 
-div.console div.header div.traffic-lights span {
+div.traffic-lights span {
   display: block;
   width: 1rem;
   height: 1rem;
@@ -93,23 +93,23 @@ div.console div.header div.traffic-lights span {
   transition: filter 0.15s ease;
 }
 
-div.console div.header div.traffic-lights span:hover {
+div.traffic-lights span:hover {
   filter: brightness(1.3);
 }
 
-div.console div.header div.traffic-lights span.close {
+div.traffic-lights span.close {
   background-color: #ff5f57;
 }
 
-div.console div.header div.traffic-lights span.minimize {
+div.traffic-lights span.minimize {
   background-color: #febc2e;
 }
 
-div.console div.header div.traffic-lights span.maximize {
+div.traffic-lights span.maximize {
   background-color: #28c840;
 }
 
-div.console div.header p.title {
+p.title {
   flex: 1;
   margin: 0;
   color: #bababa;
@@ -117,7 +117,7 @@ div.console div.header p.title {
   user-select: none;
 }
 
-div.console div.output {
+div.output {
   justify-content: end;
   height: 100%;
   padding: 0 1rem;
@@ -127,21 +127,21 @@ div.console div.output {
   transition: box-shadow 0.3s ease-in-out;
 }
 
-div.console div.output.bottom {
+div.output.bottom {
   box-shadow: none;
 }
 
-div.console div.output-line {
+div.output-line {
   display: flex;
   padding: 1px 0;
 }
 
-div.console div.prompt {
+div.prompt {
   min-height: fit-content;
   padding: 1rem 1rem 0;
 }
 
-div.console div.input {
+div.input {
   position: sticky;
   bottom: 0;
   display: flex;
@@ -149,34 +149,38 @@ div.console div.input {
   padding: 1rem;
 }
 
-div.console div.input input {
+div.input span.prefix {
+  min-width: fit-content;
+}
+
+div.input input {
   z-index: 10;
   flex: 1;
   padding-block: 0;
   padding-inline: 0;
   font-family: monospace;
   font-size: 1rem;
-  line-height: 1.25rem;
+  line-height: 1;
   color: #e6e6e6;
   outline: none;
   background: none;
   border: none;
 }
 
-div.console div.input input::placeholder {
+div.input input::placeholder {
   color: #bababa;
 }
 
-div.console div.input input:focus {
+div.input input:focus {
   outline: none;
 }
 
-div.console div.resize-handle {
+div.resize-handle {
   position: absolute;
   z-index: 1001;
 }
 
-div.console div.resize-n {
+div.resize-n {
   top: 0;
   right: 12px;
   left: 12px;
@@ -184,7 +188,7 @@ div.console div.resize-n {
   cursor: ns-resize;
 }
 
-div.console div.resize-s {
+div.resize-s {
   right: 12px;
   bottom: 0;
   left: 12px;
@@ -192,7 +196,7 @@ div.console div.resize-s {
   cursor: ns-resize;
 }
 
-div.console div.resize-e {
+div.resize-e {
   top: 12px;
   right: 0;
   bottom: 12px;
@@ -200,7 +204,7 @@ div.console div.resize-e {
   cursor: ew-resize;
 }
 
-div.console div.resize-w {
+div.resize-w {
   top: 12px;
   bottom: 12px;
   left: 0;
@@ -208,7 +212,7 @@ div.console div.resize-w {
   cursor: ew-resize;
 }
 
-div.console div.resize-nw {
+div.resize-nw {
   top: 0;
   left: 0;
   width: 12px;
@@ -216,7 +220,7 @@ div.console div.resize-nw {
   cursor: nwse-resize;
 }
 
-div.console div.resize-ne {
+div.resize-ne {
   top: 0;
   right: 0;
   width: 12px;
@@ -224,7 +228,7 @@ div.console div.resize-ne {
   cursor: nesw-resize;
 }
 
-div.console div.resize-sw {
+div.resize-sw {
   bottom: 0;
   left: 0;
   width: 12px;
@@ -232,7 +236,7 @@ div.console div.resize-sw {
   cursor: nesw-resize;
 }
 
-div.console div.resize-se {
+div.resize-se {
   right: 0;
   bottom: 0;
   width: 12px;
