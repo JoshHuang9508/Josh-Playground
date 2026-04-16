@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { AddConsoleLog } from "@/redux";
 
+import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
 import { useProjectRepo } from "@/lib/hooks/ProjectRepo";
 import { languageColors } from "@/lib/hooks/GitHubRepos";
@@ -59,7 +60,7 @@ function ProjectCard({ project }: { project: ProjectConfig }) {
             )}
           </div>
         ) : (
-          <div className={styles["gallery-placeholder"]}>No images yet</div>
+          <div className={styles["gallery-placeholder"]}>{t("/projects.noImages")}</div>
         )}
       </div>
 
@@ -124,7 +125,7 @@ export default function ProjectsView() {
     open: (_cmd, args) => {
       const name = args[0] ?? "";
       if (!name) {
-        AddConsoleLog("Usage: @#00ffaaopen@# @#fff700<project-name>@#");
+        AddConsoleLog(t("/projects.commands.open.usage"));
         return;
       }
       const project = FEATURED_PROJECTS.find(
@@ -135,16 +136,16 @@ export default function ProjectsView() {
           `https://github.com/${project.github.owner}/${project.github.repo}`,
           "_blank",
         );
-        AddConsoleLog(`Opening @#fff700${project.name}@#...`);
+        AddConsoleLog(t("/projects.commands.open.opening", project.name));
       } else {
-        AddConsoleLog(`Project @#fff700${name}@# not found.`);
+        AddConsoleLog(t("/projects.commands.open.notFound", name));
       }
     },
   });
 
   return (
     <div className={styles["projects-page"]}>
-      <p className="page-subtitle">My open-source work and side projects</p>
+      <p className="page-subtitle">{t("/projects.subtitle")}</p>
       <hr className="divider" />
 
       {FEATURED_PROJECTS.map((project) => (

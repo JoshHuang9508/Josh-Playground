@@ -459,6 +459,51 @@ export const TEXT_CONTENT = {
         value: "-Whitedog- — Type @#FFF700osu@# to open my osu! profile",
       },
     ],
+    hero: {
+      name: "Whitedog",
+      school: "NTUST-CSIE",
+      bio: "18yo developer. I love playing games and coding. Passionate about full-stack development and UI/UX design.",
+    },
+    sections: {
+      aboutMe: "@#fff700ABOUT ME@#",
+      latestPost: "@#ffa24cLATEST POST@#",
+      projects: "@#00ffaaPROJECTS@#",
+      osuStats: "@#ff77b7OSU! STATS@#",
+      aboutSite: "@#fff700ABOUT THIS SITE@#",
+    },
+    latestPost: {
+      allPosts: "All Posts \u2192",
+      comingSoon: "Coming soon...",
+      stayTuned: "Stay tuned for the first blog post.",
+    },
+    projects: {
+      viewAll: "View All \u2192",
+      noImage: "No image",
+    },
+    osu: {
+      details: "Details \u2192",
+      globalRank: "Global Rank",
+      pp: "PP",
+      accuracy: "Accuracy",
+    },
+    features: {
+      terminal: {
+        title: "@#00ffaa>_@# Built-in Terminal",
+        desc: "This site comes with a draggable, resizable console — a real terminal you can use to navigate pages, open links, and explore hidden commands. Try it out!",
+        ctrl: "Ctrl",
+        backtick: "`",
+        esc: "Esc",
+        tab: "Tab",
+        toggleConsole: "Toggle console",
+        minimize: "Minimize",
+        autocomplete: "Autocomplete",
+      },
+      commands: {
+        title: "@#ffa24c$@# Quick Commands",
+        desc: "Type @#fff700help@# to see all available commands. Use @#fff700cd@# to navigate between pages, or @#fff700github@#, @#fff700osu@#, @#fff700music -i@# to interact directly.",
+      },
+    },
+    footer: "built with next.js + too much coffee",
   },
   "/listentogether": {
     title: "Listen Together",
@@ -481,14 +526,62 @@ export const TEXT_CONTENT = {
   "/projects": {
     title: "Projects",
     subtitle: "My open-source work and side projects.",
+    noImages: "No images yet",
+    commands: {
+      open: {
+        usage: "Usage: @#00ffaaopen@# @#fff700<project-name>@#",
+        opening: "Opening @#fff700{0}@#...",
+        notFound: "Project @#fff700{0}@# not found.",
+      },
+    },
   },
   "/osu": {
     title: "osu! Stats",
     subtitle: "My osu! profile and gameplay statistics.",
+    loading: "Loading stats...",
+    unavailable: {
+      title: "Stats temporarily unavailable.",
+      desc: "osu! API proxy not configured yet.",
+    },
+    labels: {
+      globalRank: "Global Rank",
+      country: "Country",
+      performance: "Performance",
+      accuracy: "Accuracy",
+      playCount: "Play Count",
+      playTime: "Play Time",
+      gradeDistribution: "Grade Distribution",
+    },
+    commands: {
+      stats: {
+        notAvailable: "osu! stats not available.",
+        header: "@#ff77b7osu! Stats for {0}@#",
+        globalRank: "Global Rank: @#fff700#{0}@#",
+        countryRank: "Country Rank: @#00ffaa#{0}@#",
+        pp: "PP: @#ffa24c{0}@#",
+        accuracy: "Accuracy: @#fff{0}@#",
+        playCount: "Play Count: {0}",
+        playTime: "Play Time: {0}",
+      },
+    },
   },
   "/blog": {
     title: "Blog",
     subtitle: "Thoughts on development, life, and gaming.",
+    loading: "Loading posts...",
+    empty: "No posts yet. Stay tuned.",
+    commands: {
+      read: {
+        usage: "Usage: @#00ffaaread@# @#fff700<slug>@#",
+        opening: "Opening @#fff700{0}@#...",
+        notFound: "Post @#fff700{0}@# not found.",
+      },
+    },
+  },
+  blogPost: {
+    loading: "Loading post...",
+    notFound: "Post not found.",
+    backLink: "\u2190 Back to ~/blog",
   },
   "*": {
     title: "Oops!",

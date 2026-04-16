@@ -8,6 +8,8 @@ import useOsuStats from "@/lib/hooks/OsuStats";
 import { useBlogPosts } from "@/lib/hooks/BlogPosts";
 import { FEATURED_PROJECTS } from "@/lib/projects";
 
+import ColorSpan from "@/components/ColorSpan";
+
 import styles from "./Home.module.css";
 
 const SOCIAL_LINKS = [
@@ -74,9 +76,7 @@ export default function HomeView() {
   return (
     <div className={styles["home-page"]}>
       <div className={styles["feature-section"]}>
-        <span className="section-label" style={{ color: "#fff700" }}>
-          ABOUT ME
-        </span>
+        <ColorSpan str={t("/.sections.aboutMe")} className="section-label" />
         <div className={styles["bento"]}>
           {/* Left column */}
           <div
@@ -91,12 +91,9 @@ export default function HomeView() {
                 alt="Profile"
               />
               <div className={styles["hero-info"]}>
-                <span className={styles["hero-name"]}>Whitedog</span>
-                <span className={styles["hero-school"]}>NTUST-CSIE</span>
-                <p className={styles["hero-bio"]}>
-                  18yo developer. I love playing games and coding. Passionate
-                  about full-stack development and UI/UX design.
-                </p>
+                <span className={styles["hero-name"]}>{t("/.hero.name")}</span>
+                <span className={styles["hero-school"]}>{t("/.hero.school")}</span>
+                <p className={styles["hero-bio"]}>{t("/.hero.bio")}</p>
                 <div className={styles["social-row"]}>
                   {SOCIAL_LINKS.map((social) => (
                     <img
@@ -123,15 +120,13 @@ export default function HomeView() {
               }
             >
               <div className={styles["preview-header"]}>
-                <span className="section-label" style={{ color: "#ffa24c" }}>
-                  LATEST POST
-                </span>
+                <ColorSpan str={t("/.sections.latestPost")} className="section-label" />
                 <a
                   className="view-all-link"
                   href="#/blog"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  All Posts <span>&rarr;</span>
+                  {t("/.latestPost.allPosts")}
                 </a>
               </div>
               {latestPost ? (
@@ -144,9 +139,9 @@ export default function HomeView() {
                 </>
               ) : (
                 <>
-                  <span className={styles["post-title"]}>Coming soon...</span>
+                  <span className={styles["post-title"]}>{t("/.latestPost.comingSoon")}</span>
                   <p className={styles["post-excerpt"]}>
-                    Stay tuned for the first blog post.
+                    {t("/.latestPost.stayTuned")}
                   </p>
                 </>
               )}
@@ -164,15 +159,13 @@ export default function HomeView() {
               onClick={() => (window.location.hash = `#/projects`)}
             >
               <div className={styles["preview-header"]}>
-                <span className="section-label" style={{ color: "#00ffaa" }}>
-                  PROJECTS
-                </span>
+                <ColorSpan str={t("/.sections.projects")} className="section-label" />
                 <a
                   className="view-all-link"
                   href="#/projects"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  View All <span>&rarr;</span>
+                  {t("/.projects.viewAll")}
                 </a>
               </div>
               <div className={styles["project-carousel"]}>
@@ -195,7 +188,7 @@ export default function HomeView() {
                         <img src={project.images[0]} alt={project.name} />
                       ) : (
                         <span style={{ color: "#555", fontSize: "0.8rem" }}>
-                          No image
+                          {t("/.projects.noImage")}
                         </span>
                       )}
                     </div>
@@ -239,15 +232,13 @@ export default function HomeView() {
               onClick={() => (window.location.hash = "#/osu")}
             >
               <div className={styles["preview-header"]}>
-                <span className="section-label" style={{ color: "#ff77b7" }}>
-                  OSU! STATS
-                </span>
+                <ColorSpan str={t("/.sections.osuStats")} className="section-label" />
                 <a
                   className="view-all-link"
                   href="#/osu"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Details <span>&rarr;</span>
+                  {t("/.osu.details")}
                 </a>
               </div>
               <div className={styles["stat-row"]}>
@@ -257,19 +248,19 @@ export default function HomeView() {
                       ? `#${osuUser.globalRank?.toLocaleString() ?? "--"}`
                       : "--"}
                   </span>
-                  <span className={styles["stat-label"]}>Global Rank</span>
+                  <span className={styles["stat-label"]}>{t("/.osu.globalRank")}</span>
                 </div>
                 <div className={styles["stat-item"]}>
                   <span className={styles["stat-value"]}>
                     {osuUser ? `${osuUser.pp.toLocaleString()}` : "--"}
                   </span>
-                  <span className={styles["stat-label"]}>PP</span>
+                  <span className={styles["stat-label"]}>{t("/.osu.pp")}</span>
                 </div>
                 <div className={styles["stat-item"]}>
                   <span className={styles["stat-value"]}>
                     {osuUser ? `${osuUser.accuracy.toFixed(1)}%` : "--"}
                   </span>
-                  <span className={styles["stat-label"]}>Accuracy</span>
+                  <span className={styles["stat-label"]}>{t("/.osu.accuracy")}</span>
                 </div>
               </div>
             </div>
@@ -281,73 +272,42 @@ export default function HomeView() {
 
       {/* Feature showcase & console tutorial */}
       <div className={styles["feature-section"]}>
-        <span className="section-label" style={{ color: "#fff700" }}>
-          ABOUT THIS SITE
-        </span>
+        <ColorSpan str={t("/.sections.aboutSite")} className="section-label" />
         <div className={styles["feature-card"]}>
           <p className={styles["feature-title"]}>
-            <span style={{ color: "#00ffaa" }}>&gt;_</span> Built-in Terminal
+            <ColorSpan str={t("/.features.terminal.title")} />
           </p>
           <p className={styles["feature-desc"]}>
-            This site comes with a draggable, resizable console — a real
-            terminal you can use to navigate pages, open links, and explore
-            hidden commands. Try it out!
+            <ColorSpan str={t("/.features.terminal.desc")} />
           </p>
           <div className={styles["shortcut-list"]}>
             <span className={styles["shortcut"]}>
-              <span className={styles["shortcut-key"]}>Ctrl</span>+
-              <span className={styles["shortcut-key"]}>`</span> Toggle console
+              <span className={styles["shortcut-key"]}>{t("/.features.terminal.ctrl")}</span>+
+              <span className={styles["shortcut-key"]}>{t("/.features.terminal.backtick")}</span>{" "}
+              {t("/.features.terminal.toggleConsole")}
             </span>
             <span className={styles["shortcut"]}>
-              <span className={styles["shortcut-key"]}>Esc</span> Minimize
+              <span className={styles["shortcut-key"]}>{t("/.features.terminal.esc")}</span>{" "}
+              {t("/.features.terminal.minimize")}
             </span>
             <span className={styles["shortcut"]}>
-              <span className={styles["shortcut-key"]}>Tab</span> Autocomplete
+              <span className={styles["shortcut-key"]}>{t("/.features.terminal.tab")}</span>{" "}
+              {t("/.features.terminal.autocomplete")}
             </span>
           </div>
         </div>
         <div className={styles["feature-card"]}>
           <p className={styles["feature-title"]}>
-            <span style={{ color: "#ffa24c" }}>$</span> Quick Commands
+            <ColorSpan str={t("/.features.commands.title")} />
           </p>
           <p className={styles["feature-desc"]}>
-            Type{" "}
-            <span
-              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
-            >
-              help
-            </span>{" "}
-            to see all available commands. Use{" "}
-            <span
-              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
-            >
-              cd
-            </span>{" "}
-            to navigate between pages, or{" "}
-            <span
-              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
-            >
-              github
-            </span>
-            ,{" "}
-            <span
-              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
-            >
-              osu
-            </span>
-            ,{" "}
-            <span
-              style={{ color: "#fff700", fontFamily: "Consolas, monospace" }}
-            >
-              music -i
-            </span>{" "}
-            to interact directly.
+            <ColorSpan str={t("/.features.commands.desc")} />
           </p>
         </div>
       </div>
 
       <hr className="divider" />
-      <p className={styles["footer"]}>built with next.js + too much coffee</p>
+      <p className={styles["footer"]}>{t("/.footer")}</p>
     </div>
   );
 }

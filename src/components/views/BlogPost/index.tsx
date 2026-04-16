@@ -3,7 +3,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 
+import { t } from "@/lib/i18n";
+
 import { useBlogPost, getTagColor } from "@/lib/hooks/BlogPosts";
+import useCommandHandler from "@/lib/hooks/CommandHandler";
 
 import styles from "./BlogPost.module.css";
 
@@ -13,8 +16,12 @@ interface BlogPostViewProps {
 
 export default function BlogPostView({ slug }: BlogPostViewProps) {
   const { post, loading } = useBlogPost(slug);
+
   const pageRef = useRef<HTMLDivElement>(null);
+
   const [progress, setProgress] = useState(0);
+
+  useCommandHandler({});
 
   useEffect(() => {
     const el = pageRef.current;
@@ -35,7 +42,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
   if (loading) {
     return (
       <div className={styles["blogpost-page"]}>
-        <div className={styles["loading"]}>Loading post...</div>
+        <div className={styles["loading"]}>{t("blogPost.loading")}</div>
       </div>
     );
   }
@@ -43,9 +50,9 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
   if (!post) {
     return (
       <div className={styles["blogpost-page"]}>
-        <div className={styles["loading"]}>Post not found.</div>
+        <div className={styles["loading"]}>{t("blogPost.notFound")}</div>
         <a className={styles["back-link"]} href="#/blog">
-          &larr; Back to ~/blog
+          {t("blogPost.backLink")}
         </a>
       </div>
     );
@@ -88,7 +95,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
       <div className={styles["article-nav"]}>
         <a className={styles["back-link"]} href="#/blog">
-          &larr; Back to ~/blog
+          {t("blogPost.backLink")}
         </a>
       </div>
     </div>

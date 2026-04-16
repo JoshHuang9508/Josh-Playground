@@ -2,6 +2,7 @@ import React from "react";
 
 import { AddConsoleLog } from "@/redux";
 
+import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
 import { useBlogPosts, getTagColor } from "@/lib/hooks/BlogPosts";
 
@@ -14,28 +15,28 @@ export default function BlogView() {
     read: (_cmd, args) => {
       const slug = args[0] ?? "";
       if (!slug) {
-        AddConsoleLog("Usage: @#00ffaaread@# @#fff700<slug>@#");
+        AddConsoleLog(t("/blog.commands.read.usage"));
         return;
       }
       const post = posts.find((p) => p.slug === slug);
       if (post) {
         window.location.hash = `#/blog/${slug}`;
-        AddConsoleLog(`Opening @#fff700${post.title}@#...`);
+        AddConsoleLog(t("/blog.commands.read.opening", post.title));
       } else {
-        AddConsoleLog(`Post @#fff700${slug}@# not found.`);
+        AddConsoleLog(t("/blog.commands.read.notFound", slug));
       }
     },
   });
 
   return (
     <div className={styles["blog-page"]}>
-      <p className="page-subtitle">Thoughts on development, life, and gaming</p>
+      <p className="page-subtitle">{t("/blog.subtitle")}</p>
       <hr className="divider" />
 
-      {loading && <p style={{ color: "#888" }}>Loading posts...</p>}
+      {loading && <p style={{ color: "#888" }}>{t("/blog.loading")}</p>}
 
       {!loading && posts.length === 0 && (
-        <div className={styles["empty"]}>No posts yet. Stay tuned.</div>
+        <div className={styles["empty"]}>{t("/blog.empty")}</div>
       )}
 
       {posts.length > 0 && (

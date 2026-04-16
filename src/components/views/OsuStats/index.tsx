@@ -2,6 +2,7 @@ import React from "react";
 
 import { AddConsoleLog } from "@/redux";
 
+import { t } from "@/lib/i18n";
 import useCommandHandler from "@/lib/hooks/CommandHandler";
 import useOsuStats from "@/lib/hooks/OsuStats";
 
@@ -23,17 +24,17 @@ export default function OsuStatsView() {
   useCommandHandler({
     stats: () => {
       if (!user) {
-        AddConsoleLog("osu! stats not available.");
+        AddConsoleLog(t("/osu.commands.stats.notAvailable"));
         return;
       }
       AddConsoleLog(
-        `@#ff77b7osu! Stats for ${user.username}@#`,
-        `Global Rank: @#fff700#${formatNumber(user.globalRank)}@#`,
-        `Country Rank: @#00ffaa#${formatNumber(user.countryRank)}@#`,
-        `PP: @#ffa24c${formatNumber(user.pp)}@#`,
-        `Accuracy: @#fff${user.accuracy.toFixed(2)}%@#`,
-        `Play Count: ${formatNumber(user.playCount)}`,
-        `Play Time: ${formatPlayTime(user.playTime)}`,
+        t("/osu.commands.stats.header", user.username),
+        t("/osu.commands.stats.globalRank", formatNumber(user.globalRank)),
+        t("/osu.commands.stats.countryRank", formatNumber(user.countryRank)),
+        t("/osu.commands.stats.pp", formatNumber(user.pp)),
+        t("/osu.commands.stats.accuracy", user.accuracy.toFixed(2) + "%"),
+        t("/osu.commands.stats.playCount", formatNumber(user.playCount)),
+        t("/osu.commands.stats.playTime", formatPlayTime(user.playTime)),
       );
     },
   });
@@ -41,7 +42,7 @@ export default function OsuStatsView() {
   if (loading) {
     return (
       <div className={styles["osu-page"]}>
-        <p style={{ color: "#888" }}>Loading stats...</p>
+        <p style={{ color: "#888" }}>{t("/osu.loading")}</p>
       </div>
     );
   }
@@ -50,10 +51,8 @@ export default function OsuStatsView() {
     return (
       <div className={styles["osu-page"]}>
         <div className={styles["unavailable"]}>
-          <p>Stats temporarily unavailable.</p>
-          <p style={{ fontSize: "0.85rem" }}>
-            osu! API proxy not configured yet.
-          </p>
+          <p>{t("/osu.unavailable.title")}</p>
+          <p style={{ fontSize: "0.85rem" }}>{t("/osu.unavailable.desc")}</p>
         </div>
       </div>
     );
@@ -83,7 +82,7 @@ export default function OsuStatsView() {
               >
                 #{formatNumber(user.globalRank)}
               </span>
-              <span className={styles["rank-label"]}>Global Rank</span>
+              <span className={styles["rank-label"]}>{t("/osu.labels.globalRank")}</span>
             </div>
             <div className={styles["rank-item"]}>
               <span
@@ -92,7 +91,7 @@ export default function OsuStatsView() {
               >
                 #{formatNumber(user.countryRank)}
               </span>
-              <span className={styles["rank-label"]}>Country</span>
+              <span className={styles["rank-label"]}>{t("/osu.labels.country")}</span>
             </div>
             <div className={styles["rank-item"]}>
               <span
@@ -101,7 +100,7 @@ export default function OsuStatsView() {
               >
                 {formatNumber(user.pp)}pp
               </span>
-              <span className={styles["rank-label"]}>Performance</span>
+              <span className={styles["rank-label"]}>{t("/osu.labels.performance")}</span>
             </div>
           </div>
           <div>
@@ -123,26 +122,26 @@ export default function OsuStatsView() {
           <span className={styles["stat-number"]}>
             {user.accuracy.toFixed(1)}%
           </span>
-          <span className={styles["stat-label"]}>Accuracy</span>
+          <span className={styles["stat-label"]}>{t("/osu.labels.accuracy")}</span>
         </div>
         <div className={styles["stat-card"]}>
           <span className={styles["stat-number"]}>
             {formatNumber(user.playCount)}
           </span>
-          <span className={styles["stat-label"]}>Play Count</span>
+          <span className={styles["stat-label"]}>{t("/osu.labels.playCount")}</span>
         </div>
         <div className={styles["stat-card"]}>
           <span className={styles["stat-number"]}>
             {formatPlayTime(user.playTime)}
           </span>
-          <span className={styles["stat-label"]}>Play Time</span>
+          <span className={styles["stat-label"]}>{t("/osu.labels.playTime")}</span>
         </div>
       </div>
 
       <hr className="divider" />
 
       <div className={styles["grade-card"]}>
-        <span className={styles["grade-title"]}>Grade Distribution</span>
+        <span className={styles["grade-title"]}>{t("/osu.labels.gradeDistribution")}</span>
         <div className={styles["grade-bar"]}>
           <div
             style={{
