@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { t } from '@/lib/i18n';
 
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+import useCommandHandler, { AppContext } from '@/lib/hooks/CommandHandler';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import { AddConsoleLog } from '@/redux';
@@ -13,6 +13,13 @@ import styles from './Blog.module.css';
 
 export default function BlogView() {
   const { posts, loading } = useBlogPosts();
+  const appContext = useContext(AppContext);
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      appContext?.setAvailableArgs({ read: posts.map((p) => p.slug) });
+    }
+  }, [posts, appContext]);
 
   useCommandHandler({
     read: (_cmd, args) => {
