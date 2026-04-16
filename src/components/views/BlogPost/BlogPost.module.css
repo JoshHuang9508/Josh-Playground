@@ -173,6 +173,12 @@ div.article-body hr {
   border-top: 1px solid #333;
 }
 
+div.article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
 div.article-nav {
   display: flex;
   justify-content: space-between;
