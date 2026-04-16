@@ -27,7 +27,6 @@ body,
   font-family: Consolas, 'Noto Sans TC', sans-serif;
   font-size: clamp(12px, 0.9vw, 14px);
   color: white;
-  background-color: transparent;
 }
 
 span,

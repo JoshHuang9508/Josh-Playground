@@ -159,7 +159,7 @@ function PageComponent() {
           setAvailableArgs,
         }}
       >
-        <div className={styles['app']} style={{ backgroundColor: backgroundColor ? backgroundColor : undefined }}>
+        <div className={styles['app']} style={{ backgroundColor: backgroundColor }}>
           <img src={backgroundImageUrl ? backgroundImageUrl : '/assets/bg.jpg'} className={styles['background']} alt="background" />
           <div className={styles['view-container']}>
             <Navigation currentHash={currentHash} />
