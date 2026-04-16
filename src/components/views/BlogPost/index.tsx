@@ -29,10 +29,11 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   useEffect(() => {
     if (post) appContext?.setDynamicTitle(post.title);
+    else if (!loading) appContext?.setDynamicTitle(null);
     return () => {
       appContext?.setDynamicTitle(null);
     };
-  }, [post, appContext]);
+  }, [post, loading, appContext]);
 
   useEffect(() => {
     const el = pageRef.current;

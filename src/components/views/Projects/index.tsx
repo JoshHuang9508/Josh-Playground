@@ -102,6 +102,7 @@ export default function ProjectsView() {
 
   useEffect(() => {
     appContext?.setAvailableArgs({ open: PROJECTS.map((p) => p.slug) });
+    return () => appContext?.setAvailableArgs({});
   }, []);
 
   useCommandHandler({

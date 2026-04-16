@@ -19,6 +19,7 @@ export default function BlogView() {
     if (posts.length > 0) {
       appContext?.setAvailableArgs({ read: posts.map((p) => p.slug) });
     }
+    return () => appContext?.setAvailableArgs({});
   }, [posts, appContext]);
 
   useCommandHandler({
