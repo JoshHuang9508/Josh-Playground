@@ -65,26 +65,60 @@ div.hero-card {
   backdrop-filter: blur(4px);
 }
 
-img.avatar {
+div.avatar-wrapper {
+  position: relative;
+  z-index: 5;
   flex-shrink: 0;
   width: 10rem;
   height: 10rem;
+  cursor: pointer;
+  perspective: 600px;
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
+}
+
+div.avatar-wrapper:hover {
+  filter: drop-shadow(0 4px 16px #00000050);
+  transform: scale(1.05);
+}
+
+img.avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  box-shadow: 0 0 12px #ff77b740;
+  backface-visibility: hidden;
+  transition: transform 0.6s ease;
 }
 
-img.avatar.spin {
-  animation: spin 5s infinite linear;
+img.avatar-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  transition: transform 0.6s ease;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
+div.avatar-wrapper img.avatar {
+  transform: rotateY(0deg);
+}
 
-  to {
-    transform: rotate(360deg);
-  }
+div.avatar-wrapper.flipped img.avatar {
+  transform: rotateY(180deg);
+}
+
+div.avatar-wrapper img.avatar-back {
+  transform: rotateY(-180deg);
+}
+
+div.avatar-wrapper.flipped img.avatar-back {
+  transform: rotateY(0deg);
 }
 
 div.hero-info {

@@ -21,6 +21,15 @@ export default function HomeView() {
   const imageRef = useRef<HTMLImageElement>(null);
 
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+  const [avatarFlipped, setAvatarFlipped] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
+
+  const handleAvatarClick = () => {
+    if (isFlipping) return;
+    setIsFlipping(true);
+    setAvatarFlipped((prev) => !prev);
+    setTimeout(() => setIsFlipping(false), 600);
+  };
 
   const latestPost = blogPosts[0] ?? null;
 
@@ -75,7 +84,10 @@ export default function HomeView() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {/* Hero card */}
             <div className={styles['hero-card']}>
-              <img ref={imageRef} className={`${styles['avatar']} ${false ? styles['spin'] : ''}`} src="/assets/pfp.png" alt="Profile" />
+              <div className={`${styles['avatar-wrapper']} ${avatarFlipped ? styles['flipped'] : ''}`} onClick={handleAvatarClick}>
+                <img ref={imageRef} className={styles['avatar']} src="/assets/pfp.png" alt="Profile" />
+                <img className={`${styles['avatar']} ${styles['avatar-back']}`} src="/assets/pfp_rl.png" alt="Profile alt" />
+              </div>
               <div className={styles['hero-info']}>
                 <span className={styles['hero-name']}>{t('/.hero.name')}</span>
                 <div className={styles['hero-title-container']}>
