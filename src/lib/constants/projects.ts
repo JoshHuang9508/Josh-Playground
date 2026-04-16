@@ -1,14 +1,6 @@
-export type ProjectConfig = {
-  slug: string;
-  name: string;
-  description: string;
-  github: { owner: string; repo: string };
-  images: string[];
-  tags: string[];
-  accent: string;
-};
+import type * as Types from '@/lib/types';
 
-export const FEATURED_PROJECTS: ProjectConfig[] = [
+export const PROJECTS: Types.GitHubProjectConfig[] = [
   {
     slug: 'ricecall',
     name: 'RiceCall',

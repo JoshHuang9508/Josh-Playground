@@ -37,8 +37,7 @@ div.progress-bar {
   top: 0;
   left: 0;
   z-index: 200;
-  height: 2px;
-  background-color: #ffa24c;
+  width: 2px;
   transition: width 0.1s linear;
 }
 

@@ -5,7 +5,7 @@ dotenv.config({ path: '.env' });
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
-import { Command } from '@/lib/types';
+import type * as Types from '@/lib/types';
 
 import { MUSIC_LIST, TEXT_CONTENT } from '@/lib/constants';
 
@@ -13,7 +13,7 @@ import { t } from '@/lib/i18n';
 
 import { AppContext } from '@/lib/hooks/CommandHandler';
 
-import store from '@/redux';
+import store, { SetUsername } from '@/redux';
 
 import ConsoleManager from '@/components/ConsoleManager';
 import HomeView from '@/components/views/Home';
@@ -31,7 +31,7 @@ import styles from './_app.module.css';
 function PageComponent() {
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
-  const [availableCommands, setAvailableCommands] = useState<Command[]>([]);
+  const [availableCommands, setAvailableCommands] = useState<Types.Command[]>([]);
   const [availablePaths, setAvailablePaths] = useState<string[]>([]);
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>('');
   const [backgroundColor, setBackgroundColor] = useState<string>('');
@@ -82,6 +82,22 @@ function PageComponent() {
     audioPlayerRef.current.play();
     audioPlayerRef.current.volume = 0.05;
   }, [musicIndex]);
+
+  useEffect(() => {
+    const backgroundImageUrl = localStorage.getItem('backgroundImageUrl') ?? '';
+    setBackgroundImageUrl(backgroundImageUrl);
+  }, []);
+
+  useEffect(() => {
+    const backgroundColor = localStorage.getItem('backgroundColor') ?? '';
+    setBackgroundColor(backgroundColor);
+  }, []);
+
+  useEffect(() => {
+    const username = localStorage.getItem('username') ?? t('global.defaultUsername');
+    setUsername(username);
+    SetUsername(username);
+  }, []);
 
   const renderView = () => {
     if (currentHash.startsWith('/blog/') && currentHash !== '/blog') {

@@ -131,6 +131,12 @@ span.tag-badge {
   border-radius: 0.75rem;
 }
 
+span.slug-text {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: #888;
+}
+
 span.read-time {
   font-size: 0.8rem;
   color: #888;

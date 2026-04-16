@@ -1,3 +1,5 @@
+export type ConsoleWindowState = 'normal' | 'minimized' | 'maximized' | 'closed';
+
 export type Command = {
   name: string;
   description: string;
@@ -43,19 +45,6 @@ export type User = {
   [id: string]: string;
 };
 
-export type GitHubRepo = {
-  name: string; // e.g. "RiceCall"
-  owner: string; // e.g. "NerdyHomeReOpen"
-  description: string;
-  language: string | null; // e.g. "TypeScript", "Go", "Vue", null
-  stars: number;
-  forks: number;
-  watchers: number;
-  visibility: 'Public' | 'Private';
-  updatedAt: string; // e.g. "Updated 4 hours ago"
-  url?: string; // e.g. "https://github.com/NerdyHomeReOpen/RiceCall"
-};
-
 export type BlogPost = {
   slug: string;
   title: string;
@@ -68,6 +57,26 @@ export type BlogPost = {
 };
 
 export type BlogPostMeta = Omit<BlogPost, 'content'>;
+
+export type GitHubProjectConfig = {
+  slug: string;
+  name: string;
+  description: string;
+  github: { owner: string; repo: string };
+  images: string[];
+  tags: string[];
+  accent: string;
+};
+
+export type GitHubProject = {
+  name: string;
+  description: string;
+  language: string | null;
+  stars: number;
+  forks: number;
+  url: string;
+  updatedAt: string;
+};
 
 export type OsuUser = {
   username: string;

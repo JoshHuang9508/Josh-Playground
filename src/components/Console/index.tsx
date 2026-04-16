@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { Command } from '@/lib/types';
+import type * as Types from '@/lib/types';
 
 import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT, COMMAND_LIST, PATH_LIST } from '@/lib/constants';
 
@@ -10,35 +10,22 @@ import { subscribeConsole, setActiveConsole } from '@/lib/consoleLog';
 
 import { AppContext } from '@/lib/hooks/CommandHandler';
 
-import { AddConsoleLog, SetCommand, SetUsername } from '@/redux';
+import { AddConsoleLog, SetCommand } from '@/redux';
 
 import ColorSpan from '@/components/ColorSpan';
-import { WindowState } from '@/components/ConsoleManager';
 
 import styles from './Console.module.css';
 
 interface ConsoleProps {
   id: string;
-  windowState: WindowState;
-  onWindowStateChange: (id: string, state: WindowState) => void;
+  windowState: Types.ConsoleWindowState;
+  onWindowStateChange: (id: string, state: Types.ConsoleWindowState) => void;
   positionOffset: number;
   minimizedIndex: number;
 }
 
-function Console({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: ConsoleProps) {
-  const {
-    availableCommands,
-    availablePaths,
-    setAvailableCommands,
-    setAvailablePaths,
-    backgroundImageUrl,
-    backgroundColor,
-    setBackgroundImageUrl,
-    setBackgroundColor,
-    username,
-    setUsername,
-    currentHash,
-  } = useContext(AppContext)!;
+export default function Console({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: ConsoleProps) {
+  const { availableCommands, setAvailableCommands, setAvailablePaths, username, setUsername, currentHash } = useContext(AppContext)!;
 
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
@@ -89,9 +76,11 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
   const findAvailablePath = (input: string) => {
     const paths = input.split('/');
     const lastPath = paths.pop();
-    const pagePaths = currentHash.split('/').filter(Boolean);
-    paths.forEach((element) => {
-      if (element === '.') {
+    let pagePaths = currentHash.split('/').filter(Boolean);
+    paths.forEach((element, index) => {
+      if (index === 0 && element === '~') {
+        pagePaths = [];
+      } else if (element === '.') {
         return;
       } else if (element === '..') {
         pagePaths.pop();
@@ -111,7 +100,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
     return input + replace;
   };
 
-  const findAvailable = (input: string, commands: Command[]): string[] => {
+  const findAvailable = (input: string, commands: Types.Command[]): string[] => {
     const parts = input.split(' ');
     const lastPart = parts[parts.length - 1];
     const command = parts.length <= 1 ? '' : commands.find((cmd) => cmd.name === parts[0]);
@@ -127,9 +116,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
         availables.push(...command.options.filter((opt) => opt.startsWith(lastPart) && opt != lastPart));
       }
     }
-    if (lastPart.endsWith('/') || input.endsWith(' ')) {
-      availables.push(...findAvailablePath(lastPart));
-    }
+    availables.push(...findAvailablePath(lastPart));
 
     return availables;
   };
@@ -153,6 +140,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
       setActiveConsole(id);
       AddConsoleLog(`${prefix}@#fff700${command}`);
       setCmdHistory([command, ...cmdHistory]);
+      localStorage.setItem('cmdHistory', [command, ...cmdHistory].slice(0, 100).join(','));
       setCmdHistoryIndex(-1);
 
       SetCommand(command);
@@ -347,39 +335,6 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cmdHistory', cmdHistory.slice(0, 100).join(','));
-  }, [cmdHistory]);
-
-  useEffect(() => {
-    const username = localStorage.getItem('username') ?? t('global.defaultUsername');
-    setUsername(username);
-    SetUsername(username);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('username', username);
-    SetUsername(username);
-  }, [username]);
-
-  useEffect(() => {
-    const backgroundImageUrl = localStorage.getItem('backgroundImageUrl') ?? '';
-    setBackgroundImageUrl(backgroundImageUrl);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('backgroundImageUrl', backgroundImageUrl);
-  }, [backgroundImageUrl]);
-
-  useEffect(() => {
-    const backgroundColor = localStorage.getItem('backgroundColor') ?? '';
-    setBackgroundColor(backgroundColor);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('backgroundColor', backgroundColor);
-  }, [backgroundColor]);
-
-  useEffect(() => {
     const unsubscribe = subscribeConsole(
       id,
       (messages) => {
@@ -430,6 +385,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
       <div className={styles['minimize-icon']}>
         <span>{'>_'}</span>
       </div>
+
       {windowState !== 'maximized' && (
         <>
           <div className={`${styles['resize-handle']} ${styles['resize-n']}`} onMouseDown={(e) => handleResizeStart(e, 'n')} />
@@ -442,6 +398,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
           <div className={`${styles['resize-handle']} ${styles['resize-se']}`} onMouseDown={(e) => handleResizeStart(e, 'se')} />
         </>
       )}
+
       <div className={`${styles['header']} ${isDragging ? styles['dragging'] : ''}`} onMouseDown={handleDragStart}>
         <div className={styles['traffic-lights']}>
           <span className={styles['close']} onClick={handleClose} />
@@ -450,6 +407,7 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
         </div>
         <p className={styles['title']}>{t('console.title')}</p>
       </div>
+
       <div tabIndex={-1} className={styles['output']} onScroll={handleOutputBoxScroll}>
         {consoleContents.map((content, index) => (
           <div key={index} className={styles['output-line']}>
@@ -458,11 +416,13 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
         ))}
         <div ref={outputEndRef} />
       </div>
+
       {available[0] && (
         <div className={styles['prompt']}>
           <ColorSpan str={`@#FFF700${available.join('@#, @#FFF700')}`} />
         </div>
       )}
+
       <div className={styles['input']}>
         <ColorSpan str={prefix} style={{ minWidth: 'fit-content' }} />
         <input ref={inputBox} type="text" value={`${inputValue}`} placeholder={t('console.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
@@ -470,5 +430,3 @@ function Console({ id, windowState, onWindowStateChange, positionOffset, minimiz
     </div>
   );
 }
-
-export default Console;

@@ -3,9 +3,11 @@ import React from 'react';
 import { t } from '@/lib/i18n';
 
 import useCommandHandler from '@/lib/hooks/CommandHandler';
-import { useBlogPosts, getTagColor } from '@/lib/hooks/BlogPosts';
+import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import { AddConsoleLog } from '@/redux';
+
+import PostCard from './PostCard';
 
 import styles from './Blog.module.css';
 
@@ -41,33 +43,9 @@ export default function BlogView() {
       {posts.length > 0 && (
         <div className={styles['timeline']}>
           <div className={styles['timeline-line']} />
-          {posts.map((post, index) => {
-            const tagColor = getTagColor(post.tags[0] ?? '');
-            return (
-              <div key={post.slug} className={styles['timeline-entry']}>
-                <div
-                  className={styles['timeline-dot']}
-                  style={{
-                    backgroundColor: tagColor,
-                    animationDelay: `${index * 0.1}s`,
-                  }}
-                />
-                <span className={styles['timeline-date']}>{post.date}</span>
-                <div className={styles['post-card']} onClick={() => (window.location.hash = `#/blog/${post.slug}`)}>
-                  <span className={styles['post-title']}>{post.title}</span>
-                  <p className={styles['post-excerpt']}>{post.excerpt}</p>
-                  <div className={styles['post-meta']}>
-                    {post.tags.map((tag) => (
-                      <span key={tag} className={styles['tag-badge']} style={{ color: getTagColor(tag) }}>
-                        {tag}
-                      </span>
-                    ))}
-                    <span className={styles['read-time']}>{post.readTime} min read</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {posts.map((post, index) => (
+            <PostCard key={post.slug} post={post} index={index} />
+          ))}
         </div>
       )}
     </div>

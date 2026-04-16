@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
+import type * as Types from '@/lib/types';
+
+import { LANGUAGE_COLORS } from '@/lib/constants';
+
+import { PROJECTS } from '@/lib/constants';
+
 import { t } from '@/lib/i18n';
 
-import { FEATURED_PROJECTS, ProjectConfig } from '@/lib/projects';
-
 import useCommandHandler from '@/lib/hooks/CommandHandler';
-import { useProjectRepo } from '@/lib/hooks/ProjectRepo';
-import { languageColors } from '@/lib/hooks/GitHubRepos';
+import useProjectRepo from '@/lib/hooks/ProjectRepo';
 
 import { AddConsoleLog } from '@/redux';
 
 import styles from './Projects.module.css';
 
-function ProjectCard({ project }: { project: ProjectConfig }) {
+interface ProjectCardProps {
+  project: Types.GitHubProjectConfig;
+}
+
+function ProjectCard({ project }: ProjectCardProps) {
   const { data: repo } = useProjectRepo(project.github.owner, project.github.repo);
 
   const [activeImage, setActiveImage] = useState(0);
@@ -75,7 +82,7 @@ function ProjectCard({ project }: { project: ProjectConfig }) {
                 <span
                   className={styles['lang-dot']}
                   style={{
-                    backgroundColor: languageColors[repo.language] ?? '#ccc',
+                    backgroundColor: LANGUAGE_COLORS[repo.language] ?? '#ccc',
                   }}
                 />
                 {repo.language}
@@ -98,7 +105,7 @@ export default function ProjectsView() {
         AddConsoleLog(t('/projects.commands.open.usage'));
         return;
       }
-      const project = FEATURED_PROJECTS.find((p) => p.slug.toLowerCase() === name.toLowerCase());
+      const project = PROJECTS.find((p) => p.slug.toLowerCase() === name.toLowerCase());
       if (project) {
         window.open(`https://github.com/${project.github.owner}/${project.github.repo}`, '_blank');
         AddConsoleLog(t('/projects.commands.open.opening', project.name));
@@ -113,7 +120,7 @@ export default function ProjectsView() {
       <p className="page-subtitle">{t('/projects.subtitle')}</p>
       <hr className="divider" />
 
-      {FEATURED_PROJECTS.map((project) => (
+      {PROJECTS.map((project) => (
         <ProjectCard key={project.slug} project={project} />
       ))}
     </div>

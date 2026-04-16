@@ -3,10 +3,12 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 
+import { TAG_COLORS } from '@/lib/constants';
+
 import { t } from '@/lib/i18n';
 
 import useCommandHandler from '@/lib/hooks/CommandHandler';
-import { useBlogPost, getTagColor } from '@/lib/hooks/BlogPosts';
+import useBlogPost from '@/lib/hooks/BlogPost';
 
 import styles from './BlogPost.module.css';
 
@@ -19,7 +21,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   const pageRef = useRef<HTMLDivElement>(null);
 
-  const [progress, setProgress] = useState(0);
+  const [progressBarHeight, setProgressBarHeight] = useState(0);
 
   useCommandHandler({});
 
@@ -31,7 +33,8 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
       const scrollTop = el.scrollTop;
       const scrollHeight = el.scrollHeight - el.clientHeight;
       if (scrollHeight > 0) {
-        setProgress((scrollTop / scrollHeight) * 100);
+        const progress = (scrollTop / scrollHeight) * 100;
+        setProgressBarHeight(el.scrollTop + el.clientHeight * (progress / 100));
       }
     };
 
@@ -60,14 +63,14 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   return (
     <div className={styles['blogpost-page']} ref={pageRef}>
-      <div className={styles['progress-bar']} style={{ width: `${progress}%` }} />
+      <div className={styles['progress-bar']} style={{ height: `${progressBarHeight}px`, backgroundColor: TAG_COLORS[post.tags[0] ?? ''] }} />
 
       <div className={styles['article-header']}>
         <h1 className={styles['article-title']}>{post.title}</h1>
         <div className={styles['article-meta']}>
           <span className={styles['article-date']}>{post.date}</span>
           {post.tags.map((tag) => (
-            <span key={tag} className={styles['article-tag']} style={{ color: getTagColor(tag) }}>
+            <span key={tag} className={styles['article-tag']} style={{ color: TAG_COLORS[tag] }}>
               {tag}
             </span>
           ))}

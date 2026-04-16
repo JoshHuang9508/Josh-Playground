@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReactPlayer from 'react-player';
 
-import { PlayerState, Track, PlayerStateClient, User } from '@/lib/types';
+import type * as Types from '@/lib/types';
 
 import { API_URL } from '@/lib/constants';
 
@@ -25,7 +25,7 @@ export default function ListenTogetherView() {
 
   const [mute, setMute] = useState(true);
   const [socketInstance, setSocketInstance] = useState<ListenTogetherSocket | null>(null);
-  const [playerState, setPlayerState] = useState<PlayerState>({
+  const [playerState, setPlayerState] = useState<Types.PlayerState>({
     playing: false,
     played: 0,
     playedSeconds: 0,
@@ -40,18 +40,18 @@ export default function ListenTogetherView() {
     index: 0,
     isEnd: false,
   });
-  const [cachedPlayerState, setCachedPlayerState] = useState<PlayerState | null>(null);
-  const [PlayerStateClientState, setPlayerStateClient] = useState<PlayerStateClient>({
+  const [cachedPlayerState, setCachedPlayerState] = useState<Types.PlayerState | null>(null);
+  const [PlayerStateClientState, setPlayerStateClient] = useState<Types.PlayerStateClient>({
     volume: 0.5,
     seeking: false,
     isReady: false,
   });
   const [logs, setLogs] = useState<string[]>([]);
   const [cachedLogs, setCachedLogs] = useState<string[]>([]);
-  const [users, setUsers] = useState<User>({});
-  const [cachedUsers, setCachedUsers] = useState<User>({});
+  const [users, setUsers] = useState<Types.User>({});
+  const [cachedUsers, setCachedUsers] = useState<Types.User>({});
 
-  const getVideoInfo = async (videoId: string): Promise<Track> => {
+  const getVideoInfo = async (videoId: string): Promise<Types.Track> => {
     const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
       method: 'GET',
       headers: {
@@ -68,7 +68,7 @@ export default function ListenTogetherView() {
         AddConsoleLog(t('listentogether.errors.getVideoInfo', String(error)));
         throw error;
       });
-    const track: Track = {
+    const track: Types.Track = {
       url: data.video_url,
       title: data.title,
       author: data.ownerChannelName,
@@ -79,7 +79,7 @@ export default function ListenTogetherView() {
     return track;
   };
 
-  const getPlaylist = async (playlistId: string): Promise<Track[]> => {
+  const getPlaylist = async (playlistId: string): Promise<Types.Track[]> => {
     const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
       method: 'GET',
       headers: {
@@ -96,7 +96,7 @@ export default function ListenTogetherView() {
         AddConsoleLog(t('listentogether.errors.getPlaylist', String(error)));
         throw error;
       });
-    const tracks: Track[] = data.map((item: any, index) => {
+    const tracks: Types.Track[] = data.map((item: any, index) => {
       return {
         url: item.shortUrl,
         title: item.title,
@@ -113,7 +113,7 @@ export default function ListenTogetherView() {
     socketInstance?.onEnded();
   };
 
-  const handlePlayerProgress = (state: PlayerState) => {
+  const handlePlayerProgress = (state: Types.PlayerState) => {
     socketInstance?.onProgress(state);
   };
 

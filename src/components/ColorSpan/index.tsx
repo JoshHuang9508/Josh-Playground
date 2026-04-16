@@ -6,7 +6,7 @@ interface ColorSpanProps {
   style?: React.CSSProperties;
 }
 
-function ColorSpan({ str, className, style }: ColorSpanProps) {
+export default function ColorSpan({ str, className, style }: ColorSpanProps) {
   const isValidColorCode = (color: string) => {
     const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
     return regex.test(color);
@@ -34,5 +34,3 @@ function ColorSpan({ str, className, style }: ColorSpanProps) {
     </div>
   );
 }
-
-export default ColorSpan;

@@ -4,12 +4,11 @@ import { AddConsoleLog } from '@/redux';
 
 import { t } from '@/lib/i18n';
 
-import { SOCIAL_LINKS } from '@/lib/constants';
-import { FEATURED_PROJECTS } from '@/lib/projects';
+import { SOCIAL_LINKS, PROJECTS } from '@/lib/constants';
 
 import useCommandHandler from '@/lib/hooks/CommandHandler';
 import useOsuStats from '@/lib/hooks/OsuStats';
-import { useBlogPosts } from '@/lib/hooks/BlogPosts';
+import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import ColorSpan from '@/components/ColorSpan';
 
@@ -22,6 +21,7 @@ export default function HomeView() {
 
   const { user: osuUser } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
+
   const latestPost = blogPosts[0] ?? null;
 
   useCommandHandler({
@@ -61,7 +61,7 @@ export default function HomeView() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveProjectIndex((prev) => (prev + 1) % FEATURED_PROJECTS.length);
+      setActiveProjectIndex((prev) => (prev + 1) % PROJECTS.length);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -129,7 +129,7 @@ export default function HomeView() {
                 </a>
               </div>
               <div className={styles['project-carousel']}>
-                {FEATURED_PROJECTS.map((project, i) => (
+                {PROJECTS.map((project, i) => (
                   <div
                     key={project.slug}
                     className={`${styles['mini-project']} ${i === activeProjectIndex ? styles['active'] : ''}`}
@@ -161,7 +161,7 @@ export default function HomeView() {
                 ))}
               </div>
               <div className={styles['carousel-dots']}>
-                {FEATURED_PROJECTS.map((project, i) => (
+                {PROJECTS.map((project, i) => (
                   <span
                     key={project.slug}
                     className={`${styles['carousel-dot']} ${i === activeProjectIndex ? styles['active'] : ''}`}

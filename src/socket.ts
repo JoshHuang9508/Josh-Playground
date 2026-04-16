@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-import { PlayerState, Track, User } from '@/lib/types';
+import type * as Types from '@/lib/types';
 
 import { API_URL } from '@/lib/constants';
 
@@ -25,9 +25,9 @@ export default class ListenTogetherSocket {
     connect_error: () => void;
     error: (error: any) => void;
     disconnect: () => void;
-    receivePlayerState: (state: PlayerState) => void;
+    receivePlayerState: (state: Types.PlayerState) => void;
     receiveLog: (logs: any) => void;
-    receiveUsers: (users: User) => void;
+    receiveUsers: (users: Types.User) => void;
     seek: (time: number) => void;
   }) {
     this.socket.connect();
@@ -61,7 +61,7 @@ export default class ListenTogetherSocket {
     this.socket.emit('addLog', log);
   };
 
-  setPlayerState = (state: PlayerState) => {
+  setPlayerState = (state: Types.PlayerState) => {
     this.socket.emit('setPlayerState', state);
   };
 
@@ -89,11 +89,11 @@ export default class ListenTogetherSocket {
     this.socket.emit('refresh');
   };
 
-  addTrack = (track: Track) => {
+  addTrack = (track: Types.Track) => {
     this.socket.emit('addTrack', track);
   };
 
-  addTracks = (tracks: Track[]) => {
+  addTracks = (tracks: Types.Track[]) => {
     this.socket.emit('addTracks', tracks);
   };
 
@@ -101,7 +101,7 @@ export default class ListenTogetherSocket {
     this.socket.emit('removeTrack', index);
   };
 
-  setTrackQueue = (queue: Track[]) => {
+  setTrackQueue = (queue: Types.Track[]) => {
     this.socket.emit('setTrackQueue', queue);
   };
 

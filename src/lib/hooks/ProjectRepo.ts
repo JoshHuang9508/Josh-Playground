@@ -1,47 +1,43 @@
 import { useState, useEffect } from 'react';
 
-export type RepoData = {
-  name: string;
-  description: string;
-  language: string | null;
-  stars: number;
-  forks: number;
-  url: string;
-  updatedAt: string;
-};
+import type * as Types from '@/lib/types';
 
-export function useProjectRepo(owner: string, repo: string) {
-  const [data, setData] = useState<RepoData | null>(null);
+export default function useProjectRepo(owner: string, repo: string) {
+  const [data, setData] = useState<Types.GitHubProject | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function fetchRepo() {
+    async function loadRepo() {
       try {
         setLoading(true);
         const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-        const r = await res.json();
-        if (!cancelled) {
-          setData({
-            name: r.name,
-            description: r.description ?? '',
-            language: r.language,
-            stars: r.stargazers_count,
-            forks: r.forks_count,
-            url: r.html_url,
-            updatedAt: new Date(r.updated_at).toLocaleDateString(),
-          });
+        if (!res.ok) {
+          setData(null);
+          return;
         }
+        const data = await res.json();
+
+        const mapped: Types.GitHubProject = {
+          name: data.name,
+          description: data.description ?? '',
+          language: data.language,
+          stars: data.stargazers_count,
+          forks: data.forks_count,
+          url: data.html_url,
+          updatedAt: new Date(data.updated_at).toLocaleDateString(),
+        };
+
+        if (!cancelled) setData(mapped);
       } catch {
         // silently fail — project card will show config data instead
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
+    loadRepo();
 
-    fetchRepo();
     return () => {
       cancelled = true;
     };

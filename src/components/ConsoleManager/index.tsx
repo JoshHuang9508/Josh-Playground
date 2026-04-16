@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import Console from '@/components/Console';
+import type * as Types from '@/lib/types';
 
-export type WindowState = 'normal' | 'minimized' | 'maximized' | 'closed';
+import Console from '@/components/Console';
 
 type ConsoleInstance = {
   id: string;
-  windowState: WindowState;
+  windowState: Types.ConsoleWindowState;
   positionOffset: number;
 };
 
-function ConsoleManager() {
+export default function ConsoleManager() {
   const nextZIndexRef = useRef(999);
 
   const [consoles, setConsoles] = useState<ConsoleInstance[]>([{ id: '1', windowState: 'minimized', positionOffset: 0 }]);
@@ -30,7 +30,7 @@ function ConsoleManager() {
     });
   };
 
-  const handleWindowStateChange = (id: string, state: WindowState) => {
+  const handleWindowStateChange = (id: string, state: Types.ConsoleWindowState) => {
     if (state === 'closed') {
       setConsoles((prev) => prev.map((c) => (c.id === id ? { ...c, windowState: 'minimized' } : c)));
       return;
@@ -47,7 +47,7 @@ function ConsoleManager() {
       }
 
       if (event.key === 'Escape') {
-        setConsoles((prev) => prev.map((c) => (c.windowState === 'normal' ? { ...c, windowState: 'minimized' as WindowState } : c)));
+        setConsoles((prev) => prev.map((c) => (c.windowState === 'normal' ? { ...c, windowState: 'minimized' as Types.ConsoleWindowState } : c)));
       }
     };
     document.addEventListener('keydown', onKeyDown);
@@ -66,13 +66,7 @@ function ConsoleManager() {
     return () => document.removeEventListener('pointerdownter', onPointerDown);
   }, []);
 
-  return (
-    <>
-      {consoles.map((c) => (
-        <Console key={c.id} id={c.id} windowState={c.windowState} onWindowStateChange={handleWindowStateChange} positionOffset={c.positionOffset} minimizedIndex={minimizedIds.indexOf(c.id)} />
-      ))}
-    </>
-  );
+  return consoles.map((c) => (
+    <Console key={c.id} id={c.id} windowState={c.windowState} onWindowStateChange={handleWindowStateChange} positionOffset={c.positionOffset} minimizedIndex={minimizedIds.indexOf(c.id)} />
+  ));
 }
-
-export default ConsoleManager;

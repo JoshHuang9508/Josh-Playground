@@ -1,27 +1,30 @@
 import { useState, useEffect } from 'react';
 
-import { OsuUser } from '@/lib/types';
+import type * as Types from '@/lib/types';
 
 const OSU_USER_ID = '15100005';
 
 export function useOsuStats() {
-  const [user, setUser] = useState<OsuUser | null>(null);
+  const [user, setUser] = useState<Types.OsuUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function fetchStats() {
+    async function loadStats() {
       try {
         setLoading(true);
         setError(null);
 
         const res = await fetch(`/api/osu/${OSU_USER_ID}`);
-        if (!res.ok) throw new Error(`osu! API error: ${res.status}`);
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
         const data = await res.json();
 
-        const mapped: OsuUser = {
+        const mapped: Types.OsuUser = {
           username: data.username,
           avatarUrl: data.avatar_url,
           countryCode: data.country_code,
@@ -50,8 +53,8 @@ export function useOsuStats() {
         if (!cancelled) setLoading(false);
       }
     }
+    loadStats();
 
-    fetchStats();
     return () => {
       cancelled = true;
     };

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ReactPlayer from 'react-player';
 
-import { Command, CommandHandler } from '@/lib/types';
+import type * as Types from '@/lib/types';
 
 import { MUSIC_LIST } from '@/lib/constants';
 
@@ -11,14 +11,14 @@ import { t } from '@/lib/i18n';
 import { clearActiveConsole, setActiveConsole } from '@/lib/consoleLog';
 import { getVideoBlob } from '@/lib/getVideoBlob';
 
-import { AddConsoleLog, SetCommand } from '@/redux';
+import { AddConsoleLog, SetCommand, SetUsername } from '@/redux';
 
-export type CommandHandlers = Record<string, CommandHandler>;
+export type CommandHandlers = Record<string, Types.CommandHandler>;
 
 export type AppContextType = {
-  availableCommands: Command[];
+  availableCommands: Types.Command[];
   availablePaths: string[];
-  setAvailableCommands: (cmds: Command[]) => void;
+  setAvailableCommands: (cmds: Types.Command[]) => void;
   setAvailablePaths: (paths: string[]) => void;
   backgroundImageUrl: string;
   backgroundColor: string;
@@ -82,7 +82,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     return {
       help: () => {
         AddConsoleLog(t('commands.availableCommands'), t('commands.separator'));
-        ctx.availableCommands.forEach((cmd: Command) => {
+        ctx.availableCommands.forEach((cmd: Types.Command) => {
           AddConsoleLog(t('commands.help.usage', cmd.usage, cmd.description));
         });
         return;
@@ -116,6 +116,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
         } else {
           AddConsoleLog(t('commands.background.set', url));
           ctx.setBackgroundImageUrl(url);
+          localStorage.setItem('backgroundImageUrl', url);
           return;
         }
       },
@@ -131,6 +132,7 @@ export default function useCommandHandler(handlers: CommandHandlers) {
         } else {
           AddConsoleLog(t('commands.backgroundcolor.set', color));
           ctx.setBackgroundColor(color);
+          localStorage.setItem('backgroundColor', color);
           return;
         }
       },
@@ -144,7 +146,9 @@ export default function useCommandHandler(handlers: CommandHandlers) {
           return;
         } else {
           ctx.setUsername(name);
+          SetUsername(name);
           AddConsoleLog(t('commands.username.set', name));
+          localStorage.setItem('username', name);
           return;
         }
       },
@@ -161,12 +165,14 @@ export default function useCommandHandler(handlers: CommandHandlers) {
     cd: (_cmd, args) => {
       const page = args[0] ?? '';
       const hash = window.location.hash.slice(1) || '/';
-      const paths = hash.split('/').filter(Boolean);
+      let paths = hash.split('/').filter(Boolean);
       if (!page) {
         window.location.hash = '#/';
       } else {
-        page.split('/').forEach((element) => {
-          if (element === '.') {
+        page.split('/').forEach((element, index) => {
+          if (index === 0 && element === '~') {
+            paths = [];
+          } else if (element === '.') {
             return;
           } else if (element === '..') {
             paths.pop();
