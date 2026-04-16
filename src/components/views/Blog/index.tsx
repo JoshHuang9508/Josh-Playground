@@ -20,7 +20,7 @@ export default function BlogView() {
       appContext?.setAvailableArgs({ read: posts.map((p) => p.slug) });
     }
     return () => appContext?.setAvailableArgs({});
-  }, [posts, appContext]);
+  }, [posts]);
 
   useCommandHandler({
     read: (_cmd, args) => {
