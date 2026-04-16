@@ -10,15 +10,11 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, index }: PostCardProps) {
+  const tagColor = TAG_COLORS[post.tags[0] ?? ''];
+
   return (
     <div key={post.slug} className={styles['timeline-entry']}>
-      <div
-        className={styles['timeline-dot']}
-        style={{
-          backgroundColor: TAG_COLORS[post.tags[0] ?? ''],
-          animationDelay: `${index * 0.1}s`,
-        }}
-      />
+      <div className={styles['timeline-dot']} style={{ backgroundColor: tagColor, animationDelay: `${index * 0.1}s` }} />
       <span className={styles['timeline-date']}>{post.date}</span>
       <div className={styles['post-card']} onClick={() => (window.location.hash = `#/blog/${post.slug}`)}>
         <span className={styles['post-title']}>{post.title}</span>

@@ -12,8 +12,8 @@ import PostCard from './PostCard';
 import styles from './Blog.module.css';
 
 export default function BlogView() {
-  const { posts, loading } = useBlogPosts();
   const appContext = useContext(AppContext);
+  const { posts, loading } = useBlogPosts();
 
   useEffect(() => {
     if (posts.length > 0) {

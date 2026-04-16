@@ -1,8 +1,8 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type * as Types from '@/lib/types';
 
-import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT, COMMAND_LIST, PATH_LIST } from '@/lib/constants';
+import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT, PATH_LIST } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
@@ -25,7 +25,7 @@ interface ConsoleProps {
 }
 
 export default function Console({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: ConsoleProps) {
-  const { availableCommands, availableArgs, setAvailableCommands, setAvailablePaths, username, setUsername, currentHash } = useContext(AppContext)!;
+  const { availableCommands, availableArgs, username, currentHash } = useContext(AppContext)!;
 
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
@@ -60,11 +60,15 @@ export default function Console({ id, windowState, onWindowStateChange, position
   const [inputTemp, setInputTemp] = useState<string>('');
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [consoleContents, setConsoleContents] = useState<string[]>([]);
-  const [currentURL, setCurrentURL] = useState<string>('');
   const [cmdHistoryIndex, setCmdHistoryIndex] = useState<number>(-1);
   const [available, setAvailable] = useState<string[]>([]);
   const [availableIndex, setAvailableIndex] = useState<number>(0);
   const [isTabing, setIsTabing] = useState(false);
+
+  const currentURL = useMemo(() => {
+    const hashPaths = currentHash.split('/').filter(Boolean);
+    return hashPaths.length > 0 ? `/${hashPaths.join('/')}/` : '/';
+  }, [currentHash]);
 
   const prefix = window
     ? `@#FF77B7${username ?? t('global.defaultUsername')}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
@@ -325,13 +329,6 @@ export default function Console({ id, windowState, onWindowStateChange, position
   };
 
   useEffect(() => {
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
-  useEffect(() => {
     const cmdHistory = localStorage.getItem('cmdHistory')?.split(',') ?? [];
     setCmdHistory(cmdHistory);
   }, []);
@@ -353,13 +350,6 @@ export default function Console({ id, windowState, onWindowStateChange, position
   useEffect(() => {
     if (consoleBox.current) consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
   }, [consoleContents, inputValue]);
-
-  useEffect(() => {
-    const hashPaths = currentHash.split('/').filter(Boolean);
-    setCurrentURL(hashPaths.length > 0 ? `/${hashPaths.join('/')}/` : '/');
-    setAvailableCommands([...COMMAND_LIST['*'], ...(COMMAND_LIST[hashPaths.length > 0 ? `${hashPaths.join('/')}/` : '/'] ?? [])].sort((a, b) => a.name.localeCompare(b.name)));
-    setAvailablePaths(PATH_LIST[`/${hashPaths.join('/')}`] ?? []);
-  }, [currentHash]);
 
   useEffect(() => {
     if (outputEndRef.current) {

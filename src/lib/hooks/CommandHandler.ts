@@ -16,21 +16,21 @@ import { AddConsoleLog, SetCommand, SetUsername } from '@/redux';
 export type CommandHandlers = Record<string, Types.CommandHandler>;
 
 export type AppContextType = {
+  availableArgs: Record<string, string[]>;
   availableCommands: Types.Command[];
   availablePaths: string[];
+  setAvailableArgs: (args: Record<string, string[]>) => void;
   setAvailableCommands: (cmds: Types.Command[]) => void;
   setAvailablePaths: (paths: string[]) => void;
   backgroundImageUrl: string;
   backgroundColor: string;
+  dynamicTitle: string | null;
+  username: string;
   setBackgroundImageUrl: (url: string) => void;
   setBackgroundColor: (color: string) => void;
-  username: string;
+  setDynamicTitle: (title: string | null) => void;
   setUsername: (name: string) => void;
   currentHash: string;
-  dynamicTitle: string | null;
-  setDynamicTitle: (title: string | null) => void;
-  availableArgs: Record<string, string[]>;
-  setAvailableArgs: (args: Record<string, string[]>) => void;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);

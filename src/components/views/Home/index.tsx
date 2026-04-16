@@ -15,12 +15,12 @@ import ColorSpan from '@/components/ColorSpan';
 import styles from './Home.module.css';
 
 export default function HomeView() {
+  const { user: osuUser } = useOsuStats();
+  const { posts: blogPosts } = useBlogPosts();
+
   const imageRef = useRef<HTMLImageElement>(null);
 
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-
-  const { user: osuUser } = useOsuStats();
-  const { posts: blogPosts } = useBlogPosts();
 
   const latestPost = blogPosts[0] ?? null;
 

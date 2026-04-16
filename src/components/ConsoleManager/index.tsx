@@ -50,6 +50,7 @@ export default function ConsoleManager() {
         setConsoles((prev) => prev.map((c) => (c.windowState === 'normal' ? { ...c, windowState: 'minimized' as Types.ConsoleWindowState } : c)));
       }
     };
+
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, []);
@@ -62,6 +63,7 @@ export default function ConsoleManager() {
         nextZIndexRef.current += 1;
       }
     };
+
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdownter', onPointerDown);
   }, []);

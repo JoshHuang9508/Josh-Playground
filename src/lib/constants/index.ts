@@ -1,11 +1,13 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+export const OSU_USER_ID = '15100005';
 export const CONSOLE_MIN_WIDTH = 400;
 export const CONSOLE_MIN_HEIGHT = 150;
 export const TAG_COLORS: Record<string, string> = {
-  dev: '#00ffaa',
-  life: '#ff77b7',
-  gaming: '#00f3ff',
-  design: '#ffa24c',
+  'dev': '#00ffaa',
+  'life': '#ff77b7',
+  'gaming': '#00f3ff',
+  'design': '#ffa24c',
+  '': '#ccc',
 };
 export const MUSIC_LIST = [
   {
@@ -45,6 +47,7 @@ export const LANGUAGE_COLORS: Record<string, string> = {
   'Swift': '#F05138',
   'Kotlin': '#A97BFF',
   'Dart': '#00B4AB',
+  '': '#ccc',
 };
 export * from './command-list';
 export * from './path-list';

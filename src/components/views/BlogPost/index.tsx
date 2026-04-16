@@ -17,13 +17,14 @@ interface BlogPostViewProps {
 }
 
 export default function BlogPostView({ slug }: BlogPostViewProps) {
+  const appContext = useContext(AppContext);
   const { post, loading } = useBlogPost(slug);
 
   const pageRef = useRef<HTMLDivElement>(null);
 
   const [progressBarHeight, setProgressBarHeight] = useState(0);
 
-  const appContext = useContext(AppContext);
+  const tagColor = TAG_COLORS[post?.tags[0] ?? ''];
 
   useCommandHandler({});
 
@@ -39,7 +40,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
     const el = pageRef.current;
     if (!el) return;
 
-    const handleScroll = () => {
+    const onScroll = () => {
       const scrollTop = el.scrollTop;
       const scrollHeight = el.scrollHeight - el.clientHeight;
       if (scrollHeight > 0) {
@@ -48,8 +49,8 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
       }
     };
 
-    el.addEventListener('scroll', handleScroll);
-    return () => el.removeEventListener('scroll', handleScroll);
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
   }, [post]);
 
   if (loading) {
@@ -73,7 +74,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   return (
     <div className={styles['blogpost-page']} ref={pageRef}>
-      <div className={styles['progress-bar']} style={{ height: `${progressBarHeight}px`, backgroundColor: TAG_COLORS[post.tags[0] ?? ''] }} />
+      <div className={styles['progress-bar']} style={{ height: `${progressBarHeight}px`, backgroundColor: tagColor }} />
 
       <div className={styles['article-header']}>
         <h1 className={styles['article-title']}>{post.title}</h1>

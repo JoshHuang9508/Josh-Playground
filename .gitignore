@@ -21,5 +21,8 @@ web-build/
 # Environment variables
 *.env
 
+.vscode
+
 # Claude
+.claude
 .superpowers

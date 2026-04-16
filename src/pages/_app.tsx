@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, TEXT_CONTENT } from '@/lib/constants';
+import { COMMAND_LIST, MUSIC_LIST, PATH_LIST, TEXT_CONTENT } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
@@ -86,6 +86,12 @@ function PageComponent() {
     audioPlayerRef.current.play();
     audioPlayerRef.current.volume = 0.05;
   }, [musicIndex]);
+
+  useEffect(() => {
+    const hashPaths = currentHash.split('/').filter(Boolean);
+    setAvailableCommands([...COMMAND_LIST['*'], ...(COMMAND_LIST[hashPaths.length > 0 ? `${hashPaths.join('/')}/` : '/'] ?? [])].sort((a, b) => a.name.localeCompare(b.name)));
+    setAvailablePaths(PATH_LIST[`/${hashPaths.join('/')}`] ?? []);
+  }, [currentHash]);
 
   useEffect(() => {
     const backgroundImageUrl = localStorage.getItem('backgroundImageUrl') ?? '';

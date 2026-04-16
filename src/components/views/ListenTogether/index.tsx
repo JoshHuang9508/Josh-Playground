@@ -369,6 +369,7 @@ export default function ListenTogetherView() {
     const onInteraction = () => {
       if (PlayerStateClientState.isReady) setMute(false);
     };
+
     document.addEventListener('click', onInteraction);
     document.addEventListener('touchstart', onInteraction);
     return () => {
