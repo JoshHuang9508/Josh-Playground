@@ -166,19 +166,9 @@ function PageComponent() {
           setAvailableArgs,
         }}
       >
-        <div
-          style={{
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100vh',
-            width: '100vw',
-            backgroundColor: backgroundColor ? backgroundColor : undefined,
-            transition: 'background-color 0.3s ease-in-out',
-          }}
-        >
+        <div className={styles['app']} style={{ backgroundColor: backgroundColor ? backgroundColor : undefined }}>
           <img src={backgroundImageUrl ? backgroundImageUrl : '/assets/bg.jpg'} className={styles['background']} alt="background" />
-          <div className={styles['container']}>
+          <div className={styles['view-container']}>
             <Navigation currentHash={currentHash} />
             {renderView()}
           </div>
