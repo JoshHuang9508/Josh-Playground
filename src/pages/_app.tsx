@@ -37,6 +37,8 @@ function PageComponent() {
   const [backgroundColor, setBackgroundColor] = useState<string>('');
   const [username, setUsername] = useState<string>(t('global.defaultUsername'));
   const [currentHash, setCurrentHash] = useState<string>('/');
+  const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
+  const [availableArgs, setAvailableArgs] = useState<Record<string, string[]>>({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
 
@@ -48,6 +50,8 @@ function PageComponent() {
     const updateHash = () => {
       const hash = window.location.hash.slice(1) || '/';
       setCurrentHash(hash);
+      setDynamicTitle(null);
+      setAvailableArgs({});
     };
     updateHash();
     window.addEventListener('hashchange', updateHash);
@@ -124,9 +128,9 @@ function PageComponent() {
     <Provider store={store}>
       <audio data-audio-player ref={audioPlayerRef} src={MUSIC_LIST[musicIndex].path} onEnded={handleMusicEnd} />
       <Head>
-        <title>{t('global.siteTitle', TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title)}</title>
+        <title>{t('global.siteTitle', dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title)}</title>
         <meta name="description" content={TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT['*'].subtitle} />
-        <meta property="og:title" content={t('global.siteTitle', TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title)} />
+        <meta property="og:title" content={t('global.siteTitle', dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title)} />
         <meta property="og:description" content={TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT['*'].subtitle} />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
@@ -150,6 +154,10 @@ function PageComponent() {
           username,
           setUsername,
           currentHash,
+          dynamicTitle,
+          setDynamicTitle,
+          availableArgs,
+          setAvailableArgs,
         }}
       >
         <div
