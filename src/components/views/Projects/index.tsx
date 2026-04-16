@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import type * as Types from '@/lib/types';
 
@@ -8,7 +8,7 @@ import { PROJECTS } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+import useCommandHandler, { AppContext } from '@/lib/hooks/CommandHandler';
 import useProjectRepo from '@/lib/hooks/ProjectRepo';
 
 import { AddConsoleLog } from '@/redux';
@@ -98,6 +98,12 @@ function ProjectCard({ project }: ProjectCardProps) {
 }
 
 export default function ProjectsView() {
+  const appContext = useContext(AppContext);
+
+  useEffect(() => {
+    appContext?.setAvailableArgs({ open: PROJECTS.map((p) => p.slug) });
+  }, []);
+
   useCommandHandler({
     open: (_cmd, args) => {
       const name = args[0] ?? '';
