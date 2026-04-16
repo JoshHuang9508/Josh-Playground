@@ -19,14 +19,15 @@
 }
 
 html,
-body {
+body,
+#__next {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   font-family: Consolas, 'Noto Sans TC', sans-serif;
   font-size: clamp(12px, 0.9vw, 14px);
   color: white;
-  background-color: rgb(10 10 10 / 80%);
+  background-color: transparent;
 }
 
 span,
