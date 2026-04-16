@@ -8,18 +8,11 @@ export function IDeepEqual(a: unknown, b: unknown): boolean {
     return a.every((item, index) => IDeepEqual(item, b[index]));
   }
 
-  if (typeof a === "object" && typeof b === "object") {
+  if (typeof a === 'object' && typeof b === 'object') {
     const keysA = Object.keys(a as Record<string, unknown>);
     const keysB = Object.keys(b as Record<string, unknown>);
     if (keysA.length !== keysB.length) return false;
-    return keysA.every(
-      (key) =>
-        Object.prototype.hasOwnProperty.call(b, key) &&
-        IDeepEqual(
-          (a as Record<string, unknown>)[key],
-          (b as Record<string, unknown>)[key],
-        ),
-    );
+    return keysA.every((key) => Object.prototype.hasOwnProperty.call(b, key) && IDeepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]));
   }
 
   return false;
@@ -30,10 +23,7 @@ export function IDiffArray<T>(a: T[], b: T[]): boolean {
   return !a.every((item, index) => IDeepEqual(item, b[index]));
 }
 
-export function IDiffObject(
-  a: Record<string, unknown> | null,
-  b: Record<string, unknown> | null,
-): boolean {
+export function IDiffObject(a: Record<string, unknown> | null, b: Record<string, unknown> | null): boolean {
   if (a === null || b === null) return true;
   return !IDeepEqual(a, b);
 }

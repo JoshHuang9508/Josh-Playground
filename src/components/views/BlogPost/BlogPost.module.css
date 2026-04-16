@@ -81,7 +81,7 @@ span.article-read-time {
 }
 
 div.article-body {
-  font-family: "Noto Sans TC", sans-serif;
+  font-family: 'Noto Sans TC', sans-serif;
   font-size: 1.05rem;
   line-height: 1.7;
   color: #ccc;
@@ -92,7 +92,7 @@ div.article-body h2,
 div.article-body h3 {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
-  font-family: Consolas, "Noto Sans TC", sans-serif;
+  font-family: Consolas, 'Noto Sans TC', sans-serif;
   color: #fff;
 }
 

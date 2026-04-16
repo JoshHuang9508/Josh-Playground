@@ -2,14 +2,14 @@
   font-family: StandardFont;
   font-style: normal;
   font-weight: normal;
-  src: url("/fonts/zh-tw.ttf") format("truetype");
+  src: url('/fonts/zh-tw.ttf') format('truetype');
 }
 
 @font-face {
   font-family: SignatureFont;
   font-style: normal;
   font-weight: normal;
-  src: url("/fonts/signature-us.otf") format("opentype");
+  src: url('/fonts/signature-us.otf') format('opentype');
 }
 
 * {
@@ -23,7 +23,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: Consolas, "Noto Sans TC", sans-serif;
+  font-family: Consolas, 'Noto Sans TC', sans-serif;
   font-size: clamp(12px, 0.9vw, 14px);
   color: white;
   background-color: rgb(10 10 10 / 80%);

@@ -1,4 +1,4 @@
-import { TEXT_CONTENT } from "@/lib/constants";
+import { TEXT_CONTENT } from '@/lib/constants';
 
 type NestedRecord = { [key: string]: string | string[] | NestedRecord };
 
@@ -10,21 +10,19 @@ type NestedRecord = { [key: string]: string | string[] | NestedRecord };
  * Supports {0}, {1}, ... placeholders in the string.
  */
 export function t(key: string, ...args: string[]): any {
-  const keys = key.split(".");
+  const keys = key.split('.');
   let value: unknown = TEXT_CONTENT;
   for (const k of keys) {
-    if (value && typeof value === "object" && k in value) {
+    if (value && typeof value === 'object' && k in value) {
       value = (value as NestedRecord)[k];
     } else {
       return key; // fallback: return the key itself
     }
   }
-  if (typeof value === "string") {
-    return value.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? "");
+  if (typeof value === 'string') {
+    return value.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? '');
   } else if (Array.isArray(value)) {
-    return value.map((item) =>
-      item.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? ""),
-    );
+    return value.map((item) => item.replace(/\{(\d+)\}/g, (_, i) => args[parseInt(i)] ?? ''));
   } else {
     return key;
   }

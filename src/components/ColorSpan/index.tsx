@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface ColorSpanProps {
   str: string;
@@ -13,10 +13,10 @@ function ColorSpan({ str, className, style }: ColorSpanProps) {
   };
 
   return (
-    <div style={{ display: "inline-block" }}>
+    <div style={{ display: 'inline-block' }}>
       {str
-        .split("@#")
-        .filter((i) => i !== "")
+        .split('@#')
+        .filter((i) => i !== '')
         .map((item, index) => {
           const color = item.slice(0, 6);
           if (!isValidColorCode(color))
@@ -26,11 +26,7 @@ function ColorSpan({ str, className, style }: ColorSpanProps) {
               </span>
             );
           return (
-            <span
-              key={color + index}
-              style={{ color: `#${color}`, ...style }}
-              className={className}
-            >
+            <span key={color + index} style={{ color: `#${color}`, ...style }} className={className}>
               {item.slice(6)}
             </span>
           );

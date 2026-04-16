@@ -6,11 +6,7 @@ export type Command = {
   options?: string[];
 };
 
-export type CommandHandler = (
-  fullCommand: string,
-  args: string[],
-  flags: string[],
-) => void;
+export type CommandHandler = (fullCommand: string, args: string[], flags: string[]) => void;
 
 export type Track = {
   url: string; // e.g. https://www.youtube.com/watch?v={ID}
@@ -55,7 +51,7 @@ export type GitHubRepo = {
   stars: number;
   forks: number;
   watchers: number;
-  visibility: "Public" | "Private";
+  visibility: 'Public' | 'Private';
   updatedAt: string; // e.g. "Updated 4 hours ago"
   url?: string; // e.g. "https://github.com/NerdyHomeReOpen/RiceCall"
 };
@@ -71,7 +67,7 @@ export type BlogPost = {
   readTime: number;
 };
 
-export type BlogPostMeta = Omit<BlogPost, "content">;
+export type BlogPostMeta = Omit<BlogPost, 'content'>;
 
 export type OsuUser = {
   username: string;

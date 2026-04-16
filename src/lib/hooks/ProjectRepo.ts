@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export type RepoData = {
   name: string;
@@ -20,15 +20,13 @@ export function useProjectRepo(owner: string, repo: string) {
     async function fetchRepo() {
       try {
         setLoading(true);
-        const res = await fetch(
-          `https://api.github.com/repos/${owner}/${repo}`,
-        );
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const r = await res.json();
         if (!cancelled) {
           setData({
             name: r.name,
-            description: r.description ?? "",
+            description: r.description ?? '',
             language: r.language,
             stars: r.stargazers_count,
             forks: r.forks_count,

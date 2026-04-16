@@ -1,9 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 
-import commandSlice, { setCommand } from "./slices/Command";
-import userSlice, { setUsername } from "./slices/User";
+import commandSlice, { setCommand } from './slices/Command';
+import userSlice, { setUsername } from './slices/User';
 
-import { emitConsoleLog } from "@/lib/consoleLog";
+import { emitConsoleLog } from '@/lib/consoleLog';
 
 const store = configureStore({
   reducer: {

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { OsuUser } from "@/lib/types";
+import { OsuUser } from '@/lib/types';
 
-const OSU_USER_ID = "15100005";
+const OSU_USER_ID = '15100005';
 
 export function useOsuStats() {
   const [user, setUser] = useState<OsuUser | null>(null);
@@ -35,13 +35,9 @@ export function useOsuStats() {
           level: data.statistics?.level?.current ?? 0,
           levelProgress: data.statistics?.level?.progress ?? 0,
           gradeCounts: {
-            ss:
-              (data.statistics?.grade_counts?.ss ?? 0) +
-              (data.statistics?.grade_counts?.ssh ?? 0),
+            ss: (data.statistics?.grade_counts?.ss ?? 0) + (data.statistics?.grade_counts?.ssh ?? 0),
             ssh: data.statistics?.grade_counts?.ssh ?? 0,
-            s:
-              (data.statistics?.grade_counts?.s ?? 0) +
-              (data.statistics?.grade_counts?.sh ?? 0),
+            s: (data.statistics?.grade_counts?.s ?? 0) + (data.statistics?.grade_counts?.sh ?? 0),
             sh: data.statistics?.grade_counts?.sh ?? 0,
             a: data.statistics?.grade_counts?.a ?? 0,
           },

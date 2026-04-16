@@ -5,11 +5,7 @@ const logSubscribers = new Map<string, LogCallback>();
 const clearSubscribers = new Map<string, ClearCallback>();
 let activeConsoleId: string | null = null;
 
-export function subscribeConsole(
-  id: string,
-  onLog: LogCallback,
-  onClear: ClearCallback,
-) {
+export function subscribeConsole(id: string, onLog: LogCallback, onClear: ClearCallback) {
   logSubscribers.set(id, onLog);
   clearSubscribers.set(id, onClear);
   return () => {

@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { BlogPost, BlogPostMeta } from "@/lib/types";
-import { TAG_COLORS } from "@/lib/constants";
+import { BlogPost, BlogPostMeta } from '@/lib/types';
+
+import { TAG_COLORS } from '@/lib/constants';
 
 function calculateReadTime(content: string): number {
   const chineseChars = (content.match(/[\u4e00-\u9fff]/g) || []).length;
   const englishWords = content
-    .replace(/[\u4e00-\u9fff]/g, "")
+    .replace(/[\u4e00-\u9fff]/g, '')
     .split(/\s+/)
     .filter(Boolean).length;
   const minutes = chineseChars / 200 + englishWords / 250;
@@ -14,7 +15,7 @@ function calculateReadTime(content: string): number {
 }
 
 export function getTagColor(tag: string): string {
-  return TAG_COLORS[tag] ?? "#888";
+  return TAG_COLORS[tag] ?? '#888';
 }
 
 export function useBlogPosts() {
@@ -24,7 +25,7 @@ export function useBlogPosts() {
   useEffect(() => {
     async function loadPosts() {
       try {
-        const res = await fetch("/posts/index.json");
+        const res = await fetch('/posts/index.json');
         if (!res.ok) {
           setPosts([]);
           return;
@@ -62,15 +63,15 @@ export function useBlogPost(slug: string | null) {
         }
         const raw = await res.text();
 
-        const matter = await import("gray-matter");
+        const matter = await import('gray-matter');
         const { data, content } = matter.default(raw);
 
         const blogPost: BlogPost = {
           slug: slug as string,
           title: data.title ?? slug,
-          date: data.date ?? "",
+          date: data.date ?? '',
           tags: data.tags ?? [],
-          excerpt: data.excerpt ?? "",
+          excerpt: data.excerpt ?? '',
           color: data.color,
           content,
           readTime: calculateReadTime(content),
