@@ -27,6 +27,10 @@ export type AppContextType = {
   username: string;
   setUsername: (name: string) => void;
   currentHash: string;
+  dynamicTitle: string | null;
+  setDynamicTitle: (title: string | null) => void;
+  availableArgs: Record<string, string[]>;
+  setAvailableArgs: (args: Record<string, string[]>) => void;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);
