@@ -234,10 +234,10 @@ export default function OsuStatsView() {
 
   const statCells = [
     { label: t('/osu.labels.globalRank'), value: user.globalRank !== null ? `#${formatNumber(user.globalRank)}` : '--' },
-    { label: t('/osu.labels.country'), value: user.countryRank !== null ? `#${formatNumber(user.countryRank)}` : '--' },
-    { label: t('/osu.labels.performance'), value: `${formatNumber(user.pp)}pp` },
-    { label: t('/osu.labels.accuracy'), value: `${user.accuracy.toFixed(2)}%` },
+    { label: t('/osu.labels.pp'), value: `${formatNumber(user.pp)}pp` },
     { label: t('/osu.labels.playCount'), value: formatNumber(user.playCount) },
+    { label: t('/osu.labels.country'), value: user.countryRank !== null ? `#${formatNumber(user.countryRank)}` : '--' },
+    { label: t('/osu.labels.accuracy'), value: `${user.accuracy.toFixed(2)}%` },
     { label: t('/osu.labels.playTime'), value: formatPlayTime(user.playTime) },
   ];
 
@@ -312,11 +312,10 @@ export default function OsuStatsView() {
       {/* Pill row: Daily Challenge + Peak Stats */}
       <div className={styles['pill-row']}>
         <div className={styles['pill']}>
-          <span className={styles['pill-icon']}>🔥</span>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {user.dailyChallenge.currentStreak}d
           </span>
-          <span className={styles['pill-label']}> streak</span>
+          <span className={styles['pill-label']}>daily streak</span>
           <span className={styles['pill-sep']}>·</span>
           <span className={styles['pill-label']}>Best </span>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>

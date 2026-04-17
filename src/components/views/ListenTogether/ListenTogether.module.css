@@ -39,14 +39,17 @@ div.player-area {
   max-height: 55vh;
   aspect-ratio: 16 / 9;
   overflow: hidden;
+  pointer-events: none;
   background: #00000040;
   border-radius: 0.75rem;
   box-shadow: 0 8px 40px #00000060;
 }
 
-div.player-area > div {
+div.player-area > div,
+div.player-area > iframe {
   width: 100% !important;
   height: 100% !important;
+  pointer-events: none;
 }
 
 div.no-track-placeholder {

@@ -473,7 +473,7 @@ export default function ListenTogetherView() {
       {/* Room content */}
       <div className={styles['room']}>
         {/* Player area */}
-        <div className={styles['player-area']}>
+        <div className={styles['player-area']} inert>
           {/* Unmute overlay */}
           <div className={`${styles['unmute-container']} ${!playerState.trackQueue.length || !mute ? styles['active'] : ''}`}>
             <p className="header2">{t('listentogether.unmute')}</p>

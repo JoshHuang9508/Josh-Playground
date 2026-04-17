@@ -226,13 +226,13 @@ div.peak-note {
 }
 
 span.peak-date {
-  color: #444;
+  color: #888;
 }
 
 div.chart-empty {
   padding: 1rem;
   font-size: 0.75rem;
-  color: #444;
+  color: #888;
   text-align: center;
 }
 

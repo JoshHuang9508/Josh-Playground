@@ -313,7 +313,7 @@ export const TEXT_CONTENT = {
     labels: {
       globalRank: 'Global Rank',
       country: 'Country',
-      performance: 'Performance',
+      pp: 'PP',
       accuracy: 'Accuracy',
       playCount: 'Play Count',
       playTime: 'Play Time',
