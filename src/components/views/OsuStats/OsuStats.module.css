@@ -8,6 +8,7 @@ div.osu-page {
   padding: 0.5rem 2rem 2rem;
   margin: 0 auto;
   animation: page-enter 0.5s ease both;
+
   --profile-hue: 360;
 }
 
@@ -57,13 +58,13 @@ div.hero-card {
   display: flex;
   gap: 1rem;
   align-items: center;
+  aspect-ratio: 4/1;
   padding: 1.25rem;
   overflow: hidden;
-  background: hsl(var(--profile-hue), 100%, 60%, 6%);
-  border: 1px solid hsl(var(--profile-hue), 100%, 60%, 8%);
+  background: hsl(var(--profile-hue) 100% 60% / 6%);
+  border: 1px solid hsl(var(--profile-hue) 100% 60% / 8%);
   border-radius: 0.5rem;
   backdrop-filter: blur(4px);
-  aspect-ratio: 4/1;
 }
 
 img.osu-cover {
@@ -96,8 +97,8 @@ div.hero-identity {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  min-width: 100px;
   width: 100%;
+  min-width: 100px;
 }
 
 span.osu-username {
@@ -114,8 +115,8 @@ div.level-bar-wrap {
   display: flex;
   gap: 0.4rem;
   align-items: center;
-  margin-top: 0.2rem;
   width: 100%;
+  margin-top: 0.2rem;
 }
 
 div.level-bar {
@@ -173,8 +174,8 @@ div.profile-card {
   flex-direction: column;
   justify-content: space-between;
   padding: 0.75rem;
-  background: hsl(var(--profile-hue), 100%, 60%, 6%);
-  border: 1px solid hsl(var(--profile-hue), 100%, 60%, 8%);
+  background: hsl(var(--profile-hue) 100% 60% / 6%);
+  border: 1px solid hsl(var(--profile-hue) 100% 60% / 8%);
   border-radius: 0.5rem;
   backdrop-filter: blur(4px);
 }
@@ -252,8 +253,8 @@ div.pill {
   gap: 0.4rem;
   align-items: center;
   padding: 0.45rem 0.75rem;
-  background: hsl(var(--profile-hue), 100%, 60%, 6%);
-  border: 1px solid hsl(var(--profile-hue), 100%, 60%, 8%);
+  background: hsl(var(--profile-hue) 100% 60% / 6%);
+  border: 1px solid hsl(var(--profile-hue) 100% 60% / 8%);
   border-radius: 0.5rem;
 }
 
@@ -263,7 +264,7 @@ span.pill-icon {
 
 span.pill-value {
   font-family: Consolas, monospace;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: bold;
 }
 
@@ -288,11 +289,11 @@ div.profile-page-content {
 }
 
 div.profile-page-content a {
-  color: hsl(var(--profile-hue), 100%, 60%);
+  color: hsl(var(--profile-hue) 100% 60%);
 }
 
 div.profile-page-content blockquote {
-  border-left: 3px solid hsl(var(--profile-hue), 100%, 60%);
+  border-left: 3px solid hsl(var(--profile-hue) 100% 60%);
 }
 
 div.unavailable {
@@ -337,8 +338,8 @@ div.unavailable {
 
   div.hero-card {
     flex-direction: column;
-    text-align: center;
     aspect-ratio: unset;
+    text-align: center;
   }
 
   div.hero-left {
