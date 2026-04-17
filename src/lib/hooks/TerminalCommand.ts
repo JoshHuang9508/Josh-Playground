@@ -48,7 +48,8 @@ const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
 
 export default function useTerminalCommand(extensions: Types.CommandList) {
   const command = useSelector((state: { command: string }) => state.command);
-  const { availableCommands, availablePaths, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername, isSettingsOpen, setIsSettingsOpen, settings, setSettings } = useContext(AppContext)!;
+  const { availableCommands, availablePaths, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername, isSettingsOpen, setIsSettingsOpen, settings, setSettings } =
+    useContext(AppContext)!;
 
   const contextCommands: Types.CommandList = {
     help: {
@@ -163,16 +164,19 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
         const sub = args[0];
 
         if (!sub) {
-          AddConsoleLog(...t('commands.theme.show',
-            settings.backgroundImageUrl || '(default)',
-            `${settings.backgroundColor.h} ${settings.backgroundColor.s} ${settings.backgroundColor.l} / ${settings.backgroundAlpha}`,
-            `${settings.themeColor.h} ${settings.themeColor.s} ${settings.themeColor.l}`,
-            `${settings.cardBlur}px`,
-            settings.textColors.primary,
-            settings.textColors.secondary,
-            settings.textColors.muted,
-            settings.textColors.accent.length > 0 ? settings.textColors.accent.join(', ') : '(empty)',
-          ));
+          AddConsoleLog(
+            ...t(
+              'commands.theme.show',
+              settings.backgroundImageUrl || '(default)',
+              `${settings.backgroundColor.h} ${settings.backgroundColor.s} ${settings.backgroundColor.l} / ${settings.backgroundAlpha}`,
+              `${settings.themeColor.h} ${settings.themeColor.s} ${settings.themeColor.l}`,
+              `${settings.cardBlur}px`,
+              settings.textColors.primary,
+              settings.textColors.secondary,
+              settings.textColors.muted,
+              settings.textColors.accent.length > 0 ? settings.textColors.accent.join(', ') : '(empty)',
+            ),
+          );
           return;
         }
 

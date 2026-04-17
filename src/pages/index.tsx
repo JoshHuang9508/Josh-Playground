@@ -199,7 +199,7 @@ function PageComponent() {
         }}
       >
         <div className={styles['app']} style={{ backgroundColor: backgroundColor }}>
-          <img src={backgroundImageUrl ? backgroundImageUrl : (settings.backgroundImageUrl || '/assets/bg.jpg')} className={styles['background']} alt="background" />
+          <img src={backgroundImageUrl ? backgroundImageUrl : settings.backgroundImageUrl || '/assets/bg.jpg'} className={styles['background']} alt="background" />
           <div className={styles['view-container']}>
             <Navigation currentHash={currentHash} />
             {renderView()}
