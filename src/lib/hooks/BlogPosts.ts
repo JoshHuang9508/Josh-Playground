@@ -11,11 +11,12 @@ export default function useBlogPosts() {
 
     async function loadPosts() {
       try {
+        setLoading(true);
+
         const res = await fetch('/posts/index.json');
-        if (!res.ok) {
-          setPosts([]);
-          return;
-        }
+
+        if (!res.ok) return;
+
         const data: Types.BlogPostMeta[] = await res.json();
 
         if (!cancelled) setPosts(data.sort((a, b) => b.date.localeCompare(a.date)));

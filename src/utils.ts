@@ -31,3 +31,39 @@ export function IDiffObject(a: Record<string, unknown> | null, b: Record<string,
 export function IsMobile(): boolean {
   return ['Mobile', 'iPhone', 'iPad', 'Android'].some((userAgent) => navigator.userAgent.includes(userAgent));
 }
+
+type WebPaths = (string | string[] | WebPaths)[];
+
+export function renderWebPaths(paths: WebPaths, prefix: string): string[] {
+  const result: string[] = [];
+
+  paths.map((path, index) => {
+    if (Array.isArray(path)) {
+      if (index != paths.length - 1) {
+        result.push(`${prefix}├─ ${path[0]}/`);
+        result.push(
+          ...renderWebPaths(
+            path.filter((_, i) => i > 0),
+            prefix + '│　',
+          ),
+        );
+      } else {
+        result.push(`${prefix}└─ ${path[0]}/`);
+        result.push(
+          ...renderWebPaths(
+            path.filter((_, i) => i > 0),
+            prefix + '　　',
+          ),
+        );
+      }
+    } else {
+      if (index != paths.length - 1) {
+        result.push(`${prefix}├─ ${path}`);
+      } else {
+        result.push(`${prefix}└─ ${path}`);
+      }
+    }
+  });
+
+  return result;
+}

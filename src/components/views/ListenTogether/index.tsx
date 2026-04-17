@@ -1,16 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReactPlayer from 'react-player';
 
 import type * as Types from '@/lib/types';
 
+import { VALID_VIBES } from '@/lib/constants';
+
 import { t } from '@/lib/i18n';
 
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
-import { getVideoInfo, getPlaylist } from '@/lib/getVideoBlob';
-
 import { AddConsoleLog } from '@/redux';
+
+import { getVideoInfo, getPlaylist } from '@/api';
 
 import ListenTogetherSocket from '@/socket';
 
@@ -20,15 +22,13 @@ import MemberDots from './MemberDots';
 
 import styles from './ListenTogether.module.css';
 
-const VALID_VIBES: Types.VibeName[] = ['default', 'lofi', 'rave', 'cinema', 'dawn'];
-
 export default function ListenTogetherView() {
   const playerRef = useRef<ReactPlayer>(null);
 
   const username = useSelector((state: { user: string }) => state.user);
 
   const [mute, setMute] = useState(true);
-  const [vibe, setVibe] = useState<Types.VibeName>('default');
+  const [vibe, setVibe] = useState('default');
   const [flash, setFlash] = useState(false);
   const [socketInstance, setSocketInstance] = useState<ListenTogetherSocket | null>(null);
   const [playerState, setPlayerState] = useState<Types.PlayerState>({
@@ -63,8 +63,14 @@ export default function ListenTogetherView() {
   };
 
   const handlePlayerEnded = () => socketInstance?.onEnded();
-  const handlePlayerProgress = (state: Types.PlayerState) => socketInstance?.onProgress(state);
+
+  const handlePlayerProgress = (state: Types.PlayerState) => {
+    socketInstance?.onProgress(state.playedSeconds);
+    setPlayerState((prev) => ({ ...prev, playedSeconds: state.playedSeconds }));
+  };
+
   const handlePlayerDuration = (duration: number) => socketInstance?.onDuration(duration);
+
   const handlePlayerError = (error: any) => AddConsoleLog(t('listentogether.errors.playerError', String(error)));
 
   const handlePlayerReady = () => {
@@ -191,10 +197,6 @@ export default function ListenTogetherView() {
       flags: ['-n', '--next', '-p', '--prev'],
       handler: (_cmd, args, flags) => {
         const index = args[0] ?? '';
-        if (!index) {
-          AddConsoleLog(t('listentogether.commands.switch.usage'));
-          return;
-        }
         if (flags.includes('-n') || flags.includes('--next')) {
           socketInstance?.nextTrack();
           AddConsoleLog(t('listentogether.commands.switch.next'));
@@ -205,6 +207,10 @@ export default function ListenTogetherView() {
           socketInstance?.prevTrack();
           AddConsoleLog(t('listentogether.commands.switch.prev'));
           socketInstance?.addRoomLog(t('listentogether.logs.switchPrev', username));
+          return;
+        }
+        if (!index) {
+          AddConsoleLog(t('listentogether.commands.switch.usage'));
           return;
         }
         if (isNaN(parseFloat(index))) {
@@ -360,6 +366,7 @@ export default function ListenTogetherView() {
       name: 'vibe',
       description: 'Set the ambiance of the room',
       usage: '@#00ffaavibe@# @#fff700<vibe_name>@#',
+      flags: VALID_VIBES,
       handler: (_cmd, args) => {
         const vibeName = args[0] as Types.VibeName;
         if (!vibeName || !VALID_VIBES.includes(vibeName)) {
@@ -399,6 +406,7 @@ export default function ListenTogetherView() {
       onPlayerState: (state) => setPlayerState((prev) => ({ ...prev, ...state })),
       onLogs: (logs) => setLogs(logs),
       onUsers: (users) => setUsers(users),
+      onProgress: (progress) => setPlayerState((prev) => ({ ...prev, playedSeconds: progress })),
       onSeek: (time) => {
         if (playerRef.current) playerRef.current.seekTo(time);
       },
@@ -459,11 +467,6 @@ export default function ListenTogetherView() {
 
   return (
     <div className={`${styles['content']} ${flash ? styles['flash'] : ''}`} data-vibe={vibe === 'default' ? undefined : vibe}>
-      {/* Unmute overlay */}
-      <div className={`${styles['unmute-container']} ${!mute ? styles['active'] : ''}`}>
-        <p className="header2">{t('listentogether.unmute')}</p>
-      </div>
-
       {/* Ambient background */}
       {ambientSrc && <div className={styles['ambient']} style={{ backgroundImage: `url(${ambientSrc})` }} />}
 
@@ -471,6 +474,10 @@ export default function ListenTogetherView() {
       <div className={styles['room']}>
         {/* Player area */}
         <div className={styles['player-area']}>
+          {/* Unmute overlay */}
+          <div className={`${styles['unmute-container']} ${!playerState.trackQueue.length || !mute ? styles['active'] : ''}`}>
+            <p className="header2">{t('listentogether.unmute')}</p>
+          </div>
           {playerState.trackQueue.length === 0 ? (
             <div className={styles['no-track-placeholder']}>queue a track to begin</div>
           ) : (

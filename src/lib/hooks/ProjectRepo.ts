@@ -12,11 +12,11 @@ export default function useProjectRepo(owner: string, repo: string) {
     async function loadRepo() {
       try {
         setLoading(true);
+
         const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-        if (!res.ok) {
-          setData(null);
-          return;
-        }
+
+        if (!res.ok) return;
+
         const data = await res.json();
 
         const mapped: Types.GitHubProject = {

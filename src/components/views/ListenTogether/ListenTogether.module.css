@@ -201,3 +201,9 @@ div.content[data-vibe='dawn'] div.progress-bar-fill {
     transform: translateY(0);
   }
 }
+
+@media (width <= 768px) {
+  div.player-area {
+    aspect-ratio: 3 / 4;
+  }
+}

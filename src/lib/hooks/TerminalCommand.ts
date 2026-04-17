@@ -9,11 +9,14 @@ import { MUSIC_LIST } from '@/lib/constants';
 import { t } from '@/lib/i18n';
 
 import { clearActiveConsole, setActiveConsole } from '@/lib/consoleLog';
-import { getVideoBlob } from '@/lib/getVideoBlob';
+
+import { getVideoBlob } from '@/api';
 
 import { AddConsoleLog, SetCommand, SetUsername } from '@/redux';
 
 import { AppContext } from '@/pages/index';
+
+import { renderWebPaths } from '@/utils';
 
 export function parseCommand(command: string) {
   const parts = command.split(' ');
@@ -44,38 +47,6 @@ const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
 export default function useTerminalCommand(extensions: Types.CommandList) {
   const command = useSelector((state: { command: string }) => state.command);
   const { availableCommands, availablePaths, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername } = useContext(AppContext)!;
-
-  const renderWebPaths = (paths: any, prefix: string): string[] => {
-    const result: string[] = [];
-    paths.map((path, index) => {
-      if (Array.isArray(path)) {
-        if (index != paths.length - 1) {
-          result.push(`${prefix}├─ ${path[0]}/`);
-          result.push(
-            ...renderWebPaths(
-              path.filter((_, i) => i > 0),
-              prefix + '│　',
-            ),
-          );
-        } else {
-          result.push(`${prefix}└─ ${path[0]}/`);
-          result.push(
-            ...renderWebPaths(
-              path.filter((_, i) => i > 0),
-              prefix + '　　',
-            ),
-          );
-        }
-      } else {
-        if (index != paths.length - 1) {
-          result.push(`${prefix}├─ ${path}`);
-        } else {
-          result.push(`${prefix}└─ ${path}`);
-        }
-      }
-    });
-    return result;
-  };
 
   const contextCommands: Types.CommandList = {
     help: {

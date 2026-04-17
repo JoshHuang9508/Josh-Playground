@@ -22,10 +22,9 @@ export function useOsuStats() {
             'ngrok-skip-browser-warning': 'true',
           },
         });
-        if (!res.ok) {
-          setUser(null);
-          return;
-        }
+
+        if (!res.ok) return;
+
         const { data }: { data: Types.OsuUserReturnType } = await res.json();
 
         const mapped: Types.OsuUser = {

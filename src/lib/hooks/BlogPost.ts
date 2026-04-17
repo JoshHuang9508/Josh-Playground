@@ -26,11 +26,12 @@ export default function useBlogPost(slug: string | null) {
 
     async function loadPost() {
       try {
+        setLoading(true);
+
         const res = await fetch(`/posts/${slug}.md`);
-        if (!res.ok) {
-          setPost(null);
-          return;
-        }
+
+        if (!res.ok) return;
+
         const raw = await res.text();
 
         const matter = await import('gray-matter');
