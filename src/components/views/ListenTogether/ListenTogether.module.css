@@ -1,51 +1,137 @@
+/* ── Root layout ───────────────────────────────────────── */
 div.content {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-}
-
-div.player-container {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  pointer-events: none;
-  user-select: none;
-  opacity: 0.5;
+  height: 100%;
+  gap: 1.25rem;
+  padding: 1.5rem 2rem;
+  overflow: hidden;
 }
 
-@keyframes rgb-shadow {
-  0% {
-    box-shadow: 0 0 2rem rgb(255 0 0);
-  }
-
-  33% {
-    box-shadow: 0 0 2rem rgb(0 255 0);
-  }
-
-  66% {
-    box-shadow: 0 0 2rem rgb(0 0 255);
-  }
-
-  100% {
-    box-shadow: 0 0 2rem rgb(255 0 0);
-  }
-}
-
-div.unmute-container {
+/* ── Ambient background ────────────────────────────────── */
+div.ambient {
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 200;
+  inset: -20%;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) brightness(0.25) saturate(1.4);
+  transition: background-image 2s ease;
+  pointer-events: none;
+}
+
+/* ── Inner content (above ambient) ────────────────────── */
+div.room {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  gap: 1rem;
+}
+
+/* ── Video / album-art area ────────────────────────────── */
+div.player-area {
+  position: relative;
+  width: 100%;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #00000040;
+  box-shadow: 0 8px 40px #00000060;
+  aspect-ratio: 16 / 9;
+  max-height: 55vh;
+}
+
+div.player-area > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* placeholder shown when queue is empty */
+div.no-track-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  color: #ffffff40;
+}
+
+/* ── Track info bar ───────────────────────────────────── */
+div.track-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  gap: 0.2rem;
+}
+
+div.track-title {
+  font-family: Consolas, monospace;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffffcc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+div.track-author {
+  font-family: Consolas, monospace;
+  font-size: 0.8rem;
+  color: #ffffff60;
+}
+
+/* ── Progress bar ─────────────────────────────────────── */
+div.progress-bar-track {
+  width: 100%;
+  height: 2px;
+  background: #ffffff18;
+  border-radius: 999px;
+  margin-top: 0.35rem;
+}
+
+div.progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #e8a87c;
+  transition: width 0.5s linear, background 1.5s ease;
+}
+
+/* ── Member dots row ──────────────────────────────────── */
+div.members-row {
+  width: 100%;
+}
+
+/* ── Queue row ────────────────────────────────────────── */
+div.queue-row {
+  width: 100%;
+}
+
+div.queue-row::-webkit-scrollbar {
+  height: 0;
+}
+
+/* ── Unmute overlay ───────────────────────────────────── */
+div.unmute-container {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   user-select: none;
-  background-color: #000000a0;
+  background: #000000a0;
   backdrop-filter: blur(1rem);
 }
 
@@ -53,13 +139,60 @@ div.unmute-container.active {
   animation: fade-out 0.3s ease-in-out forwards;
 }
 
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
+/* ── Flash effect (triggered by play/pause/remove) ─────── */
+div.content.flash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: #ffffff08;
+  pointer-events: none;
+  animation: vibe-flash 0.35s ease forwards;
+}
 
-  to {
-    display: none;
-    opacity: 0;
-  }
+@keyframes vibe-flash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── Vibe themes ─────────────────────────────────────── */
+
+div.content[data-vibe="lofi"] div.ambient {
+  filter: blur(60px) brightness(0.2) saturate(0.6) sepia(0.4);
+}
+div.content[data-vibe="lofi"] div.progress-bar-fill {
+  background: #c8976a;
+}
+
+div.content[data-vibe="rave"] div.ambient {
+  filter: blur(60px) brightness(0.35) saturate(3) hue-rotate(270deg);
+}
+div.content[data-vibe="rave"] div.progress-bar-fill {
+  background: #ff00ff;
+}
+
+div.content[data-vibe="cinema"] div.ambient {
+  filter: blur(60px) brightness(0.08) saturate(0.3);
+}
+div.content[data-vibe="cinema"] div.progress-bar-fill {
+  background: #aaaaaa;
+}
+
+div.content[data-vibe="dawn"] div.ambient {
+  filter: blur(60px) brightness(0.3) saturate(1.8) hue-rotate(-20deg);
+}
+div.content[data-vibe="dawn"] div.progress-bar-fill {
+  background: #ffb347;
+}
+
+/* ── Animations ──────────────────────────────────────── */
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; pointer-events: none; }
+}
+
+@keyframes member-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
