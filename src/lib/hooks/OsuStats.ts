@@ -17,12 +17,16 @@ export function useOsuStats() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`${API_URL}/api/osu/stats?username=${OSU_USERNAME}`);
+        const res = await fetch(`${API_URL}/api/osu/stats?username=${OSU_USERNAME}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true',
+          },
+        });
         if (!res.ok) {
           setUser(null);
           return;
         }
-        const data = await res.json();
+        const { data } = await res.json();
 
         const mapped: Types.OsuUser = {
           username: data.username,

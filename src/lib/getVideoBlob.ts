@@ -50,19 +50,20 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
 }
 
 export const getVideoInfo = async (videoId: string, requestBy: string): Promise<Types.Track> => {
-  const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
+  const res = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
     method: 'GET',
     headers: {
       'ngrok-skip-browser-warning': 'true',
     },
   })
-    .then(async (response) => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const res = await response.json()
-      return res.data;
+      return response
     })
+
+  const { data } = await res.json()
 
   const track: Types.Track = {
     url: data.video_url,
@@ -77,19 +78,20 @@ export const getVideoInfo = async (videoId: string, requestBy: string): Promise<
 };
 
 export const getPlaylist = async (playlistId: string, requestBy: string): Promise<Types.Track[]> => {
-  const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
+  const res = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
     method: 'GET',
     headers: {
       'ngrok-skip-browser-warning': 'true',
     },
   })
-    .then(async (response) => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const res = await response.json()
-      return res.data;
+      return response
     })
+
+  const { data } = await res.json()
 
   const tracks: Types.Track[] = data.map((item: any, index) => {
     return {
