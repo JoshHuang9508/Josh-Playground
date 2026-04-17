@@ -64,6 +64,7 @@ export default function OsuStatsView() {
       <hr className="divider" />
 
       <div className={styles['banner']}>
+        <img className={styles['osu-cover']} src={user.coverUrl} alt={user.username} />
         <img className={styles['osu-avatar']} src={user.avatarUrl} alt={user.username} />
         <div className={styles['banner-info']}>
           <span className={styles['osu-username']}>{user.username}</span>

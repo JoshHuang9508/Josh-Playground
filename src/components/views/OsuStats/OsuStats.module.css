@@ -49,12 +49,28 @@ div.banner {
   border: 1px solid rgb(255 255 255 / 6%);
   border-radius: 0.5rem;
   backdrop-filter: blur(4px);
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/1;
+  backdrop-filter: blur(4px);
+}
+
+img.osu-cover {
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  opacity: 0.3;
 }
 
 img.osu-avatar {
   flex-shrink: 0;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 8rem;
+  height: 8rem;
   border-radius: 0.5rem;
 }
 

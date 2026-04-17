@@ -26,11 +26,12 @@ export function useOsuStats() {
           setUser(null);
           return;
         }
-        const { data } = await res.json();
+        const { data }: { data: Types.OsuUserReturnType } = await res.json();
 
         const mapped: Types.OsuUser = {
           username: data.username,
           avatarUrl: data.avatar_url,
+          coverUrl: data.cover_url,
           countryCode: data.country_code,
           joinDate: data.join_date,
           globalRank: data.statistics?.global_rank ?? null,
