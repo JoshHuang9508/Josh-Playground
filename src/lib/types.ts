@@ -45,6 +45,8 @@ export type User = {
   [id: string]: string;
 };
 
+export type VibeName = 'default' | 'lofi' | 'rave' | 'cinema' | 'dawn';
+
 export type BlogPost = {
   slug: string;
   title: string;
