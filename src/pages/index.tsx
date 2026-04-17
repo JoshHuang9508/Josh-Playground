@@ -11,6 +11,8 @@ import { t } from '@/lib/i18n';
 
 import { DEFAULT_SETTINGS, ThemeSettings, applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
 
+import useBlogPosts from '@/lib/hooks/BlogPosts';
+
 import store, { SetUsername } from '@/redux';
 
 import ConsoleManager from '@/components/ConsoleManager';
@@ -29,10 +31,10 @@ import styles from './index.module.css';
 export type AppContextType = {
   availableArgs: Record<string, string[]>;
   availableCommands: Types.Command[];
-  availablePaths: string[];
+  availablePaths: Record<string, string[]>;
   setAvailableArgs: (args: Record<string, string[]>) => void;
   setAvailableCommands: (cmds: Types.Command[]) => void;
-  setAvailablePaths: (paths: string[]) => void;
+  setAvailablePaths: (paths: Record<string, string[]>) => void;
   backgroundImageUrl: string;
   backgroundColor: string;
   dynamicTitle: string | null;
@@ -51,16 +53,18 @@ export type AppContextType = {
 export const AppContext = createContext<AppContextType | null>(null);
 
 function PageComponent() {
+  const { posts } = useBlogPosts();
+
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
+  const [availableArgs, setAvailableArgs] = useState<Record<string, string[]>>({});
   const [availableCommands, setAvailableCommands] = useState<Types.Command[]>([]);
-  const [availablePaths, setAvailablePaths] = useState<string[]>([]);
+  const [availablePaths, setAvailablePaths] = useState<Record<string, string[]>>({});
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>('');
   const [backgroundColor, setBackgroundColor] = useState<string>('');
   const [username, setUsername] = useState<string>(t('global.defaultUsername'));
   const [currentHash, setCurrentHash] = useState<string>('/');
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
-  const [availableArgs, setAvailableArgs] = useState<Record<string, string[]>>({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
   const [settings, setSettingsState] = useState<ThemeSettings>(DEFAULT_SETTINGS);
@@ -111,9 +115,10 @@ function PageComponent() {
   }, [musicIndex]);
 
   useEffect(() => {
-    const hashPaths = currentHash.split('/').filter(Boolean);
-    setAvailablePaths(PATH_LIST[`/${hashPaths.join('/')}`] ?? []);
-  }, [currentHash]);
+    if (posts.length > 0) {
+      setAvailablePaths({ '/blog': posts.map((p) => `${p.slug}/`) });
+    }
+  }, [posts]);
 
   useEffect(() => {
     const backgroundImageUrl = localStorage.getItem('backgroundImageUrl') ?? '';

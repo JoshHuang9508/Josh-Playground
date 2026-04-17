@@ -9,30 +9,27 @@ interface ColorSpanProps {
 }
 
 export default function ColorSpan({ str, className, style }: ColorSpanProps) {
-  const isColorCode = (color: string) => {
-    const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-    return regex.test(color);
-  };
+  const regex = /@#([0-9a-fA-F]{3,6})(.+?)(@#|$)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
 
-  return (
-    <div className={styles['color-span']}>
-      {str
-        .split('@#')
-        .filter((i) => i !== '')
-        .map((item, index) => {
-          const color = item.slice(0, 6);
-          if (isColorCode(color))
-            return (
-              <span key={color + index} className={className} style={{ ...style, color: `#${color}` }}>
-                {item.slice(6)}
-              </span>
-            );
-          return (
-            <span key={color + index} className={className} style={style}>
-              {item}
-            </span>
-          );
-        })}
-    </div>
-  );
+  while ((match = regex.exec(str)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(str.slice(lastIndex, match.index));
+    }
+    const [, color, content] = match;
+    parts.push(
+      <span key={match.index} className={className} style={{ ...style, color: `#${color}` }}>
+        {content}
+      </span>,
+    );
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < str.length) {
+    parts.push(str.slice(lastIndex));
+  }
+
+  return <div className={styles['color-span']}>{parts}</div>;
 }

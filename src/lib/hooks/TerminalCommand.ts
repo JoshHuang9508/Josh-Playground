@@ -18,37 +18,13 @@ import { AddConsoleLog, SetCommand, SetUsername } from '@/redux';
 
 import { AppContext } from '@/pages/index';
 
-import { renderWebPaths } from '@/utils';
-
-export function parseCommand(command: string) {
-  const parts = command.split(' ');
-  const cmdName = parts.shift() ?? null;
-  const args: string[] = [];
-  const flags: string[] = [];
-  for (const part of parts) {
-    if (part.startsWith('-')) {
-      if (part.startsWith('--')) {
-        flags.push(part);
-      } else {
-        flags.push(
-          ...part
-            .slice(1)
-            .split('')
-            .map((flag) => `-${flag}`),
-        );
-      }
-    } else {
-      args.push(part);
-    }
-  }
-  return { cmdName, args, flags };
-}
+import { renderWebPaths, parseCommand, findAvailablePath } from '@/utils';
 
 const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
 
 export default function useTerminalCommand(extensions: Types.CommandList) {
   const command = useSelector((state: { command: string }) => state.command);
-  const { availableCommands, availablePaths, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername, isSettingsOpen, setIsSettingsOpen, settings, setSettings } =
+  const { availableCommands, availablePaths, currentHash, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername, isSettingsOpen, setIsSettingsOpen, settings, setSettings } =
     useContext(AppContext)!;
 
   const contextCommands: Types.CommandList = {
@@ -69,20 +45,22 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
       description: 'List available paths in the current directory',
       usage: '@#00ffaals@# @#fff700[-a | -l | -t]@#',
       flags: ['-a', '-l', '-t'],
-      handler: (_cmd, _args, flags) => {
+      handler: (_cmd, args, flags) => {
+        const path = args[0] ?? '';
+        const available = findAvailablePath(path, availablePaths, currentHash);
         if (flags.includes('-t') || flags.includes('--tree')) {
           renderWebPaths(webPaths, '').forEach((path) => {
             AddConsoleLog(path);
           });
           return;
         } else if (flags.includes('-a') || flags.includes('--all')) {
-          AddConsoleLog(['./', '../', ...availablePaths].join(' '));
+          AddConsoleLog(['./', '../', ...available].join(' '));
           return;
         } else if (flags.includes('-l') || flags.includes('--long')) {
-          AddConsoleLog(t('commands.availablePaths'), ...availablePaths);
+          AddConsoleLog(t('commands.availablePaths'), ...available);
           return;
         } else {
-          AddConsoleLog(availablePaths.join(' '));
+          AddConsoleLog(available.join(' '));
           return;
         }
       },

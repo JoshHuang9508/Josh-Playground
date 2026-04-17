@@ -1,3 +1,7 @@
+import type * as Types from '@/lib/types';
+
+import { PATH_LIST } from '@/lib/constants';
+
 export function IDeepEqual(a: unknown, b: unknown): boolean {
   if (a === b) return true;
   if (a === null || b === null) return false;
@@ -67,3 +71,85 @@ export function renderWebPaths(paths: WebPaths, prefix: string): string[] {
 
   return result;
 }
+
+export function parseCommand(command: string) {
+  const parts = command.split(' ');
+  const cmdName = parts.shift() ?? null;
+  const args: string[] = [];
+  const flags: string[] = [];
+
+  for (const part of parts) {
+    if (part.startsWith('-')) {
+      if (part.startsWith('--')) {
+        flags.push(part);
+      } else {
+        flags.push(
+          ...part
+            .slice(1)
+            .split('')
+            .map((flag) => `-${flag}`),
+        );
+      }
+    } else {
+      args.push(part);
+    }
+  }
+
+  return { cmdName, args, flags };
+}
+
+export const findAvailablePath = (input: string, availablePaths: Record<string, string[]>, currentHash: string) => {
+  const paths = input.split('/');
+  const lastPart = paths.pop() ?? '';
+  let pagePaths = currentHash.split('/').filter(Boolean);
+
+  paths.forEach((element, index) => {
+    if (index === 0 && element === '~') {
+      pagePaths = [];
+    } else if (element === '.') {
+      return;
+    } else if (element === '..') {
+      pagePaths.pop();
+    } else {
+      pagePaths.push(element);
+    }
+  });
+
+  return [...(PATH_LIST[`/${pagePaths.join('/')}`] ?? []), ...(availablePaths[`/${pagePaths.join('/')}`] ?? [])].filter((a) => a.startsWith(lastPart));
+};
+
+export const replaceInput = (input: string, replace: string) => {
+  for (let i = 0; i < input.length; i++) {
+    if (replace.startsWith(input.slice(i, input.length))) {
+      return input.slice(0, i) + replace;
+    }
+  }
+
+  return input + replace;
+};
+
+export const findAvailable = (input: string, availableCommands: Types.Command[], availableArgs: Record<string, string[]>, availablePaths: Record<string, string[]>, currentHash: string): string[] => {
+  const parts = input.split(' ');
+  const lastPart = parts.pop() ?? '';
+  const command = parts ? availableCommands.find((cmd) => cmd.name === parts[0]) : null;
+  let availables: string[] = [];
+
+  if (input == '' || input == ' ') {
+    return availables;
+  }
+
+  if (!command && !input.endsWith(' ') && availableCommands.filter((_) => _.name.startsWith(parts[0])).length != 0) {
+    availables.push(...availableCommands.map((cmd) => cmd.name));
+  } else if (command) {
+    if (command.flags) {
+      availables.push(...command.flags);
+    }
+    if (availableArgs[command.name]) {
+      availables.push(...availableArgs[command.name]);
+    }
+  }
+
+  availables = availables.filter((a) => a.startsWith(lastPart)).concat(findAvailablePath(lastPart, availablePaths, currentHash));
+
+  return availables;
+};
