@@ -206,7 +206,7 @@ export default function Settings() {
 
           <div className={styles['block']}>
             <div className={styles['block-head']}>
-              <span className={styles['field-key']}>overlay</span>
+              <span className={styles['field-key']}>Background Overlay</span>
               <span className={styles['swatch']} style={{ background: hslString(settings.backgroundColor, settings.backgroundAlpha) }} />
             </div>
             <HslPicker value={settings.backgroundColor} onChange={(backgroundColor) => update({ backgroundColor })} />
@@ -229,7 +229,7 @@ export default function Settings() {
 
           <div className={styles['block']}>
             <div className={styles['block-head']}>
-              <span className={styles['field-key']}>color</span>
+              <span className={styles['field-key']}>Card Color</span>
               <span className={styles['swatch']} style={{ background: themeHex }} />
             </div>
             <HslPicker value={settings.themeColor} onChange={(themeColor) => update({ themeColor })} />
@@ -242,7 +242,7 @@ export default function Settings() {
 
           <div className={styles['block']}>
             <div className={styles['block-head']}>
-              <span className={styles['field-key']}>text highlight</span>
+              <span className={styles['field-key']}>Text Highlight</span>
               <span className={styles['swatch']} style={{ background: highlightHex }} />
             </div>
             <HslPicker value={settings.textColors.highlight} onChange={(highlight) => update({ textColors: { ...settings.textColors, highlight } })} />

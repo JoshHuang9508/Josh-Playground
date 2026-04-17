@@ -43,7 +43,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
     ls: {
       name: 'ls',
       description: 'List available paths in the current directory',
-      usage: '@#00ffaals@# @#fff700[-a | -l | -t]@#',
+      usage: '@#00ffaals@# @#fff700[-a|-l|-t]@#',
       flags: ['-a', '-l', '-t'],
       handler: (_cmd, args, flags) => {
         const path = args[0] ?? '';
@@ -68,7 +68,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
     background: {
       name: 'background',
       description: 'Set or reset the background image',
-      usage: '@#00ffaabackground@# @#fff700<image_url> | -r@#',
+      usage: '@#00ffaabackground@# @#fff700<image_url>|-r@#',
       flags: ['-r', '--reset'],
       handler: (_cmd, args, flags) => {
         const url = args[0] ?? '';
@@ -90,7 +90,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
     backgroundcolor: {
       name: 'backgroundcolor',
       description: 'Set or reset the background color (hex code)',
-      usage: '@#00ffaabackgroundcolor@# @#fff700<#hex_color> | -r@#',
+      usage: '@#00ffaabackgroundcolor@# @#fff700<#hex_color|-r>@#',
       flags: ['-r', '--reset'],
       handler: (_cmd, args, flags) => {
         const color = args[0] ?? '';
@@ -361,7 +361,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
     download: {
       name: 'download',
       description: 'Download a YouTube video as mp4 or mp3',
-      usage: '@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#',
+      usage: '@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v|-a]@#',
       flags: ['-v', '--video', '-a', '--audio'],
       handler: (_cmd, args, flags) => {
         const URL = args[0] ?? '';
@@ -411,7 +411,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
     music: {
       name: 'music',
       description: 'Control background music playback',
-      usage: '@#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#',
+      usage: '@#00ffaamusic@# @#fff700[-p|-s|-i|-l]@#',
       flags: ['-p', '--play', '-s', '--stop', '-i', '--info', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-l') || flags.includes('--list')) {

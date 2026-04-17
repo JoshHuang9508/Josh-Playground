@@ -101,7 +101,7 @@ export default function ListenTogetherView() {
     queue: {
       name: 'queue',
       description: 'Add a YouTube video or playlist to the queue',
-      usage: '@#00ffaaqueue@# @#fff700<video_url | playlist_url>@#',
+      usage: '@#00ffaaqueue@# @#fff700<video_url|-playlist_url>@#',
       handler: async (_cmd, args) => {
         const URL = args[0] ?? '';
         if (!URL) {
@@ -140,7 +140,7 @@ export default function ListenTogetherView() {
     remove: {
       name: 'remove',
       description: 'Remove a track from the queue by index (* = all)',
-      usage: '@#00ffaaremove@# @#fff700<index | *>@#',
+      usage: '@#00ffaaremove@# @#fff700<index|*>@#',
       handler: (_cmd, args) => {
         const indexToRm = args[0] ?? '';
         if (!indexToRm) {
@@ -193,7 +193,7 @@ export default function ListenTogetherView() {
     switch: {
       name: 'switch',
       description: 'Switch to a track by index, or next / previous',
-      usage: '@#00ffaaswitch@# @#fff700<index> | -n | -p@#',
+      usage: '@#00ffaaswitch@# @#fff700<index|-n|-p>@#',
       flags: ['-n', '--next', '-p', '--prev'],
       handler: (_cmd, args, flags) => {
         const index = args[0] ?? '';
@@ -248,7 +248,7 @@ export default function ListenTogetherView() {
     loop: {
       name: 'loop',
       description: 'Toggle loop mode for the current track',
-      usage: '@#00ffaaloop@# @#fff700[-t | -f]@#',
+      usage: '@#00ffaaloop@# @#fff700[-t|-f]@#',
       flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
@@ -269,7 +269,7 @@ export default function ListenTogetherView() {
     random: {
       name: 'random',
       description: 'Toggle shuffle / random playback',
-      usage: '@#00ffaarandom@# @#fff700[-t | -f]@#',
+      usage: '@#00ffaarandom@# @#fff700[-t|-f]@#',
       flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
@@ -342,7 +342,7 @@ export default function ListenTogetherView() {
     playlist: {
       name: 'playlist',
       description: 'Show the current playlist',
-      usage: '@#00ffaaplaylist@# @#fff700[-d | -l]@#',
+      usage: '@#00ffaaplaylist@# @#fff700[-d|-l]@#',
       flags: ['-d', '--detail', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-d') || flags.includes('--detail')) {
