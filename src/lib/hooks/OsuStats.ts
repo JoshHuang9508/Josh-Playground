@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import type * as Types from '@/lib/types';
 
-import { OSU_USER_ID } from '@/lib/constants';
+import { OSU_USERNAME } from '@/lib/constants';
 
 export function useOsuStats() {
   const [user, setUser] = useState<Types.OsuUser | null>(null);
@@ -17,7 +17,7 @@ export function useOsuStats() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`/api/osu/${OSU_USER_ID}`);
+        const res = await fetch(`/api/osu/stats?username=${OSU_USERNAME}`);
         if (!res.ok) {
           setUser(null);
           return;
