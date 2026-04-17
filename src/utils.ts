@@ -130,15 +130,16 @@ export const replaceInput = (input: string, replace: string) => {
 
 export const findAvailable = (input: string, availableCommands: Types.Command[], availableArgs: Record<string, string[]>, availablePaths: Record<string, string[]>, currentHash: string): string[] => {
   const parts = input.split(' ');
+  const firstPart = parts[0] ?? '';
   const lastPart = parts.pop() ?? '';
-  const command = parts ? availableCommands.find((cmd) => cmd.name === parts[0]) : null;
+  const command = parts ? availableCommands.find((cmd) => cmd.name === firstPart) : null;
   let availables: string[] = [];
 
   if (input == '' || input == ' ') {
     return availables;
   }
 
-  if (!command && !input.endsWith(' ') && availableCommands.filter((_) => _.name.startsWith(parts[0])).length != 0) {
+  if (!command && !input.endsWith(' ') && availableCommands.filter((_) => _.name.startsWith(firstPart)).length != 0) {
     availables.push(...availableCommands.map((cmd) => cmd.name));
   } else if (command) {
     if (command.flags) {
