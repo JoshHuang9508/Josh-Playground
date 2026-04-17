@@ -21,24 +21,24 @@ export default class ListenTogetherSocket {
   }
 
   connect(eventHandlers: {
-    connect: () => void;
-    connect_error: () => void;
-    error: (error: any) => void;
-    disconnect: () => void;
-    receivePlayerState: (state: Types.PlayerState) => void;
-    receiveLog: (logs: any) => void;
-    receiveUsers: (users: Types.User) => void;
-    seek: (time: number) => void;
+    onConnect: () => void;
+    onConnectError: () => void;
+    onError: (error: any) => void;
+    onDisconnect: () => void;
+    onPlayerState: (state: Types.PlayerState) => void;
+    onLogs: (logs: any) => void;
+    onUsers: (users: Types.User) => void;
+    onSeek: (time: number) => void;
   }) {
     this.socket.connect();
-    this.socket.on('connect', eventHandlers.connect);
-    this.socket.on('connect_error', eventHandlers.connect_error);
-    this.socket.on('error', eventHandlers.error);
-    this.socket.on('disconnect', eventHandlers.disconnect);
-    this.socket.on('receivePlayerState', eventHandlers.receivePlayerState);
-    this.socket.on('receiveLog', eventHandlers.receiveLog);
-    this.socket.on('receiveUsers', eventHandlers.receiveUsers);
-    this.socket.on('seek', eventHandlers.seek);
+    this.socket.on('connect', eventHandlers.onConnect);
+    this.socket.on('connect_error', eventHandlers.onConnectError);
+    this.socket.on('error', eventHandlers.onError);
+    this.socket.on('disconnect', eventHandlers.onDisconnect);
+    this.socket.on('player:player_state', eventHandlers.onPlayerState);
+    this.socket.on('player:logs', eventHandlers.onLogs);
+    this.socket.on('player:users', eventHandlers.onUsers);
+    this.socket.on('player:seek', eventHandlers.onSeek);
   }
 
   disconnect() {
@@ -46,86 +46,86 @@ export default class ListenTogetherSocket {
   }
 
   join = (username: string) => {
-    this.socket.emit('join', username);
+    this.socket.emit('player:join', username);
   };
 
   ready = () => {
-    this.socket.emit('ready');
+    this.socket.emit('player:ready');
   };
 
   setUsername = (username: string) => {
-    this.socket.emit('setUsername', username);
+    this.socket.emit('player:set_username', username);
   };
 
   addRoomLog = (log: string) => {
-    this.socket.emit('addLog', log);
+    this.socket.emit('player:add_log', log);
   };
 
   setPlayerState = (state: Types.PlayerState) => {
-    this.socket.emit('setPlayerState', state);
+    this.socket.emit('player:set_player_state', state);
   };
 
   onDuration = (duration: number) => {
-    this.socket.emit('onDuration', duration);
+    this.socket.emit('player:duration', duration);
   };
 
   onProgress = (state: any) => {
-    this.socket.emit('onProgress', state);
+    this.socket.emit('player:progress', state);
   };
 
   onEnded = () => {
-    this.socket.emit('onEnd');
+    this.socket.emit('player:ended');
   };
 
   play = () => {
-    this.socket.emit('play');
+    this.socket.emit('player:play');
   };
 
   pause = () => {
-    this.socket.emit('pause');
+    this.socket.emit('player:pause');
   };
 
   refresh = () => {
-    this.socket.emit('refresh');
+    this.socket.emit('player:refresh');
   };
 
   addTrack = (track: Types.Track) => {
-    this.socket.emit('addTrack', track);
+    this.socket.emit('player:add_track', track);
   };
 
   addTracks = (tracks: Types.Track[]) => {
-    this.socket.emit('addTracks', tracks);
+    this.socket.emit('player:add_tracks', tracks);
   };
 
   removeTrack = (index: number) => {
-    this.socket.emit('removeTrack', index);
+    this.socket.emit('player:remove_track', index);
   };
 
   setTrackQueue = (queue: Types.Track[]) => {
-    this.socket.emit('setTrackQueue', queue);
+    this.socket.emit('player:set_track_queue', queue);
   };
 
   nextTrack = () => {
-    this.socket.emit('nextTrack');
+    this.socket.emit('player:next_track');
   };
 
   prevTrack = () => {
-    this.socket.emit('prevTrack');
+    this.socket.emit('player:prev_track');
   };
 
   setTrackIndex = (index: number) => {
-    this.socket.emit('setTrackIndex', index);
+    this.socket.emit('player:set_track_index', index);
   };
 
   setPlayBackRate = (rate: number) => {
-    this.socket.emit('setPlaybackRate', rate);
+    this.socket.emit('player:set_playback_rate', rate);
   };
 
   setLoop = (loop: boolean) => {
-    this.socket.emit('setLoop', loop);
+    this.socket.emit('player:set_loop', loop);
   };
 
   seek = (time: number) => {
-    this.socket.emit('seek', time);
+    this.socket.emit('player:seek', time);
   };
 }

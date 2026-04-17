@@ -332,29 +332,29 @@ export default function ListenTogetherView() {
     const socket = new ListenTogetherSocket();
 
     socket.connect({
-      connect: async () => {
+      onConnect: async () => {
         socket.join(localStorage.getItem('username') ?? t('global.defaultUsername'));
         socket.ready();
       },
-      connect_error: () => {
+      onConnectError: () => {
         AddConsoleLog(t('listentogether.errors.connectError', String(socket.id)));
       },
-      error: (error) => {
+      onError: (error) => {
         AddConsoleLog(t('listentogether.errors.serverError', error.message));
       },
-      disconnect: () => {
+      onDisconnect: () => {
         AddConsoleLog(t('listentogether.errors.disconnect'));
       },
-      receivePlayerState: (state) => {
+      onPlayerState: (state) => {
         setPlayerState((prev) => ({ ...prev, ...state }));
       },
-      receiveLog: (logs) => {
+      onLogs: (logs) => {
         setLogs(logs);
       },
-      receiveUsers: (users) => {
+      onUsers: (users) => {
         setUsers(users);
       },
-      seek: (time) => {
+      onSeek: (time) => {
         if (playerRef.current) playerRef.current.seekTo(time);
       },
     });
