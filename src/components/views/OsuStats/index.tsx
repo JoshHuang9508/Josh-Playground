@@ -1,11 +1,14 @@
 import React from 'react';
 import DOMPurify from 'dompurify';
 
+import type * as Types from '@/lib/types';
+
 import { t } from '@/lib/i18n';
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useOsuStats from '@/lib/hooks/OsuStats';
+
 import { AddConsoleLog } from '@/redux';
-import type { OsuUser } from '@/lib/types';
 
 import styles from './OsuStats.module.css';
 
@@ -76,7 +79,7 @@ function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number
   );
 }
 
-function MonthlyChart({ data }: { data: OsuUser['monthlyPlaycounts'] }) {
+function MonthlyChart({ data }: { data: Types.OsuUser['monthlyPlaycounts'] }) {
   if (!data.length) return <div className={styles['chart-empty']}>No data</div>;
 
   const maxCount = Math.max(...data.map((d) => d.count), 1);
@@ -100,7 +103,7 @@ function MonthlyChart({ data }: { data: OsuUser['monthlyPlaycounts'] }) {
   );
 }
 
-function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
+function HitDistChart({ counts }: { counts: Types.OsuUser['hitCounts'] }) {
   const total = counts.count300 + counts.count100 + counts.count50 + counts.countMiss;
   if (!total) return <div className={styles['chart-empty']}>No data</div>;
 
@@ -152,7 +155,7 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
   );
 }
 
-function GradeChart({ grades }: { grades: OsuUser['gradeCounts'] }) {
+function GradeChart({ grades }: { grades: Types.OsuUser['gradeCounts'] }) {
   const data = [
     { label: 'XH', count: grades.ssh, color: '#00f3ff' },
     { label: 'SS', count: Math.max(0, grades.ss - grades.ssh), color: '#fff700' },
@@ -187,21 +190,26 @@ function GradeChart({ grades }: { grades: OsuUser['gradeCounts'] }) {
 export default function OsuStatsView() {
   const { user, loading, error } = useOsuStats();
 
-  useCommandHandler({
-    stats: () => {
-      if (!user) {
-        AddConsoleLog(t('/osu.commands.stats.notAvailable'));
-        return;
-      }
-      AddConsoleLog(
-        t('/osu.commands.stats.header', user.username),
-        t('/osu.commands.stats.globalRank', formatNumber(user.globalRank)),
-        t('/osu.commands.stats.countryRank', formatNumber(user.countryRank)),
-        t('/osu.commands.stats.pp', formatNumber(user.pp)),
-        t('/osu.commands.stats.accuracy', user.accuracy.toFixed(2) + '%'),
-        t('/osu.commands.stats.playCount', formatNumber(user.playCount)),
-        t('/osu.commands.stats.playTime', formatPlayTime(user.playTime)),
-      );
+  useTerminalCommand({
+    stats: {
+      name: 'stats',
+      description: 'Show osu! stats',
+      usage: '@#00ffaastats@#',
+      handler: () => {
+        if (!user) {
+          AddConsoleLog(t('/osu.commands.stats.notAvailable'));
+          return;
+        }
+        AddConsoleLog(
+          t('/osu.commands.stats.header', user.username),
+          t('/osu.commands.stats.globalRank', formatNumber(user.globalRank)),
+          t('/osu.commands.stats.countryRank', formatNumber(user.countryRank)),
+          t('/osu.commands.stats.pp', formatNumber(user.pp)),
+          t('/osu.commands.stats.accuracy', user.accuracy.toFixed(2) + '%'),
+          t('/osu.commands.stats.playCount', formatNumber(user.playCount)),
+          t('/osu.commands.stats.playTime', formatPlayTime(user.playTime)),
+        );
+      },
     },
   });
 

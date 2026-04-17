@@ -1,13 +1,11 @@
-import React from 'react';
-
 import { t } from '@/lib/i18n';
 
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
 import ColorSpan from '@/components/ColorSpan';
 
 export default function NotFoundView() {
-  useCommandHandler({});
+  useTerminalCommand({});
 
   return (
     <div className={'content-div'}>

@@ -49,7 +49,6 @@ export const LANGUAGE_COLORS: Record<string, string> = {
   'Dart': '#00B4AB',
   '': '#ccc',
 };
-export * from './command-list';
 export * from './path-list';
 export * from './projects';
 export * from './text-content';

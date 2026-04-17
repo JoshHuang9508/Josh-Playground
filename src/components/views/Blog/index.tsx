@@ -1,11 +1,13 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { t } from '@/lib/i18n';
 
-import useCommandHandler, { AppContext } from '@/lib/hooks/CommandHandler';
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import { AddConsoleLog } from '@/redux';
+
+import { AppContext } from '@/pages/index';
 
 import PostCard from './PostCard';
 
@@ -22,20 +24,25 @@ export default function BlogView() {
     return () => appContext?.setAvailableArgs({});
   }, [posts]);
 
-  useCommandHandler({
-    read: (_cmd, args) => {
-      const slug = args[0] ?? '';
-      if (!slug) {
-        AddConsoleLog(t('/blog.commands.read.usage'));
-        return;
-      }
-      const post = posts.find((p) => p.slug === slug);
-      if (post) {
-        window.location.hash = `#/blog/${slug}`;
-        AddConsoleLog(t('/blog.commands.read.opening', post.title));
-      } else {
-        AddConsoleLog(t('/blog.commands.read.notFound', slug));
-      }
+  useTerminalCommand({
+    read: {
+      name: 'read',
+      description: 'Read a blog post',
+      usage: '@#00ffaaread@# @#fff700<slug>@#',
+      handler: (_cmd, args) => {
+        const slug = args[0] ?? '';
+        if (!slug) {
+          AddConsoleLog(t('/blog.commands.read.usage'));
+          return;
+        }
+        const post = posts.find((p) => p.slug === slug);
+        if (post) {
+          window.location.hash = `#/blog/${slug}`;
+          AddConsoleLog(t('/blog.commands.read.opening', post.title));
+        } else {
+          AddConsoleLog(t('/blog.commands.read.notFound', slug));
+        }
+      },
     },
   });
 

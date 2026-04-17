@@ -68,13 +68,11 @@ export const TEXT_CONTENT = {
       invalidUrl: 'Invalid video URL.',
       pending: 'Preparing download: @#fff700{0}@# ({1})',
       starting: 'Download started...',
+      error: {
+        downloadVideoFailed: 'Video download failed: {0}',
+        downloadAudioFailed: 'Audio download failed: {0}',
+      },
     },
-  },
-  'errors': {
-    downloadVideo: 'Video download failed: {0}',
-    downloadAudio: 'Audio download failed: {0}',
-    mp4Failed: 'Failed to retrieve .mp4 file.',
-    mp3Failed: 'Failed to retrieve .mp3 file.',
   },
   'home': {
     commands: {
@@ -191,6 +189,11 @@ export const TEXT_CONTENT = {
       playerError: 'Player error: {0}',
     },
   },
+  'blogPost': {
+    loading: 'Loading post...',
+    notFound: 'Post not found.',
+    backLink: '\u2190 Back to ~/blog',
+  },
   '/': {
     title: 'Personal site',
     subtitle: "I'm Whydog, a 18yo developer passionate about full-stack development, UI/UX design.",
@@ -287,18 +290,6 @@ export const TEXT_CONTENT = {
     title: 'Listen Together',
     subtitle: 'A web-based music sync player. Listen to music with your friends in real-time.',
   },
-  '/ytdownloader': {
-    title: 'YouTube Downloader',
-    subtitle: 'A web-based YouTube video downloader. Download YouTube videos in audio or video format.',
-    tutorial: [
-      '@#FFF700How to use?',
-      '1. @#FF77B7Copy@# the @#00ffaaURL@# of the @#00ffaaYouTube video@# you want to download.',
-      "2. @#FF77B7Type@# @#00ffaa'download'@# and paste the @#00ffaaURL@#.",
-      "3. @#FF77B7Use@# flag @#00ffaa'-a'@# for @#00ffaaaudio@# only, or @#00ffaa'-v'@# for @#00ffaavideo@# only.",
-      '4. @#FF77B7Wait@# for the download to complete.',
-      '@#f9f284Enjoy your download!',
-    ],
-  },
   '/projects': {
     title: 'Projects',
     subtitle: 'My open-source work and side projects.',
@@ -312,7 +303,7 @@ export const TEXT_CONTENT = {
     },
   },
   '/osu': {
-    title: 'osu! Stats',
+    title: 'My osu! Stats',
     subtitle: 'My osu! profile and gameplay statistics.',
     loading: 'Loading stats...',
     unavailable: {
@@ -342,7 +333,7 @@ export const TEXT_CONTENT = {
     },
   },
   '/blog': {
-    title: 'Blog',
+    title: 'My Blog',
     subtitle: 'Thoughts on development, life, and gaming.',
     loading: 'Loading posts...',
     empty: 'No posts yet. Stay tuned.',
@@ -353,11 +344,6 @@ export const TEXT_CONTENT = {
         notFound: 'Post @#fff700{0}@# not found.',
       },
     },
-  },
-  'blogPost': {
-    loading: 'Loading post...',
-    notFound: 'Post not found.',
-    backLink: '\u2190 Back to ~/blog',
   },
   '*': {
     title: 'Oops!',

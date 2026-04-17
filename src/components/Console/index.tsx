@@ -8,9 +8,9 @@ import { t } from '@/lib/i18n';
 
 import { subscribeConsole, setActiveConsole } from '@/lib/consoleLog';
 
-import { AppContext } from '@/lib/hooks/CommandHandler';
-
 import { AddConsoleLog, SetCommand } from '@/redux';
+
+import { AppContext } from '@/pages/index';
 
 import ColorSpan from '@/components/ColorSpan';
 
@@ -118,8 +118,8 @@ export default function Console({ id, windowState, onWindowStateChange, position
     if (!command && !input.endsWith(' ') && commands.filter((_) => _.name.startsWith(parts[0])).length != 0) {
       availables.push(...commands.filter((cmd) => cmd.name.startsWith(lastPart) && cmd.name != lastPart).map((cmd) => cmd.name));
     } else if (command) {
-      if (command.options) {
-        availables.push(...command.options.filter((opt) => opt.startsWith(lastPart) && opt != lastPart));
+      if (command.flags) {
+        availables.push(...command.flags.filter((flag) => flag.startsWith(lastPart) && flag != lastPart));
       }
       const argCompletions = availableArgs[command.name] ?? [];
       availables.push(...argCompletions.filter((a) => a.startsWith(lastPart) && a !== lastPart));

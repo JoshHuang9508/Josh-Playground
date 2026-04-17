@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -7,8 +7,10 @@ import { TAG_COLORS } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
-import useCommandHandler, { AppContext } from '@/lib/hooks/CommandHandler';
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useBlogPost from '@/lib/hooks/BlogPost';
+
+import { AppContext } from '@/pages/index';
 
 import styles from './BlogPost.module.css';
 
@@ -26,7 +28,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   const tagColor = TAG_COLORS[post?.tags[0] ?? ''];
 
-  useCommandHandler({});
+  useTerminalCommand({});
 
   useEffect(() => {
     if (post) appContext?.setDynamicTitle(post.title);
@@ -89,7 +91,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
         </div>
       </div>
 
-      <div className={styles['article-body']}>
+      <div className={`${styles['article-body']} markdown-content`}>
         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
           {post.content}
         </ReactMarkdown>

@@ -6,7 +6,7 @@ import type * as Types from '@/lib/types';
 
 import { t } from '@/lib/i18n';
 
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
 import { getVideoInfo, getPlaylist } from '@/lib/getVideoBlob';
 
@@ -78,225 +78,295 @@ export default function ListenTogetherView() {
     setTimeout(() => setPlayerStateClient((prev) => ({ ...prev, seeking: false })), 1000);
   };
 
-  useCommandHandler({
-    send: (_cmd, args) => {
-      const message = args.join(' ') ?? '';
-      if (!message) {
-        AddConsoleLog(t('listentogether.commands.send.usage'));
-        return;
-      }
-      socketInstance?.addRoomLog(`${username}: ${message}`);
+  useTerminalCommand({
+    send: {
+      name: 'send',
+      description: 'Send a message to the room',
+      usage: '@#00ffaasend@# @#fff700<message>@#',
+      handler: (_cmd, args) => {
+        const message = args.join(' ') ?? '';
+        if (!message) {
+          AddConsoleLog(t('listentogether.commands.send.usage'));
+          return;
+        }
+        socketInstance?.addRoomLog(`${username}: ${message}`);
+      },
     },
-    queue: async (_cmd, args) => {
-      const URL = args[0] ?? '';
-      if (!URL) {
-        AddConsoleLog(t('listentogether.commands.queue.usage'));
-        return;
-      }
-      if (!ReactPlayer.canPlay(URL)) {
-        AddConsoleLog(t('listentogether.commands.queue.cannotPlay'));
-        return;
-      }
-      if (URL.includes('playlist?list=')) {
-        const tracks = await getPlaylist(URL.split('list=')[1], username).catch((error) => {
-          AddConsoleLog(t('listentogether.errors.getPlaylist', error.message));
-          return null;
-        });
-        if (!tracks) return;
-        socketInstance?.addTracks(tracks);
-        AddConsoleLog(t('listentogether.commands.queue.addedTracks', String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)));
-        socketInstance?.addRoomLog(
-          t('listentogether.logs.addedTracks', username, String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)),
-        );
-      } else if (URL.includes('watch?v=')) {
-        const track = await getVideoInfo(URL.split('v=')[1], username).catch((error) => {
-          AddConsoleLog(t('listentogether.errors.getVideoInfo', error.message));
-          return null;
-        });
-        if (!track) return;
-        socketInstance?.addTrack(track);
-        AddConsoleLog(t('listentogether.commands.queue.addedTrack', track.title, String(playerState.trackQueue.length)));
-        socketInstance?.addRoomLog(t('listentogether.logs.addedTrack', username, track.title, String(playerState.trackQueue.length)));
-      } else {
-        AddConsoleLog(t('listentogether.commands.queue.invalidUrl'));
-      }
+    queue: {
+      name: 'queue',
+      description: 'Add a YouTube video or playlist to the queue',
+      usage: '@#00ffaaqueue@# @#fff700<video_url | playlist_url>@#',
+      handler: async (_cmd, args) => {
+        const URL = args[0] ?? '';
+        if (!URL) {
+          AddConsoleLog(t('listentogether.commands.queue.usage'));
+          return;
+        }
+        if (!ReactPlayer.canPlay(URL)) {
+          AddConsoleLog(t('listentogether.commands.queue.cannotPlay'));
+          return;
+        }
+        if (URL.includes('playlist?list=')) {
+          const tracks = await getPlaylist(URL.split('list=')[1], username).catch((error) => {
+            AddConsoleLog(t('listentogether.errors.getPlaylist', error.message));
+            return null;
+          });
+          if (!tracks) return;
+          socketInstance?.addTracks(tracks);
+          AddConsoleLog(t('listentogether.commands.queue.addedTracks', String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)));
+          socketInstance?.addRoomLog(
+            t('listentogether.logs.addedTracks', username, String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)),
+          );
+        } else if (URL.includes('watch?v=')) {
+          const track = await getVideoInfo(URL.split('v=')[1], username).catch((error) => {
+            AddConsoleLog(t('listentogether.errors.getVideoInfo', error.message));
+            return null;
+          });
+          if (!track) return;
+          socketInstance?.addTrack(track);
+          AddConsoleLog(t('listentogether.commands.queue.addedTrack', track.title, String(playerState.trackQueue.length)));
+          socketInstance?.addRoomLog(t('listentogether.logs.addedTrack', username, track.title, String(playerState.trackQueue.length)));
+        } else {
+          AddConsoleLog(t('listentogether.commands.queue.invalidUrl'));
+        }
+      },
     },
-    remove: (_cmd, args) => {
-      const indexToRm = args[0] ?? '';
-      if (!indexToRm) {
-        AddConsoleLog(t('listentogether.commands.remove.usage'));
-        return;
-      }
-      if (indexToRm === '*') {
-        socketInstance?.setTrackQueue([]);
-        AddConsoleLog(t('listentogether.commands.remove.removedAll'));
-        socketInstance?.addRoomLog(t('listentogether.logs.removedAll', username));
+    remove: {
+      name: 'remove',
+      description: 'Remove a track from the queue by index (* = all)',
+      usage: '@#00ffaaremove@# @#fff700<index | *>@#',
+      handler: (_cmd, args) => {
+        const indexToRm = args[0] ?? '';
+        if (!indexToRm) {
+          AddConsoleLog(t('listentogether.commands.remove.usage'));
+          return;
+        }
+        if (indexToRm === '*') {
+          socketInstance?.setTrackQueue([]);
+          AddConsoleLog(t('listentogether.commands.remove.removedAll'));
+          socketInstance?.addRoomLog(t('listentogether.logs.removedAll', username));
+          triggerFlash();
+          return;
+        }
+        if (isNaN(parseFloat(indexToRm))) {
+          AddConsoleLog(t('listentogether.commands.remove.invalidIndex'));
+          return;
+        }
+        if (parseInt(indexToRm) >= playerState.trackQueue.length) {
+          AddConsoleLog(t('listentogether.commands.remove.indexOutOfRange'));
+          return;
+        }
+        const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
+        socketInstance?.removeTrack(parseInt(indexToRm));
+        AddConsoleLog(t('listentogether.commands.remove.removed', indexToRm));
+        socketInstance?.addRoomLog(t('listentogether.logs.removedTrack', username, trackToRm.title, indexToRm));
+      },
+    },
+    play: {
+      name: 'play',
+      description: 'Start or resume playback',
+      usage: '@#00ffaaplay@#',
+      handler: () => {
+        socketInstance?.play();
+        AddConsoleLog(t('listentogether.commands.play.start'));
+        socketInstance?.addRoomLog(t('listentogether.logs.play', username));
         triggerFlash();
-        return;
-      }
-      if (isNaN(parseFloat(indexToRm))) {
-        AddConsoleLog(t('listentogether.commands.remove.invalidIndex'));
-        return;
-      }
-      if (parseInt(indexToRm) >= playerState.trackQueue.length) {
-        AddConsoleLog(t('listentogether.commands.remove.indexOutOfRange'));
-        return;
-      }
-      const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
-      socketInstance?.removeTrack(parseInt(indexToRm));
-      AddConsoleLog(t('listentogether.commands.remove.removed', indexToRm));
-      socketInstance?.addRoomLog(t('listentogether.logs.removedTrack', username, trackToRm.title, indexToRm));
+      },
     },
-    play: () => {
-      socketInstance?.play();
-      AddConsoleLog(t('listentogether.commands.play.start'));
-      socketInstance?.addRoomLog(t('listentogether.logs.play', username));
-      triggerFlash();
+    pause: {
+      name: 'pause',
+      description: 'Pause playback',
+      usage: '@#00ffaapause@#',
+      handler: () => {
+        socketInstance?.pause();
+        AddConsoleLog(t('listentogether.commands.pause.pause'));
+        socketInstance?.addRoomLog(t('listentogether.logs.pause', username));
+        triggerFlash();
+      },
     },
-    pause: () => {
-      socketInstance?.pause();
-      AddConsoleLog(t('listentogether.commands.pause.pause'));
-      socketInstance?.addRoomLog(t('listentogether.logs.pause', username));
-      triggerFlash();
+    switch: {
+      name: 'switch',
+      description: 'Switch to a track by index, or next / previous',
+      usage: '@#00ffaaswitch@# @#fff700<index> | -n | -p@#',
+      handler: (_cmd, args, flags) => {
+        const index = args[0] ?? '';
+        if (!index) {
+          AddConsoleLog(t('listentogether.commands.switch.usage'));
+          return;
+        }
+        if (flags.includes('n') || flags.includes('next')) {
+          socketInstance?.nextTrack();
+          AddConsoleLog(t('listentogether.commands.switch.next'));
+          socketInstance?.addRoomLog(t('listentogether.logs.switchNext', username));
+          return;
+        }
+        if (flags.includes('p') || flags.includes('prev')) {
+          socketInstance?.prevTrack();
+          AddConsoleLog(t('listentogether.commands.switch.prev'));
+          socketInstance?.addRoomLog(t('listentogether.logs.switchPrev', username));
+          return;
+        }
+        if (isNaN(parseFloat(index))) {
+          AddConsoleLog(t('listentogether.commands.switch.invalidIndex'));
+          return;
+        }
+        if (parseInt(index) >= playerState.trackQueue.length || parseInt(index) < 0) {
+          AddConsoleLog(t('listentogether.commands.switch.indexOutOfRange'));
+          return;
+        }
+        socketInstance?.setTrackIndex(parseInt(index));
+        AddConsoleLog(t('listentogether.commands.switch.switchTo', index));
+        socketInstance?.addRoomLog(t('listentogether.logs.switchTo', username, index));
+      },
     },
-    switch: (_cmd, args, flags) => {
-      const index = args[0] ?? '';
-      if (!index) {
-        AddConsoleLog(t('listentogether.commands.switch.usage'));
-        return;
-      }
-      if (flags.includes('-n') || flags.includes('--next')) {
-        socketInstance?.nextTrack();
-        AddConsoleLog(t('listentogether.commands.switch.next'));
-        socketInstance?.addRoomLog(t('listentogether.logs.switchNext', username));
-        return;
-      }
-      if (flags.includes('-p') || flags.includes('--prev')) {
-        socketInstance?.prevTrack();
-        AddConsoleLog(t('listentogether.commands.switch.prev'));
-        socketInstance?.addRoomLog(t('listentogether.logs.switchPrev', username));
-        return;
-      }
-      if (isNaN(parseFloat(index))) {
-        AddConsoleLog(t('listentogether.commands.switch.invalidIndex'));
-        return;
-      }
-      if (parseInt(index) >= playerState.trackQueue.length || parseInt(index) < 0) {
-        AddConsoleLog(t('listentogether.commands.switch.indexOutOfRange'));
-        return;
-      }
-      socketInstance?.setTrackIndex(parseInt(index));
-      AddConsoleLog(t('listentogether.commands.switch.switchTo', index));
-      socketInstance?.addRoomLog(t('listentogether.logs.switchTo', username, index));
+    volume: {
+      name: 'volume',
+      description: 'Set the playback volume (0-100)',
+      usage: '@#00ffaavolume@# @#fff700<0-100>@#',
+      handler: (_cmd, args) => {
+        const volume = args[0] ?? '';
+        if (!volume) {
+          AddConsoleLog(t('listentogether.commands.volume.usage'));
+          return;
+        }
+        if (isNaN(parseFloat(volume))) {
+          AddConsoleLog(t('listentogether.commands.volume.invalid'));
+          return;
+        }
+        setPlayerStateClient((prev) => ({ ...prev, volume: parseFloat(volume) / 100 }));
+        localStorage.setItem('volume', volume);
+        AddConsoleLog(t('listentogether.commands.volume.set', volume));
+      },
     },
-    volume: (_cmd, args) => {
-      const volume = args[0] ?? '';
-      if (!volume) {
-        AddConsoleLog(t('listentogether.commands.volume.usage'));
-        return;
-      }
-      if (isNaN(parseFloat(volume))) {
-        AddConsoleLog(t('listentogether.commands.volume.invalid'));
-        return;
-      }
-      setPlayerStateClient((prev) => ({ ...prev, volume: parseFloat(volume) / 100 }));
-      localStorage.setItem('volume', volume);
-      AddConsoleLog(t('listentogether.commands.volume.set', volume));
+    loop: {
+      name: 'loop',
+      description: 'Toggle loop mode for the current track',
+      usage: '@#00ffaaloop@# @#fff700[-t | -f]@#',
+      handler: (_cmd, _args, flags) => {
+        if (flags.includes('t') || flags.includes('true')) {
+          socketInstance?.setLoop(true);
+          AddConsoleLog(t('listentogether.commands.loop.on'));
+          socketInstance?.addRoomLog(t('listentogether.logs.loopOn', username));
+          return;
+        }
+        if (flags.includes('f') || flags.includes('false')) {
+          socketInstance?.setLoop(false);
+          AddConsoleLog(t('listentogether.commands.loop.off'));
+          socketInstance?.addRoomLog(t('listentogether.logs.loopOff', username));
+          return;
+        }
+        AddConsoleLog(t('listentogether.commands.loop.usage'));
+      },
     },
-    loop: (_cmd, _args, flags) => {
-      if (flags.includes('-t') || flags.includes('--true')) {
-        socketInstance?.setLoop(true);
-        AddConsoleLog(t('listentogether.commands.loop.on'));
-        socketInstance?.addRoomLog(t('listentogether.logs.loopOn', username));
-        return;
-      }
-      if (flags.includes('-f') || flags.includes('--false')) {
-        socketInstance?.setLoop(false);
-        AddConsoleLog(t('listentogether.commands.loop.off'));
-        socketInstance?.addRoomLog(t('listentogether.logs.loopOff', username));
-        return;
-      }
-      AddConsoleLog(t('listentogether.commands.loop.usage'));
+    random: {
+      name: 'random',
+      description: 'Toggle shuffle / random playback',
+      usage: '@#00ffaarandom@# @#fff700[-t | -f]@#',
+      handler: (_cmd, _args, flags) => {
+        if (flags.includes('t') || flags.includes('true')) {
+          socketInstance?.setPlayerState({ ...playerState, random: true });
+          AddConsoleLog(t('listentogether.commands.random.on'));
+          socketInstance?.addRoomLog(t('listentogether.logs.randomOn', username));
+          return;
+        }
+        if (flags.includes('f') || flags.includes('false')) {
+          socketInstance?.setPlayerState({ ...playerState, random: false });
+          AddConsoleLog(t('listentogether.commands.random.off'));
+          socketInstance?.addRoomLog(t('listentogether.logs.randomOff', username));
+          return;
+        }
+        AddConsoleLog(t('listentogether.commands.random.usage'));
+      },
     },
-    random: (_cmd, _args, flags) => {
-      if (flags.includes('-t') || flags.includes('--true')) {
-        socketInstance?.setPlayerState({ ...playerState, random: true });
-        AddConsoleLog(t('listentogether.commands.random.on'));
-        socketInstance?.addRoomLog(t('listentogether.logs.randomOn', username));
-        return;
-      }
-      if (flags.includes('-f') || flags.includes('--false')) {
-        socketInstance?.setPlayerState({ ...playerState, random: false });
-        AddConsoleLog(t('listentogether.commands.random.off'));
-        socketInstance?.addRoomLog(t('listentogether.logs.randomOff', username));
-        return;
-      }
-      AddConsoleLog(t('listentogether.commands.random.usage'));
+    rate: {
+      name: 'rate',
+      description: 'Set playback speed (e.g. 100 = normal)',
+      usage: '@#00ffaarate@# @#fff700<percent>@#',
+      handler: (_cmd, args) => {
+        const rate = args[0] ?? '';
+        if (!rate) {
+          AddConsoleLog(t('listentogether.commands.rate.usage'));
+          return;
+        }
+        if (isNaN(parseFloat(rate))) {
+          AddConsoleLog(t('listentogether.commands.rate.invalid'));
+          return;
+        }
+        socketInstance?.setPlayBackRate(parseFloat(rate) / 100);
+        AddConsoleLog(t('listentogether.commands.rate.set', rate));
+        socketInstance?.addRoomLog(t('listentogether.logs.rate', username, rate));
+      },
     },
-    rate: (_cmd, args) => {
-      const rate = args[0] ?? '';
-      if (!rate) {
-        AddConsoleLog(t('listentogether.commands.rate.usage'));
-        return;
-      }
-      if (isNaN(parseFloat(rate))) {
-        AddConsoleLog(t('listentogether.commands.rate.invalid'));
-        return;
-      }
-      socketInstance?.setPlayBackRate(parseFloat(rate) / 100);
-      AddConsoleLog(t('listentogether.commands.rate.set', rate));
-      socketInstance?.addRoomLog(t('listentogether.logs.rate', username, rate));
+    seek: {
+      name: 'seek',
+      description: 'Jump to a specific time in seconds',
+      usage: '@#00ffaaseek@# @#fff700<seconds>@#',
+      handler: (_cmd, args) => {
+        const seek = args[0] ?? '';
+        if (!seek) {
+          AddConsoleLog(t('listentogether.commands.seek.usage'));
+          return;
+        }
+        if (isNaN(parseFloat(seek))) {
+          AddConsoleLog(t('listentogether.commands.seek.invalid'));
+          return;
+        }
+        if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
+          AddConsoleLog(t('listentogether.commands.seek.outOfRange'));
+          return;
+        }
+        socketInstance?.seek(parseFloat(seek));
+        AddConsoleLog(t('listentogether.commands.seek.seekTo', seek));
+        socketInstance?.addRoomLog(t('listentogether.logs.seek', username, seek));
+      },
     },
-    seek: (_cmd, args) => {
-      const seek = args[0] ?? '';
-      if (!seek) {
-        AddConsoleLog(t('listentogether.commands.seek.usage'));
-        return;
-      }
-      if (isNaN(parseFloat(seek))) {
-        AddConsoleLog(t('listentogether.commands.seek.invalid'));
-        return;
-      }
-      if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
-        AddConsoleLog(t('listentogether.commands.seek.outOfRange'));
-        return;
-      }
-      socketInstance?.seek(parseFloat(seek));
-      AddConsoleLog(t('listentogether.commands.seek.seekTo', seek));
-      socketInstance?.addRoomLog(t('listentogether.logs.seek', username, seek));
+    refresh: {
+      name: 'refresh',
+      description: 'Re-sync the player state from the server',
+      usage: '@#00ffaarefresh@#',
+      handler: () => {
+        socketInstance?.refresh();
+        AddConsoleLog(t('listentogether.commands.refresh.message'));
+        socketInstance?.addRoomLog(t('listentogether.logs.refresh', username));
+      },
     },
-    refresh: () => {
-      socketInstance?.refresh();
-      AddConsoleLog(t('listentogether.commands.refresh.message'));
-      socketInstance?.addRoomLog(t('listentogether.logs.refresh', username));
-    },
-    playlist: (_cmd, _args, flags) => {
-      if (flags.includes('-d') || flags.includes('--detail')) {
+    playlist: {
+      name: 'playlist',
+      description: 'Show the current playlist',
+      usage: '@#00ffaaplaylist@# @#fff700[-d]@#',
+      handler: (_cmd, _args, flags) => {
+        if (flags.includes('d') || flags.includes('detail')) {
+          AddConsoleLog(
+            t('listentogether.commands.playlist.detail'),
+            ...playerState.trackQueue.map((track, index) =>
+              track.id === playerState.currentTrack?.id
+                ? `@#fff700#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`
+                : `#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`,
+            ),
+          );
+          return;
+        }
         AddConsoleLog(
-          t('listentogether.commands.playlist.detail'),
-          ...playerState.trackQueue.map((track, index) =>
-            track.id === playerState.currentTrack?.id
-              ? `@#fff700#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`
-              : `#${index} - ${track.title} by ${track.author} | Requested: ${track.requestBy}`,
-          ),
+          t('listentogether.commands.playlist.list'),
+          ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `@#fff700#${index} - ${track.title}` : `#${index} - ${track.title}`)),
         );
-        return;
-      }
-      AddConsoleLog(
-        t('listentogether.commands.playlist.list'),
-        ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `@#fff700#${index} - ${track.title}` : `#${index} - ${track.title}`)),
-      );
+      },
     },
-    vibe: (_cmd, args) => {
-      const vibeName = args[0] as Types.VibeName;
-      if (!vibeName || !VALID_VIBES.includes(vibeName)) {
-        AddConsoleLog(t('listentogether.commands.vibe.invalid'));
-        return;
-      }
-      socketInstance?.setVibe(vibeName);
-      setVibe(vibeName);
-      AddConsoleLog(t('listentogether.commands.vibe.set', vibeName));
-      socketInstance?.addRoomLog(t('listentogether.logs.vibe', username, vibeName));
+    vibe: {
+      name: 'vibe',
+      description: 'Set the ambiance of the room',
+      usage: '@#00ffaavibe@# @#fff700<vibe_name>@#',
+      handler: (_cmd, args) => {
+        const vibeName = args[0] as Types.VibeName;
+        if (!vibeName || !VALID_VIBES.includes(vibeName)) {
+          AddConsoleLog(t('listentogether.commands.vibe.invalid'));
+          return;
+        }
+        socketInstance?.setVibe(vibeName);
+        setVibe(vibeName);
+        AddConsoleLog(t('listentogether.commands.vibe.set', vibeName));
+        socketInstance?.addRoomLog(t('listentogether.logs.vibe', username, vibeName));
+      },
     },
   });
 

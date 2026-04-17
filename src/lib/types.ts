@@ -1,14 +1,17 @@
 export type ConsoleWindowState = 'normal' | 'minimized' | 'maximized' | 'closed';
 
+export type CommandHandler = (command: string, args: string[], flags: string[]) => void;
+
 export type Command = {
   name: string;
   description: string;
   usage: string;
+  flags?: string[];
   subCommands?: Command[];
-  options?: string[];
+  handler: CommandHandler;
 };
 
-export type CommandHandler = (fullCommand: string, args: string[], flags: string[]) => void;
+export type CommandList = Record<string, Command>;
 
 export type Track = {
   url: string; // e.g. https://www.youtube.com/watch?v={ID}

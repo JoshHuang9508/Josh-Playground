@@ -1,15 +1,13 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, createContext } from 'react';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { COMMAND_LIST, MUSIC_LIST, PATH_LIST, TEXT_CONTENT } from '@/lib/constants';
+import { MUSIC_LIST, PATH_LIST, TEXT_CONTENT } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
-
-import { AppContext } from '@/lib/hooks/CommandHandler';
 
 import store, { SetUsername } from '@/redux';
 
@@ -24,6 +22,26 @@ import OsuStatsView from '@/components/views/OsuStats';
 import Navigation from '@/components/Navigation';
 
 import styles from './index.module.css';
+
+export type AppContextType = {
+  availableArgs: Record<string, string[]>;
+  availableCommands: Types.Command[];
+  availablePaths: string[];
+  setAvailableArgs: (args: Record<string, string[]>) => void;
+  setAvailableCommands: (cmds: Types.Command[]) => void;
+  setAvailablePaths: (paths: string[]) => void;
+  backgroundImageUrl: string;
+  backgroundColor: string;
+  dynamicTitle: string | null;
+  username: string;
+  setBackgroundImageUrl: (url: string) => void;
+  setBackgroundColor: (color: string) => void;
+  setDynamicTitle: (title: string | null) => void;
+  setUsername: (name: string) => void;
+  currentHash: string;
+};
+
+export const AppContext = createContext<AppContextType | null>(null);
 
 function PageComponent() {
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
@@ -79,7 +97,6 @@ function PageComponent() {
 
   useEffect(() => {
     const hashPaths = currentHash.split('/').filter(Boolean);
-    setAvailableCommands([...COMMAND_LIST['*'], ...(COMMAND_LIST[hashPaths.length > 0 ? `${hashPaths.join('/')}/` : '/'] ?? [])].sort((a, b) => a.name.localeCompare(b.name)));
     setAvailablePaths(PATH_LIST[`/${hashPaths.join('/')}`] ?? []);
   }, [currentHash]);
 

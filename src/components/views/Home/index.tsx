@@ -6,7 +6,7 @@ import { t } from '@/lib/i18n';
 
 import { SOCIAL_LINKS, PROJECTS } from '@/lib/constants';
 
-import useCommandHandler from '@/lib/hooks/CommandHandler';
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useOsuStats from '@/lib/hooks/OsuStats';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
@@ -33,38 +33,78 @@ export default function HomeView() {
 
   const latestPost = blogPosts[0] ?? null;
 
-  useCommandHandler({
-    github: () => {
-      window.open('https://github.com/JoshHuang9508', '_blank');
-      AddConsoleLog(t('home.commands.github'));
+  useTerminalCommand({
+    github: {
+      name: 'github',
+      description: 'Open my GitHub profile',
+      usage: '@#00ffaagithub@#',
+      handler: () => {
+        window.open('https://github.com/JoshHuang9508', '_blank');
+        AddConsoleLog(t('home.commands.github'));
+      },
     },
-    youtube: () => {
-      window.open('https://www.youtube.com/@whydog5555', '_blank');
-      AddConsoleLog(t('home.commands.youtube'));
+    youtube: {
+      name: 'youtube',
+      description: 'Open my YouTube channel',
+      usage: '@#00ffaayoutube@#',
+      handler: () => {
+        window.open('https://www.youtube.com/@whydog5555', '_blank');
+        AddConsoleLog(t('home.commands.youtube'));
+      },
     },
-    twitter: () => {
-      window.open('https://x.com/whydog5555', '_blank');
-      AddConsoleLog(t('home.commands.twitter'));
+    twitter: {
+      name: 'twitter',
+      description: 'Open my Twitter profile',
+      usage: '@#00ffaatwitter@#',
+      handler: () => {
+        window.open('https://x.com/whydog5555', '_blank');
+        AddConsoleLog(t('home.commands.twitter'));
+      },
     },
-    instagram: () => {
-      window.open('https://www.instagram.com/whydog5555/', '_blank');
-      AddConsoleLog(t('home.commands.instagram'));
+    instagram: {
+      name: 'instagram',
+      description: 'Open my Instagram profile',
+      usage: '@#00ffaainstagram@#',
+      handler: () => {
+        window.open('https://www.instagram.com/whydog5555/', '_blank');
+        AddConsoleLog(t('home.commands.instagram'));
+      },
     },
-    twitch: () => {
-      window.open('https://www.twitch.tv/whydog5555', '_blank');
-      AddConsoleLog(t('home.commands.twitch'));
+    twitch: {
+      name: 'twitch',
+      description: 'Open my Twitch profile',
+      usage: '@#00ffaatwitch@#',
+      handler: () => {
+        window.open('https://www.twitch.tv/whydog5555', '_blank');
+        AddConsoleLog(t('home.commands.twitch'));
+      },
     },
-    discord: () => {
-      window.open('https://discord.com/users/whydog5555', '_blank');
-      AddConsoleLog(t('home.commands.discord'));
+    discord: {
+      name: 'discord',
+      description: 'Open my Discord profile',
+      usage: '@#00ffaacdiscord@#',
+      handler: () => {
+        window.open('https://discord.com/users/whydog5555', '_blank');
+        AddConsoleLog(t('home.commands.discord'));
+      },
     },
-    email: () => {
-      window.open('mailto:joshhuang9508@gmail.com', '_blank');
-      AddConsoleLog(t('home.commands.email'));
+    email: {
+      name: 'email',
+      description: 'Open my email',
+      usage: '@#00ffaaemail@#',
+      handler: () => {
+        window.open('mailto:joshhuang9508@gmail.com', '_blank');
+        AddConsoleLog(t('home.commands.email'));
+      },
     },
-    osu: () => {
-      window.open('https://osu.ppy.sh/users/15100005', '_blank');
-      AddConsoleLog(t('home.commands.osu'));
+    osu: {
+      name: 'osu',
+      description: 'Open my osu! profile',
+      usage: '@#00ffaaosu@#',
+      handler: () => {
+        window.open('https://osu.ppy.sh/users/15100005', '_blank');
+        AddConsoleLog(t('home.commands.osu'));
+      },
     },
   });
 
