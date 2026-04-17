@@ -168,6 +168,11 @@ export const COMMAND_LIST = {
       description: 'Set playback volume (0–100)',
       usage: '@#00ffaavolume@# @#fff700<value>@#',
     },
+    {
+      name: 'vibe',
+      description: 'Set the room vibe theme (default | lofi | rave | cinema | dawn)',
+      usage: '@#00ffaavibe@# @#fff700<default | lofi | rave | cinema | dawn>@#',
+    },
   ],
   'projects/': [
     {

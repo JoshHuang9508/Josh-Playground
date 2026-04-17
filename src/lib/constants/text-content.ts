@@ -155,6 +155,11 @@ export const TEXT_CONTENT = {
         detail: 'Playlist (detailed):',
         list: 'Playlist:',
       },
+      vibe: {
+        usage: 'Usage: @#00ffaavibe@# @#fff700<default | lofi | rave | cinema | dawn>@#',
+        invalid: 'Invalid vibe. Choose: @#fff700default | lofi | rave | cinema | dawn@#',
+        set: 'Vibe set to @#fff700{0}@#',
+      },
     },
     logs: {
       addedTracks: '{0} 在播放清單中新增了 {1} 首歌曲 (#{2} ~ #{3})',
@@ -175,6 +180,7 @@ export const TEXT_CONTENT = {
       refresh: '{0} 重新同步播放器',
       playlistUpdated: 'Playlist updated:',
       joined: '{0} joined the room',
+      vibe: '{0} set the vibe to {1}',
     },
     errors: {
       getVideoInfo: 'Failed to fetch video info: {0}',

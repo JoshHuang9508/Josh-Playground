@@ -29,6 +29,7 @@ export default class ListenTogetherSocket {
     onLogs: (logs: any) => void;
     onUsers: (users: Types.User) => void;
     onSeek: (time: number) => void;
+    onVibe?: (vibe: import('@/lib/types').VibeName) => void;
   }) {
     this.socket.connect();
     this.socket.on('connect', eventHandlers.onConnect);
@@ -39,6 +40,9 @@ export default class ListenTogetherSocket {
     this.socket.on('player:logs', eventHandlers.onLogs);
     this.socket.on('player:users', eventHandlers.onUsers);
     this.socket.on('player:seek', eventHandlers.onSeek);
+    if (eventHandlers.onVibe) {
+      this.socket.on('player:vibe', eventHandlers.onVibe);
+    }
   }
 
   disconnect() {
@@ -123,6 +127,10 @@ export default class ListenTogetherSocket {
 
   setLoop = (loop: boolean) => {
     this.socket.emit('player:set_loop', loop);
+  };
+
+  setVibe = (vibe: import('@/lib/types').VibeName) => {
+    this.socket.emit('player:vibe', vibe);
   };
 
   seek = (time: number) => {
