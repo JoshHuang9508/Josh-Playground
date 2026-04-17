@@ -19,7 +19,7 @@ web-build/
 .netlify
 
 # Next.js
-.next-env.d.ts
+next-env.d.ts
 
 # Environment variables
 *.env
