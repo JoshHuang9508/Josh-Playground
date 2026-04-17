@@ -2,11 +2,11 @@ div.content {
   position: relative;
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  gap: 1.25rem;
   padding: 1.5rem 2rem;
   overflow: hidden;
 }
@@ -15,11 +15,11 @@ div.ambient {
   position: absolute;
   inset: -20%;
   z-index: 0;
-  background-size: cover;
+  pointer-events: none;
   background-position: center;
+  background-size: cover;
   filter: blur(60px) brightness(0.25) saturate(1.4);
   transition: background-image 2s ease;
-  pointer-events: none;
 }
 
 div.room {
@@ -27,21 +27,21 @@ div.room {
   z-index: 1;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   align-items: center;
   width: 100%;
   max-width: 900px;
-  gap: 1rem;
 }
 
 div.player-area {
   position: relative;
   width: 100%;
-  border-radius: 0.75rem;
+  max-height: 55vh;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: #00000040;
+  border-radius: 0.75rem;
   box-shadow: 0 8px 40px #00000060;
-  aspect-ratio: 16 / 9;
-  max-height: 55vh;
 }
 
 div.player-area > div {
@@ -63,20 +63,20 @@ div.no-track-placeholder {
 div.track-info {
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
   align-items: flex-start;
   width: 100%;
-  gap: 0.2rem;
 }
 
 div.track-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-family: Consolas, monospace;
   font-size: 1rem;
   font-weight: bold;
-  color: #ffffffcc;
+  color: #fffc;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 div.track-author {
@@ -88,16 +88,18 @@ div.track-author {
 div.progress-bar-track {
   width: 100%;
   height: 2px;
+  margin-top: 0.35rem;
   background: #ffffff18;
   border-radius: 999px;
-  margin-top: 0.35rem;
 }
 
 div.progress-bar-fill {
   height: 100%;
-  border-radius: 999px;
   background: #e8a87c;
-  transition: width 0.5s linear, background 1.5s ease;
+  border-radius: 999px;
+  transition:
+    width 0.5s linear,
+    background 1.5s ease;
 }
 
 div.members-row {
@@ -126,55 +128,76 @@ div.unmute-container.active {
 }
 
 div.content.flash::after {
-  content: '';
   position: absolute;
   inset: 0;
   z-index: 100;
-  background: #ffffff08;
   pointer-events: none;
+  content: '';
+  background: #ffffff08;
   animation: vibe-flash 0.35s ease forwards;
 }
 
 @keyframes vibe-flash {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
-
-div.content[data-vibe="lofi"] div.ambient {
+div.content[data-vibe='lofi'] div.ambient {
   filter: blur(60px) brightness(0.2) saturate(0.6) sepia(0.4);
 }
-div.content[data-vibe="lofi"] div.progress-bar-fill {
+
+div.content[data-vibe='lofi'] div.progress-bar-fill {
   background: #c8976a;
 }
 
-div.content[data-vibe="rave"] div.ambient {
+div.content[data-vibe='rave'] div.ambient {
   filter: blur(60px) brightness(0.35) saturate(3) hue-rotate(270deg);
 }
-div.content[data-vibe="rave"] div.progress-bar-fill {
-  background: #ff00ff;
+
+div.content[data-vibe='rave'] div.progress-bar-fill {
+  background: #f0f;
 }
 
-div.content[data-vibe="cinema"] div.ambient {
+div.content[data-vibe='cinema'] div.ambient {
   filter: blur(60px) brightness(0.08) saturate(0.3);
 }
-div.content[data-vibe="cinema"] div.progress-bar-fill {
-  background: #aaaaaa;
+
+div.content[data-vibe='cinema'] div.progress-bar-fill {
+  background: #aaa;
 }
 
-div.content[data-vibe="dawn"] div.ambient {
+div.content[data-vibe='dawn'] div.ambient {
   filter: blur(60px) brightness(0.3) saturate(1.8) hue-rotate(-20deg);
 }
-div.content[data-vibe="dawn"] div.progress-bar-fill {
+
+div.content[data-vibe='dawn'] div.progress-bar-fill {
   background: #ffb347;
 }
 
 @keyframes fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; pointer-events: none; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    pointer-events: none;
+    opacity: 0;
+  }
 }
 
 @keyframes member-appear {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

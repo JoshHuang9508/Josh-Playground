@@ -40,7 +40,9 @@ function CardHeader({ color, title }: { color: string; title: string }) {
 function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number | null }) {
   if (data.length < 2) return <div className={styles['chart-empty']}>No data</div>;
 
-  const VW = 1000, VH = 80, PAD = 10;
+  const VW = 1000,
+    VH = 80,
+    PAD = 10;
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
@@ -52,9 +54,7 @@ function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number
   const fillPoints = `${toX(0)},${VH} ${linePoints} ${toX(data.length - 1)},${VH}`;
   const lastX = toX(data.length - 1);
   const lastY = toY(data[data.length - 1]);
-  const peakY = peakRank !== null
-    ? toY(Math.max(min, Math.min(max, peakRank)))
-    : null;
+  const peakY = peakRank !== null ? toY(Math.max(min, Math.min(max, peakRank))) : null;
 
   return (
     <svg viewBox={`0 0 ${VW} ${VH}`} preserveAspectRatio="none" width="100%" height="80">
@@ -64,12 +64,7 @@ function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number
           <stop offset="100%" stopColor="#ff77b7" stopOpacity="0" />
         </linearGradient>
       </defs>
-      {peakY !== null && (
-        <line
-          x1={PAD} y1={peakY} x2={VW - PAD} y2={peakY}
-          stroke="#ff77b7" strokeWidth="1.5" strokeDasharray="8 5" opacity="0.4"
-        />
-      )}
+      {peakY !== null && <line x1={PAD} y1={peakY} x2={VW - PAD} y2={peakY} stroke="#ff77b7" strokeWidth="1.5" strokeDasharray="8 5" opacity="0.4" />}
       <polygon points={fillPoints} fill={`url(#${RANK_GRADIENT_ID})`} />
       <polyline points={linePoints} fill="none" stroke="#ff77b7" strokeWidth="2" strokeLinejoin="round" />
       <circle cx={lastX} cy={lastY} r="5" fill="#ff77b7" />
@@ -80,7 +75,7 @@ function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number
 function MonthlyChart({ data }: { data: OsuUser['monthlyPlaycounts'] }) {
   if (!data.length) return <div className={styles['chart-empty']}>No data</div>;
 
-  const maxCount = Math.max(...data.map(d => d.count), 1);
+  const maxCount = Math.max(...data.map((d) => d.count), 1);
   const VW = data.length * 12;
   const VH = 50;
 
@@ -90,15 +85,7 @@ function MonthlyChart({ data }: { data: OsuUser['monthlyPlaycounts'] }) {
         const h = Math.max(2, (d.count / maxCount) * (VH - 4));
         const opacity = 0.25 + 0.75 * (d.count / maxCount);
         return (
-          <rect
-            key={d.start_date}
-            x={i * 12 + 1}
-            y={VH - h}
-            width={10}
-            height={h}
-            fill={`rgba(255,162,76,${opacity.toFixed(2)})`}
-            rx="1.5"
-          >
+          <rect key={d.start_date} x={i * 12 + 1} y={VH - h} width={10} height={h} fill={`rgba(255,162,76,${opacity.toFixed(2)})`} rx="1.5">
             <title>
               {new Date(d.start_date).toLocaleDateString('en', { year: 'numeric', month: 'short' })}: {d.count.toLocaleString()}
             </title>
@@ -113,7 +100,10 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
   const total = counts.count300 + counts.count100 + counts.count50 + counts.countMiss;
   if (!total) return <div className={styles['chart-empty']}>No data</div>;
 
-  const R = 18, CX = 26, CY = 26, STROKE = 9;
+  const R = 18,
+    CX = 0,
+    CY = 30,
+    STROKE = 9;
   const C = 2 * Math.PI * R;
 
   const segments = [
@@ -124,7 +114,7 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
   ];
 
   let cumulativeOffset = 0;
-  const arcs = segments.map(seg => {
+  const arcs = segments.map((seg) => {
     const pct = seg.count / total;
     const dash = pct * C;
     const arc = { ...seg, pct, dash, offset: cumulativeOffset };
@@ -133,20 +123,24 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
   });
 
   return (
-    <svg viewBox="0 0 90 52" width="100%" height="52">
-      <circle cx={CX} cy={CY} r={R} fill="none"
-        stroke="rgba(255,255,255,0.06)" strokeWidth={STROKE} />
-      {arcs.map(arc => (
-        <circle key={arc.key} cx={CX} cy={CY} r={R} fill="none"
-          stroke={arc.color} strokeWidth={STROKE}
+    <svg viewBox="0 0 90 60" width="100%" height="60">
+      <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={STROKE} />
+      {arcs.map((arc) => (
+        <circle
+          key={arc.key}
+          cx={CX}
+          cy={CY}
+          r={R}
+          fill="none"
+          stroke={arc.color}
+          strokeWidth={STROKE}
           strokeDasharray={`${arc.dash} ${C - arc.dash}`}
           strokeDashoffset={-arc.offset}
           transform={`rotate(-90 ${CX} ${CY})`}
         />
       ))}
       {arcs.map((arc, i) => (
-        <text key={arc.key} x={88} y={12 + i * 11}
-          fill={arc.color} fontSize="7.5" textAnchor="end" dominantBaseline="middle">
+        <text key={arc.key} x={88} y={15 + i * 11} fill={arc.color} fontSize="0.85rem" textAnchor="end" dominantBaseline="middle">
           {arc.key} · {(arc.pct * 100).toFixed(1)}%
         </text>
       ))}
@@ -162,22 +156,23 @@ function GradeChart({ grades }: { grades: OsuUser['gradeCounts'] }) {
     { label: 'S', count: Math.max(0, grades.s - grades.sh), color: '#ffa24c' },
     { label: 'A', count: grades.a, color: 'rgba(255,255,255,0.45)' },
   ];
-  const maxCount = Math.max(...data.map(d => d.count), 1);
+  const maxCount = Math.max(...data.map((d) => d.count), 1);
   const VH = 48;
 
   return (
     <svg viewBox="0 0 100 60" width="100%" height="60">
       {data.map((d, i) => {
-        const barH = Math.max(2, (d.count / maxCount) * (VH - 8));
+        const barH = Math.max(2, (d.count / maxCount) * (VH - 9));
         const x = 3 + i * 19;
         return (
           <g key={d.label}>
-            <rect x={x} y={VH - barH} width={15} height={barH}
-              fill={d.color} rx="2" opacity="0.85" />
-            <text x={x + 7.5} y={VH + 9} fill={d.color}
-              fontSize="7" textAnchor="middle">{d.label}</text>
-            <text x={x + 7.5} y={VH - barH - 3} fill={d.color}
-              fontSize="5.5" textAnchor="middle">{d.count}</text>
+            <rect x={x} y={VH - barH} width={15} height={barH} fill={d.color} rx="2" opacity="0.85" />
+            <text x={x + 7.5} y={VH + 9} fill={d.color} fontSize="0.85rem" textAnchor="middle">
+              {d.label}
+            </text>
+            <text x={x + 7.5} y={VH - barH - 3} fill={d.color} fontSize="0.75rem" textAnchor="middle">
+              {d.count}
+            </text>
           </g>
         );
       })}
@@ -260,13 +255,11 @@ export default function OsuStatsView() {
         </div>
         <div className={styles['stat-cells']}>
           {statCells.map(({ label, value, color }) => (
-            <div
-              key={label}
-              className={styles['stat-cell']}
-              style={{ '--cell-accent': color } as React.CSSProperties}
-            >
+            <div key={label} className={styles['stat-cell']} style={{ '--cell-accent': color } as React.CSSProperties}>
               <span className={styles['cell-label']}>{label}</span>
-              <span className={styles['cell-value']} style={{ color }}>{value}</span>
+              <span className={styles['cell-value']} style={{ color }}>
+                {value}
+              </span>
             </div>
           ))}
         </div>
@@ -290,7 +283,7 @@ export default function OsuStatsView() {
 
       {/* Three-column charts */}
       <div className={styles['charts-row']}>
-        <div className={styles['chart-card']}>
+        <div className={`${styles['chart-card']} ${styles['chart-card-2wide']}`}>
           <CardHeader color="#ffa24c" title="MONTHLY ACTIVITY" />
           <MonthlyChart data={user.monthlyPlaycounts} />
         </div>
@@ -355,7 +348,7 @@ export default function OsuStatsView() {
         <div className={styles['profile-card']}>
           <CardHeader color="#ff77b7" title="PROFILE PAGE" />
           <div
-            className={styles['profile-page-content']}
+            className={`${styles['profile-page-content']} markdown-content`}
             dangerouslySetInnerHTML={{
               __html: typeof window !== 'undefined' ? DOMPurify.sanitize(user.pageHtml) : '',
             }}

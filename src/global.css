@@ -288,3 +288,116 @@ a.view-all-link {
 a.view-all-link:hover {
   gap: 0.5rem;
 }
+
+/* Markdown styles */
+
+div.markdown-content {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #ccc;
+}
+
+div.markdown-content h1,
+div.markdown-content h2,
+div.markdown-content h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-family: Consolas, 'Noto Sans TC', sans-serif;
+  color: #fff;
+}
+
+div.markdown-content h1 {
+  font-size: 1.6rem;
+}
+
+div.markdown-content h2 {
+  font-size: 1.35rem;
+}
+
+div.markdown-content h3 {
+  font-size: 1.15rem;
+}
+
+div.markdown-content p {
+  margin-bottom: 0.75rem;
+}
+
+div.markdown-content a {
+  color: #0fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+div.markdown-content strong {
+  color: #fff;
+}
+
+div.markdown-content ul,
+div.markdown-content ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+div.markdown-content li {
+  margin-bottom: 0.25rem;
+}
+
+div.markdown-content code {
+  padding: 0.15rem 0.35rem;
+  font-family: Consolas, monospace;
+  font-size: 1rem;
+  color: #fff700;
+  background-color: rgb(0 0 0 / 30%);
+  border-radius: 0.25rem;
+}
+
+div.markdown-content pre {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+  font-family: Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 0.5rem;
+}
+
+div.markdown-content pre code {
+  padding: 0;
+  color: inherit;
+  background: none;
+  border-radius: 0;
+}
+
+div.markdown-content blockquote {
+  padding-left: 1rem;
+  margin-bottom: 0.75rem;
+  color: #888;
+  border-left: 3px solid #ffa24c;
+}
+
+div.markdown-content hr {
+  margin: 1.5rem 0;
+  border: none;
+  border-top: 1px solid #333;
+}
+
+div.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+div.well {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+  font-family: Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 0.5rem;
+}

@@ -12,18 +12,17 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
         headers: {
           'ngrok-skip-browser-warning': 'true',
         },
-      })
-        .then(async (response) => {
-          const contentType = response.headers.get('Content-Type');
-          if (!response.ok) {
-            if (contentType === 'application/json') {
-              const res = await response.json();
-              throw new Error(res.message);
-            }
-            throw new Error(t('errors.mp4Failed'));
+      }).then(async (response) => {
+        const contentType = response.headers.get('Content-Type');
+        if (!response.ok) {
+          if (contentType === 'application/json') {
+            const res = await response.json();
+            throw new Error(res.message);
           }
-          return response.blob();
-        })
+          throw new Error(t('errors.mp4Failed'));
+        }
+        return response.blob();
+      });
 
       return blob_mp4;
     case 'mp3':
@@ -32,18 +31,17 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
         headers: {
           'ngrok-skip-browser-warning': 'true',
         },
-      })
-        .then(async (response) => {
-          const contentType = response.headers.get('Content-Type');
-          if (!response.ok) {
-            if (contentType === 'application/json') {
-              const res = await response.json();
-              throw new Error(res.message);
-            }
-            throw new Error(t('errors.mp3Failed'));
+      }).then(async (response) => {
+        const contentType = response.headers.get('Content-Type');
+        if (!response.ok) {
+          if (contentType === 'application/json') {
+            const res = await response.json();
+            throw new Error(res.message);
           }
-          return response.blob();
-        })
+          throw new Error(t('errors.mp3Failed'));
+        }
+        return response.blob();
+      });
 
       return blob_mp3;
   }
@@ -55,15 +53,14 @@ export const getVideoInfo = async (videoId: string, requestBy: string): Promise<
     headers: {
       'ngrok-skip-browser-warning': 'true',
     },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response
-    })
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+  });
 
-  const { data } = await res.json()
+  const { data } = await res.json();
 
   const track: Types.Track = {
     url: data.video_url,
@@ -83,15 +80,14 @@ export const getPlaylist = async (playlistId: string, requestBy: string): Promis
     headers: {
       'ngrok-skip-browser-warning': 'true',
     },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response
-    })
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+  });
 
-  const { data } = await res.json()
+  const { data } = await res.json();
 
   const tracks: Types.Track[] = data.map((item: any, index) => {
     return {

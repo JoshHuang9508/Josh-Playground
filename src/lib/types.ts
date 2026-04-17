@@ -81,159 +81,159 @@ export type GitHubProject = {
 };
 
 export type OsuUserReturnType = {
-  avatar_url: string,
-  country_code: string,
-  default_group: string,
-  id: number,
-  is_active: boolean,
-  is_bot: boolean,
-  is_deleted: boolean,
-  is_online: boolean,
-  is_supporter: boolean,
-  last_visit: string,
-  pm_friends_only: boolean,
-  profile_colour: string | null,
-  username: string,
-  cover_url: string,
-  discord: string,
-  has_supported: boolean,
-  interests: string,
-  join_date: string,
-  location: string,
-  max_blocks: number,
-  max_friends: number,
-  occupation: string,
-  playmode: string,
-  playstyle: string[],
-  post_count: number,
-  profile_hue: number,
-  profile_order: string[],
-  title: string | null,
-  title_url: string | null,
-  twitter: string,
-  website: string | null,
+  avatar_url: string;
+  country_code: string;
+  default_group: string;
+  id: number;
+  is_active: boolean;
+  is_bot: boolean;
+  is_deleted: boolean;
+  is_online: boolean;
+  is_supporter: boolean;
+  last_visit: string;
+  pm_friends_only: boolean;
+  profile_colour: string | null;
+  username: string;
+  cover_url: string;
+  discord: string;
+  has_supported: boolean;
+  interests: string;
+  join_date: string;
+  location: string;
+  max_blocks: number;
+  max_friends: number;
+  occupation: string;
+  playmode: string;
+  playstyle: string[];
+  post_count: number;
+  profile_hue: number;
+  profile_order: string[];
+  title: string | null;
+  title_url: string | null;
+  twitter: string;
+  website: string | null;
   country: {
-    code: string,
-    name: string
-  },
+    code: string;
+    name: string;
+  };
   cover: {
-    custom_url: string,
-    url: string,
-    id: number | null
-  },
+    custom_url: string;
+    url: string;
+    id: number | null;
+  };
   kudosu: {
-    available: number,
-    total: number
-  },
-  account_history: string[],
-  active_tournament_banner: string | null,
-  active_tournament_banners: string[],
-  badges: string[],
-  beatmap_playcounts_count: number,
-  comments_count: number,
-  current_season_stats: string | null,
+    available: number;
+    total: number;
+  };
+  account_history: string[];
+  active_tournament_banner: string | null;
+  active_tournament_banners: string[];
+  badges: string[];
+  beatmap_playcounts_count: number;
+  comments_count: number;
+  current_season_stats: string | null;
   daily_challenge_user_stats: {
-    daily_streak_best: number,
-    daily_streak_current: number,
-    last_update: string,
-    last_weekly_streak: string,
-    playcount: number,
-    top_10p_placements: number,
-    top_50p_placements: number,
-    user_id: number,
-    weekly_streak_best: number,
-    weekly_streak_current: number
-  },
-  favourite_beatmapset_count: number,
-  follower_count: number,
-  graveyard_beatmapset_count: number,
-  groups: string[],
-  guest_beatmapset_count: number,
-  loved_beatmapset_count: number,
-  mapping_follower_count: number,
-  matchmaking_stats: string[],
+    daily_streak_best: number;
+    daily_streak_current: number;
+    last_update: string;
+    last_weekly_streak: string;
+    playcount: number;
+    top_10p_placements: number;
+    top_50p_placements: number;
+    user_id: number;
+    weekly_streak_best: number;
+    weekly_streak_current: number;
+  };
+  favourite_beatmapset_count: number;
+  follower_count: number;
+  graveyard_beatmapset_count: number;
+  groups: string[];
+  guest_beatmapset_count: number;
+  loved_beatmapset_count: number;
+  mapping_follower_count: number;
+  matchmaking_stats: string[];
   monthly_playcounts: {
-    start_date: string,
-    count: number
-  }[]
-  nominated_beatmapset_count: number,
+    start_date: string;
+    count: number;
+  }[];
+  nominated_beatmapset_count: number;
   page: {
-    html: string,
-    raw: string
-  },
-  pending_beatmapset_count: number
-  previous_usernames: string[]
+    html: string;
+    raw: string;
+  };
+  pending_beatmapset_count: number;
+  previous_usernames: string[];
   rank_highest: {
-    rank: number,
-    updated_at: string
-  },
-  ranked_beatmapset_count: number,
+    rank: number;
+    updated_at: string;
+  };
+  ranked_beatmapset_count: number;
   replays_watched_counts: {
-    start_date: string,
-    count: number
-  }[]
-  scores_best_count: number,
-  scores_first_count: number,
-  scores_pinned_count: number,
-  scores_recent_count: number,
+    start_date: string;
+    count: number;
+  }[];
+  scores_best_count: number;
+  scores_first_count: number;
+  scores_pinned_count: number;
+  scores_recent_count: number;
   statistics: {
-    count_100: number,
-    count_300: number,
-    count_50: number,
-    count_miss: number,
+    count_100: number;
+    count_300: number;
+    count_50: number;
+    count_miss: number;
     level: {
-      current: number,
-      progress: number
-    },
-    global_rank: number,
-    global_rank_percent: number,
-    global_rank_exp: number | null,
-    pp: number,
-    pp_exp: number,
-    ranked_score: number,
-    hit_accuracy: number,
-    accuracy: number,
-    play_count: number,
-    play_time: number,
-    total_score: number,
-    total_hits: number,
-    maximum_combo: number,
-    replays_watched_by_others: number,
-    is_ranked: boolean,
+      current: number;
+      progress: number;
+    };
+    global_rank: number;
+    global_rank_percent: number;
+    global_rank_exp: number | null;
+    pp: number;
+    pp_exp: number;
+    ranked_score: number;
+    hit_accuracy: number;
+    accuracy: number;
+    play_count: number;
+    play_time: number;
+    total_score: number;
+    total_hits: number;
+    maximum_combo: number;
+    replays_watched_by_others: number;
+    is_ranked: boolean;
     grade_counts: {
-      ss: number,
-      ssh: number,
-      s: number,
-      sh: number,
-      a: number
-    },
-    country_rank: number,
+      ss: number;
+      ssh: number;
+      s: number;
+      sh: number;
+      a: number;
+    };
+    country_rank: number;
     rank: {
-      country: number
-    }
-  },
-  support_level: number,
+      country: number;
+    };
+  };
+  support_level: number;
   team: {
-    flag_url: string,
-    id: number,
-    name: string,
-    short_name: string
-  },
+    flag_url: string;
+    id: number;
+    name: string;
+    short_name: string;
+  };
   user_achievements: {
-    achieved_at: string,
-    achievement_id: number
-  }[],
+    achieved_at: string;
+    achievement_id: number;
+  }[];
   rank_history: {
-    mode: string,
-    data: number[]
-  },
+    mode: string;
+    data: number[];
+  };
   rankHistory: {
-    mode: string,
-    data: number[]
-  },
-  ranked_and_approved_beatmapset_count: number,
-  unranked_beatmapset_count: number
-}
+    mode: string;
+    data: number[];
+  };
+  ranked_and_approved_beatmapset_count: number;
+  unranked_beatmapset_count: number;
+};
 
 export type OsuUser = {
   username: string;
