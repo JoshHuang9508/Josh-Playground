@@ -198,7 +198,11 @@ export default function useCommandHandler(handlers: CommandHandlers) {
       } else if (flags.includes('-v') || flags.includes('--video') || flags.length === 0) {
         const downloadVideo = async () => {
           AddConsoleLog(t('commands.download.pending', URL, '.mp4'));
-          const blob = await getVideoBlob(URL.split('v=')[1], 'mp4');
+          const blob = await getVideoBlob(URL.split('v=')[1], 'mp4').catch((error) => {
+            AddConsoleLog(t('errors.downloadVideo', error.message));
+            return null;
+          });
+          if (!blob) return;
           AddConsoleLog(t('commands.download.starting'));
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -211,7 +215,11 @@ export default function useCommandHandler(handlers: CommandHandlers) {
       } else if (flags.includes('-a') || flags.includes('--audio')) {
         const downloadAudio = async () => {
           AddConsoleLog(t('commands.download.pending', URL, '.mp3'));
-          const blob = await getVideoBlob(URL.split('v=')[1], 'mp3');
+          const blob = await getVideoBlob(URL.split('v=')[1], 'mp3').catch((error) => {
+            AddConsoleLog(t('errors.downloadAudio', error.message));
+            return null;
+          });
+          if (!blob) return;
           AddConsoleLog(t('commands.download.starting'));
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');

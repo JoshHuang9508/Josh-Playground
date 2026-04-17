@@ -4,11 +4,11 @@ import ReactPlayer from 'react-player';
 
 import type * as Types from '@/lib/types';
 
-import { API_URL } from '@/lib/constants';
-
 import { t } from '@/lib/i18n';
 
 import useCommandHandler from '@/lib/hooks/CommandHandler';
+
+import { getVideoInfo, getPlaylist } from '@/lib/getVideoBlob';
 
 import { AddConsoleLog } from '@/redux';
 
@@ -50,64 +50,6 @@ export default function ListenTogetherView() {
   const [cachedLogs, setCachedLogs] = useState<string[]>([]);
   const [users, setUsers] = useState<Types.User>({});
   const [cachedUsers, setCachedUsers] = useState<Types.User>({});
-
-  const getVideoInfo = async (videoId: string): Promise<Types.Track> => {
-    const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
-      method: 'GET',
-      headers: {
-        'ngrok-skip-browser-warning': 'true',
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        AddConsoleLog(t('listentogether.errors.getVideoInfo', String(error)));
-        throw error;
-      });
-    const track: Types.Track = {
-      url: data.video_url,
-      title: data.title,
-      author: data.ownerChannelName,
-      img: data.thumbnails[data.thumbnails.length - 1].url,
-      requestBy: username,
-      id: Date.now(),
-    };
-    return track;
-  };
-
-  const getPlaylist = async (playlistId: string): Promise<Types.Track[]> => {
-    const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
-      method: 'GET',
-      headers: {
-        'ngrok-skip-browser-warning': 'true',
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        AddConsoleLog(t('listentogether.errors.getPlaylist', String(error)));
-        throw error;
-      });
-    const tracks: Types.Track[] = data.map((item: any, index) => {
-      return {
-        url: item.shortUrl,
-        title: item.title,
-        author: item.author.name,
-        img: item.thumbnails[item.thumbnails.length - 1].url,
-        requestBy: username,
-        id: `${index}-${Date.now()}`,
-      };
-    });
-    return tracks;
-  };
 
   const handlePlayerEnded = () => {
     socketInstance?.onEnded();
@@ -167,7 +109,11 @@ export default function ListenTogetherView() {
         AddConsoleLog(t('listentogether.commands.queue.cannotPlay'));
         return;
       } else if (URL.includes('playlist?list=')) {
-        const tracks = await getPlaylist(URL.split('list=')[1]);
+        const tracks = await getPlaylist(URL.split('list=')[1], username).catch((error) => {
+          AddConsoleLog(t('listentogether.errors.getPlaylist', error.message));
+          return null;
+        });
+        if (!tracks) return;
         socketInstance?.addTracks(tracks);
         AddConsoleLog(t('listentogether.commands.queue.addedTracks', String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)));
         socketInstance?.addRoomLog(
@@ -175,7 +121,11 @@ export default function ListenTogetherView() {
         );
         return;
       } else if (URL.includes('watch?v=')) {
-        const track = await getVideoInfo(URL.split('v=')[1]);
+        const track = await getVideoInfo(URL.split('v=')[1], username).catch((error) => {
+          AddConsoleLog(t('listentogether.errors.getVideoInfo', error.message));
+          return null;
+        });
+        if (!track) return;
         socketInstance?.addTrack(track);
         AddConsoleLog(t('listentogether.commands.queue.addedTrack', track.title, String(playerState.trackQueue.length)));
         socketInstance?.addRoomLog(t('listentogether.logs.addedTrack', username, track.title, String(playerState.trackQueue.length)));

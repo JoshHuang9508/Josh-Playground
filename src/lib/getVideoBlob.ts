@@ -1,6 +1,6 @@
-import { AddConsoleLog } from '@/redux';
-
 import { API_URL } from '@/lib/constants';
+
+import type * as Types from '@/lib/types';
 
 import { t } from '@/lib/i18n';
 
@@ -13,19 +13,18 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
           'ngrok-skip-browser-warning': 'true',
         },
       })
-        .then((response) => {
+        .then(async (response) => {
           const contentType = response.headers.get('Content-Type');
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          if (contentType === 'application/json') {
+            if (contentType === 'application/json') {
+              const res = await response.json();
+              throw new Error(res.message);
+            }
             throw new Error(t('errors.mp4Failed'));
           }
           return response.blob();
         })
-        .catch((error) => {
-          AddConsoleLog(t('errors.downloadVideo', String(error)));
-        });
+
       return blob_mp4;
     case 'mp3':
       const blob_mp3 = await fetch(`${API_URL}/api/ytdownload-mp3?videoId=${videoId}`, {
@@ -34,19 +33,74 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
           'ngrok-skip-browser-warning': 'true',
         },
       })
-        .then((response) => {
+        .then(async (response) => {
           const contentType = response.headers.get('Content-Type');
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          if (contentType === 'application/json') {
+            if (contentType === 'application/json') {
+              const res = await response.json();
+              throw new Error(res.message);
+            }
             throw new Error(t('errors.mp3Failed'));
           }
           return response.blob();
         })
-        .catch((error) => {
-          AddConsoleLog(t('errors.downloadAudio', String(error)));
-        });
+
       return blob_mp3;
   }
 }
+
+export const getVideoInfo = async (videoId: string, requestBy: string): Promise<Types.Track> => {
+  const data = await fetch(`${API_URL}/api/ytdl?videoId=${videoId}`, {
+    method: 'GET',
+    headers: {
+      'ngrok-skip-browser-warning': 'true',
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const res = await response.json()
+      return res.data;
+    })
+
+  const track: Types.Track = {
+    url: data.video_url,
+    title: data.title,
+    author: data.ownerChannelName,
+    img: data.thumbnails[data.thumbnails.length - 1].url,
+    requestBy: requestBy,
+    id: Date.now(),
+  };
+
+  return track;
+};
+
+export const getPlaylist = async (playlistId: string, requestBy: string): Promise<Types.Track[]> => {
+  const data = await fetch(`${API_URL}/api/ytpl?playlistId=${playlistId}`, {
+    method: 'GET',
+    headers: {
+      'ngrok-skip-browser-warning': 'true',
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const res = await response.json()
+      return res.data;
+    })
+
+  const tracks: Types.Track[] = data.map((item: any, index) => {
+    return {
+      url: item.shortUrl,
+      title: item.title,
+      author: item.author.name,
+      img: item.thumbnails[item.thumbnails.length - 1].url,
+      requestBy: requestBy,
+      id: `${index}-${Date.now()}`,
+    };
+  });
+
+  return tracks;
+};
