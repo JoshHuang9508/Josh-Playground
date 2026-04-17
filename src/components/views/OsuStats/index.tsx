@@ -9,6 +9,8 @@ import type { OsuUser } from '@/lib/types';
 
 import styles from './OsuStats.module.css';
 
+const RANK_GRADIENT_ID = 'osu-rank-gradient';
+
 function formatNumber(n: number | null): string {
   if (n === null) return '--';
   return n.toLocaleString();
@@ -57,7 +59,7 @@ function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number
   return (
     <svg viewBox={`0 0 ${VW} ${VH}`} preserveAspectRatio="none" width="100%" height="80">
       <defs>
-        <linearGradient id="rank-gradient" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={RANK_GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ff77b7" stopOpacity="0.35" />
           <stop offset="100%" stopColor="#ff77b7" stopOpacity="0" />
         </linearGradient>
@@ -68,7 +70,7 @@ function RankHistoryChart({ data, peakRank }: { data: number[]; peakRank: number
           stroke="#ff77b7" strokeWidth="1.5" strokeDasharray="8 5" opacity="0.4"
         />
       )}
-      <polygon points={fillPoints} fill="url(#rank-gradient)" />
+      <polygon points={fillPoints} fill={`url(#${RANK_GRADIENT_ID})`} />
       <polyline points={linePoints} fill="none" stroke="#ff77b7" strokeWidth="2" strokeLinejoin="round" />
       <circle cx={lastX} cy={lastY} r="5" fill="#ff77b7" />
     </svg>
@@ -89,7 +91,7 @@ function MonthlyChart({ data }: { data: OsuUser['monthlyPlaycounts'] }) {
         const opacity = 0.25 + 0.75 * (d.count / maxCount);
         return (
           <rect
-            key={i}
+            key={d.start_date}
             x={i * 12 + 1}
             y={VH - h}
             width={10}
@@ -155,9 +157,9 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
 function GradeChart({ grades }: { grades: OsuUser['gradeCounts'] }) {
   const data = [
     { label: 'XH', count: grades.ssh, color: '#00f3ff' },
-    { label: 'SS', count: grades.ss - grades.ssh, color: '#fff700' },
+    { label: 'SS', count: Math.max(0, grades.ss - grades.ssh), color: '#fff700' },
     { label: 'SH', count: grades.sh, color: '#00ffaa' },
-    { label: 'S', count: grades.s - grades.sh, color: '#ffa24c' },
+    { label: 'S', count: Math.max(0, grades.s - grades.sh), color: '#ffa24c' },
     { label: 'A', count: grades.a, color: 'rgba(255,255,255,0.45)' },
   ];
   const maxCount = Math.max(...data.map(d => d.count), 1);
