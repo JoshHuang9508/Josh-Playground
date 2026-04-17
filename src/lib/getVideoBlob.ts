@@ -2,8 +2,6 @@ import { API_URL } from '@/lib/constants';
 
 import type * as Types from '@/lib/types';
 
-import { t } from '@/lib/i18n';
-
 export async function getVideoBlob(videoId: string, format: string): Promise<any> {
   switch (format) {
     case 'mp4':
@@ -19,7 +17,7 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
             const res = await response.json();
             throw new Error(res.message);
           }
-          throw new Error(t('errors.mp4Failed'));
+          throw new Error(`Video download failed: ${response.status}`);
         }
         return response.blob();
       });
@@ -38,7 +36,7 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
             const res = await response.json();
             throw new Error(res.message);
           }
-          throw new Error(t('errors.mp3Failed'));
+          throw new Error(`Audio download failed: ${response.status}`);
         }
         return response.blob();
       });
@@ -55,7 +53,7 @@ export const getVideoInfo = async (videoId: string, requestBy: string): Promise<
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Video info fetch failed: ${response.status}`);
     }
     return response;
   });
@@ -82,7 +80,7 @@ export const getPlaylist = async (playlistId: string, requestBy: string): Promis
     },
   }).then((response) => {
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Playlist fetch failed: ${response.status}`);
     }
     return response;
   });
