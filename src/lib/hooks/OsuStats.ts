@@ -40,6 +40,7 @@ export function useOsuStats() {
           accuracy: data.statistics?.hit_accuracy ?? 0,
           playCount: data.statistics?.play_count ?? 0,
           playTime: data.statistics?.play_time ?? 0,
+          profileHue: data.profile_hue ?? 0xfff,
           level: data.statistics?.level?.current ?? 0,
           levelProgress: data.statistics?.level?.progress ?? 0,
           gradeCounts: {

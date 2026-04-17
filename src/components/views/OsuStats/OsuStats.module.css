@@ -8,6 +8,7 @@ div.osu-page {
   padding: 0.5rem 2rem 2rem;
   margin: 0 auto;
   animation: page-enter 0.5s ease both;
+  --profile-hue: 360;
 }
 
 div.osu-page > * {
@@ -58,8 +59,8 @@ div.hero-card {
   align-items: center;
   padding: 1.25rem;
   overflow: hidden;
-  background: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 8%);
+  background: hsl(var(--profile-hue), 100%, 60%, 6%);
+  border: 1px solid hsl(var(--profile-hue), 100%, 60%, 8%);
   border-radius: 0.5rem;
   backdrop-filter: blur(4px);
   aspect-ratio: 4/1;
@@ -172,8 +173,8 @@ div.profile-card {
   flex-direction: column;
   justify-content: space-between;
   padding: 0.75rem;
-  background: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background: hsl(var(--profile-hue), 100%, 60%, 6%);
+  border: 1px solid hsl(var(--profile-hue), 100%, 60%, 8%);
   border-radius: 0.5rem;
   backdrop-filter: blur(4px);
 }
@@ -251,8 +252,8 @@ div.pill {
   gap: 0.4rem;
   align-items: center;
   padding: 0.45rem 0.75rem;
-  background: rgb(255 255 255 / 4%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background: hsl(var(--profile-hue), 100%, 60%, 6%);
+  border: 1px solid hsl(var(--profile-hue), 100%, 60%, 8%);
   border-radius: 0.5rem;
 }
 
@@ -284,6 +285,10 @@ div.profile-page-content {
   margin-top: 0.5rem;
   font-size: 1rem;
   line-height: 1.75;
+}
+
+div.profile-page-content a {
+  color: hsl(278, 100%, 60%);
 }
 
 div.unavailable {

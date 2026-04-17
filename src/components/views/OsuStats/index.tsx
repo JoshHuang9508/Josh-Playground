@@ -28,6 +28,10 @@ function formatLargeNumber(n: number): string {
   return n.toLocaleString();
 }
 
+function formatHueStyleProperty(hue: number): string {
+  return `hsl(${hue}, 100%, 60%)`;
+}
+
 function CardHeader({ color, title }: { color: string; title: string }) {
   return (
     <div className={styles['card-header']}>
@@ -109,7 +113,7 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
   const segments = [
     { key: '300', count: counts.count300, color: '#00f3ff' },
     { key: '100', count: counts.count100, color: '#00ffaa' },
-    { key: '50', count: counts.count50, color: '#ffa24c' },
+    { key: '50', count: counts.count50, color: '#fff700' },
     { key: 'Miss', count: counts.countMiss, color: '#ff4466' },
   ];
 
@@ -140,7 +144,7 @@ function HitDistChart({ counts }: { counts: OsuUser['hitCounts'] }) {
         />
       ))}
       {arcs.map((arc, i) => (
-        <text key={arc.key} x={88} y={15 + i * 11} fill={arc.color} fontSize="0.85rem" textAnchor="end" dominantBaseline="middle">
+        <text key={arc.key} x={110} y={15 + i * 11} fill={arc.color} fontSize="0.85rem" textAnchor="end" dominantBaseline="middle">
           {arc.key} · {(arc.pct * 100).toFixed(1)}%
         </text>
       ))}
@@ -152,9 +156,9 @@ function GradeChart({ grades }: { grades: OsuUser['gradeCounts'] }) {
   const data = [
     { label: 'XH', count: grades.ssh, color: '#00f3ff' },
     { label: 'SS', count: Math.max(0, grades.ss - grades.ssh), color: '#fff700' },
-    { label: 'SH', count: grades.sh, color: '#00ffaa' },
+    { label: 'SH', count: grades.sh, color: '#4dd2ff' },
     { label: 'S', count: Math.max(0, grades.s - grades.sh), color: '#ffa24c' },
-    { label: 'A', count: grades.a, color: 'rgba(255,255,255,0.45)' },
+    { label: 'A', count: grades.a, color: '#00ffaa' },
   ];
   const maxCount = Math.max(...data.map((d) => d.count), 1);
   const VH = 48;
@@ -162,7 +166,7 @@ function GradeChart({ grades }: { grades: OsuUser['gradeCounts'] }) {
   return (
     <svg viewBox="0 0 100 60" width="100%" height="60">
       {data.map((d, i) => {
-        const barH = Math.max(2, (d.count / maxCount) * (VH - 9));
+        const barH = Math.max(2, (d.count / maxCount) * (VH - 10));
         const x = 3 + i * 19;
         return (
           <g key={d.label}>
@@ -221,18 +225,18 @@ export default function OsuStatsView() {
   }
 
   const statCells = [
-    { label: t('/osu.labels.globalRank'), value: user.globalRank !== null ? `#${formatNumber(user.globalRank)}` : '--', color: '#fff700' },
-    { label: t('/osu.labels.country'), value: user.countryRank !== null ? `#${formatNumber(user.countryRank)}` : '--', color: '#00ffaa' },
-    { label: t('/osu.labels.performance'), value: `${formatNumber(user.pp)}pp`, color: '#ffa24c' },
-    { label: t('/osu.labels.accuracy'), value: `${user.accuracy.toFixed(2)}%`, color: '#00f3ff' },
-    { label: t('/osu.labels.playCount'), value: formatNumber(user.playCount), color: '#ffa24c' },
-    { label: t('/osu.labels.playTime'), value: formatPlayTime(user.playTime), color: '#888' },
+    { label: t('/osu.labels.globalRank'), value: user.globalRank !== null ? `#${formatNumber(user.globalRank)}` : '--' },
+    { label: t('/osu.labels.country'), value: user.countryRank !== null ? `#${formatNumber(user.countryRank)}` : '--' },
+    { label: t('/osu.labels.performance'), value: `${formatNumber(user.pp)}pp` },
+    { label: t('/osu.labels.accuracy'), value: `${user.accuracy.toFixed(2)}%` },
+    { label: t('/osu.labels.playCount'), value: formatNumber(user.playCount) },
+    { label: t('/osu.labels.playTime'), value: formatPlayTime(user.playTime) },
   ];
 
   const peakRankValue = user.peakRank?.rank ?? null;
 
   return (
-    <div className={styles['osu-page']}>
+    <div className={styles['osu-page']} style={{ '--profile-hue': user.profileHue } as React.CSSProperties}>
       <hr className="divider" />
 
       {/* Hero Card */}
@@ -254,10 +258,10 @@ export default function OsuStatsView() {
           </div>
         </div>
         <div className={styles['stat-cells']}>
-          {statCells.map(({ label, value, color }) => (
-            <div key={label} className={styles['stat-cell']} style={{ '--cell-accent': color } as React.CSSProperties}>
+          {statCells.map(({ label, value }) => (
+            <div key={label} className={styles['stat-cell']} style={{ '--cell-accent': formatHueStyleProperty(user.profileHue) } as React.CSSProperties}>
               <span className={styles['cell-label']}>{label}</span>
-              <span className={styles['cell-value']} style={{ color }}>
+              <span className={styles['cell-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
                 {value}
               </span>
             </div>
@@ -301,13 +305,13 @@ export default function OsuStatsView() {
       <div className={styles['pill-row']}>
         <div className={styles['pill']}>
           <span className={styles['pill-icon']}>🔥</span>
-          <span className={styles['pill-value']} style={{ color: '#fff700' }}>
+          <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {user.dailyChallenge.currentStreak}d
           </span>
           <span className={styles['pill-label']}> streak</span>
           <span className={styles['pill-sep']}>·</span>
           <span className={styles['pill-label']}>Best </span>
-          <span className={styles['pill-value']} style={{ color: '#ffa24c', fontSize: '0.9rem' }}>
+          <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {user.dailyChallenge.bestStreak}d
           </span>
         </div>
@@ -315,7 +319,7 @@ export default function OsuStatsView() {
         {user.peakRank && (
           <div className={styles['pill']}>
             <span className={styles['pill-label']}>PEAK</span>
-            <span className={styles['pill-value']} style={{ color: '#ff77b7' }}>
+            <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
               #{formatNumber(user.peakRank.rank)}
             </span>
           </div>
@@ -323,21 +327,21 @@ export default function OsuStatsView() {
 
         <div className={styles['pill']}>
           <span className={styles['pill-label']}>MAX COMBO</span>
-          <span className={styles['pill-value']} style={{ color: '#00ffaa' }}>
+          <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {formatNumber(user.maximumCombo)}x
           </span>
         </div>
 
         <div className={styles['pill']}>
           <span className={styles['pill-label']}>TOTAL HITS</span>
-          <span className={styles['pill-value']} style={{ color: '#00f3ff' }}>
+          <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {formatLargeNumber(user.totalHits)}
           </span>
         </div>
 
         <div className={styles['pill']}>
           <span className={styles['pill-label']}>RANKED SCORE</span>
-          <span className={styles['pill-value']} style={{ color: '#ffa24c' }}>
+          <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {formatLargeNumber(user.rankedScore)}
           </span>
         </div>
@@ -346,7 +350,7 @@ export default function OsuStatsView() {
       {/* Profile Page */}
       {user.pageHtml && (
         <div className={styles['profile-card']}>
-          <CardHeader color="#ff77b7" title="PROFILE PAGE" />
+          <CardHeader color="#fff700" title="PROFILE PAGE" />
           <div
             className={`${styles['profile-page-content']} markdown-content`}
             dangerouslySetInnerHTML={{

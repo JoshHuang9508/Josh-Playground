@@ -247,6 +247,7 @@ export type OsuUser = {
   accuracy: number;
   playCount: number;
   playTime: number;
+  profileHue: number;
   level: number;
   levelProgress: number;
   gradeCounts: {
