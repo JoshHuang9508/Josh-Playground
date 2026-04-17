@@ -241,6 +241,21 @@ span.card-label {
   letter-spacing: 0.05em;
 }
 
+a.view-all-link {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  font-family: Consolas, monospace;
+  font-size: 0.9rem;
+  color: var(--text-highlight);
+  text-decoration: none;
+  transition: gap 0.2s ease;
+}
+
+a.view-all-link:hover {
+  gap: 0.5rem;
+}
+
 div.project-carousel {
   position: relative;
   min-height: 10rem;

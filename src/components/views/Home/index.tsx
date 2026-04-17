@@ -154,7 +154,7 @@ export default function HomeView() {
             <div className={styles['preview-card']} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
               <div className={styles['preview-header']}>
                 <ColorSpan className={styles['card-label']} str={t('/.sections.latestPost')} />
-                <a className="view-all-link" href="#/blog" onClick={(e) => e.stopPropagation()}>
+                <a className={styles['view-all-link']} href="#/blog" onClick={(e) => e.stopPropagation()}>
                   {t('/.latestPost.allPosts')}
                 </a>
               </div>
@@ -179,7 +179,7 @@ export default function HomeView() {
             <div className={styles['preview-card']} onClick={() => (window.location.hash = `#/projects`)}>
               <div className={styles['preview-header']}>
                 <ColorSpan className={styles['card-label']} str={t('/.sections.projects')} />
-                <a className="view-all-link" href="#/projects" onClick={(e) => e.stopPropagation()}>
+                <a className={styles['view-all-link']} href="#/projects" onClick={(e) => e.stopPropagation()}>
                   {t('/.projects.viewAll')}
                 </a>
               </div>
@@ -218,7 +218,7 @@ export default function HomeView() {
             <div className={styles['preview-card']} onClick={() => (window.location.hash = '#/osu')}>
               <div className={styles['preview-header']}>
                 <ColorSpan className={styles['card-label']} str={t('/.sections.osuStats')} />
-                <a className="view-all-link" href="#/osu" onClick={(e) => e.stopPropagation()}>
+                <a className={styles['view-all-link']} href="#/osu" onClick={(e) => e.stopPropagation()}>
                   {t('/.osu.details')}
                 </a>
               </div>
