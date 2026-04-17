@@ -23,6 +23,10 @@ web-build/
 
 .vscode
 
+.worktrees
+
+docs
+
 # Claude
 .claude
-.superpowers.worktrees
+.superpowers
