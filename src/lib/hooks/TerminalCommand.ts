@@ -168,9 +168,10 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
             ...t(
               'commands.theme.show',
               settings.backgroundImageUrl || '(default)',
-              `${settings.backgroundColor.h} ${settings.backgroundColor.s} ${settings.backgroundColor.l} / ${settings.backgroundAlpha}`,
-              `${settings.themeColor.h} ${settings.themeColor.s} ${settings.themeColor.l}`,
+              `H:${settings.backgroundColor.h} S:${settings.backgroundColor.s} L:${settings.backgroundColor.l} / A:${settings.backgroundAlpha}`,
+              `H:${settings.themeColor.h} S:${settings.themeColor.s} L:${settings.themeColor.l}`,
               `${settings.cardBlur}px`,
+              `H:${settings.textColors.highlight.h} S:${settings.textColors.highlight.s} L:${settings.textColors.highlight.l}`,
               settings.textColors.primary,
               settings.textColors.secondary,
               settings.textColors.muted,
@@ -229,6 +230,19 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
           }
           setSettings({ ...settings, cardBlur: px });
           AddConsoleLog(t('commands.theme.blurSet', `${px}`));
+          return;
+        }
+
+        if (sub === 'text-highlight') {
+          const h = num(args[1]);
+          const s = num(args[2]);
+          const l = num(args[3]);
+          if ([h, s, l].some(Number.isNaN)) {
+            AddConsoleLog(t('commands.theme.hslInvalid'));
+            return;
+          }
+          setSettings({ ...settings, textColors: { ...settings.textColors, highlight: { h, s, l } } });
+          AddConsoleLog(t('commands.theme.textHighlightSet', `${h} ${s} ${l}`));
           return;
         }
 
