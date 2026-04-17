@@ -49,6 +49,24 @@ export function useOsuStats() {
             sh: data.statistics?.grade_counts?.sh ?? 0,
             a: data.statistics?.grade_counts?.a ?? 0,
           },
+          rankHistory: data.rank_history?.data ?? data.rankHistory?.data ?? [],
+          monthlyPlaycounts: data.monthly_playcounts ?? [],
+          peakRank: data.rank_highest ?? null,
+          totalHits: data.statistics?.total_hits ?? 0,
+          rankedScore: data.statistics?.ranked_score ?? 0,
+          maximumCombo: data.statistics?.maximum_combo ?? 0,
+          hitCounts: {
+            count300: data.statistics?.count_300 ?? 0,
+            count100: data.statistics?.count_100 ?? 0,
+            count50: data.statistics?.count_50 ?? 0,
+            countMiss: data.statistics?.count_miss ?? 0,
+          },
+          dailyChallenge: {
+            currentStreak: data.daily_challenge_user_stats?.daily_streak_current ?? 0,
+            bestStreak: data.daily_challenge_user_stats?.daily_streak_best ?? 0,
+            totalPlaycount: data.daily_challenge_user_stats?.playcount ?? 0,
+          },
+          pageHtml: data.page?.html ?? '',
         };
 
         if (!cancelled) setUser(mapped);
