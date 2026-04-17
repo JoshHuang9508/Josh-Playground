@@ -188,19 +188,20 @@ export default function ListenTogetherView() {
       name: 'switch',
       description: 'Switch to a track by index, or next / previous',
       usage: '@#00ffaaswitch@# @#fff700<index> | -n | -p@#',
+      flags: ['-n', '--next', '-p', '--prev'],
       handler: (_cmd, args, flags) => {
         const index = args[0] ?? '';
         if (!index) {
           AddConsoleLog(t('listentogether.commands.switch.usage'));
           return;
         }
-        if (flags.includes('n') || flags.includes('next')) {
+        if (flags.includes('-n') || flags.includes('--next')) {
           socketInstance?.nextTrack();
           AddConsoleLog(t('listentogether.commands.switch.next'));
           socketInstance?.addRoomLog(t('listentogether.logs.switchNext', username));
           return;
         }
-        if (flags.includes('p') || flags.includes('prev')) {
+        if (flags.includes('-p') || flags.includes('--prev')) {
           socketInstance?.prevTrack();
           AddConsoleLog(t('listentogether.commands.switch.prev'));
           socketInstance?.addRoomLog(t('listentogether.logs.switchPrev', username));
@@ -242,14 +243,15 @@ export default function ListenTogetherView() {
       name: 'loop',
       description: 'Toggle loop mode for the current track',
       usage: '@#00ffaaloop@# @#fff700[-t | -f]@#',
+      flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
-        if (flags.includes('t') || flags.includes('true')) {
+        if (flags.includes('-t') || flags.includes('--true')) {
           socketInstance?.setLoop(true);
           AddConsoleLog(t('listentogether.commands.loop.on'));
           socketInstance?.addRoomLog(t('listentogether.logs.loopOn', username));
           return;
         }
-        if (flags.includes('f') || flags.includes('false')) {
+        if (flags.includes('-f') || flags.includes('--false')) {
           socketInstance?.setLoop(false);
           AddConsoleLog(t('listentogether.commands.loop.off'));
           socketInstance?.addRoomLog(t('listentogether.logs.loopOff', username));
@@ -262,14 +264,15 @@ export default function ListenTogetherView() {
       name: 'random',
       description: 'Toggle shuffle / random playback',
       usage: '@#00ffaarandom@# @#fff700[-t | -f]@#',
+      flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
-        if (flags.includes('t') || flags.includes('true')) {
+        if (flags.includes('-t') || flags.includes('--true')) {
           socketInstance?.setPlayerState({ ...playerState, random: true });
           AddConsoleLog(t('listentogether.commands.random.on'));
           socketInstance?.addRoomLog(t('listentogether.logs.randomOn', username));
           return;
         }
-        if (flags.includes('f') || flags.includes('false')) {
+        if (flags.includes('-f') || flags.includes('--false')) {
           socketInstance?.setPlayerState({ ...playerState, random: false });
           AddConsoleLog(t('listentogether.commands.random.off'));
           socketInstance?.addRoomLog(t('listentogether.logs.randomOff', username));
@@ -333,9 +336,10 @@ export default function ListenTogetherView() {
     playlist: {
       name: 'playlist',
       description: 'Show the current playlist',
-      usage: '@#00ffaaplaylist@# @#fff700[-d]@#',
+      usage: '@#00ffaaplaylist@# @#fff700[-d | -l]@#',
+      flags: ['-d', '--detail', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
-        if (flags.includes('d') || flags.includes('detail')) {
+        if (flags.includes('-d') || flags.includes('--detail')) {
           AddConsoleLog(
             t('listentogether.commands.playlist.detail'),
             ...playerState.trackQueue.map((track, index) =>

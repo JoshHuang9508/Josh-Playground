@@ -23,9 +23,14 @@ export function parseCommand(command: string) {
   for (const part of parts) {
     if (part.startsWith('-')) {
       if (part.startsWith('--')) {
-        flags.push(part.slice(2));
+        flags.push(part);
       } else {
-        flags.push(...part.slice(1).split(''));
+        flags.push(
+          ...part
+            .slice(1)
+            .split('')
+            .map((flag) => `-${flag}`),
+        );
       }
     } else {
       args.push(part);
@@ -89,17 +94,17 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
       name: 'ls',
       description: 'List available paths in the current directory',
       usage: '@#00ffaals@# @#fff700[-a | -l | -t]@#',
-      flags: ['a', 'l', 't'],
+      flags: ['-a', '-l', '-t'],
       handler: (_cmd, _args, flags) => {
-        if (flags.includes('t') || flags.includes('tree')) {
+        if (flags.includes('-t') || flags.includes('--tree')) {
           renderWebPaths(webPaths, '').forEach((path) => {
             AddConsoleLog(path);
           });
           return;
-        } else if (flags.includes('a') || flags.includes('all')) {
+        } else if (flags.includes('-a') || flags.includes('--all')) {
           AddConsoleLog(['./', '../', ...availablePaths].join(' '));
           return;
-        } else if (flags.includes('l') || flags.includes('long')) {
+        } else if (flags.includes('-l') || flags.includes('--long')) {
           AddConsoleLog(t('commands.availablePaths'), ...availablePaths);
           return;
         } else {
@@ -112,10 +117,10 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
       name: 'background',
       description: 'Set or reset the background image',
       usage: '@#00ffaabackground@# @#fff700<image_url> | -r@#',
-      flags: ['r', 'reset'],
+      flags: ['-r', '--reset'],
       handler: (_cmd, args, flags) => {
         const url = args[0] ?? '';
-        if (flags.includes('r') || flags.includes('reset')) {
+        if (flags.includes('-r') || flags.includes('--reset')) {
           AddConsoleLog(t('commands.background.reset'));
           setBackgroundImageUrl('');
           return;
@@ -134,10 +139,10 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
       name: 'backgroundcolor',
       description: 'Set or reset the background color (hex code)',
       usage: '@#00ffaabackgroundcolor@# @#fff700<#hex_color> | -r@#',
-      flags: ['r', 'reset'],
+      flags: ['-r', '--reset'],
       handler: (_cmd, args, flags) => {
         const color = args[0] ?? '';
-        if (flags.includes('r') || flags.includes('reset')) {
+        if (flags.includes('-r') || flags.includes('--reset')) {
           AddConsoleLog(t('commands.backgroundcolor.reset'));
           setBackgroundColor('');
           return;
@@ -222,7 +227,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
       name: 'download',
       description: 'Download a YouTube video as mp4 or mp3',
       usage: '@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v | -a]@#',
-      flags: ['v', 'video', 'a', 'audio'],
+      flags: ['-v', '--video', '-a', '--audio'],
       handler: (_cmd, args, flags) => {
         const URL = args[0] ?? '';
         if (!URL) {
@@ -231,7 +236,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
         } else if (!ReactPlayer.canPlay(URL)) {
           AddConsoleLog(t('commands.download.invalidUrl'));
           return;
-        } else if (flags.includes('v') || flags.includes('video') || flags.length === 0) {
+        } else if (flags.includes('-v') || flags.includes('--video') || flags.length === 0) {
           const downloadVideo = async () => {
             AddConsoleLog(t('commands.download.pending', URL, '.mp4'));
             const blob = await getVideoBlob(URL.split('v=')[1], 'mp4').catch((error) => {
@@ -248,7 +253,7 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
           };
           downloadVideo();
           return;
-        } else if (flags.includes('a') || flags.includes('audio')) {
+        } else if (flags.includes('-a') || flags.includes('--audio')) {
           const downloadAudio = async () => {
             AddConsoleLog(t('commands.download.pending', URL, '.mp3'));
             const blob = await getVideoBlob(URL.split('v=')[1], 'mp3').catch((error) => {
@@ -272,18 +277,18 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
       name: 'music',
       description: 'Control background music playback',
       usage: '@#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#',
-      flags: ['p', 'play', 's', 'stop', 'i', 'info', 'l', 'list'],
+      flags: ['-p', '--play', '-s', '--stop', '-i', '--info', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
-        if (flags.includes('l') || flags.includes('list')) {
+        if (flags.includes('-l') || flags.includes('--list')) {
           AddConsoleLog(t('commands.music.list'), ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`));
           return;
         }
-        if (flags.includes('p') || flags.includes('play')) {
+        if (flags.includes('-p') || flags.includes('--play')) {
           const audioPlayer = document.querySelector('[data-audio-player]') as HTMLAudioElement;
           if (audioPlayer) audioPlayer.play();
           return;
         }
-        if (flags.includes('s') || flags.includes('stop')) {
+        if (flags.includes('-s') || flags.includes('--stop')) {
           const audioPlayer = document.querySelector('[data-audio-player]') as HTMLAudioElement;
           if (audioPlayer) audioPlayer.pause();
           return;
