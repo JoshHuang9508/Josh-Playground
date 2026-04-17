@@ -9,6 +9,8 @@ import { MUSIC_LIST, PATH_LIST, TEXT_CONTENT } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
+import { DEFAULT_SETTINGS, ThemeSettings, applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
+
 import store, { SetUsername } from '@/redux';
 
 import ConsoleManager from '@/components/ConsoleManager';
@@ -20,6 +22,7 @@ import BlogView from '@/components/views/Blog';
 import BlogPostView from '@/components/views/BlogPost';
 import OsuStatsView from '@/components/views/OsuStats';
 import Navigation from '@/components/Navigation';
+import Settings from '@/components/Settings';
 
 import styles from './index.module.css';
 
@@ -39,6 +42,10 @@ export type AppContextType = {
   setDynamicTitle: (title: string | null) => void;
   setUsername: (name: string) => void;
   currentHash: string;
+  settings: ThemeSettings;
+  setSettings: (s: ThemeSettings) => void;
+  isSettingsOpen: boolean;
+  setIsSettingsOpen: (open: boolean) => void;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -56,6 +63,14 @@ function PageComponent() {
   const [availableArgs, setAvailableArgs] = useState<Record<string, string[]>>({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
+  const [settings, setSettingsState] = useState<ThemeSettings>(DEFAULT_SETTINGS);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const setSettings = (s: ThemeSettings) => {
+    setSettingsState(s);
+    saveSettings(s);
+    applySettingsToDOM(s);
+  };
 
   const handleMusicEnd = () => {
     setMusicIndex((prev) => (prev + 1) % MUSIC_LIST.length);
@@ -108,6 +123,12 @@ function PageComponent() {
   useEffect(() => {
     const backgroundColor = localStorage.getItem('backgroundColor') ?? '';
     setBackgroundColor(backgroundColor);
+  }, []);
+
+  useEffect(() => {
+    const loaded = loadSettings();
+    setSettingsState(loaded);
+    applySettingsToDOM(loaded);
   }, []);
 
   useEffect(() => {
@@ -171,15 +192,20 @@ function PageComponent() {
           setDynamicTitle,
           availableArgs,
           setAvailableArgs,
+          settings,
+          setSettings,
+          isSettingsOpen,
+          setIsSettingsOpen,
         }}
       >
         <div className={styles['app']} style={{ backgroundColor: backgroundColor }}>
-          <img src={backgroundImageUrl ? backgroundImageUrl : '/assets/bg.jpg'} className={styles['background']} alt="background" />
+          <img src={backgroundImageUrl ? backgroundImageUrl : (settings.backgroundImageUrl || '/assets/bg.jpg')} className={styles['background']} alt="background" />
           <div className={styles['view-container']}>
             <Navigation currentHash={currentHash} />
             {renderView()}
           </div>
           <ConsoleManager />
+          <Settings />
         </div>
       </AppContext.Provider>
     </Provider>

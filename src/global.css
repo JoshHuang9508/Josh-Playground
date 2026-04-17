@@ -12,6 +12,24 @@
   src: url('/fonts/signature-us.otf') format('opentype');
 }
 
+:root {
+  --bg-color: hsl(0deg 0% 4% / 80%);
+  --card-color: hsl(0deg 0% 100% / 6%);
+  --card-border: hsl(0deg 0% 100% / 12%);
+  --card-blur: 4px;
+  --text-primary: #fff;
+  --text-secondary: #ccc;
+  --text-muted: #888;
+  --text-highlight: #fff700;
+  --accent-green: #0fa;
+  --accent-pink: #ff77b7;
+  --accent-orange: #ffa24c;
+  --accent-cyan: #00f3ff;
+  --accent-custom-1: #b07219;
+  --accent-custom-2: #a97bff;
+  --accent-custom-3: #00b4ab;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -26,7 +44,7 @@ body,
   overflow: hidden;
   font-family: Consolas, 'Noto Sans TC', sans-serif;
   font-size: clamp(12px, 0.9vw, 14px);
-  color: white;
+  color: var(--text-primary);
 }
 
 span,
@@ -187,10 +205,10 @@ p.p2 {
 /* Shared card styles */
 div.card {
   padding: 0.75rem 1rem;
-  background-color: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
   transition:
     box-shadow 0.2s ease,
     transform 0.2s ease;
@@ -210,7 +228,7 @@ p.page-header {
 
 p.page-subtitle {
   font-size: 1.05rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* Section label (monospace colored) */
@@ -280,7 +298,7 @@ a.view-all-link {
   align-items: center;
   font-family: Consolas, monospace;
   font-size: 0.9rem;
-  color: #fff700;
+  color: var(--text-highlight);
   text-decoration: none;
   transition: gap 0.2s ease;
 }
@@ -295,7 +313,7 @@ div.markdown-content {
   font-family: 'Noto Sans TC', sans-serif;
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #ccc;
+  color: var(--text-secondary);
 }
 
 div.markdown-content h1,
@@ -304,7 +322,7 @@ div.markdown-content h3 {
   margin-top: 1rem;
   margin-bottom: 0.5rem;
   font-family: Consolas, 'Noto Sans TC', sans-serif;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 div.markdown-content h1 {
@@ -324,13 +342,13 @@ div.markdown-content p {
 }
 
 div.markdown-content a {
-  color: #0fa;
+  color: var(--accent-green);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 div.markdown-content strong {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 div.markdown-content ul,
@@ -347,7 +365,7 @@ div.markdown-content code {
   padding: 0.15rem 0.35rem;
   font-family: Consolas, monospace;
   font-size: 1rem;
-  color: #fff700;
+  color: var(--text-highlight);
   background-color: rgb(0 0 0 / 30%);
   border-radius: 0.25rem;
 }
@@ -374,8 +392,8 @@ div.markdown-content pre code {
 div.markdown-content blockquote {
   padding-left: 1rem;
   margin-bottom: 0.75rem;
-  color: #888;
-  border-left: 3px solid #ffa24c;
+  color: var(--text-muted);
+  border-left: 3px solid var(--accent-orange);
 }
 
 div.markdown-content hr {

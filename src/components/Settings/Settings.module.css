@@ -1,0 +1,252 @@
+div.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  background-color: rgb(0 0 0 / 40%);
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.2s ease both;
+}
+
+div.panel {
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100vw);
+  height: 100%;
+  font-family: Consolas, 'Noto Sans TC', sans-serif;
+  color: var(--text-primary, #fff);
+  background-color: rgb(18 18 18 / 92%);
+  border-left: 1px solid rgb(255 255 255 / 10%);
+  box-shadow: -8px 0 24px #00000060;
+  animation: slide-in 0.25s ease both;
+}
+
+div.header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+}
+
+span.title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-highlight, #fff700);
+}
+
+div.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+button.btn {
+  padding: 0.3rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #ccc);
+  cursor: pointer;
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
+  border-radius: 0.3rem;
+  transition: background-color 0.2s ease;
+}
+
+button.btn:hover {
+  background-color: rgb(255 255 255 / 12%);
+}
+
+button.btn-close {
+  width: 1.8rem;
+  height: 1.8rem;
+  font-family: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: color 0.15s ease;
+}
+
+button.btn-close:hover {
+  color: var(--text-primary, #fff);
+}
+
+div.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem 2rem;
+  overflow-y: auto;
+}
+
+div.body::-webkit-scrollbar {
+  width: 6px;
+}
+
+div.body::-webkit-scrollbar-thumb {
+  background-color: rgb(255 255 255 / 10%);
+  border-radius: 3px;
+}
+
+section.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+span.section-title {
+  font-family: Consolas, monospace;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+label.field,
+div.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+div.field-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+span.field-label {
+  font-size: 0.95rem;
+  color: var(--text-secondary, #ccc);
+}
+
+span.swatch {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 0.3rem;
+}
+
+input.text-input {
+  padding: 0.4rem 0.6rem;
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--text-primary, #fff);
+  outline: none;
+  background-color: rgb(0 0 0 / 30%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 0.3rem;
+}
+
+input.text-input:focus {
+  border-color: var(--text-highlight, #fff700);
+}
+
+div.sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+label.row,
+div.sliders label {
+  display: grid;
+  grid-template-columns: 3rem 1fr 3.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted, #888);
+}
+
+div.sliders input[type='range'],
+label.row input[type='range'] {
+  width: 100%;
+  accent-color: var(--text-highlight, #fff700);
+}
+
+span.value {
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #ccc);
+  text-align: right;
+}
+
+div.color-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem 0.75rem;
+}
+
+label.color-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+span.color-label {
+  font-size: 0.85rem;
+  color: var(--text-muted, #888);
+}
+
+div.color-input-wrap {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+input.color-picker {
+  width: 2rem;
+  height: 1.8rem;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 0.25rem;
+}
+
+input.color-text {
+  flex: 1;
+  min-width: 0;
+  padding: 0.3rem 0.5rem;
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--text-primary, #fff);
+  outline: none;
+  background-color: rgb(0 0 0 / 30%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 0.25rem;
+}
+
+input.color-text:focus {
+  border-color: var(--text-highlight, #fff700);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

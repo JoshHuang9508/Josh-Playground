@@ -58,6 +58,10 @@ export const TEXT_CONTENT = {
       tooLong: 'Name too long — max 20 characters.',
       set: 'Username changed to @#fff700{0}@#',
     },
+    settings: {
+      opened: 'Settings panel opened.',
+      closed: 'Settings panel closed.',
+    },
     music: {
       usage: 'Usage: @#00ffaamusic@# @#fff700[-p | -s | -i | -l]@#',
       list: 'Music list:',

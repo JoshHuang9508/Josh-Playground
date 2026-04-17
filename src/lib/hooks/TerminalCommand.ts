@@ -46,7 +46,7 @@ const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
 
 export default function useTerminalCommand(extensions: Types.CommandList) {
   const command = useSelector((state: { command: string }) => state.command);
-  const { availableCommands, availablePaths, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername } = useContext(AppContext)!;
+  const { availableCommands, availablePaths, setAvailableCommands, setBackgroundImageUrl, setBackgroundColor, setUsername, isSettingsOpen, setIsSettingsOpen } = useContext(AppContext)!;
 
   const contextCommands: Types.CommandList = {
     help: {
@@ -126,6 +126,21 @@ export default function useTerminalCommand(extensions: Types.CommandList) {
           localStorage.setItem('backgroundColor', color);
           return;
         }
+      },
+    },
+    settings: {
+      name: 'settings',
+      description: 'Open or toggle the settings panel',
+      usage: '@#00ffaasettings@# @#fff700[-c]@#',
+      flags: ['-c', '--close'],
+      handler: (_cmd, _args, flags) => {
+        if (flags.includes('-c') || flags.includes('--close')) {
+          setIsSettingsOpen(false);
+          AddConsoleLog(t('commands.settings.closed'));
+          return;
+        }
+        setIsSettingsOpen(!isSettingsOpen);
+        AddConsoleLog(isSettingsOpen ? t('commands.settings.closed') : t('commands.settings.opened'));
       },
     },
     username: {
