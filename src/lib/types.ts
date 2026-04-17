@@ -256,6 +256,24 @@ export type OsuUser = {
     sh: number;
     a: number;
   };
+  rankHistory: number[];
+  monthlyPlaycounts: { start_date: string; count: number }[];
+  peakRank: { rank: number; updated_at: string } | null;
+  totalHits: number;
+  rankedScore: number;
+  maximumCombo: number;
+  hitCounts: {
+    count300: number;
+    count100: number;
+    count50: number;
+    countMiss: number;
+  };
+  dailyChallenge: {
+    currentStreak: number;
+    bestStreak: number;
+    totalPlaycount: number;
+  };
+  pageHtml: string;
 };
 
 export type YTPLReturnType = {
