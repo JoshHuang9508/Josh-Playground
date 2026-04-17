@@ -117,8 +117,8 @@ export default function HomeView() {
 
   return (
     <div className={styles['home-page']}>
-      <div className={styles['feature-section']}>
-        <ColorSpan className="section-label" str={t('/.sections.aboutMe')} />
+      <div className={styles['section']}>
+        <span className={styles['section-label']}>{t('/.sections.aboutMe')}</span>
         <div className={styles['bento']}>
           {/* Left column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -151,9 +151,9 @@ export default function HomeView() {
             </div>
 
             {/* Latest post preview */}
-            <div className={styles['preview-card']} style={{ cursor: 'pointer' }} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
+            <div className={styles['preview-card']} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
               <div className={styles['preview-header']}>
-                <ColorSpan className="section-label" str={t('/.sections.latestPost')} />
+                <ColorSpan className={styles['card-label']} str={t('/.sections.latestPost')} />
                 <a className="view-all-link" href="#/blog" onClick={(e) => e.stopPropagation()}>
                   {t('/.latestPost.allPosts')}
                 </a>
@@ -174,11 +174,11 @@ export default function HomeView() {
           </div>
 
           {/* Right column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div className={styles['preview-column']}>
             {/* Projects preview */}
-            <div className={styles['preview-card']} style={{ cursor: 'pointer' }} onClick={() => (window.location.hash = `#/projects`)}>
+            <div className={styles['preview-card']} onClick={() => (window.location.hash = `#/projects`)}>
               <div className={styles['preview-header']}>
-                <ColorSpan className="section-label" str={t('/.sections.projects')} />
+                <ColorSpan className={styles['card-label']} str={t('/.sections.projects')} />
                 <a className="view-all-link" href="#/projects" onClick={(e) => e.stopPropagation()}>
                   {t('/.projects.viewAll')}
                 </a>
@@ -187,30 +187,15 @@ export default function HomeView() {
                 {PROJECTS.map((project, i) => (
                   <div
                     key={project.slug}
-                    className={`${styles['mini-project']} ${i === activeProjectIndex ? styles['active'] : ''}`}
-                    style={{
-                      position: i === 0 ? 'relative' : 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                    }}
+                    className={`${styles['project']} ${i === activeProjectIndex ? styles['active'] : ''}`}
+                    style={{ position: i === 0 ? 'relative' : 'absolute', top: 0, left: 0, width: '100%' }}
                   >
-                    <div className={styles['mini-project-img']} style={{ borderColor: project.accent }}>
-                      {project.images[0] ? <img src={project.images[0]} alt={project.name} /> : <span style={{ color: '#555', fontSize: '0.8rem' }}>{t('/.projects.noImage')}</span>}
+                    <div className={styles['project-img']} style={{ borderColor: project.accent }}>
+                      {project.images[0] ? <img src={project.images[0]} alt={project.name} /> : <span className={styles['no-image']}>{t('/.projects.noImage')}</span>}
                     </div>
-                    <div className={styles['mini-project-info']}>
-                      <span className={styles['mini-repo-name']}>{project.name}</span>
-                      <span
-                        style={{
-                          fontSize: '0.8rem',
-                          color: '#888',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {project.tags.join(' · ')}
-                      </span>
+                    <div className={styles['project-info']}>
+                      <span className={styles['project-name']}>{project.name}</span>
+                      <span className={styles['project-tags']}>{project.tags.join(' · ')}</span>
                     </div>
                   </div>
                 ))}
@@ -230,9 +215,9 @@ export default function HomeView() {
             </div>
 
             {/* osu! stats preview */}
-            <div className={styles['preview-card']} style={{ cursor: 'pointer' }} onClick={() => (window.location.hash = '#/osu')}>
+            <div className={styles['preview-card']} onClick={() => (window.location.hash = '#/osu')}>
               <div className={styles['preview-header']}>
-                <ColorSpan className="section-label" str={t('/.sections.osuStats')} />
+                <ColorSpan className={styles['card-label']} str={t('/.sections.osuStats')} />
                 <a className="view-all-link" href="#/osu" onClick={(e) => e.stopPropagation()}>
                   {t('/.osu.details')}
                 </a>
@@ -259,8 +244,8 @@ export default function HomeView() {
       <hr className="divider" />
 
       {/* Feature showcase & console tutorial */}
-      <div className={styles['feature-section']}>
-        <ColorSpan className="section-label" str={t('/.sections.aboutSite')} />
+      <div className={styles['section']}>
+        <span className={styles['section-label']}>{t('/.sections.aboutSite')}</span>
         <div className={styles['feature-card']}>
           <p className={styles['feature-title']}>
             <ColorSpan str={t('/.features.terminal.title')} />

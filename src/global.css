@@ -13,21 +13,19 @@
 }
 
 :root {
-  --bg-color: hsl(0deg 0% 4% / 80%);
-  --card-color: hsl(0deg 0% 100% / 6%);
-  --card-border: hsl(0deg 0% 100% / 12%);
+  --bg-color: hsl(0deg 0 4 / 80%);
+  --card-color: hsl(54deg 100 50 / 6%);
+  --card-border: hsl(54deg 100 50 / 8%);
+  --card-shadow: 0 0 1rem #00000040;
   --card-blur: 4px;
   --text-primary: #fff;
   --text-secondary: #ccc;
   --text-muted: #888;
   --text-highlight: #fff700;
-  --accent-green: #0fa;
-  --accent-pink: #ff77b7;
-  --accent-orange: #ffa24c;
-  --accent-cyan: #00f3ff;
-  --accent-custom-1: #b07219;
-  --accent-custom-2: #a97bff;
-  --accent-custom-3: #00b4ab;
+  --accent-1: #0fa;
+  --accent-2: #ff77b7;
+  --accent-3: #ffa24c;
+  --accent-4: #00f3ff;
 }
 
 * {
@@ -200,8 +198,6 @@ p.p2 {
   }
 }
 
-/* Test zone */
-
 /* Shared card styles */
 div.card {
   padding: 0.75rem 1rem;
@@ -215,7 +211,7 @@ div.card {
 }
 
 div.card:hover {
-  box-shadow: 0 4px 16px #00000050;
+  box-shadow: var(--card-shadow);
   transform: translateY(-2px);
 }
 
@@ -229,15 +225,6 @@ p.page-header {
 p.page-subtitle {
   font-size: 1.05rem;
   color: var(--text-muted);
-}
-
-/* Section label (monospace colored) */
-span.section-label {
-  font-family: Consolas, monospace;
-  font-size: 0.85rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 /* Page entrance animation */
@@ -342,7 +329,7 @@ div.markdown-content p {
 }
 
 div.markdown-content a {
-  color: var(--accent-green);
+  color: var(--text-highlight);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -393,7 +380,7 @@ div.markdown-content blockquote {
   padding-left: 1rem;
   margin-bottom: 0.75rem;
   color: var(--text-muted);
-  border-left: 3px solid var(--accent-orange);
+  border-left: 3px solid var(--text-highlight);
 }
 
 div.markdown-content hr {

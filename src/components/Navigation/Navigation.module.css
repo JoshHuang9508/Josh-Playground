@@ -7,38 +7,38 @@ nav.breadcrumb {
   width: 90%;
   max-width: 900px;
   min-height: 3rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 0.75rem 0.75rem 1.5rem;
   margin: 1rem 0;
   font-family: Consolas, monospace;
   font-weight: bold;
   background-color: rgb(10 10 10 / 33%);
   border: 1px solid #ffffff10;
   border-radius: 1.5rem;
-  box-shadow: 0 0 1rem #00000040;
-  backdrop-filter: blur(2px);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(var(--card-blur));
   animation: page-enter 0.35s ease both;
 }
 
 span.segment {
-  color: var(--text-muted, #888);
+  color: var(--text-muted);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 span.segment:hover {
-  color: var(--text-primary, #fff);
+  color: var(--text-primary);
 }
 
 span.segment.active {
-  color: var(--text-primary, #fff);
+  color: var(--text-primary);
 }
 
 span.home {
-  color: var(--accent-green, #0fa);
+  color: var(--text-highlight);
 }
 
 span.home:hover {
-  color: var(--accent-cyan, #0fd);
+  color: var(--text-primary);
 }
 
 span.separator {
@@ -50,15 +50,15 @@ button.gear {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
   margin-left: auto;
-  color: var(--text-muted, #888);
+  color: var(--text-muted);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: 0.9rem;
+  border-radius: 1rem;
   transition:
     color 0.2s ease,
     background-color 0.2s ease,
@@ -66,7 +66,7 @@ button.gear {
 }
 
 button.gear:hover {
-  color: var(--text-primary, #fff);
+  color: var(--text-primary);
   background-color: rgb(255 255 255 / 8%);
   transform: rotate(60deg);
 }

@@ -9,7 +9,7 @@ interface ColorSpanProps {
 }
 
 export default function ColorSpan({ str, className, style }: ColorSpanProps) {
-  const isValidColorCode = (color: string) => {
+  const isColorCode = (color: string) => {
     const regex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
     return regex.test(color);
   };
@@ -21,15 +21,15 @@ export default function ColorSpan({ str, className, style }: ColorSpanProps) {
         .filter((i) => i !== '')
         .map((item, index) => {
           const color = item.slice(0, 6);
-          if (!isValidColorCode(color))
+          if (isColorCode(color))
             return (
-              <span key={color + index} className={className} style={style}>
-                {item}
+              <span key={color + index} className={className} style={{ ...style, color: `#${color}` }}>
+                {item.slice(6)}
               </span>
             );
           return (
-            <span key={color + index} className={className} style={{ ...style, color: `#${color}` }}>
-              {item.slice(6)}
+            <span key={color + index} className={className} style={style}>
+              {item}
             </span>
           );
         })}

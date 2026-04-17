@@ -47,7 +47,7 @@ div.timeline-line {
   bottom: 0;
   left: 0.35rem;
   width: 1px;
-  background-color: #333;
+  background-color: var(--card-border);
 }
 
 div.timeline-entry {
@@ -82,7 +82,7 @@ div.timeline-dot {
 span.timeline-date {
   font-family: Consolas, monospace;
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 div.post-card {
@@ -92,30 +92,30 @@ div.post-card {
   padding: 0.75rem 1rem;
   margin-top: 0.35rem;
   cursor: pointer;
-  background-color: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 div.post-card:hover {
-  box-shadow: 0 4px 16px #00000050;
+  box-shadow: var(--card-shadow);
   transform: translateY(-2px);
 }
 
 span.post-title {
   font-size: 1.15rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 p.post-excerpt {
   font-size: 1rem;
   line-height: 1.4;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 div.post-meta {
@@ -134,18 +134,18 @@ span.tag-badge {
 span.slug-text {
   margin-left: auto;
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 span.read-time {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 div.empty {
   padding: 2rem;
   font-size: 1rem;
-  color: #888;
+  color: var(--text-muted);
   text-align: center;
 }
 

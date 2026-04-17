@@ -64,7 +64,7 @@ div.hero-card {
   background: hsl(var(--profile-hue) 100% 60% / 6%);
   border: 1px solid hsl(var(--profile-hue) 100% 60% / 8%);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
 }
 
 img.osu-cover {
@@ -104,7 +104,7 @@ div.hero-identity {
 span.osu-username {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 span.osu-details {
@@ -148,7 +148,7 @@ div.stat-cells {
 div.stat-cell {
   padding: 0.4rem 0.6rem;
   background: rgb(0 0 0 / 25%);
-  border-left: 2px solid var(--cell-accent, #888);
+  border-left: 2px solid var(--cell-accent);
   border-radius: 0 0.25rem 0.25rem 0;
 }
 
@@ -177,7 +177,7 @@ div.profile-card {
   background: hsl(var(--profile-hue) 100% 60% / 6%);
   border: 1px solid hsl(var(--profile-hue) 100% 60% / 8%);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
 }
 
 div.chart-card-2wide {
@@ -222,17 +222,17 @@ div.rank-chart-wrap {
 div.peak-note {
   font-family: Consolas, monospace;
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 span.peak-date {
-  color: #888;
+  color: var(--text-muted);
 }
 
 div.chart-empty {
   padding: 1rem;
   font-size: 0.75rem;
-  color: #888;
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -275,7 +275,7 @@ span.pill-label {
 }
 
 span.pill-sep {
-  color: #888;
+  color: var(--text-muted);
 }
 
 div.profile-card {
@@ -304,7 +304,7 @@ div.unavailable {
   justify-content: center;
   min-height: 30vh;
   font-size: 1rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 @keyframes page-enter {

@@ -44,20 +44,18 @@ div.projects-page::-webkit-scrollbar {
   width: 0;
 }
 
-/* Each project: left info + right gallery */
 div.project-row {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   padding: 1.25rem;
-  background-color: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
-  border-left: 3px solid #0fa;
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent-1);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
 }
 
-/* Left column: info + GitHub card */
 div.project-info {
   display: flex;
   flex: 1;
@@ -69,13 +67,13 @@ div.project-info {
 span.project-name {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 p.project-desc {
   font-size: 1rem;
   line-height: 1.5;
-  color: #bababa;
+  color: var(--text-secondary);
 }
 
 div.project-tags {
@@ -92,7 +90,6 @@ span.project-tag {
   border-radius: 0.75rem;
 }
 
-/* GitHub repo card */
 div.github-card {
   display: flex;
   flex-direction: column;
@@ -127,7 +124,7 @@ img.github-icon {
 span.github-repo-name {
   font-family: Consolas, monospace;
   font-size: 0.95rem;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 div.github-card-meta {
@@ -141,7 +138,7 @@ span.lang {
   gap: 0.25rem;
   align-items: center;
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 span.lang-dot {
@@ -153,15 +150,14 @@ span.lang-dot {
 
 span.stars {
   font-size: 0.85rem;
-  color: #fff700;
+  color: var(--text-highlight);
 }
 
 span.forks {
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
-/* Right column: image gallery */
 div.project-gallery {
   display: flex;
   flex-shrink: 0;
@@ -215,7 +211,7 @@ span.gallery-dot {
 }
 
 span.gallery-dot.active {
-  background-color: #fff;
+  background-color: var(--text-highlight);
 }
 
 div.gallery-placeholder {
@@ -224,7 +220,7 @@ div.gallery-placeholder {
   justify-content: center;
   width: 100%;
   min-height: 180px;
-  color: #555;
+  color: var(--text-muted);
   background-color: rgb(0 0 0 / 15%);
   border-radius: 0.4rem;
 }

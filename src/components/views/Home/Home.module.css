@@ -46,6 +46,22 @@ div.home-page::-webkit-scrollbar {
   width: 0;
 }
 
+div.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+span.section-label {
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--text-highlight);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 div.bento {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -59,10 +75,10 @@ div.hero-card {
   gap: 1rem;
   align-items: center;
   padding: 1.25rem;
-  background-color: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
 }
 
 div.avatar-wrapper {
@@ -79,7 +95,7 @@ div.avatar-wrapper {
 }
 
 div.avatar-wrapper:hover {
-  filter: drop-shadow(0 4px 16px #00000050);
+  filter: drop-shadow(var(--card-shadow));
   transform: scale(1.05);
 }
 
@@ -130,7 +146,7 @@ div.hero-info {
 span.hero-name {
   font-size: 1.6rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 div.hero-title-container {
@@ -143,8 +159,8 @@ span.hero-age {
   width: fit-content;
   padding: 0.1rem 0.5rem;
   font-size: 0.85rem;
-  color: #ffa24c;
-  background-color: #ffa24c15;
+  color: var(--accent-1);
+  background-color: rgb(from var(--accent-1) r g b / 6%);
   border-radius: 1rem;
 }
 
@@ -153,15 +169,15 @@ span.hero-school {
   width: fit-content;
   padding: 0.1rem 0.5rem;
   font-size: 0.85rem;
-  color: #00f3ff;
-  background-color: #00f3ff15;
+  color: var(--accent-2);
+  background-color: rgb(from var(--accent-2) r g b / 6%);
   border-radius: 1rem;
 }
 
 span.hero-bio {
   font-size: 1rem;
   line-height: 1.5;
-  color: #bababa;
+  color: var(--text-secondary);
 }
 
 div.social-row {
@@ -185,22 +201,29 @@ img.social-icon:hover {
   transform: scale(1.15);
 }
 
+div.preview-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 div.preview-card {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  background-color: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  cursor: pointer;
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 div.preview-card:hover {
-  box-shadow: 0 4px 16px #00000050;
+  box-shadow: var(--card-shadow);
   transform: translateY(-2px);
 }
 
@@ -210,30 +233,12 @@ div.preview-header {
   justify-content: space-between;
 }
 
-div.mini-repo {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.4rem 0.6rem;
-  background-color: rgb(0 0 0 / 20%);
-  border-radius: 0.35rem;
-  transition: background-color 0.2s ease;
-}
-
-div.mini-repo:hover {
-  background-color: rgb(0 0 0 / 30%);
-}
-
-span.mini-repo-name {
-  font-size: 1rem;
-  color: #fff;
-}
-
-span.mini-lang-dot {
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
+span.card-label {
+  font-family: Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 div.project-carousel {
@@ -241,7 +246,7 @@ div.project-carousel {
   min-height: 10rem;
 }
 
-div.mini-project {
+div.project {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -250,11 +255,11 @@ div.mini-project {
   transition: opacity 0.5s ease;
 }
 
-div.mini-project.active {
+div.project.active {
   opacity: 1;
 }
 
-div.mini-project-img {
+div.project-img {
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -266,13 +271,18 @@ div.mini-project-img {
   border-radius: 0.25rem;
 }
 
-div.mini-project-img img {
+div.project-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-div.mini-project-info {
+span.project-img .no-image {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+div.project-info {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -286,8 +296,18 @@ div.mini-project-info {
   transition: background-color 0.2s ease;
 }
 
-div.project-carousel:hover div.mini-project-info {
+div.project-carousel:hover div.project-info {
   background-color: rgb(0 0 0 / 70%);
+}
+
+span.project-name {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+span.project-tags {
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 div.carousel-dots {
@@ -307,7 +327,7 @@ span.carousel-dot {
 }
 
 span.carousel-dot.active {
-  background-color: #fff;
+  background-color: var(--text-highlight);
 }
 
 div.stat-row {
@@ -324,29 +344,29 @@ span.stat-value {
   font-family: Consolas, monospace;
   font-size: 1.3rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 span.stat-label {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 span.post-title {
   font-size: 1.05rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 p.post-excerpt {
   font-size: 0.9rem;
   line-height: 1.4;
-  color: #888;
+  color: var(--text-muted);
 }
 
 span.post-date {
   font-size: 0.85rem;
-  color: #ffa24c;
+  color: var(--accent-3);
 }
 
 div.music-info {
@@ -366,35 +386,30 @@ div.music-info.hidden {
   opacity: 0;
 }
 
-div.feature-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  width: 100%;
-}
-
 div.feature-card {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   padding: 1.25rem;
-  background-color: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 6%);
+  background-color: var(--card-color);
+  border: 1px solid var(--card-border);
   border-radius: 0.5rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--card-blur));
+  transform: translateZ(0);
+  will-change: backdrop-filter;
 }
 
 p.feature-title {
   font-family: Consolas, monospace;
   font-size: 1.15rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 p.feature-desc {
   font-size: 1rem;
   line-height: 1.6;
-  color: #bababa;
+  color: var(--text-secondary);
 }
 
 div.shortcut-list {
@@ -411,7 +426,7 @@ span.shortcut {
   padding: 0.3rem 0.6rem;
   font-family: Consolas, monospace;
   font-size: 0.9rem;
-  color: #e6e6e6;
+  color: var(--text-secondary);
   background-color: rgb(0 0 0 / 25%);
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 0.35rem;
@@ -420,7 +435,7 @@ span.shortcut {
 span.shortcut-key {
   padding: 0.1rem 0.35rem;
   font-size: 0.85rem;
-  color: #fff700;
+  color: var(--text-highlight);
   background-color: rgb(0 0 0 / 30%);
   border-radius: 0.2rem;
 }
@@ -428,7 +443,7 @@ span.shortcut-key {
 p.footer {
   font-family: Consolas, monospace;
   font-size: 0.8rem;
-  color: #555;
+  color: var(--text-muted);
 }
 
 @keyframes page-enter {
