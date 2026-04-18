@@ -100,10 +100,10 @@ export default function Settings() {
   const [isDragging, setIsDragging] = useState(false);
   const [newAccent, setNewAccent] = useState('#ffffff');
 
-  const themeHex = hslString(settings.themeColor);
-  const highlightHex = hslString(settings.textColors.highlight);
+  const cardHex = hslString(settings.cardColor);
+  const highlightHex = hslString(settings.textHighlight);
 
-  const update = (patch: Partial<Types.ThemeSettings>) => setSettings({ ...settings, ...patch });
+  const update = (patch: Partial<Types.Settings>) => setSettings({ ...settings, ...patch });
 
   const updateText = (key: TextColorKey, color: string) => setSettings({ ...settings, textColors: { ...settings.textColors, [key]: color } });
 
@@ -235,10 +235,10 @@ export default function Settings() {
           <div className={styles['block']}>
             <div className={styles['block-head']}>
               <span className={styles['field-key']}>{t('settings.theme.cardColor')}</span>
-              <span className={styles['swatch']} style={{ background: themeHex }} />
+              <span className={styles['swatch']} style={{ background: cardHex }} />
             </div>
-            <HslPicker value={settings.themeColor} onChange={(themeColor) => update({ themeColor })} />
-            <Slider label="blur" min={0} max={40} value={settings.cardBlur} onChange={(cardBlur) => update({ cardBlur })} suffix="px" hsl={settings.themeColor} />
+            <HslPicker value={settings.cardColor} onChange={(cardColor) => update({ cardColor })} />
+            <Slider label="blur" min={0} max={40} value={settings.cardBlur} onChange={(cardBlur) => update({ cardBlur })} suffix="px" hsl={settings.cardColor} />
           </div>
 
           <div className={styles['hint']} style={{ marginBottom: '0.25rem' }}>
@@ -250,7 +250,7 @@ export default function Settings() {
               <span className={styles['field-key']}>{t('settings.theme.textHighlight')}</span>
               <span className={styles['swatch']} style={{ background: highlightHex }} />
             </div>
-            <HslPicker value={settings.textColors.highlight} onChange={(highlight) => update({ textColors: { ...settings.textColors, highlight } })} />
+            <HslPicker value={settings.textHighlight} onChange={(textHighlight) => update({ textHighlight })} />
           </div>
         </section>
 

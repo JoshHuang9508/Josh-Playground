@@ -436,7 +436,7 @@ export default function ListenTogetherView() {
     if (trackQueueDiff || currentTrackDiff) {
       emitTerminalLog(
         t('listentogether.logs.playlistUpdated'),
-        ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `@#fff700#${index} - ${track.title}` : `#${index} - ${track.title}`)),
+        ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `  @#fff700#${index} - ${track.title}` : `  #${index} - ${track.title}`)),
       );
     }
   }, [playerState.trackQueue, playerState.currentTrack]);

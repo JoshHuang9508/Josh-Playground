@@ -16,17 +16,17 @@ export type CommandList = Record<string, Command>;
 
 export type HSL = { h: number; s: number; l: number };
 
-export type ThemeSettings = {
+export type Settings = {
   backgroundImageUrl: string;
   backgroundColor: HSL;
   backgroundAlpha: number;
-  themeColor: HSL;
+  cardColor: HSL;
   cardBlur: number;
+  textHighlight: HSL;
   textColors: {
     primary: string;
     secondary: string;
     muted: string;
-    highlight: HSL;
     accent: string[];
   };
 };

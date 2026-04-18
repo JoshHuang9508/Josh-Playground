@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import ReactPlayer from 'react-player';
 
 import type * as Types from '@/lib/types';
@@ -8,6 +8,8 @@ import { MUSIC_LIST, DEFAULT_SETTINGS } from '@/lib/constants';
 import { findAvailablePath, renderWebPaths } from '@/lib/terminal';
 
 import { clearActiveTerminalLog, emitTerminalLog } from '@/lib/terminalLog';
+
+import { escapeCustomColorTags } from '@/lib/color';
 
 import { t } from '@/lib/i18n';
 
@@ -20,8 +22,8 @@ const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
 const isHex = (v: string) => /^#[0-9a-fA-F]{6}$/.test(v);
 const num = (v: string) => (Number.isFinite(Number(v)) ? Number(v) : NaN);
 
-export default function useTerminalCommand(extensionCommands: Types.CommandList) {
-  const { setExtensionCommands, extensionPaths, currentHash, isSettingsOpen, setIsSettingsOpen, settings, setSettings, setUsername } = useContext(AppContext)!;
+export default function useTerminalCommand(extension: Types.CommandList) {
+  const { extensionCommands, extensionPaths, currentHash, settings, setSettings, setUsername } = useContext(AppContext)!;
 
   const contextCommands: Types.CommandList = {
     help: {
@@ -29,11 +31,15 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       description: t('global.commands.help.description'),
       usage: t('global.commands.help.usage'),
       handler: (_cmd, _args, _flags) => {
-        emitTerminalLog(t('global.commands.help.availableCommands'), t('global.commands.help.separator'));
-        Object.values(commandList).forEach((cmd) => {
-          emitTerminalLog(t('global.commands.help.commandUsage', cmd.usage, cmd.description));
+        emitTerminalLog(t('global.commands.help.availableCommands'));
+        const commands = Object.values(extensionCommands.current);
+        const maxUsageWidth = Math.max(...commands.map((cmd) => escapeCustomColorTags(cmd.usage).length));
+        const columnWidth = maxUsageWidth + 4;
+        commands.forEach((cmd) => {
+          const offset = cmd.usage.length - escapeCustomColorTags(cmd.usage).length;
+          const paddedUsage = cmd.usage.padEnd(columnWidth + offset, ' ');
+          emitTerminalLog(t('global.commands.help.commandUsage', paddedUsage, cmd.description));
         });
-        return;
       },
     },
     echo: {
@@ -51,7 +57,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       flags: ['-a', '-l', '-t'],
       handler: (_cmd, args, flags) => {
         const path = args[0] ?? '';
-        const available = findAvailablePath(path, extensionPaths, currentHash);
+        const available = findAvailablePath(path, extensionPaths.current, currentHash);
         if (flags.includes('-t') || flags.includes('--tree')) {
           renderWebPaths(webPaths, '').forEach((path) => {
             emitTerminalLog(path);
@@ -157,10 +163,10 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       name: 'music',
       description: t('global.commands.music.description'),
       usage: t('global.commands.music.usage'),
-      flags: ['-p', '--play', '-s', '--stop', '-i', '--info', '-l', '--list'],
+      flags: ['-p', '--play', '-s', '--stop', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-l') || flags.includes('--list')) {
-          emitTerminalLog(t('global.commands.music.list'), ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`));
+          emitTerminalLog(t('global.commands.music.list'), ...MUSIC_LIST.map((_, index) => `  #${index} - ${_.name}`));
           return;
         }
         if (flags.includes('-p') || flags.includes('--play')) {
@@ -180,214 +186,199 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       name: 'settings',
       description: t('global.commands.settings.description'),
       usage: t('global.commands.settings.usage'),
-      flags: ['-c', '--close'],
-      handler: (_cmd, _args, flags) => {
-        if (flags.includes('-c') || flags.includes('--close')) {
-          setIsSettingsOpen(false);
-          emitTerminalLog(t('global.commands.settings.closed'));
-          return;
-        }
-        setIsSettingsOpen(!isSettingsOpen);
-        emitTerminalLog(isSettingsOpen ? t('global.commands.settings.closed') : t('global.commands.settings.opened'));
-      },
-    },
-    theme: {
-      name: 'theme',
-      description: t('global.commands.theme.description'),
-      usage: t('global.commands.theme.usage'),
       flags: ['-h', '--help'],
       subCommands: {
         'reset': {
           name: 'reset',
-          description: t('global.commands.theme.reset.description'),
-          usage: t('global.commands.theme.reset.usage'),
+          description: t('global.commands.settings.reset.description'),
+          usage: t('global.commands.settings.reset.usage'),
           handler: (_cmd, _args, _flags) => {
             setSettings(DEFAULT_SETTINGS);
-            emitTerminalLog(t('global.commands.theme.reset.reset'));
+            emitTerminalLog(t('global.commands.settings.reset.reset'));
           },
         },
         'bg-image': {
           name: 'bg-image',
-          description: t('global.commands.theme.bgImage.description'),
-          usage: t('global.commands.theme.bgImage.usage'),
+          description: t('global.commands.settings.bgImage.description'),
+          usage: t('global.commands.settings.bgImage.usage'),
           flags: ['-r', '--reset'],
           handler: (_cmd, args, flags) => {
             const url = args[0];
             if (!url && flags.length === 0) {
-              emitTerminalLog(t('global.commands.theme.bgImage.usage'));
+              emitTerminalLog(t('global.commands.settings.bgImage.usage'));
               return;
             }
             if (flags.includes('-r') || flags.includes('--reset')) {
               setSettings({ ...settings, backgroundImageUrl: '' });
-              emitTerminalLog(t('global.commands.theme.bgImage.reset'));
+              emitTerminalLog(t('global.commands.settings.bgImage.reset'));
               return;
             }
             setSettings({ ...settings, backgroundImageUrl: url });
-            emitTerminalLog(t('global.commands.theme.bgImage.set', url));
+            emitTerminalLog(t('global.commands.settings.bgImage.set', url));
           },
         },
         'bg': {
           name: 'bg',
-          description: t('global.commands.theme.bg.description'),
-          usage: t('global.commands.theme.bg.usage'),
+          description: t('global.commands.settings.bg.description'),
+          usage: t('global.commands.settings.bg.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
             if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('global.commands.theme.bg.invalid'));
+              emitTerminalLog(t('global.commands.settings.bg.invalid'));
               return;
             }
             const a = args[3] !== undefined ? num(args[3]) : settings.backgroundAlpha;
             if (Number.isNaN(a)) {
-              emitTerminalLog(t('global.commands.theme.bg.invalid'));
+              emitTerminalLog(t('global.commands.settings.bg.invalid'));
               return;
             }
             setSettings({ ...settings, backgroundColor: { h, s, l }, backgroundAlpha: a });
-            emitTerminalLog(t('global.commands.theme.bg.set', `${h} ${s} ${l} / ${a}`));
+            emitTerminalLog(t('global.commands.settings.bg.set', `${h} ${s} ${l} / ${a}`));
           },
         },
         'color': {
           name: 'color',
-          description: t('global.commands.theme.color.description'),
-          usage: t('global.commands.theme.color.usage'),
+          description: t('global.commands.settings.color.description'),
+          usage: t('global.commands.settings.color.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
             if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('global.commands.theme.color.invalid'));
+              emitTerminalLog(t('global.commands.settings.color.invalid'));
               return;
             }
-            setSettings({ ...settings, themeColor: { h, s, l } });
-            emitTerminalLog(t('global.commands.theme.color.set', `${h} ${s} ${l}`));
+            setSettings({ ...settings, cardColor: { h, s, l } });
+            emitTerminalLog(t('global.commands.settings.color.set', `${h} ${s} ${l}`));
           },
         },
         'blur': {
           name: 'blur',
-          description: t('global.commands.theme.blur.description'),
-          usage: t('global.commands.theme.blur.usage'),
+          description: t('global.commands.settings.blur.description'),
+          usage: t('global.commands.settings.blur.usage'),
           handler: (_cmd, args, _flags) => {
             const px = num(args[0]);
             if (Number.isNaN(px) || px < 0) {
-              emitTerminalLog(t('global.commands.theme.blur.invalid'));
+              emitTerminalLog(t('global.commands.settings.blur.invalid'));
               return;
             }
             setSettings({ ...settings, cardBlur: px });
-            emitTerminalLog(t('global.commands.theme.blur.set', `${px}`));
+            emitTerminalLog(t('global.commands.settings.blur.set', `${px}`));
           },
         },
         'text-highlight': {
           name: 'text-highlight',
-          description: t('global.commands.theme.text-highlight.description'),
-          usage: t('global.commands.theme.text-highlight.usage'),
+          description: t('global.commands.settings.text-highlight.description'),
+          usage: t('global.commands.settings.text-highlight.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
             if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('global.commands.theme.textHighlight.invalid'));
+              emitTerminalLog(t('global.commands.settings.textHighlight.invalid'));
               return;
             }
-            setSettings({ ...settings, textColors: { ...settings.textColors, highlight: { h, s, l } } });
-            emitTerminalLog(t('global.commands.theme.textHighlight.set', `${h} ${s} ${l}`));
+            setSettings({ ...settings, textHighlight: { h, s, l } });
+            emitTerminalLog(t('global.commands.settings.textHighlight.set', `${h} ${s} ${l}`));
           },
         },
         'text': {
           name: 'text',
-          description: t('global.commands.theme.text.description'),
-          usage: t('global.commands.theme.text.usage'),
+          description: t('global.commands.settings.text.description'),
+          usage: t('global.commands.settings.text.usage'),
           handler: (_cmd, args, _flags) => {
             const which = args[0];
             const color = args[1];
             if (!['primary', 'secondary', 'muted'].includes(which)) {
-              emitTerminalLog(t('global.commands.theme.text.invalid'));
+              emitTerminalLog(t('global.commands.settings.text.invalid'));
               return;
             }
             if (!isHex(color)) {
-              emitTerminalLog(t('global.commands.theme.text.invalid'));
+              emitTerminalLog(t('global.commands.settings.text.invalid'));
               return;
             }
             setSettings({ ...settings, textColors: { ...settings.textColors, [which]: color } });
-            emitTerminalLog(t('global.commands.theme.text.set', which, color));
+            emitTerminalLog(t('global.commands.settings.text.set', which, color));
           },
         },
         'accent': {
           name: 'accent',
-          description: t('global.commands.theme.accent.description'),
-          usage: t('global.commands.theme.accent.usage'),
+          description: t('global.commands.settings.accent.description'),
+          usage: t('global.commands.settings.accent.usage'),
           subCommands: {
             add: {
               name: 'add',
-              description: t('global.commands.theme.accent.add.description'),
-              usage: t('global.commands.theme.accent.add.usage'),
+              description: t('global.commands.settings.accent.add.description'),
+              usage: t('global.commands.settings.accent.add.usage'),
               handler: (_cmd, args, _flags) => {
                 const color = args[0];
                 if (!isHex(color)) {
-                  emitTerminalLog(t('global.commands.theme.accent.add.invalid'));
+                  emitTerminalLog(t('global.commands.settings.accent.add.invalid'));
                   return;
                 }
                 const accent = [...settings.textColors.accent, color];
                 setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-                emitTerminalLog(t('global.commands.theme.accent.add.added', color, `${accent.length - 1}`));
+                emitTerminalLog(t('global.commands.settings.accent.add.added', color, `${accent.length - 1}`));
               },
             },
             rm: {
               name: 'rm',
-              description: t('global.commands.theme.accent.rm.description'),
-              usage: t('global.commands.theme.accent.rm.usage'),
+              description: t('global.commands.settings.accent.rm.description'),
+              usage: t('global.commands.settings.accent.rm.usage'),
               handler: (_cmd, args, _flags) => {
                 const index = num(args[0] ?? -1);
                 if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
-                  emitTerminalLog(t('global.commands.theme.accent.rm.indexInvalid'));
+                  emitTerminalLog(t('global.commands.settings.accent.rm.indexInvalid'));
                   return;
                 }
                 const accent = settings.textColors.accent.filter((_, i) => i !== index);
                 setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-                emitTerminalLog(t('global.commands.theme.accent.rm.removed', `${index}`));
+                emitTerminalLog(t('global.commands.settings.accent.rm.removed', `${index}`));
               },
             },
             set: {
               name: 'set',
-              description: t('global.commands.theme.accent.set.description'),
-              usage: t('global.commands.theme.accent.set.usage'),
+              description: t('global.commands.settings.accent.set.description'),
+              usage: t('global.commands.settings.accent.set.usage'),
               handler: (_cmd, args, _flags) => {
                 const index = num(args[0] ?? -1);
                 const color = args[1];
                 if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
-                  emitTerminalLog(t('global.commands.theme.accent.set.indexInvalid'));
+                  emitTerminalLog(t('global.commands.settings.accent.set.indexInvalid'));
                   return;
                 }
                 if (!isHex(color)) {
-                  emitTerminalLog(t('global.commands.theme.accent.set.invalid'));
+                  emitTerminalLog(t('global.commands.settings.accent.set.invalid'));
                   return;
                 }
                 const accent = [...settings.textColors.accent];
                 accent[index] = color;
                 setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-                emitTerminalLog(t('global.commands.theme.accent.set.set', `${index}`, color));
+                emitTerminalLog(t('global.commands.settings.accent.set.set', `${index}`, color));
               },
             },
           },
           handler: (_cmd, _args, _flags) => {
-            emitTerminalLog(t('global.commands.theme.accent.usage'));
+            emitTerminalLog(t('global.commands.settings.accent.usage'));
           },
         },
       },
       handler: (_cmd, args, flags) => {
         if (flags.includes('-h') || flags.includes('--help')) {
-          emitTerminalLog(...t('global.commands.theme.help'));
+          emitTerminalLog(...t('global.commands.settings.help'));
           return;
         }
         if (!args.length && !flags.length) {
           emitTerminalLog(
             ...t(
-              'global.commands.theme.show',
+              'global.commands.settings.show',
               settings.backgroundImageUrl || '(default)',
               `H:${settings.backgroundColor.h} S:${settings.backgroundColor.s} L:${settings.backgroundColor.l} / A:${settings.backgroundAlpha}`,
-              `H:${settings.themeColor.h} S:${settings.themeColor.s} L:${settings.themeColor.l}`,
+              `H:${settings.cardColor.h} S:${settings.cardColor.s} L:${settings.cardColor.l}`,
               `${settings.cardBlur}px`,
-              `H:${settings.textColors.highlight.h} S:${settings.textColors.highlight.s} L:${settings.textColors.highlight.l}`,
+              `H:${settings.textHighlight.h} S:${settings.textHighlight.s} L:${settings.textHighlight.l}`,
               settings.textColors.primary,
               settings.textColors.secondary,
               settings.textColors.muted,
@@ -396,7 +387,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           );
           return;
         }
-        emitTerminalLog(...t('global.commands.theme.help'));
+        emitTerminalLog(...t('global.commands.settings.help'));
       },
     },
     username: {
@@ -421,9 +412,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
     },
   };
 
-  const commandList = { ...contextCommands, ...extensionCommands };
+  const commandList = { ...contextCommands, ...extension };
 
-  useEffect(() => {
-    setExtensionCommands(commandList);
-  }, []);
+  extensionCommands.current = commandList;
 }

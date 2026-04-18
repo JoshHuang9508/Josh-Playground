@@ -52,6 +52,7 @@ export const LANGUAGE_COLORS: Record<string, string> = {
   '': '#ccc',
 };
 export const VALID_VIBES = ['default', 'lofi', 'rave', 'cinema', 'dawn'];
+export * from './color';
 export * from './path-list';
 export * from './projects';
 export * from './text-content';

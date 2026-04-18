@@ -27,7 +27,7 @@ interface TerminalProps {
 }
 
 export default function Terminal({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: TerminalProps) {
-  const appContext = useContext(AppContext)!;
+  const { extensionArgs, extensionCommands, extensionPaths, currentHash, username } = useContext(AppContext)!;
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,11 +69,11 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   const [availableIndex, setAvailableIndex] = useState<number>(0);
 
   const currentURL = useMemo(() => {
-    const hashPaths = appContext.currentHash.split('/').filter(Boolean);
+    const hashPaths = currentHash.split('/').filter(Boolean);
     return hashPaths.length > 0 ? `/${hashPaths.join('/')}/` : '/';
-  }, [appContext.currentHash]);
+  }, [currentHash]);
 
-  const prefix = `@#FF77B7${appContext.username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentURL}$ `;
+  const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentURL}$ `;
   const isMinimized = windowState === 'minimized';
   const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
   const iconY = window.innerHeight - 64;
@@ -82,7 +82,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     const input = event.target.value;
     setInputValue(input);
 
-    const available = findAvailable(input, appContext.extensionCommands, appContext.extensionArgs, appContext.extensionPaths, appContext.currentHash);
+    const available = findAvailable(input, extensionCommands.current, extensionArgs.current, extensionPaths.current, currentHash);
     setAvailable(available);
 
     if (inputRef.current) {
@@ -101,7 +101,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
       localStorage.setItem('cmdHistory', [fullCommand, ...cmdHistory].slice(0, 100).join(','));
       setCmdHistoryIndex(-1);
 
-      const handler = findCommandHandler(fullCommand, appContext.extensionCommands);
+      const handler = findCommandHandler(fullCommand, extensionCommands.current);
       if (handler) handler();
       else emitTerminalLog(t('terminal.commandNotFound', fullCommand));
 

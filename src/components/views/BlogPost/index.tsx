@@ -19,7 +19,7 @@ interface BlogPostViewProps {
 }
 
 export default function BlogPostView({ slug }: BlogPostViewProps) {
-  const appContext = useContext(AppContext);
+  const { setDynamicTitle } = useContext(AppContext)!;
   const { post, loading } = useBlogPost(slug);
 
   const pageRef = useRef<HTMLDivElement>(null);
@@ -31,12 +31,10 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
   useTerminalCommand({});
 
   useEffect(() => {
-    if (post) appContext?.setDynamicTitle(post.title);
-    else if (!loading) appContext?.setDynamicTitle(null);
-    return () => {
-      appContext?.setDynamicTitle(null);
-    };
-  }, [post, loading, appContext]);
+    if (post) setDynamicTitle(post.title);
+    else if (!loading) setDynamicTitle(null);
+    return () => setDynamicTitle(null);
+  }, [post, loading, setDynamicTitle]);
 
   useEffect(() => {
     const el = pageRef.current;

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, createContext } from 'react';
+import { useEffect, useState, useRef, createContext, type MutableRefObject } from 'react';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
@@ -7,7 +7,7 @@ import type * as Types from '@/lib/types';
 
 import { MUSIC_LIST, TEXT_CONTENT, DEFAULT_SETTINGS, DEFAULT_USERNAME } from '@/lib/constants';
 
-import { applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
+import { applySettingsToDOM, loadSettings, saveSettings, hslString } from '@/lib/settings';
 
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
@@ -27,24 +27,17 @@ import Settings from '@/components/Settings';
 import styles from './index.module.css';
 
 export type AppContextType = {
-  extensionArgs: Record<string, string[]>;
-  extensionCommands: Types.CommandList;
-  extensionPaths: Record<string, string[]>;
-  backgroundImageUrl: string;
-  backgroundColor: string;
+  extensionArgs: MutableRefObject<Record<string, string[]>>;
+  extensionCommands: MutableRefObject<Types.CommandList>;
+  extensionPaths: MutableRefObject<Record<string, string[]>>;
   dynamicTitle: string | null;
   currentHash: string;
   username: string;
-  settings: Types.ThemeSettings;
+  settings: Types.Settings;
   isSettingsOpen: boolean;
-  setExtensionArgs: (args: Record<string, string[]>) => void;
-  setExtensionCommands: (cmds: Types.CommandList) => void;
-  setExtensionPaths: (paths: Record<string, string[]>) => void;
-  setBackgroundImageUrl: (url: string) => void;
-  setBackgroundColor: (color: string) => void;
   setDynamicTitle: (title: string | null) => void;
   setUsername: (name: string) => void;
-  setSettings: (s: Types.ThemeSettings) => void;
+  setSettings: (s: Types.Settings) => void;
   setIsSettingsOpen: (open: boolean) => void;
 };
 
@@ -55,20 +48,18 @@ function PageComponent() {
 
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
-  const [extensionArgs, setExtensionArgs] = useState<Record<string, string[]>>({});
-  const [extensionCommands, setExtensionCommands] = useState<Types.CommandList>({});
-  const [extensionPaths, setExtensionPaths] = useState<Record<string, string[]>>({});
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>('');
-  const [backgroundColor, setBackgroundColor] = useState<string>('');
+  const extensionArgs = useRef<Record<string, string[]>>({});
+  const extensionCommands = useRef<Types.CommandList>({});
+  const extensionPaths = useRef<Record<string, string[]>>({});
+  const [settings, setSettingsState] = useState<Types.Settings>(DEFAULT_SETTINGS);
   const [username, setUsername] = useState<string>(DEFAULT_USERNAME);
   const [currentHash, setCurrentHash] = useState<string>('/');
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
-  const [settings, setSettingsState] = useState<Types.ThemeSettings>(DEFAULT_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const setSettings = (s: Types.ThemeSettings) => {
+  const setSettings = (s: Types.Settings) => {
     setSettingsState(s);
     saveSettings(s);
     applySettingsToDOM(s);
@@ -113,19 +104,9 @@ function PageComponent() {
 
   useEffect(() => {
     if (posts.length > 0) {
-      setExtensionPaths({ '/blog': posts.map((p) => `${p.slug}/`) });
+      extensionPaths.current = { '/blog': posts.map((p) => `${p.slug}/`) };
     }
   }, [posts]);
-
-  useEffect(() => {
-    const backgroundImageUrl = localStorage.getItem('backgroundImageUrl') ?? '';
-    setBackgroundImageUrl(backgroundImageUrl);
-  }, []);
-
-  useEffect(() => {
-    const backgroundColor = localStorage.getItem('backgroundColor') ?? '';
-    setBackgroundColor(backgroundColor);
-  }, []);
 
   useEffect(() => {
     const username = localStorage.getItem('username') ?? DEFAULT_USERNAME;
@@ -181,26 +162,19 @@ function PageComponent() {
           extensionArgs,
           extensionCommands,
           extensionPaths,
-          backgroundImageUrl,
-          backgroundColor,
           currentHash,
           dynamicTitle,
           username,
           settings,
           isSettingsOpen,
-          setExtensionArgs,
-          setExtensionCommands,
-          setExtensionPaths,
-          setBackgroundImageUrl,
-          setBackgroundColor,
           setUsername,
           setDynamicTitle,
           setSettings,
           setIsSettingsOpen,
         }}
       >
-        <div className={styles['app']} style={{ backgroundColor: backgroundColor }}>
-          <img src={backgroundImageUrl ? backgroundImageUrl : settings.backgroundImageUrl || '/assets/bg.jpg'} className={styles['background']} alt="background" />
+        <div className={styles['app']}>
+          <img src={settings.backgroundImageUrl || '/assets/bg.jpg'} className={styles['background']} alt="background" />
           <div className={styles['view-container']}>
             <Navigation currentHash={currentHash} />
             {renderView()}

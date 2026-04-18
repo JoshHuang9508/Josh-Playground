@@ -6,21 +6,21 @@ function isHslShape(v: unknown): v is Types.HSL {
   return typeof v === 'object' && v !== null && typeof (v as Types.HSL).h === 'number' && typeof (v as Types.HSL).s === 'number' && typeof (v as Types.HSL).l === 'number';
 }
 
-export function loadSettings(): Types.ThemeSettings {
+export function loadSettings(): Types.Settings {
   if (typeof window === 'undefined') return DEFAULT_SETTINGS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_SETTINGS;
-    const parsed = JSON.parse(raw) as Partial<Types.ThemeSettings>;
+    const parsed = JSON.parse(raw) as Partial<Types.Settings>;
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
       backgroundColor: isHslShape(parsed.backgroundColor) ? parsed.backgroundColor : DEFAULT_SETTINGS.backgroundColor,
-      themeColor: isHslShape(parsed.themeColor) ? parsed.themeColor : DEFAULT_SETTINGS.themeColor,
+      cardColor: isHslShape(parsed.cardColor) ? parsed.cardColor : DEFAULT_SETTINGS.cardColor,
+      textHighlight: isHslShape(parsed.textHighlight) ? parsed.textHighlight : DEFAULT_SETTINGS.textHighlight,
       textColors: {
         ...DEFAULT_SETTINGS.textColors,
         ...(parsed.textColors ?? {}),
-        highlight: parsed.textColors?.highlight ?? DEFAULT_SETTINGS.textColors.highlight,
         accent: Array.isArray(parsed.textColors?.accent) ? parsed.textColors!.accent : DEFAULT_SETTINGS.textColors.accent,
       },
     };
@@ -29,7 +29,7 @@ export function loadSettings(): Types.ThemeSettings {
   }
 }
 
-export function saveSettings(s: Types.ThemeSettings): void {
+export function saveSettings(s: Types.Settings): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
 }
@@ -44,19 +44,19 @@ export function hslString(c: Types.HSL, alpha?: number): string {
   return `hsl(${c.h} ${c.s}% ${c.l}% / 1)`;
 }
 
-export function applySettingsToDOM(s: Types.ThemeSettings): void {
+export function applySettingsToDOM(s: Types.Settings): void {
   if (typeof document === 'undefined') return;
   const r = document.documentElement.style;
 
   r.setProperty('--bg-color', hslString(s.backgroundColor, s.backgroundAlpha));
-  r.setProperty('--card-color', hslString(s.themeColor, 0.06));
-  r.setProperty('--card-border', hslString(s.themeColor, 0.08));
+  r.setProperty('--card-color', hslString(s.cardColor, 0.06));
+  r.setProperty('--card-border', hslString(s.cardColor, 0.08));
   r.setProperty('--card-blur', `${s.cardBlur}px`);
 
+  r.setProperty('--text-highlight', hslString(s.textHighlight));
   r.setProperty('--text-primary', s.textColors.primary);
   r.setProperty('--text-secondary', s.textColors.secondary);
   r.setProperty('--text-muted', s.textColors.muted);
-  r.setProperty('--text-highlight', hslString(s.textColors.highlight));
 
   const MAX_ACCENT_SLOTS = 32;
   for (let i = 0; i < MAX_ACCENT_SLOTS; i++) {

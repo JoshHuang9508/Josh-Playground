@@ -61,6 +61,7 @@ div.terminal.no-transition {
 
 div.terminal span {
   min-width: fit-content;
+  line-height: 1.2;
   background: none;
 }
 
