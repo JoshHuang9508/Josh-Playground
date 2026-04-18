@@ -36,10 +36,10 @@ export default function HomeView() {
   useTerminalCommand({
     open: {
       name: 'open',
-      description: 'Open a page',
-      usage: '@#00ffaaopen@# @#fff700<page_name>@#',
+      description: t('home.commands.open.description'),
+      usage: t('home.commands.open.usage'),
       args: ['github', 'youtube', 'twitter', 'instagram', 'twitch', 'discord', 'email', 'osu'],
-      handler: (_cmd, args) => {
+      handler: (_cmd, args, _flags) => {
         const pages = args;
         if (!pages.length) {
           emitTerminalLog(t('home.commands.open.usage'));
@@ -98,7 +98,7 @@ export default function HomeView() {
   return (
     <div className={styles['home-page']}>
       <div className={styles['section']}>
-        <span className={styles['section-label']}>{t('/.sections.aboutMe')}</span>
+        <span className={styles['section-label']}>{t('home.sections.aboutMe')}</span>
         <div className={styles['bento']}>
           {/* Left column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -109,12 +109,12 @@ export default function HomeView() {
                 <img className={`${styles['avatar']} ${styles['avatar-back']}`} src="/assets/pfp_rl.png" alt="Profile alt" />
               </div>
               <div className={styles['hero-info']}>
-                <span className={styles['hero-name']}>{t('/.hero.name')}</span>
+                <span className={styles['hero-name']}>{t('home.hero.name')}</span>
                 <div className={styles['hero-title-container']}>
-                  <span className={styles['hero-age']}>{t('/.hero.age')}</span>
-                  <span className={styles['hero-school']}>{t('/.hero.school')}</span>
+                  <span className={styles['hero-age']}>{t('home.hero.age')}</span>
+                  <span className={styles['hero-school']}>{t('home.hero.school')}</span>
                 </div>
-                <ColorSpan className={styles['hero-bio']} str={t('/.hero.bio')} />
+                <ColorSpan className={styles['hero-bio']} str={t('home.hero.bio')} />
                 <div className={styles['social-row']}>
                   {SOCIAL_LINKS.map((social) => (
                     <img
@@ -133,9 +133,9 @@ export default function HomeView() {
             {/* Latest post preview */}
             <div className={styles['preview-card']} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
               <div className={styles['preview-header']}>
-                <ColorSpan className={styles['card-label']} str={t('/.sections.latestPost')} />
+                <ColorSpan className={styles['card-label']} str={t('home.sections.latestPost')} />
                 <a className={styles['view-all-link']} href="#/blog" onClick={(e) => e.stopPropagation()}>
-                  {t('/.latestPost.allPosts')}
+                  {t('home.latestPost.allPosts')}
                 </a>
               </div>
               {latestPost ? (
@@ -146,8 +146,8 @@ export default function HomeView() {
                 </>
               ) : (
                 <>
-                  <span className={styles['post-title']}>{t('/.latestPost.comingSoon')}</span>
-                  <p className={styles['post-excerpt']}>{t('/.latestPost.stayTuned')}</p>
+                  <span className={styles['post-title']}>{t('home.latestPost.comingSoon')}</span>
+                  <p className={styles['post-excerpt']}>{t('home.latestPost.stayTuned')}</p>
                 </>
               )}
             </div>
@@ -158,9 +158,9 @@ export default function HomeView() {
             {/* Projects preview */}
             <div className={styles['preview-card']} onClick={() => (window.location.hash = `#/projects`)}>
               <div className={styles['preview-header']}>
-                <ColorSpan className={styles['card-label']} str={t('/.sections.projects')} />
+                <ColorSpan className={styles['card-label']} str={t('home.sections.projects')} />
                 <a className={styles['view-all-link']} href="#/projects" onClick={(e) => e.stopPropagation()}>
-                  {t('/.projects.viewAll')}
+                  {t('home.projects.viewAll')}
                 </a>
               </div>
               <div className={styles['project-carousel']}>
@@ -171,7 +171,7 @@ export default function HomeView() {
                     style={{ position: i === 0 ? 'relative' : 'absolute', top: 0, left: 0, width: '100%' }}
                   >
                     <div className={styles['project-img']} style={{ borderColor: project.accent }}>
-                      {project.images[0] ? <img src={project.images[0]} alt={project.name} /> : <span className={styles['no-image']}>{t('/.projects.noImage')}</span>}
+                      {project.images[0] ? <img src={project.images[0]} alt={project.name} /> : <span className={styles['no-image']}>{t('home.projects.noImage')}</span>}
                     </div>
                     <div className={styles['project-info']}>
                       <span className={styles['project-name']}>{project.name}</span>
@@ -197,23 +197,23 @@ export default function HomeView() {
             {/* osu! stats preview */}
             <div className={styles['preview-card']} onClick={() => (window.location.hash = '#/osu')}>
               <div className={styles['preview-header']}>
-                <ColorSpan className={styles['card-label']} str={t('/.sections.osuStats')} />
+                <ColorSpan className={styles['card-label']} str={t('home.sections.osuStats')} />
                 <a className={styles['view-all-link']} href="#/osu" onClick={(e) => e.stopPropagation()}>
-                  {t('/.osu.details')}
+                  {t('home.osu.details')}
                 </a>
               </div>
               <div className={styles['stat-row']}>
                 <div className={styles['stat-item']}>
                   <span className={styles['stat-value']}>{osuUser ? `#${osuUser.globalRank?.toLocaleString() ?? '--'}` : '--'}</span>
-                  <span className={styles['stat-label']}>{t('/.osu.globalRank')}</span>
+                  <span className={styles['stat-label']}>{t('home.osu.globalRank')}</span>
                 </div>
                 <div className={styles['stat-item']}>
                   <span className={styles['stat-value']}>{osuUser ? `${osuUser.pp.toLocaleString()}` : '--'}</span>
-                  <span className={styles['stat-label']}>{t('/.osu.pp')}</span>
+                  <span className={styles['stat-label']}>{t('home.osu.pp')}</span>
                 </div>
                 <div className={styles['stat-item']}>
                   <span className={styles['stat-value']}>{osuUser ? `${osuUser.accuracy.toFixed(1)}%` : '--'}</span>
-                  <span className={styles['stat-label']}>{t('/.osu.accuracy')}</span>
+                  <span className={styles['stat-label']}>{t('home.osu.accuracy')}</span>
                 </div>
               </div>
             </div>
@@ -223,42 +223,42 @@ export default function HomeView() {
 
       <hr className="divider" />
 
-      {/* Feature showcase & console tutorial */}
+      {/* Feature showcase & terminal tutorial */}
       <div className={styles['section']}>
-        <span className={styles['section-label']}>{t('/.sections.aboutSite')}</span>
+        <span className={styles['section-label']}>{t('home.sections.aboutSite')}</span>
         <div className={styles['feature-card']}>
           <p className={styles['feature-title']}>
-            <ColorSpan str={t('/.features.terminal.title')} />
+            <ColorSpan str={t('home.features.terminal.title')} />
           </p>
           <p className={styles['feature-desc']}>
-            <ColorSpan str={t('/.features.terminal.desc')} />
+            <ColorSpan str={t('home.features.terminal.desc')} />
           </p>
           <div className={styles['shortcut-list']}>
             <span className={styles['shortcut']}>
-              <span className={styles['shortcut-key']}>{t('/.features.terminal.ctrl')}</span>+<span className={styles['shortcut-key']}>{t('/.features.terminal.backtick')}</span>{' '}
-              {t('/.features.terminal.toggleConsole')}
+              <span className={styles['shortcut-key']}>{t('home.features.terminal.ctrl')}</span>+<span className={styles['shortcut-key']}>{t('home.features.terminal.backtick')}</span>{' '}
+              {t('home.features.terminal.toggleTerminal')}
             </span>
             <span className={styles['shortcut']}>
-              <span className={styles['shortcut-key']}>{t('/.features.terminal.esc')}</span> {t('/.features.terminal.minimize')}
+              <span className={styles['shortcut-key']}>{t('home.features.terminal.esc')}</span> {t('home.features.terminal.minimize')}
             </span>
             <span className={styles['shortcut']}>
-              <span className={styles['shortcut-key']}>{t('/.features.terminal.tab')}</span> {t('/.features.terminal.autocomplete')}
+              <span className={styles['shortcut-key']}>{t('home.features.terminal.tab')}</span> {t('home.features.terminal.autocomplete')}
             </span>
           </div>
         </div>
         <div className={styles['feature-card']}>
           <p className={styles['feature-title']}>
-            <ColorSpan str={t('/.features.commands.title')} />
+            <ColorSpan str={t('home.features.commands.title')} />
           </p>
           <p className={styles['feature-desc']}>
-            <ColorSpan str={t('/.features.commands.desc')} />
+            <ColorSpan str={t('home.features.commands.desc')} />
           </p>
         </div>
       </div>
 
       <hr className="divider" />
 
-      <p className={styles['footer']}>{t('/.footer')}</p>
+      <p className={styles['footer']}>{t('home.footer')}</p>
     </div>
   );
 }

@@ -70,8 +70,6 @@ export const findAvailableCommand = (input: string, commandList: Types.CommandLi
 
   let availables: string[] = [];
 
-  console.log(parts);
-
   if (!input.startsWith(' ')) {
     if (!command) {
       availables.push(...commands.map((cmd) => cmd.name));

@@ -14,12 +14,12 @@ export default function BlogView() {
 
   return (
     <div className={styles['blog-page']}>
-      <p className="page-subtitle">{t('/blog.subtitle')}</p>
+      <p className="page-subtitle">{t('blog.subtitle')}</p>
       <hr className="divider" />
 
-      {loading && <p style={{ color: '#888' }}>{t('/blog.loading')}</p>}
+      {loading && <p style={{ color: '#888' }}>{t('blog.loading')}</p>}
 
-      {!loading && posts.length === 0 && <div className={styles['empty']}>{t('/blog.empty')}</div>}
+      {!loading && posts.length === 0 && <div className={styles['empty']}>{t('blog.empty')}</div>}
 
       {posts.length > 0 && (
         <div className={styles['timeline']}>

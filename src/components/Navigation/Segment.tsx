@@ -9,7 +9,7 @@ interface SegmentProps {
 export default function Segment({ segment, isLast, onSegmentClick }: SegmentProps) {
   return (
     <>
-      <span className={styles['separator']}>/</span>
+      <span className={styles['separator']}>{'/'}</span>
       <span className={`${styles['segment']} ${isLast ? styles['active'] : ''}`} onClick={onSegmentClick}>
         {segment}
       </span>

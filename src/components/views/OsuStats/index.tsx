@@ -195,19 +195,19 @@ export default function OsuStatsView() {
       name: 'stats',
       description: 'Show osu! stats',
       usage: '@#00ffaastats@#',
-      handler: () => {
+      handler: (_cmd, _args, _flags) => {
         if (!user) {
-          emitTerminalLog(t('/osu.commands.stats.notAvailable'));
+          emitTerminalLog(t('osu.commands.stats.notAvailable'));
           return;
         }
         emitTerminalLog(
-          t('/osu.commands.stats.header', user.username),
-          t('/osu.commands.stats.globalRank', formatNumber(user.globalRank)),
-          t('/osu.commands.stats.countryRank', formatNumber(user.countryRank)),
-          t('/osu.commands.stats.pp', formatNumber(user.pp)),
-          t('/osu.commands.stats.accuracy', user.accuracy.toFixed(2) + '%'),
-          t('/osu.commands.stats.playCount', formatNumber(user.playCount)),
-          t('/osu.commands.stats.playTime', formatPlayTime(user.playTime)),
+          t('osu.commands.stats.header', user.username),
+          t('osu.commands.stats.globalRank', formatNumber(user.globalRank)),
+          t('osu.commands.stats.countryRank', formatNumber(user.countryRank)),
+          t('osu.commands.stats.pp', formatNumber(user.pp)),
+          t('osu.commands.stats.accuracy', user.accuracy.toFixed(2) + '%'),
+          t('osu.commands.stats.playCount', formatNumber(user.playCount)),
+          t('osu.commands.stats.playTime', formatPlayTime(user.playTime)),
         );
       },
     },
@@ -216,7 +216,7 @@ export default function OsuStatsView() {
   if (loading) {
     return (
       <div className={styles['osu-page']}>
-        <p style={{ color: '#888' }}>{t('/osu.loading')}</p>
+        <p style={{ color: '#888' }}>{t('osu.loading')}</p>
       </div>
     );
   }
@@ -225,20 +225,20 @@ export default function OsuStatsView() {
     return (
       <div className={styles['osu-page']}>
         <div className={styles['unavailable']}>
-          <p>{t('/osu.unavailable.title')}</p>
-          <p style={{ fontSize: '0.85rem' }}>{t('/osu.unavailable.desc')}</p>
+          <p>{t('osu.unavailable.title')}</p>
+          <p style={{ fontSize: '0.85rem' }}>{t('osu.unavailable.desc')}</p>
         </div>
       </div>
     );
   }
 
   const statCells = [
-    { label: t('/osu.labels.globalRank'), value: user.globalRank !== null ? `#${formatNumber(user.globalRank)}` : '--' },
-    { label: t('/osu.labels.pp'), value: `${formatNumber(user.pp)}pp` },
-    { label: t('/osu.labels.playCount'), value: formatNumber(user.playCount) },
-    { label: t('/osu.labels.country'), value: user.countryRank !== null ? `#${formatNumber(user.countryRank)}` : '--' },
-    { label: t('/osu.labels.accuracy'), value: `${user.accuracy.toFixed(2)}%` },
-    { label: t('/osu.labels.playTime'), value: formatPlayTime(user.playTime) },
+    { label: t('osu.globalRank'), value: user.globalRank !== null ? `#${formatNumber(user.globalRank)}` : '--' },
+    { label: t('osu.pp'), value: `${formatNumber(user.pp)}pp` },
+    { label: t('osu.playCount'), value: formatNumber(user.playCount) },
+    { label: t('osu.country'), value: user.countryRank !== null ? `#${formatNumber(user.countryRank)}` : '--' },
+    { label: t('osu.accuracy'), value: `${user.accuracy.toFixed(2)}%` },
+    { label: t('osu.playTime'), value: formatPlayTime(user.playTime) },
   ];
 
   const peakRankValue = user.peakRank?.rank ?? null;
@@ -280,10 +280,10 @@ export default function OsuStatsView() {
       {/* Rank History */}
       <div className={styles['rank-card']}>
         <div className={styles['rank-card-top']}>
-          <CardHeader color="#ff77b7" title="RANK HISTORY" />
+          <CardHeader color="#ff77b7" title={t('osu.rankHistory')} />
           {user.peakRank && (
             <div className={styles['peak-note']}>
-              Peak <span style={{ color: '#ff77b7' }}>#{formatNumber(user.peakRank.rank)}</span>
+              {t('osu.peakRank')} <span style={{ color: '#ff77b7' }}>#{formatNumber(user.peakRank.rank)}</span>
               <span className={styles['peak-date']}> · {new Date(user.peakRank.updated_at).toLocaleDateString()}</span>
             </div>
           )}
@@ -296,15 +296,15 @@ export default function OsuStatsView() {
       {/* Three-column charts */}
       <div className={styles['charts-row']}>
         <div className={`${styles['chart-card']} ${styles['chart-card-2wide']}`}>
-          <CardHeader color="#ffa24c" title="MONTHLY ACTIVITY" />
+          <CardHeader color="#ffa24c" title={t('osu.monthlyActivity')} />
           <MonthlyChart data={user.monthlyPlaycounts} />
         </div>
         <div className={styles['chart-card']}>
-          <CardHeader color="#00f3ff" title="HIT DISTRIBUTION" />
+          <CardHeader color="#00f3ff" title={t('osu.hitDistribution')} />
           <HitDistChart counts={user.hitCounts} />
         </div>
         <div className={styles['chart-card']}>
-          <CardHeader color="#fff700" title="GRADE COUNTS" />
+          <CardHeader color="#fff700" title={t('osu.gradeCounts')} />
           <GradeChart grades={user.gradeCounts} />
         </div>
       </div>
@@ -313,19 +313,19 @@ export default function OsuStatsView() {
       <div className={styles['pill-row']}>
         <div className={styles['pill']}>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
-            {user.dailyChallenge.currentStreak}d
+            {t('osu.day', user.dailyChallenge.currentStreak.toString())}
           </span>
-          <span className={styles['pill-label']}>daily streak</span>
+          <span className={styles['pill-label']}>{t('osu.dailyStreak')}</span>
           <span className={styles['pill-sep']}>·</span>
-          <span className={styles['pill-label']}>Best </span>
+          <span className={styles['pill-label']}>{t('osu.bestStreak')}</span>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
-            {user.dailyChallenge.bestStreak}d
+            {t('osu.day', user.dailyChallenge.bestStreak.toString())}
           </span>
         </div>
 
         {user.peakRank && (
           <div className={styles['pill']}>
-            <span className={styles['pill-label']}>PEAK</span>
+            <span className={styles['pill-label']}>{t('osu.peakRank')}</span>
             <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
               #{formatNumber(user.peakRank.rank)}
             </span>
@@ -333,21 +333,21 @@ export default function OsuStatsView() {
         )}
 
         <div className={styles['pill']}>
-          <span className={styles['pill-label']}>MAX COMBO</span>
+          <span className={styles['pill-label']}>{t('osu.maxCombo')}</span>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {formatNumber(user.maximumCombo)}x
           </span>
         </div>
 
         <div className={styles['pill']}>
-          <span className={styles['pill-label']}>TOTAL HITS</span>
+          <span className={styles['pill-label']}>{t('osu.totalHits')}</span>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {formatLargeNumber(user.totalHits)}
           </span>
         </div>
 
         <div className={styles['pill']}>
-          <span className={styles['pill-label']}>RANKED SCORE</span>
+          <span className={styles['pill-label']}>{t('osu.rankedScore')}</span>
           <span className={styles['pill-value']} style={{ color: formatHueStyleProperty(user.profileHue) }}>
             {formatLargeNumber(user.rankedScore)}
           </span>
@@ -357,7 +357,7 @@ export default function OsuStatsView() {
       {/* Profile Page */}
       {user.pageHtml && (
         <div className={styles['profile-card']}>
-          <CardHeader color="#fff700" title="PROFILE PAGE" />
+          <CardHeader color="#fff700" title={t('osu.profilePage')} />
           <div
             className={`${styles['profile-page-content']} markdown-content`}
             dangerouslySetInnerHTML={{

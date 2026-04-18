@@ -14,22 +14,22 @@ export default function ProjectsView() {
   useTerminalCommand({
     open: {
       name: 'open',
-      description: 'Open a project',
-      usage: '@#00ffaaopen@# @#fff700<project_name>@#',
+      description: t('projects.commands.open.description'),
+      usage: t('projects.commands.open.usage'),
       args: PROJECTS.map((p) => p.slug),
-      handler: (_cmd, args) => {
+      handler: (_cmd, args, _flags) => {
         const projects = args;
         if (!projects.length) {
-          emitTerminalLog(t('/projects.commands.open.usage'));
+          emitTerminalLog(t('projects.commands.open.usage'));
           return;
         }
         projects.forEach((pj) => {
           const project = PROJECTS.find((p) => p.slug === pj);
           if (project) {
             window.open(`https://github.com/${project.github.owner}/${project.github.repo}`, '_blank');
-            emitTerminalLog(t('/projects.commands.open.opening', project.name));
+            emitTerminalLog(t('projects.commands.open.opening', project.name));
           } else {
-            emitTerminalLog(t('/projects.commands.open.notFound', pj));
+            emitTerminalLog(t('projects.commands.open.notFound', pj));
           }
         });
       },
@@ -38,7 +38,7 @@ export default function ProjectsView() {
 
   return (
     <div className={styles['projects-page']}>
-      <p className="page-subtitle">{t('/projects.subtitle')}</p>
+      <p className="page-subtitle">{t('projects.subtitle')}</p>
       <hr className="divider" />
 
       {PROJECTS.map((project) => (

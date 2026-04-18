@@ -4,8 +4,8 @@ type NestedRecord = { [key: string]: string | string[] | NestedRecord };
 
 /**
  * Template interpolation helper for i18n.
- * Usage: t("console.placeholder") => "Feel confused? Type 'help' to get started!"
- *        t("commands.commandNotFound", "xyz") => "Command not found: @#fff700xyz"
+ * Usage: t("terminal.placeholder") => "Feel confused? Type 'help' to get started!"
+ *        t("terminal.commandNotFound", "xyz") => "Command not found: @#fff700xyz"
  *
  * Supports {0}, {1}, ... placeholders in the string.
  */

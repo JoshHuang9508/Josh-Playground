@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import type * as Types from '@/lib/types';
 
-import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from '@/lib/constants';
+import { TERMINAL_MIN_WIDTH, TERMINAL_MIN_HEIGHT, DEFAULT_SITE_NAME } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
@@ -16,21 +16,21 @@ import ColorSpan from '@/components/ColorSpan';
 
 import { IsMobile } from '@/utils';
 
-import styles from './Console.module.css';
+import styles from './Terminal.module.css';
 
-interface ConsoleProps {
+interface TerminalProps {
   id: string;
-  windowState: Types.ConsoleWindowState;
-  onWindowStateChange: (id: string, state: Types.ConsoleWindowState) => void;
+  windowState: Types.TerminalWindowState;
+  onWindowStateChange: (id: string, state: Types.TerminalWindowState) => void;
   positionOffset: number;
   minimizedIndex: number;
 }
 
-export default function Console({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: ConsoleProps) {
+export default function Terminal({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: TerminalProps) {
   const appContext = useContext(AppContext)!;
 
-  const consoleBox = useRef<HTMLDivElement>(null);
-  const inputBox = useRef<HTMLInputElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const outputEndRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef({
     type: '' as '' | 'drag' | 'resize',
@@ -63,7 +63,7 @@ export default function Console({ id, windowState, onWindowStateChange, position
   const [inputValue, setInputValue] = useState<string>('');
   const [inputTemp, setInputTemp] = useState<string>('');
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
-  const [consoleContents, setConsoleContents] = useState<string[]>([]);
+  const [terminalContents, setTerminalContents] = useState<string[]>([]);
   const [cmdHistoryIndex, setCmdHistoryIndex] = useState<number>(-1);
   const [available, setAvailable] = useState<string[]>([]);
   const [availableIndex, setAvailableIndex] = useState<number>(0);
@@ -73,9 +73,7 @@ export default function Console({ id, windowState, onWindowStateChange, position
     return hashPaths.length > 0 ? `/${hashPaths.join('/')}/` : '/';
   }, [appContext.currentHash]);
 
-  const prefix = window
-    ? `@#FF77B7${appContext.username ?? t('global.defaultUsername')}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
-    : `@#FF77B7${appContext.username ?? t('global.defaultUsername')}@#@@#FFA24C${t('global.siteName')}@#:~${currentURL}$ `;
+  const prefix = `@#FF77B7${appContext.username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentURL}$ `;
   const isMinimized = windowState === 'minimized';
   const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
   const iconY = window.innerHeight - 64;
@@ -87,8 +85,8 @@ export default function Console({ id, windowState, onWindowStateChange, position
     const available = findAvailable(input, appContext.extensionCommands, appContext.extensionArgs, appContext.extensionPaths, appContext.currentHash);
     setAvailable(available);
 
-    if (inputBox.current) {
-      inputBox.current.style.color = available.length > 0 ? '#fff700' : '';
+    if (inputRef.current) {
+      inputRef.current.style.color = available.length > 0 ? '#fff700' : '';
     }
   };
 
@@ -105,7 +103,7 @@ export default function Console({ id, windowState, onWindowStateChange, position
 
       const handler = findCommandHandler(fullCommand, appContext.extensionCommands);
       if (handler) handler();
-      else emitTerminalLog(t('commands.commandNotFound', fullCommand));
+      else emitTerminalLog(t('terminal.commandNotFound', fullCommand));
 
       setActiveTerminal(null);
       handleInputChange({ target: { value: '' } });
@@ -179,21 +177,21 @@ export default function Console({ id, windowState, onWindowStateChange, position
       let newH = ref.startHeight;
 
       if (ref.resizeDir.includes('e')) {
-        newW = Math.min(Math.max(CONSOLE_MIN_WIDTH, ref.startWidth + dx), vw - newX);
+        newW = Math.min(Math.max(TERMINAL_MIN_WIDTH, ref.startWidth + dx), vw - newX);
       }
       if (ref.resizeDir.includes('w')) {
         const maxDx = ref.startPosX;
-        const clampedDx = Math.min(dx, ref.startWidth - CONSOLE_MIN_WIDTH);
+        const clampedDx = Math.min(dx, ref.startWidth - TERMINAL_MIN_WIDTH);
         const finalDx = Math.max(-maxDx, clampedDx);
         newW = ref.startWidth - finalDx;
         newX = ref.startPosX + finalDx;
       }
       if (ref.resizeDir.includes('s')) {
-        newH = Math.min(Math.max(CONSOLE_MIN_HEIGHT, ref.startHeight + dy), vh - newY);
+        newH = Math.min(Math.max(TERMINAL_MIN_HEIGHT, ref.startHeight + dy), vh - newY);
       }
       if (ref.resizeDir.includes('n')) {
         const maxDy = ref.startPosY;
-        const clampedDy = Math.min(dy, ref.startHeight - CONSOLE_MIN_HEIGHT);
+        const clampedDy = Math.min(dy, ref.startHeight - TERMINAL_MIN_HEIGHT);
         const finalDy = Math.max(-maxDy, clampedDy);
         newH = ref.startHeight - finalDy;
         newY = ref.startPosY + finalDy;
@@ -301,16 +299,16 @@ export default function Console({ id, windowState, onWindowStateChange, position
   useEffect(() => {
     const unsubscribe = subscribeTerminal(
       id,
-      (messages) => setConsoleContents((prev) => [...prev, ...messages]),
-      () => setConsoleContents([]),
+      (messages) => setTerminalContents((prev) => [...prev, ...messages]),
+      () => setTerminalContents([]),
     );
-    setConsoleContents(t('console.welcome'));
+    setTerminalContents(t('terminal.welcome'));
     return unsubscribe;
   }, [id]);
 
   useEffect(() => {
-    if (consoleBox.current) consoleBox.current.scrollTop = consoleBox.current.scrollHeight;
-  }, [consoleContents, inputValue]);
+    if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+  }, [terminalContents, inputValue]);
 
   useEffect(() => {
     if (outputEndRef.current) {
@@ -319,13 +317,13 @@ export default function Console({ id, windowState, onWindowStateChange, position
         block: 'end',
       });
     }
-  }, [consoleContents]);
+  }, [terminalContents]);
 
   return (
     <div
-      ref={consoleBox}
+      ref={terminalRef}
       data-header
-      className={`${styles['console']} ${isMinimized ? styles['minimized'] : ''} ${isDragging ? styles['no-transition'] : ''}`}
+      className={`${styles['terminal']} ${isMinimized ? styles['minimized'] : ''} ${isDragging ? styles['no-transition'] : ''}`}
       style={{
         left: isMinimized ? iconX : position.x,
         top: isMinimized ? iconY : position.y,
@@ -358,11 +356,11 @@ export default function Console({ id, windowState, onWindowStateChange, position
           <span className={styles['minimize']} onClick={handleMinimize} />
           <span className={styles['maximize']} onClick={handleMaximize} />
         </div>
-        <p className={styles['title']}>{t('console.title')}</p>
+        <p className={styles['title']}>{t('terminal.title')}</p>
       </div>
 
       <div tabIndex={-1} className={styles['output']} onScroll={handleOutputBoxScroll}>
-        {consoleContents.map((content, index) => (
+        {terminalContents.map((content, index) => (
           <div key={index} className={styles['output-line']}>
             <ColorSpan str={content} />
           </div>
@@ -378,7 +376,7 @@ export default function Console({ id, windowState, onWindowStateChange, position
 
       <div className={styles['input']}>
         <ColorSpan className={styles['prefix']} str={prefix} />
-        <input ref={inputBox} type="text" value={`${inputValue}`} placeholder={t('console.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
+        <input ref={inputRef} type="text" value={`${inputValue}`} placeholder={t('terminal.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
       </div>
     </div>
   );

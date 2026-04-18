@@ -87,7 +87,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
               {tag}
             </span>
           ))}
-          <span className={styles['article-read-time']}>{post.readTime} min read</span>
+          <span className={styles['article-read-time']}>{t('blogPost.readTime', post.readTime.toString())}</span>
         </div>
       </div>
 

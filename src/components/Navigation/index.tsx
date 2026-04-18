@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 
 import { AppContext } from '@/pages/index';
 
@@ -21,7 +21,7 @@ export default function Navigation({ currentHash }: NavigationProps) {
   return (
     <nav className={styles['breadcrumb']}>
       <span className={`${styles['segment']} ${styles['home']}`} onClick={() => handleSegmentClick('#/')}>
-        ~
+        {'~'}
       </span>
       {segments.map((segment, index) => (
         <Segment key={index} segment={segment} isLast={index === segments.length - 1} onSegmentClick={() => handleSegmentClick(`#/${segments.slice(0, index + 1).join('/')}`)} />

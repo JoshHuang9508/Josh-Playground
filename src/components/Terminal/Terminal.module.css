@@ -1,4 +1,4 @@
-div.console {
+div.terminal {
   position: absolute;
   z-index: 999;
   display: flex;
@@ -21,7 +21,7 @@ div.console {
     border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-div.console.minimized {
+div.terminal.minimized {
   width: 48px !important;
   height: 48px !important;
   cursor: pointer;
@@ -29,20 +29,20 @@ div.console.minimized {
   opacity: 0.85;
 }
 
-div.console.minimized:hover {
+div.terminal.minimized:hover {
   opacity: 1;
   filter: brightness(1.2);
 }
 
-div.console.minimized > *:not(.minimize-icon) {
+div.terminal.minimized > *:not(.minimize-icon) {
   display: none;
 }
 
-div.console .minimize-icon {
+div.terminal .minimize-icon {
   display: none;
 }
 
-div.console.minimized .minimize-icon {
+div.terminal.minimized .minimize-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,11 +55,11 @@ div.console.minimized .minimize-icon {
   user-select: none;
 }
 
-div.console.no-transition {
+div.terminal.no-transition {
   transition: none;
 }
 
-div.console span {
+div.terminal span {
   min-width: fit-content;
   background: none;
 }

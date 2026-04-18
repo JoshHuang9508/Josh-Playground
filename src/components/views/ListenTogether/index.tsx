@@ -4,7 +4,7 @@ import ReactPlayer from 'react-player';
 
 import type * as Types from '@/lib/types';
 
-import { VALID_VIBES } from '@/lib/constants';
+import { DEFAULT_USERNAME, VALID_VIBES } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
@@ -87,9 +87,9 @@ export default function ListenTogetherView() {
   useTerminalCommand({
     send: {
       name: 'send',
-      description: 'Send a message to the room',
-      usage: '@#00ffaasend@# @#fff700<message>@#',
-      handler: (_cmd, args) => {
+      description: t('listentogether.commands.send.description'),
+      usage: t('listentogether.commands.send.usage'),
+      handler: (_cmd, args, _flags) => {
         const message = args.join(' ') ?? '';
         if (!message) {
           emitTerminalLog(t('listentogether.commands.send.usage'));
@@ -100,9 +100,9 @@ export default function ListenTogetherView() {
     },
     queue: {
       name: 'queue',
-      description: 'Add a YouTube video or playlist to the queue',
-      usage: '@#00ffaaqueue@# @#fff700<video_url|-playlist_url>@#',
-      handler: async (_cmd, args) => {
+      description: t('listentogether.commands.queue.description'),
+      usage: t('listentogether.commands.queue.usage'),
+      handler: async (_cmd, args, _flags) => {
         const URL = args[0] ?? '';
         if (!URL) {
           emitTerminalLog(t('listentogether.commands.queue.usage'));
@@ -139,9 +139,9 @@ export default function ListenTogetherView() {
     },
     remove: {
       name: 'remove',
-      description: 'Remove a track from the queue by index (* = all)',
-      usage: '@#00ffaaremove@# @#fff700<index|*>@#',
-      handler: (_cmd, args) => {
+      description: t('listentogether.commands.remove.description'),
+      usage: t('listentogether.commands.remove.usage'),
+      handler: (_cmd, args, _flags) => {
         const indexToRm = args[0] ?? '';
         if (!indexToRm) {
           emitTerminalLog(t('listentogether.commands.remove.usage'));
@@ -170,9 +170,9 @@ export default function ListenTogetherView() {
     },
     play: {
       name: 'play',
-      description: 'Start or resume playback',
-      usage: '@#00ffaaplay@#',
-      handler: () => {
+      description: t('listentogether.commands.play.description'),
+      usage: t('listentogether.commands.play.usage'),
+      handler: (_cmd, _args, _flags) => {
         socketInstance?.play();
         emitTerminalLog(t('listentogether.commands.play.start'));
         socketInstance?.addRoomLog(t('listentogether.logs.play', username));
@@ -181,9 +181,9 @@ export default function ListenTogetherView() {
     },
     pause: {
       name: 'pause',
-      description: 'Pause playback',
-      usage: '@#00ffaapause@#',
-      handler: () => {
+      description: t('listentogether.commands.pause.description'),
+      usage: t('listentogether.commands.pause.usage'),
+      handler: (_cmd, _args, _flags) => {
         socketInstance?.pause();
         emitTerminalLog(t('listentogether.commands.pause.pause'));
         socketInstance?.addRoomLog(t('listentogether.logs.pause', username));
@@ -192,8 +192,8 @@ export default function ListenTogetherView() {
     },
     switch: {
       name: 'switch',
-      description: 'Switch to a track by index, or next / previous',
-      usage: '@#00ffaaswitch@# @#fff700<index|-n|-p>@#',
+      description: t('listentogether.commands.switch.description'),
+      usage: t('listentogether.commands.switch.usage'),
       flags: ['-n', '--next', '-p', '--prev'],
       handler: (_cmd, args, flags) => {
         const index = args[0] ?? '';
@@ -228,9 +228,9 @@ export default function ListenTogetherView() {
     },
     volume: {
       name: 'volume',
-      description: 'Set the playback volume (0-100)',
-      usage: '@#00ffaavolume@# @#fff700<0-100>@#',
-      handler: (_cmd, args) => {
+      description: t('listentogether.commands.volume.description'),
+      usage: t('listentogether.commands.volume.usage'),
+      handler: (_cmd, args, _flags) => {
         const volume = args[0] ?? '';
         if (!volume) {
           emitTerminalLog(t('listentogether.commands.volume.usage'));
@@ -247,8 +247,8 @@ export default function ListenTogetherView() {
     },
     loop: {
       name: 'loop',
-      description: 'Toggle loop mode for the current track',
-      usage: '@#00ffaaloop@# @#fff700[-t|-f]@#',
+      description: t('listentogether.commands.loop.description'),
+      usage: t('listentogether.commands.loop.usage'),
       flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
@@ -268,8 +268,8 @@ export default function ListenTogetherView() {
     },
     random: {
       name: 'random',
-      description: 'Toggle shuffle / random playback',
-      usage: '@#00ffaarandom@# @#fff700[-t|-f]@#',
+      description: t('listentogether.commands.random.description'),
+      usage: t('listentogether.commands.random.usage'),
       flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
@@ -289,9 +289,9 @@ export default function ListenTogetherView() {
     },
     rate: {
       name: 'rate',
-      description: 'Set playback speed (e.g. 100 = normal)',
-      usage: '@#00ffaarate@# @#fff700<percent>@#',
-      handler: (_cmd, args) => {
+      description: t('listentogether.commands.rate.description'),
+      usage: t('listentogether.commands.rate.usage'),
+      handler: (_cmd, args, _flags) => {
         const rate = args[0] ?? '';
         if (!rate) {
           emitTerminalLog(t('listentogether.commands.rate.usage'));
@@ -308,9 +308,9 @@ export default function ListenTogetherView() {
     },
     seek: {
       name: 'seek',
-      description: 'Jump to a specific time in seconds',
-      usage: '@#00ffaaseek@# @#fff700<seconds>@#',
-      handler: (_cmd, args) => {
+      description: t('listentogether.commands.seek.description'),
+      usage: t('listentogether.commands.seek.usage'),
+      handler: (_cmd, args, _flags) => {
         const seek = args[0] ?? '';
         if (!seek) {
           emitTerminalLog(t('listentogether.commands.seek.usage'));
@@ -331,9 +331,9 @@ export default function ListenTogetherView() {
     },
     refresh: {
       name: 'refresh',
-      description: 'Re-sync the player state from the server',
-      usage: '@#00ffaarefresh@#',
-      handler: () => {
+      description: t('listentogether.commands.refresh.description'),
+      usage: t('listentogether.commands.refresh.usage'),
+      handler: (_cmd, _args, _flags) => {
         socketInstance?.refresh();
         emitTerminalLog(t('listentogether.commands.refresh.message'));
         socketInstance?.addRoomLog(t('listentogether.logs.refresh', username));
@@ -341,8 +341,8 @@ export default function ListenTogetherView() {
     },
     playlist: {
       name: 'playlist',
-      description: 'Show the current playlist',
-      usage: '@#00ffaaplaylist@# @#fff700[-d|-l]@#',
+      description: t('listentogether.commands.playlist.description'),
+      usage: t('listentogether.commands.playlist.usage'),
       flags: ['-d', '--detail', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-d') || flags.includes('--detail')) {
@@ -364,10 +364,10 @@ export default function ListenTogetherView() {
     },
     vibe: {
       name: 'vibe',
-      description: 'Set the ambiance of the room',
-      usage: '@#00ffaavibe@# @#fff700<vibe_name>@#',
+      description: t('listentogether.commands.vibe.description'),
+      usage: t('listentogether.commands.vibe.usage'),
       flags: VALID_VIBES,
-      handler: (_cmd, args) => {
+      handler: (_cmd, args, _flags) => {
         const vibeName = args[0] as Types.VibeName;
         if (!vibeName || !VALID_VIBES.includes(vibeName)) {
           emitTerminalLog(t('listentogether.commands.vibe.invalid'));
@@ -397,7 +397,7 @@ export default function ListenTogetherView() {
     const socket = new ListenTogetherSocket();
     socket.connect({
       onConnect: async () => {
-        socket.join(localStorage.getItem('username') ?? t('global.defaultUsername'));
+        socket.join(localStorage.getItem('username') ?? DEFAULT_USERNAME);
         socket.ready();
       },
       onConnectError: () => emitTerminalLog(t('listentogether.errors.connectError', String(socket.id))),

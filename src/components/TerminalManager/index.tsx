@@ -1,24 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type * as Types from '@/lib/types';
 
-import Console from '@/components/Console';
+import Terminal from '@/components/Terminal';
 
-type ConsoleInstance = {
+type TerminalInstance = {
   id: string;
-  windowState: Types.ConsoleWindowState;
+  windowState: Types.TerminalWindowState;
   positionOffset: number;
 };
 
-export default function ConsoleManager() {
+export default function TerminalManager() {
   const nextZIndexRef = useRef(999);
 
-  const [consoles, setConsoles] = useState<ConsoleInstance[]>([{ id: '1', windowState: 'minimized', positionOffset: 0 }]);
+  const [terminals, setTerminals] = useState<TerminalInstance[]>([{ id: '1', windowState: 'minimized', positionOffset: 0 }]);
 
-  const minimizedIds = consoles.filter((c) => c.windowState === 'minimized').map((c) => c.id);
+  const minimizedIds = terminals.filter((t) => t.windowState === 'minimized').map((t) => t.id);
 
-  const toggleConsole = () => {
-    setConsoles((prev) => {
+  const toggleTerminal = () => {
+    setTerminals((prev) => {
       if (prev.length === 0) {
         return [{ id: '1', windowState: 'normal', positionOffset: 0 }];
       }
@@ -30,24 +30,24 @@ export default function ConsoleManager() {
     });
   };
 
-  const handleWindowStateChange = (id: string, state: Types.ConsoleWindowState) => {
+  const handleWindowStateChange = (id: string, state: Types.TerminalWindowState) => {
     if (state === 'closed') {
-      setConsoles((prev) => prev.map((c) => (c.id === id ? { ...c, windowState: 'minimized' } : c)));
+      setTerminals((prev) => prev.map((t) => (t.id === id ? { ...t, windowState: 'minimized' } : t)));
       return;
     }
-    setConsoles((prev) => prev.map((c) => (c.id === id ? { ...c, windowState: state } : c)));
+    setTerminals((prev) => prev.map((t) => (t.id === id ? { ...t, windowState: state } : t)));
   };
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === '`') {
         event.preventDefault();
-        toggleConsole();
+        toggleTerminal();
         return;
       }
 
       if (event.key === 'Escape') {
-        setConsoles((prev) => prev.map((c) => (c.windowState === 'normal' ? { ...c, windowState: 'minimized' as Types.ConsoleWindowState } : c)));
+        setTerminals((prev) => prev.map((t) => (t.windowState === 'normal' ? { ...t, windowState: 'minimized' as Types.TerminalWindowState } : t)));
       }
     };
 
@@ -68,7 +68,7 @@ export default function ConsoleManager() {
     return () => document.removeEventListener('pointerdownter', onPointerDown);
   }, []);
 
-  return consoles.map((c) => (
-    <Console key={c.id} id={c.id} windowState={c.windowState} onWindowStateChange={handleWindowStateChange} positionOffset={c.positionOffset} minimizedIndex={minimizedIds.indexOf(c.id)} />
+  return terminals.map((t) => (
+    <Terminal key={t.id} id={t.id} windowState={t.windowState} onWindowStateChange={handleWindowStateChange} positionOffset={t.positionOffset} minimizedIndex={minimizedIds.indexOf(t.id)} />
   ));
 }

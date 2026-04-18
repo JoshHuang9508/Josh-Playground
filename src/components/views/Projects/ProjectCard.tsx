@@ -48,7 +48,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             )}
           </div>
         ) : (
-          <div className={styles['gallery-placeholder']}>{t('/projects.noImages')}</div>
+          <div className={styles['gallery-placeholder']}>{t('projects.noImages')}</div>
         )}
       </div>
 

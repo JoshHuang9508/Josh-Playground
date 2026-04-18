@@ -2,6 +2,8 @@ import type * as Types from '@/lib/types';
 
 import { TAG_COLORS } from '@/lib/constants';
 
+import { t } from '@/lib/i18n';
+
 import styles from './Blog.module.css';
 
 interface PostCardProps {
@@ -25,7 +27,7 @@ export default function PostCard({ post, index }: PostCardProps) {
               {tag}
             </span>
           ))}
-          <span className={styles['read-time']}>{post.readTime} min read</span>
+          <span className={styles['read-time']}>{t('blog.readTime', post.readTime.toString())}</span>
           <span className={styles['slug-text']}>{post.slug}</span>
         </div>
       </div>

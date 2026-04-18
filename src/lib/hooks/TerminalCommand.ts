@@ -29,18 +29,18 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       description: 'List all available commands',
       usage: '@#00ffaahelp@#',
       handler: (_cmd, _args, _flags) => {
-        emitTerminalLog(t('commands.availableCommands'), t('commands.separator'));
+        emitTerminalLog(t('global.commands.help.availableCommands'), t('global.commands.help.separator'));
         Object.values(commandList).forEach((cmd) => {
-          emitTerminalLog(t('commands.help.usage', cmd.usage, cmd.description));
+          emitTerminalLog(t('global.commands.help.commandUsage', cmd.usage, cmd.description));
         });
         return;
       },
     },
     echo: {
       name: 'echo',
-      description: 'Print a message to the console',
+      description: 'Print a message to the terminal',
       usage: '@#00ffaaecho@# @#fff700<message>@#',
-      handler: (_cmd, args) => {
+      handler: (_cmd, args, _flags) => {
         emitTerminalLog(args.join(' '));
       },
     },
@@ -73,7 +73,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       name: 'cl',
       description: 'Clear the console output',
       usage: '@#00ffaacl@#',
-      handler: () => {
+      handler: (_cmd, _args, _flags) => {
         clearActiveTerminalLog();
       },
     },
@@ -81,7 +81,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       name: 'cd',
       description: 'Navigate to a different page',
       usage: '@#00ffaacd@# @#fff700<path>@#',
-      handler: (_cmd, args) => {
+      handler: (_cmd, args, _flags) => {
         const page = args[0] ?? '';
         const hash = window.location.hash.slice(1) || '/';
         let paths = hash.split('/').filter(Boolean);
@@ -226,7 +226,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           name: 'bg',
           description: 'Set or reset the background color',
           usage: '@#00ffaatheme bg@# @#fff700<h> <s> <l> [a]@#',
-          handler: (_cmd, args) => {
+          handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
@@ -247,7 +247,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           name: 'color',
           description: 'Set or reset the theme color',
           usage: '@#00ffaatheme color@# @#fff700<h> <s> <l>@#',
-          handler: (_cmd, args) => {
+          handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
@@ -263,7 +263,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           name: 'blur',
           description: 'Set or reset the card blur radius',
           usage: '@#00ffaatheme blur@# @#fff700<px>@#',
-          handler: (_cmd, args) => {
+          handler: (_cmd, args, _flags) => {
             const px = num(args[0]);
             if (Number.isNaN(px) || px < 0) {
               emitTerminalLog(t('commands.theme.blurInvalid'));
@@ -277,7 +277,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           name: 'text-highlight',
           description: 'Set or reset the text highlight color',
           usage: '@#00ffaatheme text-highlight@# @#fff700<h> <s> <l>@#',
-          handler: (_cmd, args) => {
+          handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
@@ -293,7 +293,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           name: 'text',
           description: 'Set or reset the text color',
           usage: '@#00ffaatheme text@# @#fff700<primary|secondary|muted> <#hex>@#',
-          handler: (_cmd, args) => {
+          handler: (_cmd, args, _flags) => {
             const which = args[0];
             const color = args[1];
             if (!['primary', 'secondary', 'muted'].includes(which)) {
@@ -312,7 +312,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           name: 'accent',
           description: 'Set or reset the accent color',
           usage: '@#00ffaatheme accent@# @#fff700<add|rm|set> <#hex>@#',
-          handler: (_cmd, args) => {
+          handler: (_cmd, args, _flags) => {
             const action = args[0];
             if (action === 'add') {
               const color = args[1];
@@ -386,7 +386,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
       name: 'username',
       description: 'Change your display name (max 20 chars)',
       usage: '@#00ffaausername@# @#fff700<name>@#',
-      handler: (_cmd, args) => {
+      handler: (_cmd, args, _flags) => {
         const name = args[0] ?? '';
         if (!name) {
           emitTerminalLog(t('commands.username.usage'));

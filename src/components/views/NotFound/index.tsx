@@ -12,7 +12,7 @@ export default function NotFoundView() {
       <div className={'container1'}>
         <div className="sub-container2" style={{ fontFamily: 'monospace' }}>
           <div>
-            <ColorSpan str={t('*.error')} />
+            <ColorSpan str={t('notfound.error', window.location.hash.slice(1))} />
           </div>
         </div>
       </div>

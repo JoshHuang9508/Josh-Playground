@@ -6,6 +6,8 @@ import type * as Types from '@/lib/types';
 
 import { DEFAULT_SETTINGS } from '@/lib/constants';
 
+import { t } from '@/lib/i18n';
+
 import { hslString } from '@/lib/settings';
 
 import ColorSpan from '@/components/ColorSpan';
@@ -15,9 +17,9 @@ import styles from './Settings.module.css';
 type TextColorKey = 'primary' | 'secondary' | 'muted';
 
 const TEXT_FIELDS: { key: TextColorKey; label: string }[] = [
-  { key: 'primary', label: 'primary' },
-  { key: 'secondary', label: 'secondary' },
-  { key: 'muted', label: 'muted' },
+  { key: 'primary', label: t('settings.text.primary') },
+  { key: 'secondary', label: t('settings.text.secondary') },
+  { key: 'muted', label: t('settings.text.muted') },
 ];
 
 function Slider({
@@ -182,20 +184,20 @@ export default function Settings() {
 
       <div className={styles['body']}>
         <div className={styles['hint']}>
-          <ColorSpan str={'// tip: type @#fff700theme --help@# in console for CLI access'} />
+          <ColorSpan str={t('settings.tip')} />
         </div>
 
         {/* Background */}
         <section className={styles['section']}>
           <div className={styles['section-head']}>
             <span className={styles['bracket']}>[</span>
-            <span className={styles['section-title']}>background</span>
+            <span className={styles['section-title']}>{t('settings.background.title')}</span>
             <span className={styles['bracket']}>]</span>
             <span className={styles['section-rule']} />
           </div>
 
           <div className={styles['field']}>
-            <span className={styles['field-key']}>image</span>
+            <span className={styles['field-key']}>{t('settings.background.image')}</span>
             <span className={styles['field-eq']}>=</span>
             <input
               type="text"
@@ -209,7 +211,7 @@ export default function Settings() {
 
           <div className={styles['block']}>
             <div className={styles['block-head']}>
-              <span className={styles['field-key']}>Background Overlay</span>
+              <span className={styles['field-key']}>{t('settings.background.overlay')}</span>
               <span className={styles['swatch']} style={{ background: hslString(settings.backgroundColor, settings.backgroundAlpha) }} />
             </div>
             <HslPicker value={settings.backgroundColor} onChange={(backgroundColor) => update({ backgroundColor })} />
@@ -221,18 +223,18 @@ export default function Settings() {
         <section className={styles['section']}>
           <div className={styles['section-head']}>
             <span className={styles['bracket']}>[</span>
-            <span className={styles['section-title']}>theme</span>
+            <span className={styles['section-title']}>{t('settings.theme.title')}</span>
             <span className={styles['bracket']}>]</span>
             <span className={styles['section-rule']} />
           </div>
 
           <div className={styles['hint']} style={{ marginBottom: '0.25rem' }}>
-            <ColorSpan str={'// drives @#fff700--card-color@#'} />
+            <ColorSpan str={t('settings.theme.cardColorHint')} />
           </div>
 
           <div className={styles['block']}>
             <div className={styles['block-head']}>
-              <span className={styles['field-key']}>Card Color</span>
+              <span className={styles['field-key']}>{t('settings.theme.cardColor')}</span>
               <span className={styles['swatch']} style={{ background: themeHex }} />
             </div>
             <HslPicker value={settings.themeColor} onChange={(themeColor) => update({ themeColor })} />
@@ -240,12 +242,12 @@ export default function Settings() {
           </div>
 
           <div className={styles['hint']} style={{ marginBottom: '0.25rem' }}>
-            <ColorSpan str={'// drives @#fff700--text-highlight@#'} />
+            <ColorSpan str={t('settings.theme.textHighlightHint')} />
           </div>
 
           <div className={styles['block']}>
             <div className={styles['block-head']}>
-              <span className={styles['field-key']}>Text Highlight</span>
+              <span className={styles['field-key']}>{t('settings.theme.textHighlight')}</span>
               <span className={styles['swatch']} style={{ background: highlightHex }} />
             </div>
             <HslPicker value={settings.textColors.highlight} onChange={(highlight) => update({ textColors: { ...settings.textColors, highlight } })} />
@@ -256,7 +258,7 @@ export default function Settings() {
         <section className={styles['section']}>
           <div className={styles['section-head']}>
             <span className={styles['bracket']}>[</span>
-            <span className={styles['section-title']}>text</span>
+            <span className={styles['section-title']}>{t('settings.text.title')}</span>
             <span className={styles['bracket']}>]</span>
             <span className={styles['section-rule']} />
           </div>
@@ -270,7 +272,7 @@ export default function Settings() {
         <section className={styles['section']}>
           <div className={styles['section-head']}>
             <span className={styles['bracket']}>[</span>
-            <span className={styles['section-title']}>accent</span>
+            <span className={styles['section-title']}>{t('settings.accent.title')}</span>
             <span className={styles['bracket']}>]</span>
             <span className={styles['accent-count']}>({settings.textColors.accent.length})</span>
             <span className={styles['section-rule']} />
@@ -282,17 +284,17 @@ export default function Settings() {
 
           <div className={styles['accent-add']}>
             <button type="button" className={styles['ghost-btn']} onClick={addAccent}>
-              [+ push]
+              [{t('settings.accent.add')}]
             </button>
           </div>
         </section>
 
         <div className={styles['footer']}>
           <button type="button" className={styles['ghost-btn']} onClick={reset}>
-            [reset --all]
+            [{t('settings.reset')}]
           </button>
           <button type="button" className={styles['ghost-btn']} onClick={() => setIsSettingsOpen(false)}>
-            [exit]
+            [{t('settings.exit')}]
           </button>
         </div>
       </div>

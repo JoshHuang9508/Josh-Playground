@@ -5,9 +5,7 @@ import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, TEXT_CONTENT, DEFAULT_SETTINGS } from '@/lib/constants';
-
-import { t } from '@/lib/i18n';
+import { MUSIC_LIST, TEXT_CONTENT, DEFAULT_SETTINGS, DEFAULT_USERNAME } from '@/lib/constants';
 
 import { applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
 
@@ -15,7 +13,7 @@ import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import store from '@/redux';
 
-import ConsoleManager from '@/components/ConsoleManager';
+import TerminalManager from '@/components/TerminalManager';
 import HomeView from '@/components/views/Home';
 import ListenTogetherView from '@/components/views/ListenTogether';
 import NotFoundView from '@/components/views/NotFound';
@@ -62,7 +60,7 @@ function PageComponent() {
   const [extensionPaths, setExtensionPaths] = useState<Record<string, string[]>>({});
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>('');
   const [backgroundColor, setBackgroundColor] = useState<string>('');
-  const [username, setUsername] = useState<string>(t('global.defaultUsername'));
+  const [username, setUsername] = useState<string>(DEFAULT_USERNAME);
   const [currentHash, setCurrentHash] = useState<string>('/');
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -130,14 +128,14 @@ function PageComponent() {
   }, []);
 
   useEffect(() => {
-    const loaded = loadSettings();
-    setSettingsState(loaded);
-    applySettingsToDOM(loaded);
+    const username = localStorage.getItem('username') ?? DEFAULT_USERNAME;
+    setUsername(username);
   }, []);
 
   useEffect(() => {
-    const username = localStorage.getItem('username') ?? t('global.defaultUsername');
-    setUsername(username);
+    const loaded = loadSettings();
+    setSettingsState(loaded);
+    applySettingsToDOM(loaded);
   }, []);
 
   const renderView = () => {
@@ -165,9 +163,9 @@ function PageComponent() {
     <Provider store={store}>
       <audio data-audio-player ref={audioPlayerRef} src={MUSIC_LIST[musicIndex].path} onEnded={handleMusicEnd} />
       <Head>
-        <title>{t('global.siteTitle', dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title)}</title>
+        <title>{dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title}</title>
         <meta name="description" content={TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT['*'].subtitle} />
-        <meta property="og:title" content={t('global.siteTitle', dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title)} />
+        <meta property="og:title" content={dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title} />
         <meta property="og:description" content={TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT['*'].subtitle} />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
@@ -207,7 +205,7 @@ function PageComponent() {
             <Navigation currentHash={currentHash} />
             {renderView()}
           </div>
-          <ConsoleManager />
+          <TerminalManager />
           <Settings />
         </div>
       </AppContext.Provider>
