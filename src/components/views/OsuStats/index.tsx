@@ -193,8 +193,8 @@ export default function OsuStatsView() {
   useTerminalCommand({
     stats: {
       name: 'stats',
-      description: 'Show osu! stats',
-      usage: '@#00ffaastats@#',
+      description: t('osu.commands.stats.description'),
+      usage: t('osu.commands.stats.usage'),
       handler: (_cmd, _args, _flags) => {
         if (!user) {
           emitTerminalLog(t('osu.commands.stats.notAvailable'));

@@ -21,13 +21,13 @@ const isHex = (v: string) => /^#[0-9a-fA-F]{6}$/.test(v);
 const num = (v: string) => (Number.isFinite(Number(v)) ? Number(v) : NaN);
 
 export default function useTerminalCommand(extensionCommands: Types.CommandList) {
-  const appContext = useContext(AppContext)!;
+  const { setExtensionCommands, extensionPaths, currentHash, isSettingsOpen, setIsSettingsOpen, settings, setSettings, setUsername } = useContext(AppContext)!;
 
   const contextCommands: Types.CommandList = {
     help: {
       name: 'help',
-      description: 'List all available commands',
-      usage: '@#00ffaahelp@#',
+      description: t('global.commands.help.description'),
+      usage: t('global.commands.help.usage'),
       handler: (_cmd, _args, _flags) => {
         emitTerminalLog(t('global.commands.help.availableCommands'), t('global.commands.help.separator'));
         Object.values(commandList).forEach((cmd) => {
@@ -38,20 +38,20 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
     },
     echo: {
       name: 'echo',
-      description: 'Print a message to the terminal',
-      usage: '@#00ffaaecho@# @#fff700<message>@#',
+      description: t('global.commands.echo.description'),
+      usage: t('global.commands.echo.usage'),
       handler: (_cmd, args, _flags) => {
         emitTerminalLog(args.join(' '));
       },
     },
     ls: {
       name: 'ls',
-      description: 'List available paths in the current directory',
-      usage: '@#00ffaals@# @#fff700[-a|-l|-t]@#',
+      description: t('global.commands.ls.description'),
+      usage: t('global.commands.ls.usage'),
       flags: ['-a', '-l', '-t'],
       handler: (_cmd, args, flags) => {
         const path = args[0] ?? '';
-        const available = findAvailablePath(path, appContext.extensionPaths, appContext.currentHash);
+        const available = findAvailablePath(path, extensionPaths, currentHash);
         if (flags.includes('-t') || flags.includes('--tree')) {
           renderWebPaths(webPaths, '').forEach((path) => {
             emitTerminalLog(path);
@@ -61,7 +61,7 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           emitTerminalLog(['./', '../', ...available].join(' '));
           return;
         } else if (flags.includes('-l') || flags.includes('--long')) {
-          emitTerminalLog(t('commands.availablePaths'), ...available);
+          emitTerminalLog(t('global.commands.ls.availablePaths'), ...available);
           return;
         } else {
           emitTerminalLog(available.join(' '));
@@ -69,18 +69,18 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
         }
       },
     },
-    cl: {
-      name: 'cl',
-      description: 'Clear the console output',
-      usage: '@#00ffaacl@#',
+    clear: {
+      name: 'clear',
+      description: t('global.commands.clear.description'),
+      usage: t('global.commands.clear.usage'),
       handler: (_cmd, _args, _flags) => {
         clearActiveTerminalLog();
       },
     },
     cd: {
       name: 'cd',
-      description: 'Navigate to a different page',
-      usage: '@#00ffaacd@# @#fff700<path>@#',
+      description: t('global.commands.cd.description'),
+      usage: t('global.commands.cd.usage'),
       handler: (_cmd, args, _flags) => {
         const page = args[0] ?? '';
         const hash = window.location.hash.slice(1) || '/';
@@ -105,26 +105,26 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
     },
     download: {
       name: 'download',
-      description: 'Download a YouTube video as mp4 or mp3',
-      usage: '@#00ffaadownload@# @#fff700<video_url>@# @#fff700[-v|-a]@#',
+      description: t('global.commands.download.description'),
+      usage: t('global.commands.download.usage'),
       flags: ['-v', '--video', '-a', '--audio'],
       handler: (_cmd, args, flags) => {
         const URL = args[0] ?? '';
         if (!URL) {
-          emitTerminalLog(t('commands.download.usage'));
+          emitTerminalLog(t('global.commands.download.usage'));
           return;
         } else if (!ReactPlayer.canPlay(URL)) {
-          emitTerminalLog(t('commands.download.invalidUrl'));
+          emitTerminalLog(t('global.commands.download.invalidUrl'));
           return;
         } else if (flags.includes('-v') || flags.includes('--video') || flags.length === 0) {
           const downloadVideo = async () => {
-            emitTerminalLog(t('commands.download.pending', URL, '.mp4'));
+            emitTerminalLog(t('global.commands.download.pending', URL, '.mp4'));
             const blob = await getVideoBlob(URL.split('v=')[1], 'mp4').catch((error) => {
-              emitTerminalLog(t('commands.download.error.downloadVideoFailed', error.message));
+              emitTerminalLog(t('global.commands.download.error.downloadVideoFailed', error.message));
               return null;
             });
             if (!blob) return;
-            emitTerminalLog(t('commands.download.starting'));
+            emitTerminalLog(t('global.commands.download.starting'));
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -135,13 +135,13 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           return;
         } else if (flags.includes('-a') || flags.includes('--audio')) {
           const downloadAudio = async () => {
-            emitTerminalLog(t('commands.download.pending', URL, '.mp3'));
+            emitTerminalLog(t('global.commands.download.pending', URL, '.mp3'));
             const blob = await getVideoBlob(URL.split('v=')[1], 'mp3').catch((error) => {
-              emitTerminalLog(t('commands.download.error.downloadAudioFailed', error.message));
+              emitTerminalLog(t('global.commands.download.error.downloadAudioFailed', error.message));
               return null;
             });
             if (!blob) return;
-            emitTerminalLog(t('commands.download.starting'));
+            emitTerminalLog(t('global.commands.download.starting'));
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -155,12 +155,12 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
     },
     music: {
       name: 'music',
-      description: 'Control background music playback',
-      usage: '@#00ffaamusic@# @#fff700[-p|-s|-i|-l]@#',
+      description: t('global.commands.music.description'),
+      usage: t('global.commands.music.usage'),
       flags: ['-p', '--play', '-s', '--stop', '-i', '--info', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-l') || flags.includes('--list')) {
-          emitTerminalLog(t('commands.music.list'), ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`));
+          emitTerminalLog(t('global.commands.music.list'), ...MUSIC_LIST.map((_, index) => `#${index} - ${_.name}`));
           return;
         }
         if (flags.includes('-p') || flags.includes('--play')) {
@@ -173,230 +173,247 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
           if (audioPlayer) audioPlayer.pause();
           return;
         }
-        emitTerminalLog(t('commands.music.usage'));
+        emitTerminalLog(t('global.commands.music.usage'));
       },
     },
     settings: {
       name: 'settings',
-      description: 'Open or toggle the settings panel',
-      usage: '@#00ffaasettings@# @#fff700[-c]@#',
+      description: t('global.commands.settings.description'),
+      usage: t('global.commands.settings.usage'),
       flags: ['-c', '--close'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-c') || flags.includes('--close')) {
-          appContext.setIsSettingsOpen(false);
-          emitTerminalLog(t('commands.settings.closed'));
+          setIsSettingsOpen(false);
+          emitTerminalLog(t('global.commands.settings.closed'));
           return;
         }
-        appContext.setIsSettingsOpen(!appContext.isSettingsOpen);
-        emitTerminalLog(appContext.isSettingsOpen ? t('commands.settings.closed') : t('commands.settings.opened'));
+        setIsSettingsOpen(!isSettingsOpen);
+        emitTerminalLog(isSettingsOpen ? t('global.commands.settings.closed') : t('global.commands.settings.opened'));
       },
     },
     theme: {
       name: 'theme',
-      description: 'Inspect or modify theme settings',
-      usage: '@#00ffaatheme@# @#fff700<sub>@# @#fff700[args]@# (try @#fff700theme -h@#)',
+      description: t('global.commands.theme.description'),
+      usage: t('global.commands.theme.usage'),
       flags: ['-h', '--help'],
       subCommands: {
         'reset': {
           name: 'reset',
-          description: 'Reset theme to defaults',
-          usage: '@#00ffaatheme reset@#',
+          description: t('global.commands.theme.reset.description'),
+          usage: t('global.commands.theme.reset.usage'),
           handler: (_cmd, _args, _flags) => {
-            appContext.setSettings(DEFAULT_SETTINGS);
-            emitTerminalLog(t('commands.theme.reset'));
+            setSettings(DEFAULT_SETTINGS);
+            emitTerminalLog(t('global.commands.theme.reset.reset'));
           },
         },
         'bg-image': {
           name: 'bg-image',
-          description: 'Set or reset the background image',
-          usage: '@#00ffaatheme bg-image@# @#fff700<image_url>|-r@#',
+          description: t('global.commands.theme.bgImage.description'),
+          usage: t('global.commands.theme.bgImage.usage'),
           flags: ['-r', '--reset'],
           handler: (_cmd, args, flags) => {
             const url = args[0];
-            if (!url || flags.includes('-r') || flags.includes('--reset')) {
-              appContext.setSettings({ ...appContext.settings, backgroundImageUrl: '' });
-              emitTerminalLog(t('commands.theme.bgImageReset'));
+            if (!url && flags.length === 0) {
+              emitTerminalLog(t('global.commands.theme.bgImage.usage'));
               return;
             }
-            appContext.setSettings({ ...appContext.settings, backgroundImageUrl: url });
-            emitTerminalLog(t('commands.theme.bgImageSet', url));
+            if (flags.includes('-r') || flags.includes('--reset')) {
+              setSettings({ ...settings, backgroundImageUrl: '' });
+              emitTerminalLog(t('global.commands.theme.bgImage.reset'));
+              return;
+            }
+            setSettings({ ...settings, backgroundImageUrl: url });
+            emitTerminalLog(t('global.commands.theme.bgImage.set', url));
           },
         },
         'bg': {
           name: 'bg',
-          description: 'Set or reset the background color',
-          usage: '@#00ffaatheme bg@# @#fff700<h> <s> <l> [a]@#',
+          description: t('global.commands.theme.bg.description'),
+          usage: t('global.commands.theme.bg.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
             if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('commands.theme.hslInvalid'));
+              emitTerminalLog(t('global.commands.theme.bg.invalid'));
               return;
             }
-            const a = args[3] !== undefined ? num(args[3]) : appContext.settings.backgroundAlpha;
+            const a = args[3] !== undefined ? num(args[3]) : settings.backgroundAlpha;
             if (Number.isNaN(a)) {
-              emitTerminalLog(t('commands.theme.hslInvalid'));
+              emitTerminalLog(t('global.commands.theme.bg.invalid'));
               return;
             }
-            appContext.setSettings({ ...appContext.settings, backgroundColor: { h, s, l }, backgroundAlpha: a });
-            emitTerminalLog(t('commands.theme.bgSet', `${h} ${s} ${l} / ${a}`));
+            setSettings({ ...settings, backgroundColor: { h, s, l }, backgroundAlpha: a });
+            emitTerminalLog(t('global.commands.theme.bg.set', `${h} ${s} ${l} / ${a}`));
           },
         },
         'color': {
           name: 'color',
-          description: 'Set or reset the theme color',
-          usage: '@#00ffaatheme color@# @#fff700<h> <s> <l>@#',
+          description: t('global.commands.theme.color.description'),
+          usage: t('global.commands.theme.color.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
             if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('commands.theme.hslInvalid'));
+              emitTerminalLog(t('global.commands.theme.color.invalid'));
               return;
             }
-            appContext.setSettings({ ...appContext.settings, themeColor: { h, s, l } });
-            emitTerminalLog(t('commands.theme.colorSet', `${h} ${s} ${l}`));
+            setSettings({ ...settings, themeColor: { h, s, l } });
+            emitTerminalLog(t('global.commands.theme.color.set', `${h} ${s} ${l}`));
           },
         },
         'blur': {
           name: 'blur',
-          description: 'Set or reset the card blur radius',
-          usage: '@#00ffaatheme blur@# @#fff700<px>@#',
+          description: t('global.commands.theme.blur.description'),
+          usage: t('global.commands.theme.blur.usage'),
           handler: (_cmd, args, _flags) => {
             const px = num(args[0]);
             if (Number.isNaN(px) || px < 0) {
-              emitTerminalLog(t('commands.theme.blurInvalid'));
+              emitTerminalLog(t('global.commands.theme.blur.invalid'));
               return;
             }
-            appContext.setSettings({ ...appContext.settings, cardBlur: px });
-            emitTerminalLog(t('commands.theme.blurSet', `${px}`));
+            setSettings({ ...settings, cardBlur: px });
+            emitTerminalLog(t('global.commands.theme.blur.set', `${px}`));
           },
         },
         'text-highlight': {
           name: 'text-highlight',
-          description: 'Set or reset the text highlight color',
-          usage: '@#00ffaatheme text-highlight@# @#fff700<h> <s> <l>@#',
+          description: t('global.commands.theme.text-highlight.description'),
+          usage: t('global.commands.theme.text-highlight.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
             if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('commands.theme.hslInvalid'));
+              emitTerminalLog(t('global.commands.theme.textHighlight.invalid'));
               return;
             }
-            appContext.setSettings({ ...appContext.settings, textColors: { ...appContext.settings.textColors, highlight: { h, s, l } } });
-            emitTerminalLog(t('commands.theme.textHighlightSet', `${h} ${s} ${l}`));
+            setSettings({ ...settings, textColors: { ...settings.textColors, highlight: { h, s, l } } });
+            emitTerminalLog(t('global.commands.theme.textHighlight.set', `${h} ${s} ${l}`));
           },
         },
         'text': {
           name: 'text',
-          description: 'Set or reset the text color',
-          usage: '@#00ffaatheme text@# @#fff700<primary|secondary|muted> <#hex>@#',
+          description: t('global.commands.theme.text.description'),
+          usage: t('global.commands.theme.text.usage'),
           handler: (_cmd, args, _flags) => {
             const which = args[0];
             const color = args[1];
             if (!['primary', 'secondary', 'muted'].includes(which)) {
-              emitTerminalLog(t('commands.theme.textKey'));
+              emitTerminalLog(t('global.commands.theme.text.invalid'));
               return;
             }
             if (!isHex(color)) {
-              emitTerminalLog(t('commands.theme.hexInvalid'));
+              emitTerminalLog(t('global.commands.theme.text.invalid'));
               return;
             }
-            appContext.setSettings({ ...appContext.settings, textColors: { ...appContext.settings.textColors, [which]: color } });
-            emitTerminalLog(t('commands.theme.textSet', which, color));
+            setSettings({ ...settings, textColors: { ...settings.textColors, [which]: color } });
+            emitTerminalLog(t('global.commands.theme.text.set', which, color));
           },
         },
         'accent': {
           name: 'accent',
-          description: 'Set or reset the accent color',
-          usage: '@#00ffaatheme accent@# @#fff700<add|rm|set> <#hex>@#',
-          handler: (_cmd, args, _flags) => {
-            const action = args[0];
-            if (action === 'add') {
-              const color = args[1];
-              if (!isHex(color)) {
-                emitTerminalLog(t('commands.theme.hexInvalid'));
-                return;
-              }
-              const accent = [...appContext.settings.textColors.accent, color];
-              appContext.setSettings({ ...appContext.settings, textColors: { ...appContext.settings.textColors, accent } });
-              emitTerminalLog(t('commands.theme.accentAdded', color, `${accent.length - 1}`));
-              return;
-            }
-            if (action === 'rm' || action === 'remove') {
-              const idx = num(args[1]);
-              if (Number.isNaN(idx) || idx < 0 || idx >= appContext.settings.textColors.accent.length) {
-                emitTerminalLog(t('commands.theme.accentIndexInvalid'));
-                return;
-              }
-              const accent = appContext.settings.textColors.accent.filter((_, i) => i !== idx);
-              appContext.setSettings({ ...appContext.settings, textColors: { ...appContext.settings.textColors, accent } });
-              emitTerminalLog(t('commands.theme.accentRemoved', `${idx}`));
-              return;
-            }
-            if (action === 'set') {
-              const idx = num(args[1]);
-              const color = args[2];
-              if (Number.isNaN(idx) || idx < 0 || idx >= appContext.settings.textColors.accent.length) {
-                emitTerminalLog(t('commands.theme.accentIndexInvalid'));
-                return;
-              }
-              if (!isHex(color)) {
-                emitTerminalLog(t('commands.theme.hexInvalid'));
-                return;
-              }
-              const accent = [...appContext.settings.textColors.accent];
-              accent[idx] = color;
-              appContext.setSettings({ ...appContext.settings, textColors: { ...appContext.settings.textColors, accent } });
-              emitTerminalLog(t('commands.theme.accentSet', `${idx}`, color));
-              return;
-            }
-            emitTerminalLog(t('commands.theme.accentUsage'));
+          description: t('global.commands.theme.accent.description'),
+          usage: t('global.commands.theme.accent.usage'),
+          subCommands: {
+            add: {
+              name: 'add',
+              description: t('global.commands.theme.accent.add.description'),
+              usage: t('global.commands.theme.accent.add.usage'),
+              handler: (_cmd, args, _flags) => {
+                const color = args[0];
+                if (!isHex(color)) {
+                  emitTerminalLog(t('global.commands.theme.accent.add.invalid'));
+                  return;
+                }
+                const accent = [...settings.textColors.accent, color];
+                setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
+                emitTerminalLog(t('global.commands.theme.accent.add.added', color, `${accent.length - 1}`));
+              },
+            },
+            rm: {
+              name: 'rm',
+              description: t('global.commands.theme.accent.rm.description'),
+              usage: t('global.commands.theme.accent.rm.usage'),
+              handler: (_cmd, args, _flags) => {
+                const index = num(args[0] ?? -1);
+                if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
+                  emitTerminalLog(t('global.commands.theme.accent.rm.indexInvalid'));
+                  return;
+                }
+                const accent = settings.textColors.accent.filter((_, i) => i !== index);
+                setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
+                emitTerminalLog(t('global.commands.theme.accent.rm.removed', `${index}`));
+              },
+            },
+            set: {
+              name: 'set',
+              description: t('global.commands.theme.accent.set.description'),
+              usage: t('global.commands.theme.accent.set.usage'),
+              handler: (_cmd, args, _flags) => {
+                const index = num(args[0] ?? -1);
+                const color = args[1];
+                if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
+                  emitTerminalLog(t('global.commands.theme.accent.set.indexInvalid'));
+                  return;
+                }
+                if (!isHex(color)) {
+                  emitTerminalLog(t('global.commands.theme.accent.set.invalid'));
+                  return;
+                }
+                const accent = [...settings.textColors.accent];
+                accent[index] = color;
+                setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
+                emitTerminalLog(t('global.commands.theme.accent.set.set', `${index}`, color));
+              },
+            },
+          },
+          handler: (_cmd, _args, _flags) => {
+            emitTerminalLog(t('global.commands.theme.accent.usage'));
           },
         },
       },
       handler: (_cmd, args, flags) => {
         if (flags.includes('-h') || flags.includes('--help')) {
-          emitTerminalLog(...t('commands.theme.help'));
+          emitTerminalLog(...t('global.commands.theme.help'));
           return;
         }
         if (!args.length && !flags.length) {
           emitTerminalLog(
             ...t(
-              'commands.theme.show',
-              appContext.settings.backgroundImageUrl || '(default)',
-              `H:${appContext.settings.backgroundColor.h} S:${appContext.settings.backgroundColor.s} L:${appContext.settings.backgroundColor.l} / A:${appContext.settings.backgroundAlpha}`,
-              `H:${appContext.settings.themeColor.h} S:${appContext.settings.themeColor.s} L:${appContext.settings.themeColor.l}`,
-              `${appContext.settings.cardBlur}px`,
-              `H:${appContext.settings.textColors.highlight.h} S:${appContext.settings.textColors.highlight.s} L:${appContext.settings.textColors.highlight.l}`,
-              appContext.settings.textColors.primary,
-              appContext.settings.textColors.secondary,
-              appContext.settings.textColors.muted,
-              appContext.settings.textColors.accent.length > 0 ? appContext.settings.textColors.accent.join(', ') : '(empty)',
+              'global.commands.theme.show',
+              settings.backgroundImageUrl || '(default)',
+              `H:${settings.backgroundColor.h} S:${settings.backgroundColor.s} L:${settings.backgroundColor.l} / A:${settings.backgroundAlpha}`,
+              `H:${settings.themeColor.h} S:${settings.themeColor.s} L:${settings.themeColor.l}`,
+              `${settings.cardBlur}px`,
+              `H:${settings.textColors.highlight.h} S:${settings.textColors.highlight.s} L:${settings.textColors.highlight.l}`,
+              settings.textColors.primary,
+              settings.textColors.secondary,
+              settings.textColors.muted,
+              settings.textColors.accent.length > 0 ? settings.textColors.accent.join(', ') : '(empty)',
             ),
           );
           return;
         }
-        emitTerminalLog(...t('commands.theme.help'));
+        emitTerminalLog(...t('global.commands.theme.help'));
       },
     },
     username: {
       name: 'username',
-      description: 'Change your display name (max 20 chars)',
-      usage: '@#00ffaausername@# @#fff700<name>@#',
+      description: t('global.commands.username.description'),
+      usage: t('global.commands.username.usage'),
       handler: (_cmd, args, _flags) => {
         const name = args[0] ?? '';
         if (!name) {
-          emitTerminalLog(t('commands.username.usage'));
+          emitTerminalLog(t('global.commands.username.usage'));
           return;
         } else if (name.length > 20) {
-          emitTerminalLog(t('commands.username.tooLong'));
+          emitTerminalLog(t('global.commands.username.tooLong'));
           return;
         } else {
-          appContext.setUsername(name);
-          emitTerminalLog(t('commands.username.set', name));
+          setUsername(name);
+          emitTerminalLog(t('global.commands.username.set', name));
           localStorage.setItem('username', name);
           return;
         }
@@ -405,9 +422,8 @@ export default function useTerminalCommand(extensionCommands: Types.CommandList)
   };
 
   const commandList = { ...contextCommands, ...extensionCommands };
-  const commandKeys = Object.keys(commandList).sort().join(',');
 
   useEffect(() => {
-    appContext.setExtensionCommands(commandList);
-  }, [commandKeys]);
+    setExtensionCommands(commandList);
+  }, []);
 }
