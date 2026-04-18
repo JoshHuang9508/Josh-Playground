@@ -10,7 +10,7 @@ import { t } from '@/lib/i18n';
 
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
-import { AddConsoleLog } from '@/redux';
+import { emitTerminalLog } from '@/lib/terminalLog';
 
 import { getVideoInfo, getPlaylist } from '@/api';
 
@@ -71,7 +71,7 @@ export default function ListenTogetherView() {
 
   const handlePlayerDuration = (duration: number) => socketInstance?.onDuration(duration);
 
-  const handlePlayerError = (error: any) => AddConsoleLog(t('listentogether.errors.playerError', String(error)));
+  const handlePlayerError = (error: any) => emitTerminalLog(t('listentogether.errors.playerError', String(error)));
 
   const handlePlayerReady = () => {
     if (PlayerStateClientState.isReady) return;
@@ -92,7 +92,7 @@ export default function ListenTogetherView() {
       handler: (_cmd, args) => {
         const message = args.join(' ') ?? '';
         if (!message) {
-          AddConsoleLog(t('listentogether.commands.send.usage'));
+          emitTerminalLog(t('listentogether.commands.send.usage'));
           return;
         }
         socketInstance?.addRoomLog(`${username}: ${message}`);
@@ -105,35 +105,35 @@ export default function ListenTogetherView() {
       handler: async (_cmd, args) => {
         const URL = args[0] ?? '';
         if (!URL) {
-          AddConsoleLog(t('listentogether.commands.queue.usage'));
+          emitTerminalLog(t('listentogether.commands.queue.usage'));
           return;
         }
         if (!ReactPlayer.canPlay(URL)) {
-          AddConsoleLog(t('listentogether.commands.queue.cannotPlay'));
+          emitTerminalLog(t('listentogether.commands.queue.cannotPlay'));
           return;
         }
         if (URL.includes('playlist?list=')) {
           const tracks = await getPlaylist(URL.split('list=')[1], username).catch((error) => {
-            AddConsoleLog(t('listentogether.errors.getPlaylist', error.message));
+            emitTerminalLog(t('listentogether.errors.getPlaylist', error.message));
             return null;
           });
           if (!tracks) return;
           socketInstance?.addTracks(tracks);
-          AddConsoleLog(t('listentogether.commands.queue.addedTracks', String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)));
+          emitTerminalLog(t('listentogether.commands.queue.addedTracks', String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)));
           socketInstance?.addRoomLog(
             t('listentogether.logs.addedTracks', username, String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)),
           );
         } else if (URL.includes('watch?v=')) {
           const track = await getVideoInfo(URL.split('v=')[1], username).catch((error) => {
-            AddConsoleLog(t('listentogether.errors.getVideoInfo', error.message));
+            emitTerminalLog(t('listentogether.errors.getVideoInfo', error.message));
             return null;
           });
           if (!track) return;
           socketInstance?.addTrack(track);
-          AddConsoleLog(t('listentogether.commands.queue.addedTrack', track.title, String(playerState.trackQueue.length)));
+          emitTerminalLog(t('listentogether.commands.queue.addedTrack', track.title, String(playerState.trackQueue.length)));
           socketInstance?.addRoomLog(t('listentogether.logs.addedTrack', username, track.title, String(playerState.trackQueue.length)));
         } else {
-          AddConsoleLog(t('listentogether.commands.queue.invalidUrl'));
+          emitTerminalLog(t('listentogether.commands.queue.invalidUrl'));
         }
       },
     },
@@ -144,27 +144,27 @@ export default function ListenTogetherView() {
       handler: (_cmd, args) => {
         const indexToRm = args[0] ?? '';
         if (!indexToRm) {
-          AddConsoleLog(t('listentogether.commands.remove.usage'));
+          emitTerminalLog(t('listentogether.commands.remove.usage'));
           return;
         }
         if (indexToRm === '*') {
           socketInstance?.setTrackQueue([]);
-          AddConsoleLog(t('listentogether.commands.remove.removedAll'));
+          emitTerminalLog(t('listentogether.commands.remove.removedAll'));
           socketInstance?.addRoomLog(t('listentogether.logs.removedAll', username));
           triggerFlash();
           return;
         }
         if (isNaN(parseFloat(indexToRm))) {
-          AddConsoleLog(t('listentogether.commands.remove.invalidIndex'));
+          emitTerminalLog(t('listentogether.commands.remove.invalidIndex'));
           return;
         }
         if (parseInt(indexToRm) >= playerState.trackQueue.length) {
-          AddConsoleLog(t('listentogether.commands.remove.indexOutOfRange'));
+          emitTerminalLog(t('listentogether.commands.remove.indexOutOfRange'));
           return;
         }
         const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
         socketInstance?.removeTrack(parseInt(indexToRm));
-        AddConsoleLog(t('listentogether.commands.remove.removed', indexToRm));
+        emitTerminalLog(t('listentogether.commands.remove.removed', indexToRm));
         socketInstance?.addRoomLog(t('listentogether.logs.removedTrack', username, trackToRm.title, indexToRm));
       },
     },
@@ -174,7 +174,7 @@ export default function ListenTogetherView() {
       usage: '@#00ffaaplay@#',
       handler: () => {
         socketInstance?.play();
-        AddConsoleLog(t('listentogether.commands.play.start'));
+        emitTerminalLog(t('listentogether.commands.play.start'));
         socketInstance?.addRoomLog(t('listentogether.logs.play', username));
         triggerFlash();
       },
@@ -185,7 +185,7 @@ export default function ListenTogetherView() {
       usage: '@#00ffaapause@#',
       handler: () => {
         socketInstance?.pause();
-        AddConsoleLog(t('listentogether.commands.pause.pause'));
+        emitTerminalLog(t('listentogether.commands.pause.pause'));
         socketInstance?.addRoomLog(t('listentogether.logs.pause', username));
         triggerFlash();
       },
@@ -199,30 +199,30 @@ export default function ListenTogetherView() {
         const index = args[0] ?? '';
         if (flags.includes('-n') || flags.includes('--next')) {
           socketInstance?.nextTrack();
-          AddConsoleLog(t('listentogether.commands.switch.next'));
+          emitTerminalLog(t('listentogether.commands.switch.next'));
           socketInstance?.addRoomLog(t('listentogether.logs.switchNext', username));
           return;
         }
         if (flags.includes('-p') || flags.includes('--prev')) {
           socketInstance?.prevTrack();
-          AddConsoleLog(t('listentogether.commands.switch.prev'));
+          emitTerminalLog(t('listentogether.commands.switch.prev'));
           socketInstance?.addRoomLog(t('listentogether.logs.switchPrev', username));
           return;
         }
         if (!index) {
-          AddConsoleLog(t('listentogether.commands.switch.usage'));
+          emitTerminalLog(t('listentogether.commands.switch.usage'));
           return;
         }
         if (isNaN(parseFloat(index))) {
-          AddConsoleLog(t('listentogether.commands.switch.invalidIndex'));
+          emitTerminalLog(t('listentogether.commands.switch.invalidIndex'));
           return;
         }
         if (parseInt(index) >= playerState.trackQueue.length || parseInt(index) < 0) {
-          AddConsoleLog(t('listentogether.commands.switch.indexOutOfRange'));
+          emitTerminalLog(t('listentogether.commands.switch.indexOutOfRange'));
           return;
         }
         socketInstance?.setTrackIndex(parseInt(index));
-        AddConsoleLog(t('listentogether.commands.switch.switchTo', index));
+        emitTerminalLog(t('listentogether.commands.switch.switchTo', index));
         socketInstance?.addRoomLog(t('listentogether.logs.switchTo', username, index));
       },
     },
@@ -233,16 +233,16 @@ export default function ListenTogetherView() {
       handler: (_cmd, args) => {
         const volume = args[0] ?? '';
         if (!volume) {
-          AddConsoleLog(t('listentogether.commands.volume.usage'));
+          emitTerminalLog(t('listentogether.commands.volume.usage'));
           return;
         }
         if (isNaN(parseFloat(volume))) {
-          AddConsoleLog(t('listentogether.commands.volume.invalid'));
+          emitTerminalLog(t('listentogether.commands.volume.invalid'));
           return;
         }
         setPlayerStateClient((prev) => ({ ...prev, volume: parseFloat(volume) / 100 }));
         localStorage.setItem('volume', volume);
-        AddConsoleLog(t('listentogether.commands.volume.set', volume));
+        emitTerminalLog(t('listentogether.commands.volume.set', volume));
       },
     },
     loop: {
@@ -253,17 +253,17 @@ export default function ListenTogetherView() {
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
           socketInstance?.setLoop(true);
-          AddConsoleLog(t('listentogether.commands.loop.on'));
+          emitTerminalLog(t('listentogether.commands.loop.on'));
           socketInstance?.addRoomLog(t('listentogether.logs.loopOn', username));
           return;
         }
         if (flags.includes('-f') || flags.includes('--false')) {
           socketInstance?.setLoop(false);
-          AddConsoleLog(t('listentogether.commands.loop.off'));
+          emitTerminalLog(t('listentogether.commands.loop.off'));
           socketInstance?.addRoomLog(t('listentogether.logs.loopOff', username));
           return;
         }
-        AddConsoleLog(t('listentogether.commands.loop.usage'));
+        emitTerminalLog(t('listentogether.commands.loop.usage'));
       },
     },
     random: {
@@ -274,17 +274,17 @@ export default function ListenTogetherView() {
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
           socketInstance?.setPlayerState({ ...playerState, random: true });
-          AddConsoleLog(t('listentogether.commands.random.on'));
+          emitTerminalLog(t('listentogether.commands.random.on'));
           socketInstance?.addRoomLog(t('listentogether.logs.randomOn', username));
           return;
         }
         if (flags.includes('-f') || flags.includes('--false')) {
           socketInstance?.setPlayerState({ ...playerState, random: false });
-          AddConsoleLog(t('listentogether.commands.random.off'));
+          emitTerminalLog(t('listentogether.commands.random.off'));
           socketInstance?.addRoomLog(t('listentogether.logs.randomOff', username));
           return;
         }
-        AddConsoleLog(t('listentogether.commands.random.usage'));
+        emitTerminalLog(t('listentogether.commands.random.usage'));
       },
     },
     rate: {
@@ -294,15 +294,15 @@ export default function ListenTogetherView() {
       handler: (_cmd, args) => {
         const rate = args[0] ?? '';
         if (!rate) {
-          AddConsoleLog(t('listentogether.commands.rate.usage'));
+          emitTerminalLog(t('listentogether.commands.rate.usage'));
           return;
         }
         if (isNaN(parseFloat(rate))) {
-          AddConsoleLog(t('listentogether.commands.rate.invalid'));
+          emitTerminalLog(t('listentogether.commands.rate.invalid'));
           return;
         }
         socketInstance?.setPlayBackRate(parseFloat(rate) / 100);
-        AddConsoleLog(t('listentogether.commands.rate.set', rate));
+        emitTerminalLog(t('listentogether.commands.rate.set', rate));
         socketInstance?.addRoomLog(t('listentogether.logs.rate', username, rate));
       },
     },
@@ -313,19 +313,19 @@ export default function ListenTogetherView() {
       handler: (_cmd, args) => {
         const seek = args[0] ?? '';
         if (!seek) {
-          AddConsoleLog(t('listentogether.commands.seek.usage'));
+          emitTerminalLog(t('listentogether.commands.seek.usage'));
           return;
         }
         if (isNaN(parseFloat(seek))) {
-          AddConsoleLog(t('listentogether.commands.seek.invalid'));
+          emitTerminalLog(t('listentogether.commands.seek.invalid'));
           return;
         }
         if (parseFloat(seek) < 0 || parseFloat(seek) > playerState.duration) {
-          AddConsoleLog(t('listentogether.commands.seek.outOfRange'));
+          emitTerminalLog(t('listentogether.commands.seek.outOfRange'));
           return;
         }
         socketInstance?.seek(parseFloat(seek));
-        AddConsoleLog(t('listentogether.commands.seek.seekTo', seek));
+        emitTerminalLog(t('listentogether.commands.seek.seekTo', seek));
         socketInstance?.addRoomLog(t('listentogether.logs.seek', username, seek));
       },
     },
@@ -335,7 +335,7 @@ export default function ListenTogetherView() {
       usage: '@#00ffaarefresh@#',
       handler: () => {
         socketInstance?.refresh();
-        AddConsoleLog(t('listentogether.commands.refresh.message'));
+        emitTerminalLog(t('listentogether.commands.refresh.message'));
         socketInstance?.addRoomLog(t('listentogether.logs.refresh', username));
       },
     },
@@ -346,7 +346,7 @@ export default function ListenTogetherView() {
       flags: ['-d', '--detail', '-l', '--list'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-d') || flags.includes('--detail')) {
-          AddConsoleLog(
+          emitTerminalLog(
             t('listentogether.commands.playlist.detail'),
             ...playerState.trackQueue.map((track, index) =>
               track.id === playerState.currentTrack?.id
@@ -356,7 +356,7 @@ export default function ListenTogetherView() {
           );
           return;
         }
-        AddConsoleLog(
+        emitTerminalLog(
           t('listentogether.commands.playlist.list'),
           ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `@#fff700#${index} - ${track.title}` : `#${index} - ${track.title}`)),
         );
@@ -370,12 +370,12 @@ export default function ListenTogetherView() {
       handler: (_cmd, args) => {
         const vibeName = args[0] as Types.VibeName;
         if (!vibeName || !VALID_VIBES.includes(vibeName)) {
-          AddConsoleLog(t('listentogether.commands.vibe.invalid'));
+          emitTerminalLog(t('listentogether.commands.vibe.invalid'));
           return;
         }
         socketInstance?.setVibe(vibeName);
         setVibe(vibeName);
-        AddConsoleLog(t('listentogether.commands.vibe.set', vibeName));
+        emitTerminalLog(t('listentogether.commands.vibe.set', vibeName));
         socketInstance?.addRoomLog(t('listentogether.logs.vibe', username, vibeName));
       },
     },
@@ -400,9 +400,9 @@ export default function ListenTogetherView() {
         socket.join(localStorage.getItem('username') ?? t('global.defaultUsername'));
         socket.ready();
       },
-      onConnectError: () => AddConsoleLog(t('listentogether.errors.connectError', String(socket.id))),
-      onError: (error) => AddConsoleLog(t('listentogether.errors.serverError', error.message)),
-      onDisconnect: () => AddConsoleLog(t('listentogether.errors.disconnect')),
+      onConnectError: () => emitTerminalLog(t('listentogether.errors.connectError', String(socket.id))),
+      onError: (error) => emitTerminalLog(t('listentogether.errors.serverError', error.message)),
+      onDisconnect: () => emitTerminalLog(t('listentogether.errors.disconnect')),
       onPlayerState: (state) => setPlayerState((prev) => ({ ...prev, ...state })),
       onLogs: (logs) => setLogs(logs),
       onUsers: (users) => setUsers(users),
@@ -434,7 +434,7 @@ export default function ListenTogetherView() {
     const currentTrackDiff = IDiffObject(playerState.currentTrack, cachedPlayerState.currentTrack);
     setCachedPlayerState(playerState);
     if (trackQueueDiff || currentTrackDiff) {
-      AddConsoleLog(
+      emitTerminalLog(
         t('listentogether.logs.playlistUpdated'),
         ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `@#fff700#${index} - ${track.title}` : `#${index} - ${track.title}`)),
       );
@@ -448,7 +448,7 @@ export default function ListenTogetherView() {
     }
     const diff = logs.filter((log) => !cachedLogs.includes(log));
     setCachedLogs(logs);
-    if (diff.length > 0) AddConsoleLog(...diff.map((log) => `[${new Date().toLocaleTimeString()}] ${log}`));
+    if (diff.length > 0) emitTerminalLog(...diff.map((log) => `[${new Date().toLocaleTimeString()}] ${log}`));
   }, [logs]);
 
   useEffect(() => {
@@ -458,7 +458,7 @@ export default function ListenTogetherView() {
     }
     const diff = Object.entries(users).filter(([id]) => !Object.keys(cachedUsers).includes(id));
     setCachedUsers(users);
-    if (diff.length > 0) AddConsoleLog(...diff.map(([, user]) => `[${new Date().toLocaleTimeString()}] ${t('listentogether.logs.joined', user)}`));
+    if (diff.length > 0) emitTerminalLog(...diff.map(([, user]) => `[${new Date().toLocaleTimeString()}] ${t('listentogether.logs.joined', user)}`));
   }, [users]);
 
   const progressPercent = playerState.duration > 0 ? (playerState.playedSeconds / playerState.duration) * 100 : 0;

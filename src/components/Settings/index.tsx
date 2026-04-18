@@ -2,7 +2,11 @@ import { useCallback, useContext, useRef, useState } from 'react';
 
 import { AppContext } from '@/pages/index';
 
-import { DEFAULT_SETTINGS, HSL, ThemeSettings, hslString } from '@/lib/settings';
+import type * as Types from '@/lib/types';
+
+import { DEFAULT_SETTINGS } from '@/lib/constants';
+
+import { hslString } from '@/lib/settings';
 
 import ColorSpan from '@/components/ColorSpan';
 
@@ -33,7 +37,7 @@ function Slider({
   value: number;
   onChange: (v: number) => void;
   suffix?: string;
-  hsl: HSL;
+  hsl: Types.HSL;
 }) {
   return (
     <label className={styles['slider']}>
@@ -47,7 +51,7 @@ function Slider({
   );
 }
 
-function HslPicker({ value, onChange }: { value: HSL; onChange: (v: HSL) => void }) {
+function HslPicker({ value, onChange }: { value: Types.HSL; onChange: (v: Types.HSL) => void }) {
   return (
     <div className={styles['hsl']}>
       <Slider label="H" min={0} max={360} value={value.h} onChange={(h) => onChange({ ...value, h })} suffix="°" hsl={value} />
@@ -96,9 +100,8 @@ export default function Settings() {
 
   const themeHex = hslString(settings.themeColor);
   const highlightHex = hslString(settings.textColors.highlight);
-  const themeAccent = `hsl(${settings.themeColor.h} ${settings.themeColor.s}% ${settings.themeColor.l}%)`;
 
-  const update = (patch: Partial<ThemeSettings>) => setSettings({ ...settings, ...patch });
+  const update = (patch: Partial<Types.ThemeSettings>) => setSettings({ ...settings, ...patch });
 
   const updateText = (key: TextColorKey, color: string) => setSettings({ ...settings, textColors: { ...settings.textColors, [key]: color } });
 

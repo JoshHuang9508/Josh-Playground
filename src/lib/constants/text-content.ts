@@ -43,16 +43,6 @@ export const TEXT_CONTENT = {
     help: {
       usage: '{0} — {1}',
     },
-    background: {
-      reset: 'Background image has been reset.',
-      urlInvalid: 'Invalid URL. Usage: @#00ffaabackground@# @#fff700<image_url>@#',
-      set: 'Background image set to @#fff700{0}@#',
-    },
-    backgroundcolor: {
-      reset: 'Background color has been reset.',
-      colorInvalid: 'Invalid color. Must be a hex code (e.g. #FF0000). Usage: @#00ffaabackgroundcolor@# @#fff700<#hex>@#',
-      set: 'Background color set to @#fff700{0}@#',
-    },
     username: {
       usage: 'Usage: @#00ffaausername@# @#fff700<name>@#',
       tooLong: 'Name too long — max 20 characters.',

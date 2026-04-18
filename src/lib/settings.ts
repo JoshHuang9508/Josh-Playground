@@ -1,47 +1,17 @@
-export type HSL = { h: number; s: number; l: number };
+import type * as Types from '@/lib/types';
 
-export type ThemeSettings = {
-  backgroundImageUrl: string;
-  backgroundColor: HSL;
-  backgroundAlpha: number;
-  themeColor: HSL;
-  cardBlur: number;
-  textColors: {
-    primary: string;
-    secondary: string;
-    muted: string;
-    highlight: HSL;
-    accent: string[];
-  };
-};
+import { DEFAULT_SETTINGS, STORAGE_KEY } from '@/lib/constants';
 
-export const DEFAULT_SETTINGS: ThemeSettings = {
-  backgroundImageUrl: '',
-  backgroundColor: { h: 200, s: 60, l: 5 },
-  backgroundAlpha: 0.95,
-  themeColor: { h: 360, s: 0, l: 75 },
-  cardBlur: 4,
-  textColors: {
-    primary: '#ffffff',
-    secondary: '#cccccc',
-    muted: '#888888',
-    highlight: { h: 200, s: 100, l: 60 },
-    accent: ['#00ffaa', '#ff77b7', '#ffa24c', '#00f3ff'],
-  },
-};
-
-const STORAGE_KEY = 'themeSettings';
-
-function isHslShape(v: unknown): v is HSL {
-  return typeof v === 'object' && v !== null && typeof (v as HSL).h === 'number' && typeof (v as HSL).s === 'number' && typeof (v as HSL).l === 'number';
+function isHslShape(v: unknown): v is Types.HSL {
+  return typeof v === 'object' && v !== null && typeof (v as Types.HSL).h === 'number' && typeof (v as Types.HSL).s === 'number' && typeof (v as Types.HSL).l === 'number';
 }
 
-export function loadSettings(): ThemeSettings {
+export function loadSettings(): Types.ThemeSettings {
   if (typeof window === 'undefined') return DEFAULT_SETTINGS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_SETTINGS;
-    const parsed = JSON.parse(raw) as Partial<ThemeSettings>;
+    const parsed = JSON.parse(raw) as Partial<Types.ThemeSettings>;
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
@@ -59,7 +29,7 @@ export function loadSettings(): ThemeSettings {
   }
 }
 
-export function saveSettings(s: ThemeSettings): void {
+export function saveSettings(s: Types.ThemeSettings): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
 }
@@ -69,12 +39,12 @@ export function clearSettings(): void {
   localStorage.removeItem(STORAGE_KEY);
 }
 
-export function hslString(c: HSL, alpha?: number): string {
+export function hslString(c: Types.HSL, alpha?: number): string {
   if (alpha !== undefined) return `hsl(${c.h} ${c.s}% ${c.l}% / ${alpha})`;
   return `hsl(${c.h} ${c.s}% ${c.l}% / 1)`;
 }
 
-export function applySettingsToDOM(s: ThemeSettings): void {
+export function applySettingsToDOM(s: Types.ThemeSettings): void {
   if (typeof document === 'undefined') return;
   const r = document.documentElement.style;
 

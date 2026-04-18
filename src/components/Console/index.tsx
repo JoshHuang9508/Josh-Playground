@@ -6,15 +6,15 @@ import { CONSOLE_MIN_WIDTH, CONSOLE_MIN_HEIGHT } from '@/lib/constants';
 
 import { t } from '@/lib/i18n';
 
-import { subscribeConsole, setActiveConsole } from '@/lib/consoleLog';
+import { subscribeTerminal, setActiveTerminal, emitTerminalLog } from '@/lib/terminalLog';
 
-import { AddConsoleLog, SetCommand } from '@/redux';
+import { findAvailable, findCommandHandler, replaceInput } from '@/lib/terminal';
 
 import { AppContext } from '@/pages/index';
 
 import ColorSpan from '@/components/ColorSpan';
 
-import { IsMobile, findAvailable, replaceInput } from '@/utils';
+import { IsMobile } from '@/utils';
 
 import styles from './Console.module.css';
 
@@ -27,7 +27,7 @@ interface ConsoleProps {
 }
 
 export default function Console({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: ConsoleProps) {
-  const { availableCommands, availableArgs, availablePaths, username, currentHash } = useContext(AppContext)!;
+  const appContext = useContext(AppContext)!;
 
   const consoleBox = useRef<HTMLDivElement>(null);
   const inputBox = useRef<HTMLInputElement>(null);
@@ -69,23 +69,24 @@ export default function Console({ id, windowState, onWindowStateChange, position
   const [availableIndex, setAvailableIndex] = useState<number>(0);
 
   const currentURL = useMemo(() => {
-    const hashPaths = currentHash.split('/').filter(Boolean);
+    const hashPaths = appContext.currentHash.split('/').filter(Boolean);
     return hashPaths.length > 0 ? `/${hashPaths.join('/')}/` : '/';
-  }, [currentHash]);
+  }, [appContext.currentHash]);
 
   const prefix = window
-    ? `@#FF77B7${username ?? t('global.defaultUsername')}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
-    : `@#FF77B7${username ?? t('global.defaultUsername')}@#@@#FFA24C${t('global.siteName')}@#:~${currentURL}$ `;
+    ? `@#FF77B7${appContext.username ?? t('global.defaultUsername')}@#@@#FFA24C${window?.location.hostname}@#:~${currentURL}$ `
+    : `@#FF77B7${appContext.username ?? t('global.defaultUsername')}@#@@#FFA24C${t('global.siteName')}@#:~${currentURL}$ `;
   const isMinimized = windowState === 'minimized';
   const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
   const iconY = window.innerHeight - 64;
 
   const handleInputChange = (event) => {
-    const value = event.target.value;
-    setInputValue(value);
+    const input = event.target.value;
+    setInputValue(input);
 
-    const available = findAvailable(value, availableCommands, availableArgs, availablePaths, currentHash);
+    const available = findAvailable(input, appContext.extensionCommands, appContext.extensionArgs, appContext.extensionPaths, appContext.currentHash);
     setAvailable(available);
+
     if (inputBox.current) {
       inputBox.current.style.color = available.length > 0 ? '#fff700' : '';
     }
@@ -94,16 +95,19 @@ export default function Console({ id, windowState, onWindowStateChange, position
   const handleEnter = (event) => {
     if (event.key === 'Enter') {
       if (!inputValue || inputValue == '') return;
-      const command = inputValue;
+      const fullCommand = inputValue;
 
-      setActiveConsole(id);
-      AddConsoleLog(`${prefix}@#fff700${command}`);
-      setCmdHistory([command, ...cmdHistory]);
-      localStorage.setItem('cmdHistory', [command, ...cmdHistory].slice(0, 100).join(','));
+      setActiveTerminal(id);
+      emitTerminalLog(`${prefix}@#fff700${fullCommand}`);
+      setCmdHistory([fullCommand, ...cmdHistory]);
+      localStorage.setItem('cmdHistory', [fullCommand, ...cmdHistory].slice(0, 100).join(','));
       setCmdHistoryIndex(-1);
 
-      SetCommand(command);
+      const handler = findCommandHandler(fullCommand, appContext.extensionCommands);
+      if (handler) handler();
+      else emitTerminalLog(t('commands.commandNotFound', fullCommand));
 
+      setActiveTerminal(null);
       handleInputChange({ target: { value: '' } });
       return;
     }
@@ -295,14 +299,10 @@ export default function Console({ id, windowState, onWindowStateChange, position
   }, []);
 
   useEffect(() => {
-    const unsubscribe = subscribeConsole(
+    const unsubscribe = subscribeTerminal(
       id,
-      (messages) => {
-        setConsoleContents((prev) => [...prev, ...messages]);
-      },
-      () => {
-        setConsoleContents([]);
-      },
+      (messages) => setConsoleContents((prev) => [...prev, ...messages]),
+      () => setConsoleContents([]),
     );
     setConsoleContents(t('console.welcome'));
     return unsubscribe;

@@ -6,12 +6,30 @@ export type Command = {
   name: string;
   description: string;
   usage: string;
+  args?: string[];
   flags?: string[];
-  subCommands?: Command[];
+  subCommands?: CommandList;
   handler: CommandHandler;
 };
 
 export type CommandList = Record<string, Command>;
+
+export type HSL = { h: number; s: number; l: number };
+
+export type ThemeSettings = {
+  backgroundImageUrl: string;
+  backgroundColor: HSL;
+  backgroundAlpha: number;
+  themeColor: HSL;
+  cardBlur: number;
+  textColors: {
+    primary: string;
+    secondary: string;
+    muted: string;
+    highlight: HSL;
+    accent: string[];
+  };
+};
 
 export type Track = {
   url: string; // e.g. https://www.youtube.com/watch?v={ID}

@@ -1,50 +1,16 @@
-import { useContext, useEffect } from 'react';
-
 import { t } from '@/lib/i18n';
 
-import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
-
-import { AddConsoleLog } from '@/redux';
-
-import { AppContext } from '@/pages/index';
+import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
 import PostCard from './PostCard';
 
 import styles from './Blog.module.css';
 
 export default function BlogView() {
-  const appContext = useContext(AppContext);
   const { posts, loading } = useBlogPosts();
 
-  useEffect(() => {
-    if (posts.length > 0) {
-      appContext?.setAvailableArgs({ read: posts.map((p) => p.slug) });
-    }
-    return () => appContext?.setAvailableArgs({});
-  }, [posts]);
-
-  useTerminalCommand({
-    read: {
-      name: 'read',
-      description: 'Read a blog post',
-      usage: '@#00ffaaread@# @#fff700<slug>@#',
-      handler: (_cmd, args) => {
-        const slug = args[0] ?? '';
-        if (!slug) {
-          AddConsoleLog(t('/blog.commands.read.usage'));
-          return;
-        }
-        const post = posts.find((p) => p.slug === slug);
-        if (post) {
-          window.location.hash = `#/blog/${slug}`;
-          AddConsoleLog(t('/blog.commands.read.opening', post.title));
-        } else {
-          AddConsoleLog(t('/blog.commands.read.notFound', slug));
-        }
-      },
-    },
-  });
+  useTerminalCommand({});
 
   return (
     <div className={styles['blog-page']}>

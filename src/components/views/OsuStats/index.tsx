@@ -8,7 +8,7 @@ import { t } from '@/lib/i18n';
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useOsuStats from '@/lib/hooks/OsuStats';
 
-import { AddConsoleLog } from '@/redux';
+import { emitTerminalLog } from '@/lib/terminalLog';
 
 import styles from './OsuStats.module.css';
 
@@ -197,10 +197,10 @@ export default function OsuStatsView() {
       usage: '@#00ffaastats@#',
       handler: () => {
         if (!user) {
-          AddConsoleLog(t('/osu.commands.stats.notAvailable'));
+          emitTerminalLog(t('/osu.commands.stats.notAvailable'));
           return;
         }
-        AddConsoleLog(
+        emitTerminalLog(
           t('/osu.commands.stats.header', user.username),
           t('/osu.commands.stats.globalRank', formatNumber(user.globalRank)),
           t('/osu.commands.stats.countryRank', formatNumber(user.countryRank)),
