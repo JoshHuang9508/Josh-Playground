@@ -48,8 +48,11 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     width: IsMobile() ? window.innerWidth : window.innerWidth * 0.8,
     height: IsMobile() ? window.innerHeight : window.innerHeight * 0.8,
   });
-  const isShifting = useRef(false);
-  const isTabbing = useRef(false);
+  const tempInputValueRef = useRef<string>('');
+  const cmdHistoryIndexRef = useRef<number>(-1);
+  const availableIndexRef = useRef<number>(0);
+  const isShiftingRef = useRef(false);
+  const isTabbingRef = useRef(false);
 
   const [position, setPosition] = useState(() => ({
     x: IsMobile() ? 0 : window.innerWidth * 0.1 + positionOffset,
@@ -61,25 +64,18 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   }));
   const [isDragging, setIsDragging] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
-  const [inputTemp, setInputTemp] = useState<string>('');
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [terminalContents, setTerminalContents] = useState<string[]>([]);
-  const [cmdHistoryIndex, setCmdHistoryIndex] = useState<number>(-1);
   const [available, setAvailable] = useState<string[]>([]);
-  const [availableIndex, setAvailableIndex] = useState<number>(0);
 
-  const currentURL = useMemo(() => {
-    const hashPaths = currentHash.split('/').filter(Boolean);
-    return hashPaths.length > 0 ? `/${hashPaths.join('/')}/` : '/';
-  }, [currentHash]);
-
+  const currentURL = '/' + currentHash.split('/').filter(Boolean).join('/');
   const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentURL}$ `;
   const isMinimized = windowState === 'minimized';
   const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
   const iconY = window.innerHeight - 64;
 
-  const handleInputChange = (event) => {
-    const input = event.target.value;
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = (event.target as HTMLInputElement).value;
     setInputValue(input);
 
     const available = findAvailable(input, extensionCommands.current, extensionArgs.current, extensionPaths.current, currentHash);
@@ -90,8 +86,10 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     }
   };
 
-  const handleEnter = (event) => {
+  const handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
+
       if (!inputValue || inputValue == '') return;
       const fullCommand = inputValue;
 
@@ -99,57 +97,53 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
       emitTerminalLog(`${prefix}@#fff700${fullCommand}`);
       setCmdHistory([fullCommand, ...cmdHistory]);
       localStorage.setItem('cmdHistory', [fullCommand, ...cmdHistory].slice(0, 100).join(','));
-      setCmdHistoryIndex(-1);
+      cmdHistoryIndexRef.current = -1;
 
       const handler = findCommandHandler(fullCommand, extensionCommands.current);
       if (handler) handler();
       else emitTerminalLog(t('terminal.commandNotFound', fullCommand));
 
       setActiveTerminal(null);
-      handleInputChange({ target: { value: '' } });
+      handleInputChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
       return;
     }
     if (event.key === 'ArrowUp') {
       event.preventDefault();
-      const cmdHistoryLength = cmdHistory.length;
-      const newIndex = Math.max(-1, Math.min(cmdHistoryIndex + 1, cmdHistoryLength - 1));
-      setCmdHistoryIndex(newIndex);
-      handleInputChange({
-        target: { value: newIndex !== -1 ? cmdHistory[newIndex] : '' },
-      });
+      const newIndex = Math.max(-1, Math.min(cmdHistoryIndexRef.current + 1, cmdHistory.length - 1));
+      cmdHistoryIndexRef.current = newIndex;
+      const value = newIndex !== -1 ? cmdHistory[newIndex] : '';
+      handleInputChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
     }
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      const cmdHistoryLength = cmdHistory.length;
-      const newIndex = Math.max(-1, Math.min(cmdHistoryIndex - 1, cmdHistoryLength - 1));
-      setCmdHistoryIndex(newIndex);
-      handleInputChange({
-        target: { value: newIndex !== -1 ? cmdHistory[newIndex] : '' },
-      });
+      const newIndex = Math.max(-1, Math.min(cmdHistoryIndexRef.current - 1, cmdHistory.length - 1));
+      cmdHistoryIndexRef.current = newIndex;
+      const value = newIndex !== -1 ? cmdHistory[newIndex] : '';
+      handleInputChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
     }
     if (event.key === 'Tab') {
       event.preventDefault();
-      let input = inputTemp;
+      let input = tempInputValueRef.current;
       if (!inputValue || inputValue == '') return;
-      if (!inputTemp) input = inputValue;
+      if (!tempInputValueRef.current) input = inputValue;
       if (available.length > 0) {
-        setInputValue(replaceInput(input, available[availableIndex]));
-        isTabbing.current = true;
-        setInputTemp(input);
-        if (isShifting.current) {
-          setAvailableIndex(availableIndex == 0 ? available.length - 1 : availableIndex - 1);
+        setInputValue(replaceInput(input, available[availableIndexRef.current]));
+        isTabbingRef.current = true;
+        tempInputValueRef.current = input;
+        if (isShiftingRef.current) {
+          availableIndexRef.current = availableIndexRef.current == 0 ? available.length - 1 : availableIndexRef.current - 1;
         } else {
-          setAvailableIndex(availableIndex >= available.length - 1 ? 0 : availableIndex + 1);
+          availableIndexRef.current = availableIndexRef.current >= available.length - 1 ? 0 : availableIndexRef.current + 1;
         }
       }
     } else if (event.key === 'Shift') {
       event.preventDefault();
-    } else if (isTabbing.current) {
-      handleInputChange(event);
-      isTabbing.current = false;
-      isShifting.current = false;
-      setInputTemp('');
-      setAvailableIndex(0);
+    } else if (isTabbingRef.current) {
+      event.preventDefault();
+      handleInputChange({ target: { value: inputValue } } as React.ChangeEvent<HTMLInputElement>);
+      isTabbingRef.current = false;
+      tempInputValueRef.current = '';
+      availableIndexRef.current = 0;
     }
   };
 
@@ -292,13 +286,13 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Shift') {
-        isShifting.current = true;
+        isShiftingRef.current = true;
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.key === 'Shift') {
-        isShifting.current = false;
+        isShiftingRef.current = false;
       }
     };
 
@@ -394,7 +388,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
 
       <div className={styles['input']}>
         <ColorSpan className={styles['prefix']} str={prefix} />
-        <input ref={inputRef} type="text" value={`${inputValue}`} placeholder={t('terminal.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
+        <input ref={inputRef} type="text" value={inputValue} placeholder={t('terminal.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
       </div>
     </div>
   );
