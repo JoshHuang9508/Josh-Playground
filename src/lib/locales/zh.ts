@@ -210,14 +210,30 @@ export const TEXT_CONTENT_ZH = {
         osu: 'Opening @#FFF700osu!@# profile...',
       },
     },
+    bio: [
+      '嗨! 我是黃晨皓 (a.k.a. Whitedog/Whydog)，目前就讀國立台灣科技大學資訊工程系大二，對於寫程式有種成癮般的熱愛，所以毅然決然地成為了資工人。\n\n',
+      '目標是成為一個自由的開發者，能夠每天邊享受風景邊寫程式。\n\n',
+      '同時我也老愛玩遊戲了，主坑 osu! 和 Valorant。\n\n',
+      'osu! 是前排鍵鼠玩家，歡迎找我 mu。\n\n',
+      'Valorant 的話目標爬到超凡(目前最高鑽2)。\n\n',
+      '有玩蔚藍檔案，但基本是當電子手辦在養了，偶爾上線抽個角色。\n\n',
+      '如同一般資工人一樣，我也是二次元宅，會看動漫玩二遊。\n\n',
+    ],
     hero: {
+      name: 'Josh, Huang',
+      school: 'NTUST-CSIE',
+      age: '18yo',
+      motto: '「人生就是為了達到溫柔這一個目標」',
+    },
+    heroReverse: {
       name: 'Whitedog',
       school: 'NTUST-CSIE',
       age: '18yo',
-      bio: '「人生就是為了達到@#00ffaa溫柔@#這一個目標」',
+      motto: '「人生就是為了達到溫柔這一個目標」',
     },
     sections: {
       aboutMe: '關於我',
+      information: '一些資訊',
       latestPost: '@#ffa24c最新文章@#',
       projects: '@#00ffaa專案集@#',
       osuStats: '@#ff77b7OSU! 成績@#',
@@ -233,10 +249,12 @@ export const TEXT_CONTENT_ZH = {
       noImage: '沒有圖片',
     },
     osu: {
-      details: '詳細資料 \u2192',
-      globalRank: 'Global Rank',
+      rank: 'Rank',
       pp: 'PP',
       accuracy: 'Accuracy',
+      playCount: 'Play Count',
+      playTime: 'Play Time',
+      country: 'Country',
     },
     features: {
       terminal: {
@@ -252,7 +270,7 @@ export const TEXT_CONTENT_ZH = {
       },
       commands: {
         title: '@#ffa24c$@# 快速命令',
-        desc: '輸入 @#fff700help@# 查看所有可用命令。使用 @#fff700cd@# 在頁面之間導航，或使用 @#fff700github@#, @#fff700osu@#, @#fff700music -i@# 直接互動。',
+        desc: '輸入 @#fff700help@# 查看所有可用命令。使用 @#fff700cd@# 在頁面之間導航，或使用 @#fff700open github@# 、 @#fff700music -i@# 直接互動。',
       },
     },
     footer: 'built with next.js + too much coffee',
@@ -455,10 +473,6 @@ export const TEXT_CONTENT_ZH = {
   '/projects': {
     title: 'Whydog - 專案集',
     subtitle: '我的開源作品和專案。',
-  },
-  '/osu': {
-    title: 'Whydog - osu! 成績',
-    subtitle: '我的 osu! 個人資料。',
   },
   '/blog': {
     title: 'Whydog - 部落格',

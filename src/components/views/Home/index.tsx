@@ -15,21 +15,44 @@ import ColorSpan from '@/components/ColorSpan';
 
 import styles from './Home.module.css';
 
+function formatNumber(n: number | null): string {
+  if (n === null) return '--';
+  return n.toLocaleString();
+}
+
+function formatPlayTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  return `${hours.toLocaleString()}h`;
+}
+
+function formatHueStyleProperty(hue: number): string {
+  return `hsl(${hue}, 100%, 60%)`;
+}
+
 export default function HomeView() {
-  const { user: osuUser } = useOsuStats();
+  const { user: osuData } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
   const { t } = useI18n();
 
   const imageRef = useRef<HTMLImageElement>(null);
 
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const [avatarFlipped, setAvatarFlipped] = useState(false);
+  const [profileFlipped, setProfileFlipped] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
 
-  const handleAvatarClick = () => {
+  const statCells = [
+    { label: t('home.osu.rank'), value: osuData?.globalRank !== null ? `#${formatNumber(osuData?.globalRank ?? 0)}` : '--' },
+    { label: t('home.osu.pp'), value: `${formatNumber(osuData?.pp ?? 0)}pp` },
+    { label: t('home.osu.playCount'), value: formatNumber(osuData?.playCount ?? 0) },
+    { label: t('home.osu.country'), value: osuData?.countryRank !== null ? `#${formatNumber(osuData?.countryRank ?? 0)}` : '--' },
+    { label: t('home.osu.accuracy'), value: `${osuData?.accuracy.toFixed(2) ?? '0.00'}%` },
+    { label: t('home.osu.playTime'), value: formatPlayTime(osuData?.playTime ?? 0) },
+  ];
+
+  const handleProfileClick = () => {
     if (isFlipping) return;
     setIsFlipping(true);
-    setAvatarFlipped((prev) => !prev);
+    setProfileFlipped((prev) => !prev);
     setTimeout(() => setIsFlipping(false), 600);
   };
 
@@ -100,41 +123,74 @@ export default function HomeView() {
   return (
     <div className={styles['home-page']}>
       <div className={styles['section']}>
-        <span className={styles['section-label']}>{t('home.sections.aboutMe')}</span>
-        <div className={styles['bento']}>
-          {/* Left column */}
-          <div className={styles['left-column']}>
-            {/* Hero card */}
-            <div className={styles['hero-card']}>
-              <div className={`${styles['avatar-wrapper']} ${avatarFlipped ? styles['flipped'] : ''}`} onClick={handleAvatarClick}>
-                <img ref={imageRef} className={styles['avatar']} src="/assets/pfp.png" alt="Profile" />
-                <img className={`${styles['avatar']} ${styles['avatar-back']}`} src="/assets/pfp_rl.png" alt="Profile alt" />
-              </div>
-              <div className={styles['hero-info']}>
+        {/* Hero card */}
+        <div className={`${styles['hero-card-wrapper']} ${profileFlipped ? styles['flipped'] : ''}`} onClick={handleProfileClick}>
+          <div className={styles['hero-card']}>
+            <div className={styles['avatar-wrapper']}>
+              <img ref={imageRef} className={styles['avatar']} src="/assets/pfp_rl.png" alt="Profile" />
+            </div>
+            <div className={styles['hero-identity']}>
+              <div className={styles['hero-name-container']}>
                 <span className={styles['hero-name']}>{t('home.hero.name')}</span>
                 <div className={styles['hero-title-container']}>
                   <span className={styles['hero-age']}>{t('home.hero.age')}</span>
                   <span className={styles['hero-school']}>{t('home.hero.school')}</span>
                 </div>
-                <ColorSpan className={styles['hero-bio']} str={t('home.hero.bio')} />
-                <div className={styles['social-row']}>
-                  {SOCIAL_LINKS.map((social) => (
-                    <img
-                      key={social.icon}
-                      className={styles['social-icon']}
-                      src={`/assets/${social.icon}.png`}
-                      alt={social.icon}
-                      title={social.icon}
-                      onClick={() => window.open(social.url, '_blank')}
-                    />
-                  ))}
+              </div>
+              <span className={styles['hero-motto']}>{t('home.hero.motto')}</span>
+            </div>
+            <div className={styles['hero-social-row']}>
+              {SOCIAL_LINKS.map((social) => (
+                <img key={social.icon} className={styles['social-icon']} src={`/assets/${social.icon}.png`} alt={social.icon} title={social.icon} onClick={() => window.open(social.url, '_blank')} />
+              ))}
+            </div>
+          </div>
+
+          {/* Reverse hero card */}
+          <div className={styles['hero-card-back']}>
+            <div className={styles['avatar-wrapper']}>
+              <img ref={imageRef} className={styles['avatar']} src="/assets/pfp.png" alt="Profile" />
+            </div>
+            <div className={styles['hero-identity']}>
+              <div className={styles['hero-name-container']}>
+                <span className={styles['hero-name']}>{t('home.heroReverse.name')}</span>
+                <div className={styles['hero-title-container']}>
+                  <span className={styles['hero-age']}>{t('home.heroReverse.age')}</span>
+                  <span className={styles['hero-school']}>{t('home.heroReverse.school')}</span>
                 </div>
               </div>
+              <span className={styles['hero-motto']}>{t('home.hero.motto')}</span>
             </div>
+            <div className={styles['hero-social-row']}>
+              {SOCIAL_LINKS.map((social) => (
+                <img key={social.icon} className={styles['social-icon']} src={`/assets/${social.icon}.png`} alt={social.icon} title={social.icon} onClick={() => window.open(social.url, '_blank')} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div className={styles['section']}>
+        <span className={styles['section-label']}>{t('home.sections.aboutMe')}</span>
+
+        <div className={`${styles['hero-bio']} markdown-content`}>
+          {t('home.bio').map((bio) => (
+            <ColorSpan key={bio} str={bio} />
+          ))}
+        </div>
+      </div>
+
+      <hr className="divider" />
+
+      <div className={styles['section']}>
+        <span className={styles['section-label']}>{t('home.sections.information')}</span>
+
+        <div className={styles['bento']}>
+          {/* Left column */}
+          <div className={styles['column']}>
             {/* Latest post preview */}
-            <div className={styles['preview-card']} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
-              <div className={styles['preview-header']}>
+            <div className={styles['card']} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
+              <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.latestPost')} />
                 <a className={styles['view-all-link']} href="#/blog" onClick={(e) => e.stopPropagation()}>
                   {t('home.latestPost.allPosts')}
@@ -153,13 +209,10 @@ export default function HomeView() {
                 </>
               )}
             </div>
-          </div>
 
-          {/* Right column */}
-          <div className={styles['preview-column']}>
             {/* Projects preview */}
-            <div className={styles['preview-card']} onClick={() => (window.location.hash = `#/projects`)}>
-              <div className={styles['preview-header']}>
+            <div className={styles['card']} onClick={() => (window.location.hash = `#/projects`)}>
+              <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.projects')} />
                 <a className={styles['view-all-link']} href="#/projects" onClick={(e) => e.stopPropagation()}>
                   {t('home.projects.viewAll')}
@@ -195,27 +248,39 @@ export default function HomeView() {
                 ))}
               </div>
             </div>
+          </div>
 
+          {/* Right column */}
+          <div className={styles['column']}>
             {/* osu! stats preview */}
-            <div className={styles['preview-card']} onClick={() => (window.location.hash = '#/osu')}>
-              <div className={styles['preview-header']}>
+            <div className={styles['card']}>
+              <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.osuStats')} />
-                <a className={styles['view-all-link']} href="#/osu" onClick={(e) => e.stopPropagation()}>
-                  {t('home.osu.details')}
-                </a>
               </div>
-              <div className={styles['stat-row']}>
-                <div className={styles['stat-item']}>
-                  <span className={styles['stat-value']}>{osuUser ? `#${osuUser.globalRank?.toLocaleString() ?? '--'}` : '--'}</span>
-                  <span className={styles['stat-label']}>{t('home.osu.globalRank')}</span>
+              <img className={styles['osu-cover']} src={osuData?.coverUrl} alt="" />
+              <div className={styles['osu-card']}>
+                <div className={styles['hero-left']}>
+                  <img className={styles['osu-avatar']} src={osuData?.avatarUrl} alt={osuData?.username} />
+                  <div className={styles['hero-identity']}>
+                    <span className={styles['osu-username']}>{osuData?.username ?? 'Unknown'}</span>
+                    <span className={styles['osu-details']}>{`${osuData?.countryCode ?? 'N/A'} · ${new Date(osuData?.joinDate ?? new Date()).getFullYear()} · Lv.${osuData?.level ?? 0}`}</span>
+                    <div className={styles['level-bar-wrap']}>
+                      <div className={styles['level-bar']}>
+                        <div className={styles['level-fill']} style={{ width: `${osuData?.levelProgress ?? 0}%` }} />
+                      </div>
+                      <span className={styles['level-pct']}>{`${osuData?.levelProgress ?? 0}%`}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles['stat-item']}>
-                  <span className={styles['stat-value']}>{osuUser ? `${osuUser.pp.toLocaleString()}` : '--'}</span>
-                  <span className={styles['stat-label']}>{t('home.osu.pp')}</span>
-                </div>
-                <div className={styles['stat-item']}>
-                  <span className={styles['stat-value']}>{osuUser ? `${osuUser.accuracy.toFixed(1)}%` : '--'}</span>
-                  <span className={styles['stat-label']}>{t('home.osu.accuracy')}</span>
+                <div className={styles['stat-cells']}>
+                  {statCells.map(({ label, value }) => (
+                    <div key={label} className={styles['stat-cell']} style={{ '--cell-accent': formatHueStyleProperty(osuData?.profileHue ?? 0) } as React.CSSProperties}>
+                      <span className={styles['cell-label']}>{label}</span>
+                      <span className={styles['cell-value']} style={{ color: formatHueStyleProperty(osuData?.profileHue ?? 0) }}>
+                        {value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

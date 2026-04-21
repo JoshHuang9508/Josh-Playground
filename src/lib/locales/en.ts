@@ -210,14 +210,30 @@ export const TEXT_CONTENT_EN = {
         osu: 'Opening @#FFF700osu!@# profile...',
       },
     },
+    bio: [
+      '嗨! 我是黃晨皓 (a.k.a. Whitedog/Whydog)，目前就讀國立台灣科技大學資訊工程系大二，對於寫程式有種成癮般的熱愛，所以毅然決然地成為了資工人。',
+      '目標是成為一個自由的開發者，能夠每天邊享受風景邊寫程式。',
+      '同時我也老愛玩遊戲了，主坑 osu! 和 Valorant。',
+      'osu! 是前排鍵鼠玩家，歡迎找我 mu。',
+      'Valorant 的話目標爬到超凡(目前最高鑽2)。',
+      '有玩蔚藍檔案，但基本是當電子手辦在養了，偶爾上線抽個角色。',
+      '如同一般資工人一樣，我也是二次元宅，會看動漫玩二遊。',
+    ],
     hero: {
+      name: 'Josh, Huang',
+      school: 'NTUST-CSIE',
+      age: '18yo',
+      motto: '\"The goal of life is to achieve gentleness\"',
+    },
+    heroReverse: {
       name: 'Whitedog',
       school: 'NTUST-CSIE',
       age: '18yo',
-      bio: '\"The goal of life is to achieve @#00ffaagentleness@#\"',
+      motto: '\"The goal of life is to achieve gentleness\"',
     },
     sections: {
       aboutMe: 'ABOUT ME',
+      information: 'INFORMATION',
       latestPost: '@#ffa24cLATEST POST@#',
       projects: '@#00ffaaPROJECTS@#',
       osuStats: '@#ff77b7OSU! STATS@#',
@@ -233,10 +249,12 @@ export const TEXT_CONTENT_EN = {
       noImage: 'No image',
     },
     osu: {
-      details: 'Details \u2192',
-      globalRank: 'Global Rank',
+      rank: 'Rank',
       pp: 'PP',
       accuracy: 'Accuracy',
+      playCount: 'Play Count',
+      playTime: 'Play Time',
+      country: 'Country',
     },
     features: {
       terminal: {
@@ -252,7 +270,7 @@ export const TEXT_CONTENT_EN = {
       },
       commands: {
         title: '@#ffa24c$@# Quick Commands',
-        desc: 'Type @#fff700help@# to see all available commands. Use @#fff700cd@# to navigate between pages, or @#fff700github@#, @#fff700osu@#, @#fff700music -i@# to interact directly.',
+        desc: 'Type @#fff700help@# to see all available commands. Use @#fff700cd@# to navigate between pages, or @#fff700open github@#, @#fff700music -i@# to interact directly.',
       },
     },
     footer: 'built with next.js + too much coffee',
@@ -455,10 +473,6 @@ export const TEXT_CONTENT_EN = {
   '/projects': {
     title: 'Whydog - Projects',
     subtitle: 'My open-source work and side projects.',
-  },
-  '/osu': {
-    title: 'Whydog - osu! Stats',
-    subtitle: 'My osu! profile and gameplay statistics.',
   },
   '/blog': {
     title: 'Whydog - My Blog',

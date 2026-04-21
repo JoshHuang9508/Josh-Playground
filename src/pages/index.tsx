@@ -23,7 +23,6 @@ import NotFoundView from '@/components/views/NotFound';
 import ProjectsView from '@/components/views/Projects';
 import BlogView from '@/components/views/Blog';
 import BlogPostView from '@/components/views/BlogPost';
-import OsuStatsView from '@/components/views/OsuStats';
 import Navigation from '@/components/Navigation';
 import Settings from '@/components/Settings';
 
@@ -69,7 +68,7 @@ function PageInner() {
 
   const playMusic = useCallback(() => {
     if (!audioPlayerRef.current || isPlayingRef.current) return;
-    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.05;
+    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.01;
     audioPlayerRef.current.play().then(() => {
       isPlayingRef.current = true;
     });
@@ -122,7 +121,7 @@ function PageInner() {
 
   useEffect(() => {
     if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.05;
+    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.01;
   }, [currentHash]);
 
   useEffect(() => {
@@ -160,8 +159,6 @@ function PageInner() {
         return <BlogView />;
       case '/listentogether':
         return <ListenTogetherView />;
-      case '/osu':
-        return <OsuStatsView />;
       default:
         return <NotFoundView />;
     }
