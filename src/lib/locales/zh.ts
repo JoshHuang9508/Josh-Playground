@@ -54,7 +54,7 @@ export const TEXT_CONTENT_ZH = {
       muted: '靜音',
     },
     accent: {
-      title: '強調文字顏色',
+      title: '其他文字顏色',
       add: '+ push',
     },
     reset: 'reset --all',
