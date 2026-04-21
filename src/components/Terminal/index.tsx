@@ -229,11 +229,6 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   };
 
   useEffect(() => {
-    const cmdHistory = localStorage.getItem('cmdHistory')?.split(',') ?? [];
-    setCmdHistory(cmdHistory);
-  }, []);
-
-  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const ref = interactionRef.current;
       const dx = e.clientX - ref.startMouseX;
@@ -317,6 +312,11 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     setTerminalContents(t('terminal.welcome'));
     return unsubscribe;
   }, [id]);
+
+  useEffect(() => {
+    const cmdHistory = localStorage.getItem('cmdHistory')?.split(',') ?? [];
+    setCmdHistory(cmdHistory);
+  }, []);
 
   useEffect(() => {
     if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { AppContext } from '@/pages/index';
 
@@ -10,74 +10,18 @@ import { t } from '@/lib/i18n';
 
 import { hslString } from '@/lib/settings';
 
+import { Slider } from './Slider';
+import { HslPicker } from './HslPicker';
+import { ColorRow } from './ColorRow';
 import ColorSpan from '@/components/ColorSpan';
 
 import styles from './Settings.module.css';
 
-type TextColorKey = 'primary' | 'secondary' | 'muted';
-
-const TEXT_FIELDS: { key: TextColorKey; label: string }[] = [
+const TEXT_FIELDS: { key: 'primary' | 'secondary' | 'muted'; label: string }[] = [
   { key: 'primary', label: t('settings.text.primary') },
   { key: 'secondary', label: t('settings.text.secondary') },
   { key: 'muted', label: t('settings.text.muted') },
 ];
-
-function Slider({
-  label,
-  min,
-  max,
-  step = 1,
-  value,
-  onChange,
-  suffix,
-  hsl,
-}: {
-  label: string;
-  min: number;
-  max: number;
-  step?: number;
-  value: number;
-  onChange: (v: number) => void;
-  suffix?: string;
-  hsl: Types.HSL;
-}) {
-  return (
-    <label className={styles['slider']}>
-      <span className={styles['slider-label']}>{label}</span>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} style={{ accentColor: hslString(hsl) }} />
-      <span className={styles['slider-value']}>
-        {step < 1 ? value.toFixed(2) : value}
-        {suffix ?? ''}
-      </span>
-    </label>
-  );
-}
-
-function HslPicker({ value, onChange }: { value: Types.HSL; onChange: (v: Types.HSL) => void }) {
-  return (
-    <div className={styles['hsl']}>
-      <Slider label="H" min={0} max={360} value={value.h} onChange={(h) => onChange({ ...value, h })} suffix="°" hsl={value} />
-      <Slider label="S" min={0} max={100} value={value.s} onChange={(s) => onChange({ ...value, s })} suffix="%" hsl={value} />
-      <Slider label="L" min={0} max={100} value={value.l} onChange={(l) => onChange({ ...value, l })} suffix="%" hsl={value} />
-      <span className={styles['hsl-out']}>{`hsl(${value.h} ${value.s}% ${value.l}%)`}</span>
-    </div>
-  );
-}
-
-function ColorRow({ label, value, onChange, onRemove }: { label: string; value: string; onChange: (v: string) => void; onRemove?: () => void }) {
-  return (
-    <div className={styles['color-row']}>
-      <span className={styles['color-row-label']}>{label}</span>
-      <div className={styles['color-picker']} style={{ background: value }} />
-      <input type="text" className={styles['color-text']} value={value} onChange={(e) => onChange(e.target.value)} spellCheck={false} />
-      {onRemove && (
-        <button type="button" className={styles['icon-btn']} onClick={onRemove} title="remove">
-          [×]
-        </button>
-      )}
-    </div>
-  );
-}
 
 export default function Settings() {
   const { settings, setSettings, isSettingsOpen, setIsSettingsOpen } = useContext(AppContext)!;
@@ -98,14 +42,17 @@ export default function Settings() {
     y: 0,
   }));
   const [isDragging, setIsDragging] = useState(false);
-  const [newAccent, setNewAccent] = useState('#ffffff');
 
   const cardHex = hslString(settings.cardColor);
   const highlightHex = hslString(settings.textHighlight);
 
-  const update = (patch: Partial<Types.Settings>) => setSettings({ ...settings, ...patch });
+  const update = (patch: Partial<Types.Settings>) => {
+    setSettings({ ...settings, ...patch });
+  };
 
-  const updateText = (key: TextColorKey, color: string) => setSettings({ ...settings, textColors: { ...settings.textColors, [key]: color } });
+  const updateText = (key: 'primary' | 'secondary' | 'muted', color: string) => {
+    setSettings({ ...settings, textColors: { ...settings.textColors, [key]: color } });
+  };
 
   const updateAccent = (idx: number, color: string) => {
     const accent = [...settings.textColors.accent];
@@ -114,11 +61,7 @@ export default function Settings() {
   };
 
   const addAccent = () => {
-    const color = /^#[0-9a-fA-F]{6}$/.test(newAccent) ? newAccent : '#ffffff';
-    setSettings({
-      ...settings,
-      textColors: { ...settings.textColors, accent: [...settings.textColors.accent, color] },
-    });
+    setSettings({ ...settings, textColors: { ...settings.textColors, accent: [...settings.textColors.accent, '#ffffff'] } });
   };
 
   const removeAccent = (idx: number) => {
@@ -126,30 +69,9 @@ export default function Settings() {
     setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
   };
 
-  const reset = () => setSettings(DEFAULT_SETTINGS);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const ref = interactionRef.current;
-    const dx = e.clientX - ref.startMouseX;
-    const dy = e.clientY - ref.startMouseY;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    if (ref.type === 'drag') {
-      const newX = Math.min(Math.max(0, ref.startPosX + dx), vw - ref.startWidth);
-      const newY = Math.min(Math.max(0, ref.startPosY + dy), vh - ref.startHeight);
-      setPosition({ x: newX, y: newY });
-    }
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    interactionRef.current.type = '';
-    setIsDragging(false);
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove]);
+  const reset = () => {
+    setSettings(DEFAULT_SETTINGS);
+  };
 
   const handleDragStart = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest(`.${styles['traffic-lights']}`)) return;
@@ -166,9 +88,37 @@ export default function Settings() {
     setIsDragging(true);
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const ref = interactionRef.current;
+      const dx = e.clientX - ref.startMouseX;
+      const dy = e.clientY - ref.startMouseY;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      if (ref.type === 'drag') {
+        const newX = Math.min(Math.max(0, ref.startPosX + dx), vw - ref.startWidth);
+        const newY = Math.min(Math.max(0, ref.startPosY + dy), vh - ref.startHeight);
+        setPosition({ x: newX, y: newY });
+      }
+    };
+
+    const handleMouseUp = () => {
+      interactionRef.current.type = '';
+      setIsDragging(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  };
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
 
   return (
     <div ref={panelRef} className={`${styles['panel']} ${isSettingsOpen ? '' : styles['closed']}`} style={{ left: position.x, top: position.y }} onClick={(e) => e.stopPropagation()}>
