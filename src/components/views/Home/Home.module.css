@@ -190,6 +190,13 @@ span.hero-school {
   border-radius: 1rem;
 }
 
+span.hero-motto {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-indent: 5rem;
+}
+
 div.hero-bio {
   padding: 0 2rem;
   font-size: 1rem;
