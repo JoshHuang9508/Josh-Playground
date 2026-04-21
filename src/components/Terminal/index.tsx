@@ -43,9 +43,9 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     startHeight: 0,
   });
   const prevLayoutRef = useRef({
-    x: IsMobile() ? 0 : window.innerWidth * 0.1 + positionOffset,
+    x: IsMobile() ? 0 : window.innerWidth * 0.2 + positionOffset,
     y: IsMobile() ? 0 : window.innerHeight - window.innerHeight * 0.9 + positionOffset,
-    width: IsMobile() ? window.innerWidth : window.innerWidth * 0.8,
+    width: IsMobile() ? window.innerWidth : window.innerWidth * 0.6,
     height: IsMobile() ? window.innerHeight : window.innerHeight * 0.8,
   });
   const tempInputValueRef = useRef<string>('');
@@ -55,11 +55,11 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   const isTabbingRef = useRef(false);
 
   const [position, setPosition] = useState(() => ({
-    x: IsMobile() ? 0 : window.innerWidth * 0.1 + positionOffset,
+    x: IsMobile() ? 0 : window.innerWidth * 0.2 + positionOffset,
     y: IsMobile() ? 0 : window.innerHeight - window.innerHeight * 0.9 + positionOffset,
   }));
   const [size, setSize] = useState(() => ({
-    width: IsMobile() ? window.innerWidth : window.innerWidth * 0.8,
+    width: IsMobile() ? window.innerWidth : window.innerWidth * 0.6,
     height: IsMobile() ? window.innerHeight : window.innerHeight * 0.8,
   }));
   const [isDragging, setIsDragging] = useState(false);

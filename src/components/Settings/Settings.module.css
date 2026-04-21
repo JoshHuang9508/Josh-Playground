@@ -303,8 +303,7 @@ div.footer {
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
-  padding-top: 0.4rem;
-  margin-top: 0.4rem;
+  padding-top: 1rem;
   border-top: 1px dashed rgb(255 255 255 / 8%);
 }
 
