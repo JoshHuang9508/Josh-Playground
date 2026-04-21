@@ -71,7 +71,7 @@ export const findAvailableCommand = (input: string, commandList: Types.CommandLi
   let availables: string[] = [];
 
   if (!input.startsWith(' ')) {
-    if (!command) {
+    if (!command || parts.length <= 1) {
       availables.push(...commands.map((cmd) => cmd.name));
     } else {
       if (command.subCommands) {
@@ -96,13 +96,28 @@ export const findAvailableCommand = (input: string, commandList: Types.CommandLi
 };
 
 export const findAvailable = (input: string, commandList: Types.CommandList, extensionArgs: Record<string, string[]>, extensionPaths: Record<string, string[]>, currentHash: string): string[] => {
-  const parts = input.split(' ');
-
-  if (input == '' || input == ' ' || parts.length == 0) {
+  if (input == '' || input == ' ') {
     return [];
   }
 
   return findAvailableCommand(input, commandList, extensionArgs).concat(findAvailablePath(input, extensionPaths, currentHash));
+};
+
+export const findCommandObject = (fullCommand: string, commandList: Types.CommandList): Types.Command | undefined => {
+  if (!fullCommand || fullCommand === '') return undefined;
+
+  const { cmdName, args } = parseCommand(fullCommand);
+  if (!cmdName) return undefined;
+
+  const commandObj = Object.values(commandList).find((cmd) => cmd.name === cmdName);
+  if (!commandObj) return undefined;
+
+  if (commandObj.subCommands && args.length > 0) {
+    const commandObject = findCommandObject(fullCommand.split(' ').slice(1).join(' '), commandObj.subCommands);
+    if (commandObject) return commandObject;
+  }
+
+  return commandObj;
 };
 
 export const findCommandHandler = (fullCommand: string, commandList: Types.CommandList): (() => void) | undefined => {
@@ -111,15 +126,10 @@ export const findCommandHandler = (fullCommand: string, commandList: Types.Comma
   const { cmdName, args, flags } = parseCommand(fullCommand);
   if (!cmdName) return undefined;
 
-  const commandObj = Object.values(commandList).find((cmd) => cmd.name === cmdName);
+  const commandObj = findCommandObject(fullCommand, commandList);
   if (!commandObj) return undefined;
 
-  if (commandObj.subCommands && args.length > 0) {
-    const commandHandler = findCommandHandler(fullCommand.split(' ').slice(1).join(' '), commandObj.subCommands);
-    if (commandHandler) return commandHandler;
-  }
-
-  return () => commandObj.handler(cmdName, args, flags);
+  return () => commandObj.handler(cmdName, args, flags, commandObj);
 };
 
 export const replaceInput = (input: string, replace: string) => {

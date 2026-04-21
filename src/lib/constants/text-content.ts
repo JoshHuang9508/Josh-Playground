@@ -29,6 +29,8 @@ export const TEXT_CONTENT = {
       '  @#f9f284Ready. Type a command to get started.',
       ' ',
     ],
+    availableCommands: 'Available commands:',
+    commandUsage: '  {0}    {1}',
     commandNotFound: 'Unknown command: @#fff700{0}@#. Type @#00ffaahelp@# to see available commands.',
   },
   'settings': {
@@ -61,10 +63,8 @@ export const TEXT_CONTENT = {
   'global': {
     commands: {
       help: {
-        description: 'List all available commands',
-        usage: '@#00ffaahelp@#',
-        commandUsage: '  {0}{1}',
-        availableCommands: 'Available commands:',
+        description: 'List all available commands or show help for a specific command',
+        usage: '@#00ffaahelp@# @#fff700[command]@#',
       },
       echo: {
         description: 'Echo a message',
@@ -92,21 +92,6 @@ export const TEXT_CONTENT = {
       settings: {
         description: 'Manage settings',
         usage: '@#00ffaasettings@# @#fff700<sub>@# @#fff700[args]@# (try @#fff700settings -h@#)',
-        help: [
-          '@#fff700settings@# — manage settings',
-          '  @#00ffaasettings@#                                          show current settings',
-          '  @#00ffaasettings@# @#fff700-h@#                                       show this help',
-          '  @#00ffaasettings reset@#                                    reset to defaults',
-          '  @#00ffaasettings bg-image@# @#fff700<url|-r>@#                        set or reset background image',
-          '  @#00ffaasettings bg@# @#fff700<h> <s> <l> [a]@#                       set background color HSL(A)',
-          '  @#00ffaasettings card-color@# @#fff700<h> <s> <l>@#                   set card color (card + highlight)',
-          '  @#00ffaasettings blur@# @#fff700<px>@#                                set card blur radius',
-          '  @#00ffaasettings text-highlight@# @#fff700<h> <s> <l>@#               set text highlight HSL',
-          '  @#00ffaasettings text@# @#fff700<primary|secondary|muted> <#hex>@#    set text color',
-          '  @#00ffaasettings accent add@# @#fff700<#hex>@#                        push accent color',
-          '  @#00ffaasettings accent rm@# @#fff700<index>@#                        remove accent at index',
-          '  @#00ffaasettings accent set@# @#fff700<index> <#hex>@#                set accent at index',
-        ],
         show: [
           '@#fff700current settings:@#',
           '  bg-image         = @#fff700{0}@#',
@@ -162,6 +147,8 @@ export const TEXT_CONTENT = {
           invalid: 'Invalid text key. Use @#fff700primary@#, @#fff700secondary@# or @#fff700muted@#.',
         },
         accent: {
+          description: 'Manage accent colors',
+          usage: '@#00ffaasettings accent@# @#fff700<sub>@# @#fff700[args]@# (try @#fff700settings accent -h@#)',
           add: {
             description: 'Add an accent color',
             usage: '@#00ffaasettings accent add@# @#fff700<#hex>@#',

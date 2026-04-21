@@ -1,6 +1,6 @@
 export type TerminalWindowState = 'normal' | 'minimized' | 'maximized' | 'closed';
 
-export type CommandHandler = (command: string, args: string[], flags: string[]) => void;
+export type CommandHandler = (command: string, args: string[], flags: string[], commandObject?: Command) => void;
 
 export type Command = {
   name: string;

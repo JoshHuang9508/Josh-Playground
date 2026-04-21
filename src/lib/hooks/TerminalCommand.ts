@@ -5,7 +5,7 @@ import type * as Types from '@/lib/types';
 
 import { MUSIC_LIST, DEFAULT_SETTINGS } from '@/lib/constants';
 
-import { findAvailablePath, renderWebPaths } from '@/lib/terminal';
+import { findAvailablePath, findCommandObject, renderWebPaths } from '@/lib/terminal';
 
 import { clearActiveTerminalLog, emitTerminalLog } from '@/lib/terminalLog';
 
@@ -30,16 +30,24 @@ export default function useTerminalCommand(extension: Types.CommandList) {
       name: 'help',
       description: t('global.commands.help.description'),
       usage: t('global.commands.help.usage'),
-      handler: (_cmd, _args, _flags) => {
-        emitTerminalLog(t('global.commands.help.availableCommands'));
-        const commands = Object.values(extensionCommands.current);
-        const maxUsageWidth = Math.max(...commands.map((cmd) => escapeCustomColorTags(cmd.usage).length));
-        const columnWidth = maxUsageWidth + 4;
-        commands.forEach((cmd) => {
-          const offset = cmd.usage.length - escapeCustomColorTags(cmd.usage).length;
-          const paddedUsage = cmd.usage.padEnd(columnWidth + offset, ' ');
-          emitTerminalLog(t('global.commands.help.commandUsage', paddedUsage, cmd.description));
-        });
+      handler: (_cmd, args, _flags) => {
+        if (args.length > 0) {
+          const command = findCommandObject(args.join(' '), extensionCommands.current);
+          if (!command) {
+            emitTerminalLog(t('terminal.commandNotFound', args.join(' ')));
+            return;
+          }
+          emitTerminalLog(t('terminal.commandUsage', command.usage, command.description));
+        } else {
+          emitTerminalLog(t('terminal.availableCommands'));
+          const commands = Object.values(extensionCommands.current);
+          const paddingWidth = Math.max(...commands.map((cmd) => escapeCustomColorTags(cmd.usage).length));
+          commands.forEach((cmd) => {
+            const offset = cmd.usage.length - escapeCustomColorTags(cmd.usage).length;
+            const paddedUsage = cmd.usage.padEnd(paddingWidth + offset, ' ');
+            emitTerminalLog(t('terminal.commandUsage', paddedUsage, cmd.description));
+          });
+        }
       },
     },
     echo: {
@@ -270,8 +278,8 @@ export default function useTerminalCommand(extension: Types.CommandList) {
         },
         'text-highlight': {
           name: 'text-highlight',
-          description: t('global.commands.settings.text-highlight.description'),
-          usage: t('global.commands.settings.text-highlight.usage'),
+          description: t('global.commands.settings.textHighlight.description'),
+          usage: t('global.commands.settings.textHighlight.usage'),
           handler: (_cmd, args, _flags) => {
             const h = num(args[0]);
             const s = num(args[1]);
@@ -307,6 +315,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'accent',
           description: t('global.commands.settings.accent.description'),
           usage: t('global.commands.settings.accent.usage'),
+          flags: ['-h', '--help'],
           subCommands: {
             add: {
               name: 'add',
@@ -360,14 +369,31 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               },
             },
           },
-          handler: (_cmd, _args, _flags) => {
-            emitTerminalLog(t('global.commands.settings.accent.usage'));
+          handler: (_cmd, _args, flags, cmdObj) => {
+            if (flags.includes('-h') || flags.includes('--help')) {
+              emitTerminalLog(t('terminal.availableCommands'));
+              const commands = Object.values(cmdObj?.subCommands ?? {});
+              const paddingWidth = Math.max(...commands.map((cmd) => escapeCustomColorTags(cmd.usage).length));
+              commands.forEach((cmd) => {
+                const offset = cmd.usage.length - escapeCustomColorTags(cmd.usage).length;
+                const paddedUsage = cmd.usage.padEnd(paddingWidth + offset, ' ');
+                emitTerminalLog(t('terminal.commandUsage', paddedUsage, cmd.description));
+              });
+              return;
+            }
           },
         },
       },
-      handler: (_cmd, args, flags) => {
+      handler: (_cmd, args, flags, cmdObj) => {
         if (flags.includes('-h') || flags.includes('--help')) {
-          emitTerminalLog(...t('global.commands.settings.help'));
+          emitTerminalLog(t('terminal.availableCommands'));
+          const commands = Object.values(cmdObj?.subCommands ?? {});
+          const paddingWidth = Math.max(...commands.map((cmd) => escapeCustomColorTags(cmd.usage).length));
+          commands.forEach((cmd) => {
+            const offset = cmd.usage.length - escapeCustomColorTags(cmd.usage).length;
+            const paddedUsage = cmd.usage.padEnd(paddingWidth + offset, ' ');
+            emitTerminalLog(t('terminal.commandUsage', paddedUsage, cmd.description));
+          });
           return;
         }
         if (!args.length && !flags.length) {
@@ -387,7 +413,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           );
           return;
         }
-        emitTerminalLog(...t('global.commands.settings.help'));
+        emitTerminalLog(t('global.commands.settings.usage'));
       },
     },
     username: {
