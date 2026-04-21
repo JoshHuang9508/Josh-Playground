@@ -4,7 +4,7 @@ import type * as Types from '@/lib/types';
 
 import { API_URL, OSU_USERNAME } from '@/lib/constants';
 
-export function useOsuStats() {
+export default function useOsuStats() {
   const [user, setUser] = useState<Types.OsuUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,5 +85,3 @@ export function useOsuStats() {
 
   return { user, loading, error };
 }
-
-export default useOsuStats;

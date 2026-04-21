@@ -1,4 +1,4 @@
-export const TEXT_CONTENT = {
+export const TEXT_CONTENT_EN = {
   'terminal': {
     title: 'Terminal {0}',
     placeholder: "Feel confused? Type 'help' to get started!",
@@ -187,6 +187,12 @@ export const TEXT_CONTENT = {
           downloadAudioFailed: 'Audio download failed: {0}',
         },
       },
+      locale: {
+        description: 'Change the locale',
+        usage: '@#00ffaalocale@# @#fff700<en|zh>@#',
+        invalid: 'Invalid locale. Use @#fff700en@# or @#fff700zh@#.',
+        set: 'Locale changed to @#fff700{0}@#',
+      },
     },
   },
   'home': {
@@ -204,48 +210,6 @@ export const TEXT_CONTENT = {
         osu: 'Opening @#FFF700osu!@# profile...',
       },
     },
-    about: [
-      '@#FFF700Whitedog@#@@#00f3ffNTUST-CSIE@#, Taiwan',
-      '(18yo) (a.k.a. Whydog)',
-      'I @#FF77B7love@# @#00ffaaplaying games@# and @#00ffaacoding@#. Sometimes @#00ffaawatching anime@#.',
-      'I @#FF77B7want@# to be a @#00ffaafull-stack@# developer, as well as a @#00ffaaUI/UX@# designer.',
-      "This website is built with @#00ffaaReact@#, and I'm still working on it.",
-      '@#f9f284Hope you enjoy your stay here.',
-    ],
-    social: [
-      {
-        icon: 'gmail',
-        value: 'joshhuang9508@gmail.com — Type @#FFF700email@# to send me an email',
-      },
-      {
-        icon: 'twitter',
-        value: '@whydog5555 — Type @#FFF700twitter@# to open my Twitter profile',
-      },
-      {
-        icon: 'instagram',
-        value: '@whydog5555 — Type @#FFF700instagram@# to open my Instagram profile',
-      },
-      {
-        icon: 'github',
-        value: 'Joshhuang9508 — Type @#FFF700github@# to open my GitHub profile',
-      },
-      {
-        icon: 'youtube',
-        value: 'Whydog — Type @#FFF700youtube@# to open my YouTube channel',
-      },
-      {
-        icon: 'twitch',
-        value: 'whydog5555 — Type @#FFF700twitch@# to open my Twitch channel',
-      },
-      {
-        icon: 'discord',
-        value: '@whydog — Type @#FFF700discord@# to open my Discord profile',
-      },
-      {
-        icon: 'osu',
-        value: '-Whitedog- — Type @#FFF700osu@# to open my osu! profile',
-      },
-    ],
     hero: {
       name: 'Whitedog',
       school: 'NTUST-CSIE',
@@ -294,7 +258,7 @@ export const TEXT_CONTENT = {
     footer: 'built with next.js + too much coffee',
   },
   'listentogether': {
-    unmute: '點我一下',
+    unmute: 'Click me to unmute',
     commands: {
       send: {
         description: 'Send a message to the room',
@@ -489,11 +453,11 @@ export const TEXT_CONTENT = {
     subtitle: 'A web-based music sync player. Listen to music with your friends in real-time.',
   },
   '/projects': {
-    title: 'Projects',
+    title: 'Whydog - Projects',
     subtitle: 'My open-source work and side projects.',
   },
   '/osu': {
-    title: 'My osu! Stats',
+    title: 'Whydog - osu! Stats',
     subtitle: 'My osu! profile and gameplay statistics.',
   },
   '/blog': {

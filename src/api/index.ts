@@ -2,10 +2,10 @@ import { API_URL } from '@/lib/constants';
 
 import type * as Types from '@/lib/types';
 
-export async function getVideoBlob(videoId: string, format: string): Promise<any> {
+export async function getVideoBlob(videoId: string, format: string): Promise<Blob> {
   switch (format) {
     case 'mp4':
-      const blob_mp4 = await fetch(`${API_URL}/api/ytdownload-mp4?videoId=${videoId}`, {
+      const blob_mp4: Blob = await fetch(`${API_URL}/api/ytdownload-mp4?videoId=${videoId}`, {
         method: 'GET',
         headers: {
           'ngrok-skip-browser-warning': 'true',
@@ -24,7 +24,7 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
 
       return blob_mp4;
     case 'mp3':
-      const blob_mp3 = await fetch(`${API_URL}/api/ytdownload-mp3?videoId=${videoId}`, {
+      const blob_mp3: Blob = await fetch(`${API_URL}/api/ytdownload-mp3?videoId=${videoId}`, {
         method: 'GET',
         headers: {
           'ngrok-skip-browser-warning': 'true',
@@ -42,6 +42,8 @@ export async function getVideoBlob(videoId: string, format: string): Promise<any
       });
 
       return blob_mp3;
+    default:
+      throw new Error(`Invalid format: ${format}`);
   }
 }
 
@@ -87,7 +89,7 @@ export const getPlaylist = async (playlistId: string, requestBy: string): Promis
 
   const { data } = await res.json();
 
-  const tracks: Types.Track[] = data.map((item: any, index) => {
+  const tracks: Types.Track[] = data.map((item, index: number) => {
     return {
       url: item.shortUrl,
       title: item.title,

@@ -22,7 +22,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "stylelint \"src/**/*.css\" --fix",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix && stylelint \"src/**/*.css\" --fix",
     "postbuild": "next-sitemap",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,css}\""
   },
@@ -31,7 +31,7 @@
     "@types/dompurify": "^3.0.5",
     "@types/node": "22.10.1",
     "@types/react": "18.3.13",
-    "eslint": "^10.0.0",
+    "eslint": "^9.37.0",
     "eslint-config-next": "^16.1.6",
     "prettier": "^3.8.1",
     "stylelint": "^17.3.0",

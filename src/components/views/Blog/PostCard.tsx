@@ -2,7 +2,7 @@ import type * as Types from '@/lib/types';
 
 import { TAG_COLORS } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
+import useI18n from '@/lib/hooks/i18n';
 
 import styles from './Blog.module.css';
 
@@ -12,6 +12,8 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, index }: PostCardProps) {
+  const { t } = useI18n();
+
   const tagColor = TAG_COLORS[post.tags[0] ?? ''];
 
   return (

@@ -1,3 +1,5 @@
+export type Locale = 'en' | 'zh';
+
 export type TerminalWindowState = 'normal' | 'minimized' | 'maximized' | 'closed';
 
 export type CommandHandler = (command: string, args: string[], flags: string[], commandObject?: Command) => void;
@@ -408,7 +410,7 @@ export type YTDLReturnType = {
   isUnpluggedCorpus: boolean;
   latencyClass: string;
   isLiveContent: boolean;
-  media: any;
+  media: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   likes: number | null;
   dislikes: number | null;
   age_restricted: boolean;
@@ -423,7 +425,7 @@ export type YTDLReturnType = {
     rows: number;
     storyboardCount: number;
   }[];
-  chapters: any[];
+  chapters: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   thumbnails: {
     url: string;
     width: number;

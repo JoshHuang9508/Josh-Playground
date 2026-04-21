@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
+
 import React from 'react';
 import DOMPurify from 'dompurify';
 
 import type * as Types from '@/lib/types';
 
-import { t } from '@/lib/i18n';
-
+import useI18n from '@/lib/hooks/i18n';
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useOsuStats from '@/lib/hooks/OsuStats';
 
@@ -189,13 +190,14 @@ function GradeChart({ grades }: { grades: Types.OsuUser['gradeCounts'] }) {
 
 export default function OsuStatsView() {
   const { user, loading, error } = useOsuStats();
+  const { t } = useI18n();
 
   useTerminalCommand({
     stats: {
       name: 'stats',
       description: t('osu.commands.stats.description'),
       usage: t('osu.commands.stats.usage'),
-      handler: (_cmd, _args, _flags) => {
+      handler: () => {
         if (!user) {
           emitTerminalLog(t('osu.commands.stats.notAvailable'));
           return;

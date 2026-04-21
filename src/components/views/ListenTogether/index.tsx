@@ -6,11 +6,11 @@ import type * as Types from '@/lib/types';
 
 import { DEFAULT_USERNAME, VALID_VIBES } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
-
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
 import { emitTerminalLog } from '@/lib/terminalLog';
+
+import useI18n from '@/lib/hooks/i18n';
 
 import { getVideoInfo, getPlaylist } from '@/api';
 
@@ -23,14 +23,19 @@ import MemberDots from './MemberDots';
 import styles from './ListenTogether.module.css';
 
 export default function ListenTogetherView() {
+  const { t } = useI18n();
+
   const playerRef = useRef<ReactPlayer>(null);
+  const socketRef = useRef<ListenTogetherSocket | null>(null);
+  const cachedPlayerStateRef = useRef<Types.PlayerState | null>(null);
+  const cachedLogsRef = useRef<string[]>([]);
+  const cachedUsersRef = useRef<Types.User>({});
 
   const username = useSelector((state: { user: string }) => state.user);
 
   const [mute, setMute] = useState(true);
   const [vibe, setVibe] = useState('default');
   const [flash, setFlash] = useState(false);
-  const [socketInstance, setSocketInstance] = useState<ListenTogetherSocket | null>(null);
   const [playerState, setPlayerState] = useState<Types.PlayerState>({
     playing: false,
     played: 0,
@@ -46,42 +51,50 @@ export default function ListenTogetherView() {
     index: 0,
     isEnd: false,
   });
-  const [cachedPlayerState, setCachedPlayerState] = useState<Types.PlayerState | null>(null);
-  const [PlayerStateClientState, setPlayerStateClient] = useState<Types.PlayerStateClient>({
-    volume: 0.5,
-    seeking: false,
-    isReady: false,
+  const [isReady, setIsReady] = useState(false);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [volume, setVolume] = useState(() => {
+    if (typeof window === 'undefined') return 0.5;
+    const stored = parseFloat(localStorage.getItem('volume') ?? '50');
+    return Number.isFinite(stored) ? stored / 100 : 0.5;
   });
   const [logs, setLogs] = useState<string[]>([]);
-  const [cachedLogs, setCachedLogs] = useState<string[]>([]);
   const [users, setUsers] = useState<Types.User>({});
-  const [cachedUsers, setCachedUsers] = useState<Types.User>({});
+
+  const progressPercent = playerState.duration > 0 ? (playerState.playedSeconds / playerState.duration) * 100 : 0;
+  const ambientSrc = playerState.currentTrack?.img ?? '';
 
   const triggerFlash = () => {
     setFlash(true);
     setTimeout(() => setFlash(false), 400);
   };
 
-  const handlePlayerEnded = () => socketInstance?.onEnded();
+  const handlePlayerEnded = () => {
+    socketRef.current?.onEnded();
+  };
 
   const handlePlayerProgress = (state: Types.PlayerState) => {
-    socketInstance?.onProgress(state.playedSeconds);
+    socketRef.current?.onProgress(state.playedSeconds);
     setPlayerState((prev) => ({ ...prev, playedSeconds: state.playedSeconds }));
   };
 
-  const handlePlayerDuration = (duration: number) => socketInstance?.onDuration(duration);
+  const handlePlayerDuration = (duration: number) => {
+    socketRef.current?.onDuration(duration);
+  };
 
-  const handlePlayerError = (error: any) => emitTerminalLog(t('listentogether.errors.playerError', String(error)));
+  const handlePlayerError = (error: Error) => {
+    emitTerminalLog(t('listentogether.errors.playerError', error.message));
+  };
 
   const handlePlayerReady = () => {
-    if (PlayerStateClientState.isReady) return;
-    socketInstance?.refresh();
-    setPlayerStateClient((prev) => ({ ...prev, isReady: true }));
+    if (isReady) return;
+    socketRef.current?.refresh();
+    setIsReady(true);
   };
 
   const handlePlayerSeek = () => {
-    setPlayerStateClient((prev) => ({ ...prev, seeking: true }));
-    setTimeout(() => setPlayerStateClient((prev) => ({ ...prev, seeking: false })), 1000);
+    setIsSeeking(true);
+    setTimeout(() => setIsSeeking(false), 1000);
   };
 
   useTerminalCommand({
@@ -89,20 +102,20 @@ export default function ListenTogetherView() {
       name: 'send',
       description: t('listentogether.commands.send.description'),
       usage: t('listentogether.commands.send.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const message = args.join(' ') ?? '';
         if (!message) {
           emitTerminalLog(t('listentogether.commands.send.usage'));
           return;
         }
-        socketInstance?.addRoomLog(`${username}: ${message}`);
+        socketRef.current?.addRoomLog(`${username}: ${message}`);
       },
     },
     queue: {
       name: 'queue',
       description: t('listentogether.commands.queue.description'),
       usage: t('listentogether.commands.queue.usage'),
-      handler: async (_cmd, args, _flags) => {
+      handler: async (_cmd, args) => {
         const URL = args[0] ?? '';
         if (!URL) {
           emitTerminalLog(t('listentogether.commands.queue.usage'));
@@ -118,9 +131,9 @@ export default function ListenTogetherView() {
             return null;
           });
           if (!tracks) return;
-          socketInstance?.addTracks(tracks);
+          socketRef.current?.addTracks(tracks);
           emitTerminalLog(t('listentogether.commands.queue.addedTracks', String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)));
-          socketInstance?.addRoomLog(
+          socketRef.current?.addRoomLog(
             t('listentogether.logs.addedTracks', username, String(tracks.length), String(playerState.trackQueue.length), String(playerState.trackQueue.length + tracks.length - 1)),
           );
         } else if (URL.includes('watch?v=')) {
@@ -129,9 +142,9 @@ export default function ListenTogetherView() {
             return null;
           });
           if (!track) return;
-          socketInstance?.addTrack(track);
+          socketRef.current?.addTrack(track);
           emitTerminalLog(t('listentogether.commands.queue.addedTrack', track.title, String(playerState.trackQueue.length)));
-          socketInstance?.addRoomLog(t('listentogether.logs.addedTrack', username, track.title, String(playerState.trackQueue.length)));
+          socketRef.current?.addRoomLog(t('listentogether.logs.addedTrack', username, track.title, String(playerState.trackQueue.length)));
         } else {
           emitTerminalLog(t('listentogether.commands.queue.invalidUrl'));
         }
@@ -141,16 +154,16 @@ export default function ListenTogetherView() {
       name: 'remove',
       description: t('listentogether.commands.remove.description'),
       usage: t('listentogether.commands.remove.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const indexToRm = args[0] ?? '';
         if (!indexToRm) {
           emitTerminalLog(t('listentogether.commands.remove.usage'));
           return;
         }
         if (indexToRm === '*') {
-          socketInstance?.setTrackQueue([]);
+          socketRef.current?.setTrackQueue([]);
           emitTerminalLog(t('listentogether.commands.remove.removedAll'));
-          socketInstance?.addRoomLog(t('listentogether.logs.removedAll', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.removedAll', username));
           triggerFlash();
           return;
         }
@@ -163,19 +176,19 @@ export default function ListenTogetherView() {
           return;
         }
         const trackToRm = playerState.trackQueue[parseInt(indexToRm)];
-        socketInstance?.removeTrack(parseInt(indexToRm));
+        socketRef.current?.removeTrack(parseInt(indexToRm));
         emitTerminalLog(t('listentogether.commands.remove.removed', indexToRm));
-        socketInstance?.addRoomLog(t('listentogether.logs.removedTrack', username, trackToRm.title, indexToRm));
+        socketRef.current?.addRoomLog(t('listentogether.logs.removedTrack', username, trackToRm.title, indexToRm));
       },
     },
     play: {
       name: 'play',
       description: t('listentogether.commands.play.description'),
       usage: t('listentogether.commands.play.usage'),
-      handler: (_cmd, _args, _flags) => {
-        socketInstance?.play();
+      handler: () => {
+        socketRef.current?.play();
         emitTerminalLog(t('listentogether.commands.play.start'));
-        socketInstance?.addRoomLog(t('listentogether.logs.play', username));
+        socketRef.current?.addRoomLog(t('listentogether.logs.play', username));
         triggerFlash();
       },
     },
@@ -183,10 +196,10 @@ export default function ListenTogetherView() {
       name: 'pause',
       description: t('listentogether.commands.pause.description'),
       usage: t('listentogether.commands.pause.usage'),
-      handler: (_cmd, _args, _flags) => {
-        socketInstance?.pause();
+      handler: () => {
+        socketRef.current?.pause();
         emitTerminalLog(t('listentogether.commands.pause.pause'));
-        socketInstance?.addRoomLog(t('listentogether.logs.pause', username));
+        socketRef.current?.addRoomLog(t('listentogether.logs.pause', username));
         triggerFlash();
       },
     },
@@ -198,15 +211,15 @@ export default function ListenTogetherView() {
       handler: (_cmd, args, flags) => {
         const index = args[0] ?? '';
         if (flags.includes('-n') || flags.includes('--next')) {
-          socketInstance?.nextTrack();
+          socketRef.current?.nextTrack();
           emitTerminalLog(t('listentogether.commands.switch.next'));
-          socketInstance?.addRoomLog(t('listentogether.logs.switchNext', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.switchNext', username));
           return;
         }
         if (flags.includes('-p') || flags.includes('--prev')) {
-          socketInstance?.prevTrack();
+          socketRef.current?.prevTrack();
           emitTerminalLog(t('listentogether.commands.switch.prev'));
-          socketInstance?.addRoomLog(t('listentogether.logs.switchPrev', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.switchPrev', username));
           return;
         }
         if (!index) {
@@ -221,16 +234,16 @@ export default function ListenTogetherView() {
           emitTerminalLog(t('listentogether.commands.switch.indexOutOfRange'));
           return;
         }
-        socketInstance?.setTrackIndex(parseInt(index));
+        socketRef.current?.setTrackIndex(parseInt(index));
         emitTerminalLog(t('listentogether.commands.switch.switchTo', index));
-        socketInstance?.addRoomLog(t('listentogether.logs.switchTo', username, index));
+        socketRef.current?.addRoomLog(t('listentogether.logs.switchTo', username, index));
       },
     },
     volume: {
       name: 'volume',
       description: t('listentogether.commands.volume.description'),
       usage: t('listentogether.commands.volume.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const volume = args[0] ?? '';
         if (!volume) {
           emitTerminalLog(t('listentogether.commands.volume.usage'));
@@ -240,7 +253,7 @@ export default function ListenTogetherView() {
           emitTerminalLog(t('listentogether.commands.volume.invalid'));
           return;
         }
-        setPlayerStateClient((prev) => ({ ...prev, volume: parseFloat(volume) / 100 }));
+        setVolume(parseFloat(volume) / 100);
         localStorage.setItem('volume', volume);
         emitTerminalLog(t('listentogether.commands.volume.set', volume));
       },
@@ -252,15 +265,15 @@ export default function ListenTogetherView() {
       flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
-          socketInstance?.setLoop(true);
+          socketRef.current?.setLoop(true);
           emitTerminalLog(t('listentogether.commands.loop.on'));
-          socketInstance?.addRoomLog(t('listentogether.logs.loopOn', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.loopOn', username));
           return;
         }
         if (flags.includes('-f') || flags.includes('--false')) {
-          socketInstance?.setLoop(false);
+          socketRef.current?.setLoop(false);
           emitTerminalLog(t('listentogether.commands.loop.off'));
-          socketInstance?.addRoomLog(t('listentogether.logs.loopOff', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.loopOff', username));
           return;
         }
         emitTerminalLog(t('listentogether.commands.loop.usage'));
@@ -273,15 +286,15 @@ export default function ListenTogetherView() {
       flags: ['-t', '--true', '-f', '--false'],
       handler: (_cmd, _args, flags) => {
         if (flags.includes('-t') || flags.includes('--true')) {
-          socketInstance?.setPlayerState({ ...playerState, random: true });
+          socketRef.current?.setPlayerState({ ...playerState, random: true });
           emitTerminalLog(t('listentogether.commands.random.on'));
-          socketInstance?.addRoomLog(t('listentogether.logs.randomOn', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.randomOn', username));
           return;
         }
         if (flags.includes('-f') || flags.includes('--false')) {
-          socketInstance?.setPlayerState({ ...playerState, random: false });
+          socketRef.current?.setPlayerState({ ...playerState, random: false });
           emitTerminalLog(t('listentogether.commands.random.off'));
-          socketInstance?.addRoomLog(t('listentogether.logs.randomOff', username));
+          socketRef.current?.addRoomLog(t('listentogether.logs.randomOff', username));
           return;
         }
         emitTerminalLog(t('listentogether.commands.random.usage'));
@@ -291,7 +304,7 @@ export default function ListenTogetherView() {
       name: 'rate',
       description: t('listentogether.commands.rate.description'),
       usage: t('listentogether.commands.rate.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const rate = args[0] ?? '';
         if (!rate) {
           emitTerminalLog(t('listentogether.commands.rate.usage'));
@@ -301,16 +314,16 @@ export default function ListenTogetherView() {
           emitTerminalLog(t('listentogether.commands.rate.invalid'));
           return;
         }
-        socketInstance?.setPlayBackRate(parseFloat(rate) / 100);
+        socketRef.current?.setPlayBackRate(parseFloat(rate) / 100);
         emitTerminalLog(t('listentogether.commands.rate.set', rate));
-        socketInstance?.addRoomLog(t('listentogether.logs.rate', username, rate));
+        socketRef.current?.addRoomLog(t('listentogether.logs.rate', username, rate));
       },
     },
     seek: {
       name: 'seek',
       description: t('listentogether.commands.seek.description'),
       usage: t('listentogether.commands.seek.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const seek = args[0] ?? '';
         if (!seek) {
           emitTerminalLog(t('listentogether.commands.seek.usage'));
@@ -324,19 +337,19 @@ export default function ListenTogetherView() {
           emitTerminalLog(t('listentogether.commands.seek.outOfRange'));
           return;
         }
-        socketInstance?.seek(parseFloat(seek));
+        socketRef.current?.seek(parseFloat(seek));
         emitTerminalLog(t('listentogether.commands.seek.seekTo', seek));
-        socketInstance?.addRoomLog(t('listentogether.logs.seek', username, seek));
+        socketRef.current?.addRoomLog(t('listentogether.logs.seek', username, seek));
       },
     },
     refresh: {
       name: 'refresh',
       description: t('listentogether.commands.refresh.description'),
       usage: t('listentogether.commands.refresh.usage'),
-      handler: (_cmd, _args, _flags) => {
-        socketInstance?.refresh();
+      handler: () => {
+        socketRef.current?.refresh();
         emitTerminalLog(t('listentogether.commands.refresh.message'));
-        socketInstance?.addRoomLog(t('listentogether.logs.refresh', username));
+        socketRef.current?.addRoomLog(t('listentogether.logs.refresh', username));
       },
     },
     playlist: {
@@ -367,23 +380,23 @@ export default function ListenTogetherView() {
       description: t('listentogether.commands.vibe.description'),
       usage: t('listentogether.commands.vibe.usage'),
       flags: VALID_VIBES,
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const vibeName = args[0] as Types.VibeName;
         if (!vibeName || !VALID_VIBES.includes(vibeName)) {
           emitTerminalLog(t('listentogether.commands.vibe.invalid'));
           return;
         }
-        socketInstance?.setVibe(vibeName);
+        socketRef.current?.setVibe(vibeName);
         setVibe(vibeName);
         emitTerminalLog(t('listentogether.commands.vibe.set', vibeName));
-        socketInstance?.addRoomLog(t('listentogether.logs.vibe', username, vibeName));
+        socketRef.current?.addRoomLog(t('listentogether.logs.vibe', username, vibeName));
       },
     },
   });
 
   useEffect(() => {
     const onInteraction = () => {
-      if (PlayerStateClientState.isReady) setMute(false);
+      if (isReady) setMute(false);
     };
     document.addEventListener('click', onInteraction);
     document.addEventListener('touchstart', onInteraction);
@@ -391,7 +404,7 @@ export default function ListenTogetherView() {
       document.removeEventListener('click', onInteraction);
       document.removeEventListener('touchstart', onInteraction);
     };
-  }, [PlayerStateClientState.isReady]);
+  }, [isReady]);
 
   useEffect(() => {
     const socket = new ListenTogetherSocket();
@@ -412,58 +425,49 @@ export default function ListenTogetherView() {
       },
       onVibe: (incoming) => setVibe(incoming),
     });
-    setSocketInstance(socket);
+    socketRef.current = socket;
     return () => socket.disconnect();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    socketInstance?.setUsername(username);
+    socketRef.current?.setUsername(username);
   }, [username]);
 
   useEffect(() => {
-    const volume = parseFloat(localStorage.getItem('volume') ?? '50');
-    setPlayerStateClient((prev) => ({ ...prev, volume: volume / 100 }));
-  }, []);
-
-  useEffect(() => {
-    if (cachedPlayerState === null) {
-      setCachedPlayerState(playerState);
+    if (cachedPlayerStateRef.current === null) {
+      cachedPlayerStateRef.current = playerState;
       return;
     }
-    const trackQueueDiff = IDiffArray(playerState.trackQueue, cachedPlayerState.trackQueue);
-    const currentTrackDiff = IDiffObject(playerState.currentTrack, cachedPlayerState.currentTrack);
-    setCachedPlayerState(playerState);
+    const trackQueueDiff = IDiffArray(playerState.trackQueue, cachedPlayerStateRef.current.trackQueue);
+    const currentTrackDiff = IDiffObject(playerState.currentTrack, cachedPlayerStateRef.current.currentTrack);
+    cachedPlayerStateRef.current = playerState;
     if (trackQueueDiff || currentTrackDiff) {
       emitTerminalLog(
         t('listentogether.logs.playlistUpdated'),
         ...playerState.trackQueue.map((track, index) => (track.id === playerState.currentTrack?.id ? `  @#fff700#${index} - ${track.title}` : `  #${index} - ${track.title}`)),
       );
     }
-  }, [playerState.trackQueue, playerState.currentTrack]);
+  }, [playerState.trackQueue, playerState.currentTrack, playerState, t]);
 
   useEffect(() => {
-    if (cachedLogs.length === 0) {
-      setCachedLogs(logs);
+    if (cachedLogsRef.current.length === 0) {
+      cachedLogsRef.current = logs;
       return;
     }
-    const diff = logs.filter((log) => !cachedLogs.includes(log));
-    setCachedLogs(logs);
+    const diff = logs.filter((log) => !cachedLogsRef.current.includes(log));
+    cachedLogsRef.current = logs;
     if (diff.length > 0) emitTerminalLog(...diff.map((log) => `[${new Date().toLocaleTimeString()}] ${log}`));
-  }, [logs]);
+  }, [logs, t]);
 
   useEffect(() => {
-    if (Object.keys(cachedUsers).length === 0) {
-      setCachedUsers(users);
+    if (Object.keys(cachedUsersRef.current).length === 0) {
+      cachedUsersRef.current = users;
       return;
     }
-    const diff = Object.entries(users).filter(([id]) => !Object.keys(cachedUsers).includes(id));
-    setCachedUsers(users);
+    const diff = Object.entries(users).filter(([id]) => !Object.keys(cachedUsersRef.current).includes(id));
+    cachedUsersRef.current = users;
     if (diff.length > 0) emitTerminalLog(...diff.map(([, user]) => `[${new Date().toLocaleTimeString()}] ${t('listentogether.logs.joined', user)}`));
-  }, [users]);
-
-  const progressPercent = playerState.duration > 0 ? (playerState.playedSeconds / playerState.duration) * 100 : 0;
-
-  const ambientSrc = playerState.currentTrack?.img ?? '';
+  }, [users, t]);
 
   return (
     <div className={`${styles['content']} ${flash ? styles['flash'] : ''}`} data-vibe={vibe === 'default' ? undefined : vibe}>
@@ -484,8 +488,8 @@ export default function ListenTogetherView() {
             <ReactPlayer
               ref={playerRef}
               url={playerState.currentTrack?.url ?? ''}
-              playing={PlayerStateClientState.isReady && !PlayerStateClientState.seeking && playerState.playing}
-              volume={PlayerStateClientState.volume}
+              playing={isReady && !isSeeking && playerState.playing}
+              volume={volume}
               muted={mute}
               loop={playerState.loop}
               playbackRate={playerState.playbackRate}

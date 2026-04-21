@@ -1,14 +1,14 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import type * as Types from '@/lib/types';
 
 import { TERMINAL_MIN_WIDTH, TERMINAL_MIN_HEIGHT, DEFAULT_SITE_NAME } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
-
 import { subscribeTerminal, setActiveTerminal, emitTerminalLog } from '@/lib/terminalLog';
 
 import { findAvailable, findCommandHandler, replaceInput } from '@/lib/terminal';
+
+import useI18n from '@/lib/hooks/i18n';
 
 import { AppContext } from '@/pages/index';
 
@@ -28,6 +28,7 @@ interface TerminalProps {
 
 export default function Terminal({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: TerminalProps) {
   const { extensionArgs, extensionCommands, extensionPaths, currentHash, username } = useContext(AppContext)!;
+  const { t } = useI18n();
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -138,7 +139,6 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     } else if (event.key === 'Shift') {
       event.preventDefault();
     } else if (isTabbingRef.current) {
-      event.preventDefault();
       handleInputChange({ target: { value: inputValue } } as React.ChangeEvent<HTMLInputElement>);
       isTabbingRef.current = false;
       tempInputValueRef.current = '';
@@ -310,7 +310,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     );
     setTerminalContents(t('terminal.welcome'));
     return unsubscribe;
-  }, [id]);
+  }, [id, t]);
 
   useEffect(() => {
     const cmdHistory = localStorage.getItem('cmdHistory')?.split(',') ?? [];

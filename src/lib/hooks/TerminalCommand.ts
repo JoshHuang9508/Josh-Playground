@@ -11,7 +11,7 @@ import { clearActiveTerminalLog, emitTerminalLog } from '@/lib/terminalLog';
 
 import { escapeCustomColorTags } from '@/lib/color';
 
-import { t } from '@/lib/i18n';
+import useI18n from '@/lib/hooks/i18n';
 
 import { AppContext } from '@/pages/index';
 
@@ -19,18 +19,29 @@ import { getVideoBlob } from '@/api';
 
 const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
 
-const isHex = (v: string) => /^#[0-9a-fA-F]{6}$/.test(v);
-const num = (v: string) => (Number.isFinite(Number(v)) ? Number(v) : NaN);
+const isHex = (v: string) => {
+  return /^#[0-9a-fA-F]{6}$/.test(v);
+};
+
+const num = (v: string) => {
+  if (Number.isFinite(Number(v))) return Number(v);
+  return NaN;
+};
+
+const navigateToHash = (hash: string) => {
+  window.location.hash = hash;
+};
 
 export default function useTerminalCommand(extension: Types.CommandList) {
-  const { extensionCommands, extensionPaths, currentHash, settings, setSettings, setUsername } = useContext(AppContext)!;
+  const { extensionCommands, extensionPaths, currentHash, settings, setSettings, setUsername, setExtensionCommands } = useContext(AppContext)!;
+  const { t, setLocale } = useI18n();
 
   const contextCommands: Types.CommandList = {
     help: {
       name: 'help',
       description: t('global.commands.help.description'),
       usage: t('global.commands.help.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         if (args.length > 0) {
           const command = findCommandObject(args.join(' '), extensionCommands.current);
           if (!command) {
@@ -54,7 +65,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
       name: 'echo',
       description: t('global.commands.echo.description'),
       usage: t('global.commands.echo.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         emitTerminalLog(args.join(' '));
       },
     },
@@ -87,7 +98,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
       name: 'clear',
       description: t('global.commands.clear.description'),
       usage: t('global.commands.clear.usage'),
-      handler: (_cmd, _args, _flags) => {
+      handler: () => {
         clearActiveTerminalLog();
       },
     },
@@ -95,12 +106,12 @@ export default function useTerminalCommand(extension: Types.CommandList) {
       name: 'cd',
       description: t('global.commands.cd.description'),
       usage: t('global.commands.cd.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const page = args[0] ?? '';
         const hash = window.location.hash.slice(1) || '/';
         let paths = hash.split('/').filter(Boolean);
         if (!page) {
-          window.location.hash = '#/';
+          navigateToHash('#/');
         } else {
           page.split('/').forEach((element, index) => {
             if (index === 0 && element === '~') {
@@ -113,7 +124,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               paths.push(element);
             }
           });
-          window.location.hash = paths.length > 0 ? `#/${paths.join('/')}` : '#/';
+          navigateToHash(paths.length > 0 ? `#/${paths.join('/')}` : '#/');
         }
       },
     },
@@ -200,7 +211,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'reset',
           description: t('global.commands.settings.reset.description'),
           usage: t('global.commands.settings.reset.usage'),
-          handler: (_cmd, _args, _flags) => {
+          handler: () => {
             setSettings(DEFAULT_SETTINGS);
             emitTerminalLog(t('global.commands.settings.reset.reset'));
           },
@@ -229,7 +240,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'bg',
           description: t('global.commands.settings.bg.description'),
           usage: t('global.commands.settings.bg.usage'),
-          handler: (_cmd, args, _flags) => {
+          handler: (_cmd, args) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
@@ -250,7 +261,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'color',
           description: t('global.commands.settings.color.description'),
           usage: t('global.commands.settings.color.usage'),
-          handler: (_cmd, args, _flags) => {
+          handler: (_cmd, args) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
@@ -266,7 +277,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'blur',
           description: t('global.commands.settings.blur.description'),
           usage: t('global.commands.settings.blur.usage'),
-          handler: (_cmd, args, _flags) => {
+          handler: (_cmd, args) => {
             const px = num(args[0]);
             if (Number.isNaN(px) || px < 0) {
               emitTerminalLog(t('global.commands.settings.blur.invalid'));
@@ -280,7 +291,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'text-highlight',
           description: t('global.commands.settings.textHighlight.description'),
           usage: t('global.commands.settings.textHighlight.usage'),
-          handler: (_cmd, args, _flags) => {
+          handler: (_cmd, args) => {
             const h = num(args[0]);
             const s = num(args[1]);
             const l = num(args[2]);
@@ -296,7 +307,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           name: 'text',
           description: t('global.commands.settings.text.description'),
           usage: t('global.commands.settings.text.usage'),
-          handler: (_cmd, args, _flags) => {
+          handler: (_cmd, args) => {
             const which = args[0];
             const color = args[1];
             if (!['primary', 'secondary', 'muted'].includes(which)) {
@@ -321,7 +332,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               name: 'add',
               description: t('global.commands.settings.accent.add.description'),
               usage: t('global.commands.settings.accent.add.usage'),
-              handler: (_cmd, args, _flags) => {
+              handler: (_cmd, args) => {
                 const color = args[0];
                 if (!isHex(color)) {
                   emitTerminalLog(t('global.commands.settings.accent.add.invalid'));
@@ -336,7 +347,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               name: 'rm',
               description: t('global.commands.settings.accent.rm.description'),
               usage: t('global.commands.settings.accent.rm.usage'),
-              handler: (_cmd, args, _flags) => {
+              handler: (_cmd, args) => {
                 const index = num(args[0] ?? -1);
                 if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
                   emitTerminalLog(t('global.commands.settings.accent.rm.indexInvalid'));
@@ -351,7 +362,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               name: 'set',
               description: t('global.commands.settings.accent.set.description'),
               usage: t('global.commands.settings.accent.set.usage'),
-              handler: (_cmd, args, _flags) => {
+              handler: (_cmd, args) => {
                 const index = num(args[0] ?? -1);
                 const color = args[1];
                 if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
@@ -420,7 +431,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
       name: 'username',
       description: t('global.commands.username.description'),
       usage: t('global.commands.username.usage'),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const name = args[0] ?? '';
         if (!name) {
           emitTerminalLog(t('global.commands.username.usage'));
@@ -436,9 +447,25 @@ export default function useTerminalCommand(extension: Types.CommandList) {
         }
       },
     },
+    locale: {
+      name: 'locale',
+      description: t('global.commands.locale.description'),
+      usage: t('global.commands.locale.usage'),
+      args: ['en', 'zh'],
+      handler: (_cmd, args) => {
+        const locale = args[0] ?? '';
+        if (!['en', 'zh'].includes(locale)) {
+          emitTerminalLog(t('global.commands.locale.invalid'));
+          return;
+        }
+        setLocale(locale as Types.Locale);
+        emitTerminalLog(t('global.commands.locale.set', locale));
+        localStorage.setItem('locale', locale);
+      },
+    },
   };
 
   const commandList = { ...contextCommands, ...extension };
 
-  extensionCommands.current = commandList;
+  setExtensionCommands(commandList);
 }

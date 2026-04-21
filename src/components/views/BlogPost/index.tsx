@@ -5,8 +5,7 @@ import rehypeHighlight from 'rehype-highlight';
 
 import { TAG_COLORS } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
-
+import useI18n from '@/lib/hooks/i18n';
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useBlogPost from '@/lib/hooks/BlogPost';
 
@@ -21,6 +20,7 @@ interface BlogPostViewProps {
 export default function BlogPostView({ slug }: BlogPostViewProps) {
   const { setDynamicTitle } = useContext(AppContext)!;
   const { post, loading } = useBlogPost(slug);
+  const { t } = useI18n();
 
   const pageRef = useRef<HTMLDivElement>(null);
 

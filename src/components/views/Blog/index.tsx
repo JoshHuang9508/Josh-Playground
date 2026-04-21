@@ -1,5 +1,4 @@
-import { t } from '@/lib/i18n';
-
+import useI18n from '@/lib/hooks/i18n';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
@@ -9,6 +8,7 @@ import styles from './Blog.module.css';
 
 export default function BlogView() {
   const { posts, loading } = useBlogPosts();
+  const { t } = useI18n();
 
   useTerminalCommand({});
 

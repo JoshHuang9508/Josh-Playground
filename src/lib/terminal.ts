@@ -35,7 +35,7 @@ export const findAvailablePath = (input: string, extensionPaths: Record<string, 
   const lastPath = paths.pop() ?? '';
 
   let pagePaths = currentHash.split('/').filter(Boolean);
-  let availables: string[] = [];
+  const availables: string[] = [];
 
   paths.forEach((element, index) => {
     if (index === 0 && element === '~') {
@@ -68,7 +68,7 @@ export const findAvailableCommand = (input: string, commandList: Types.CommandLi
   const commands = Object.values(commandList);
   const command = commands.find((cmd) => cmd.name === firstPart) ?? null;
 
-  let availables: string[] = [];
+  const availables: string[] = [];
 
   if (!input.startsWith(' ')) {
     if (!command || parts.length <= 1) {

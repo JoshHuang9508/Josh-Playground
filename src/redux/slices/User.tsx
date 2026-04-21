@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
   name: 'userSlice',
-  initialState: 'Annonymous' as String,
+  initialState: 'Annonymous' as string,
   reducers: {
-    setUsername: (state, action: { payload: String }) => {
+    setUsername: (state, action: { payload: string }) => {
       return action.payload;
     },
   },

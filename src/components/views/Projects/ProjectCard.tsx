@@ -1,11 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useState } from 'react';
 
 import type * as Types from '@/lib/types';
 
 import { LANGUAGE_COLORS } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
-
+import useI18n from '@/lib/hooks/i18n';
 import useProjectRepo from '@/lib/hooks/ProjectRepo';
 
 import styles from './Projects.module.css';
@@ -16,6 +17,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   const { data: repo } = useProjectRepo(project.github.owner, project.github.repo);
+  const { t } = useI18n();
 
   const [activeImage, setActiveImage] = useState(0);
 

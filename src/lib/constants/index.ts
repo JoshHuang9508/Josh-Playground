@@ -55,5 +55,5 @@ export const VALID_VIBES = ['default', 'lofi', 'rave', 'cinema', 'dawn'];
 export * from './color';
 export * from './path-list';
 export * from './projects';
-export * from './text-content';
+export * from '../locales/en';
 export * from './theme-settings';

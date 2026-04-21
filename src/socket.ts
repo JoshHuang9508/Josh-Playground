@@ -23,10 +23,10 @@ export default class ListenTogetherSocket {
   connect(eventHandlers: {
     onConnect: () => void;
     onConnectError: () => void;
-    onError: (error: any) => void;
+    onError: (error: Error) => void;
     onDisconnect: () => void;
     onPlayerState: (state: Types.PlayerState) => void;
-    onLogs: (logs: any) => void;
+    onLogs: (logs: string[]) => void;
     onUsers: (users: Types.User) => void;
     onProgress: (progress: number) => void;
     onSeek: (time: number) => void;
@@ -72,7 +72,7 @@ export default class ListenTogetherSocket {
     this.socket.emit('player:duration', duration);
   };
 
-  onProgress = (state: any) => {
+  onProgress = (state: number) => {
     this.socket.emit('player:progress', state);
   };
 

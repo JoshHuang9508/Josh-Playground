@@ -1,7 +1,6 @@
 import { PROJECTS } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
-
+import useI18n from '@/lib/hooks/i18n';
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 
 import { emitTerminalLog } from '@/lib/terminalLog';
@@ -11,13 +10,15 @@ import ProjectCard from './ProjectCard';
 import styles from './Projects.module.css';
 
 export default function ProjectsView() {
+  const { t } = useI18n();
+
   useTerminalCommand({
     open: {
       name: 'open',
       description: t('projects.commands.open.description'),
       usage: t('projects.commands.open.usage'),
       args: PROJECTS.map((p) => p.slug),
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const projects = args;
         if (!projects.length) {
           emitTerminalLog(t('projects.commands.open.usage'));

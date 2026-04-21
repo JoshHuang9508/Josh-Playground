@@ -1,11 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useRef, useState } from 'react';
 
 import { emitTerminalLog } from '@/lib/terminalLog';
 
-import { t } from '@/lib/i18n';
-
 import { SOCIAL_LINKS, PROJECTS } from '@/lib/constants';
 
+import useI18n from '@/lib/hooks/i18n';
 import useTerminalCommand from '@/lib/hooks/TerminalCommand';
 import useOsuStats from '@/lib/hooks/OsuStats';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
@@ -17,6 +18,7 @@ import styles from './Home.module.css';
 export default function HomeView() {
   const { user: osuUser } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
+  const { t } = useI18n();
 
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -39,7 +41,7 @@ export default function HomeView() {
       description: t('home.commands.open.description'),
       usage: t('home.commands.open.usage'),
       args: ['github', 'youtube', 'twitter', 'instagram', 'twitch', 'discord', 'email', 'osu'],
-      handler: (_cmd, args, _flags) => {
+      handler: (_cmd, args) => {
         const pages = args;
         if (!pages.length) {
           emitTerminalLog(t('home.commands.open.usage'));

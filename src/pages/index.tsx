@@ -1,14 +1,17 @@
-import { useEffect, useState, useRef, createContext, type MutableRefObject } from 'react';
+/* eslint-disable @next/next/no-img-element */
+
+import { useEffect, useState, useRef, createContext, type MutableRefObject, useCallback } from 'react';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, TEXT_CONTENT, DEFAULT_SETTINGS, DEFAULT_USERNAME } from '@/lib/constants';
+import { MUSIC_LIST, DEFAULT_USERNAME } from '@/lib/constants';
 
-import { applySettingsToDOM, loadSettings, saveSettings, hslString } from '@/lib/settings';
+import { applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
 
+import useI18n, { I18nProvider } from '@/lib/hooks/i18n';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import store from '@/redux';
@@ -35,6 +38,9 @@ export type AppContextType = {
   username: string;
   settings: Types.Settings;
   isSettingsOpen: boolean;
+  setExtensionArgs: (args: Record<string, string[]>) => void;
+  setExtensionCommands: (commands: Types.CommandList) => void;
+  setExtensionPaths: (paths: Record<string, string[]>) => void;
   setDynamicTitle: (title: string | null) => void;
   setUsername: (name: string) => void;
   setSettings: (s: Types.Settings) => void;
@@ -43,21 +49,43 @@ export type AppContextType = {
 
 export const AppContext = createContext<AppContextType | null>(null);
 
-function PageComponent() {
+function PageInner() {
   const { posts } = useBlogPosts();
+  const { t, setLocale } = useI18n();
 
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
-
   const extensionArgs = useRef<Record<string, string[]>>({});
   const extensionCommands = useRef<Types.CommandList>({});
   const extensionPaths = useRef<Record<string, string[]>>({});
-  const [settings, setSettingsState] = useState<Types.Settings>(DEFAULT_SETTINGS);
-  const [username, setUsername] = useState<string>(DEFAULT_USERNAME);
+  const isListenTogetherRef = useRef(window.location.hash === '#/listentogether');
+  const isPlayingRef = useRef(false);
+
+  const [settings, setSettingsState] = useState<Types.Settings>(() => loadSettings());
+  const [username, setUsername] = useState<string>(() => localStorage.getItem('username') ?? DEFAULT_USERNAME);
   const [currentHash, setCurrentHash] = useState<string>('/');
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const playMusic = useCallback(() => {
+    if (!audioPlayerRef.current || isPlayingRef.current) return;
+    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.05;
+    audioPlayerRef.current.play().then(() => {
+      isPlayingRef.current = true;
+    });
+  }, []);
+
+  const setExtensionArgs = (args: Record<string, string[]>) => {
+    extensionArgs.current = args;
+  };
+
+  const setExtensionCommands = (commands: Types.CommandList) => {
+    extensionCommands.current = commands;
+  };
+
+  const setExtensionPaths = (paths: Record<string, string[]>) => {
+    extensionPaths.current = paths;
+  };
 
   const setSettings = (s: Types.Settings) => {
     setSettingsState(s);
@@ -70,22 +98,19 @@ function PageComponent() {
   };
 
   useEffect(() => {
-    const updateHash = () => {
+    const onHashChange = () => {
       const hash = window.location.hash.slice(1) || '/';
       setCurrentHash(hash);
       setDynamicTitle(null);
     };
-    updateHash();
-    window.addEventListener('hashchange', updateHash);
-    return () => window.removeEventListener('hashchange', updateHash);
+    onHashChange();
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
   useEffect(() => {
     const onInteraction = () => {
-      if (!audioPlayerRef.current || isPlaying) return;
-      audioPlayerRef.current.play();
-      audioPlayerRef.current.volume = 0.05;
-      setIsPlaying(true);
+      playMusic();
     };
     document.addEventListener('click', onInteraction);
     document.addEventListener('touchstart', onInteraction);
@@ -93,14 +118,18 @@ function PageComponent() {
       document.removeEventListener('click', onInteraction);
       document.removeEventListener('touchstart', onInteraction);
     };
-  }, [isPlaying]);
+  }, [playMusic]);
+
+  useEffect(() => {
+    if (!audioPlayerRef.current) return;
+    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.05;
+  }, [currentHash]);
 
   useEffect(() => {
     if (!audioPlayerRef.current) return;
     audioPlayerRef.current.src = MUSIC_LIST[musicIndex].path;
-    audioPlayerRef.current.play();
-    audioPlayerRef.current.volume = 0.05;
-  }, [musicIndex]);
+    playMusic();
+  }, [musicIndex, playMusic]);
 
   useEffect(() => {
     if (posts.length > 0) {
@@ -109,14 +138,12 @@ function PageComponent() {
   }, [posts]);
 
   useEffect(() => {
-    const username = localStorage.getItem('username') ?? DEFAULT_USERNAME;
-    setUsername(username);
-  }, []);
+    const locale = localStorage.getItem('locale') ?? 'en';
+    setLocale(locale as Types.Locale);
+  }, [setLocale]);
 
   useEffect(() => {
-    const loaded = loadSettings();
-    setSettingsState(loaded);
-    applySettingsToDOM(loaded);
+    applySettingsToDOM(loadSettings());
   }, []);
 
   const renderView = () => {
@@ -141,13 +168,13 @@ function PageComponent() {
   };
 
   return (
-    <Provider store={store}>
+    <>
       <audio data-audio-player ref={audioPlayerRef} src={MUSIC_LIST[musicIndex].path} onEnded={handleMusicEnd} />
       <Head>
-        <title>{dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title}</title>
-        <meta name="description" content={TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT['*'].subtitle} />
-        <meta property="og:title" content={dynamicTitle ?? TEXT_CONTENT[currentHash]?.title ?? TEXT_CONTENT['*'].title} />
-        <meta property="og:description" content={TEXT_CONTENT[currentHash]?.subtitle ?? TEXT_CONTENT['*'].subtitle} />
+        <title>{dynamicTitle ?? t(`${currentHash}.title`)}</title>
+        <meta name="description" content={t(`${currentHash}.subtitle`)} />
+        <meta property="og:title" content={dynamicTitle ?? t(`${currentHash}.title`)} />
+        <meta property="og:description" content={t(`${currentHash}.subtitle`)} />
         <meta property="og:url" content="https://www.whydog.xyz/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/assets/preview.png" />
@@ -167,6 +194,9 @@ function PageComponent() {
           username,
           settings,
           isSettingsOpen,
+          setExtensionArgs,
+          setExtensionCommands,
+          setExtensionPaths,
           setUsername,
           setDynamicTitle,
           setSettings,
@@ -183,6 +213,16 @@ function PageComponent() {
           <Settings />
         </div>
       </AppContext.Provider>
+    </>
+  );
+}
+
+function PageComponent() {
+  return (
+    <Provider store={store}>
+      <I18nProvider>
+        <PageInner />
+      </I18nProvider>
     </Provider>
   );
 }

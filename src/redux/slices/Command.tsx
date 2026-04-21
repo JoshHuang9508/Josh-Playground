@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const commandSlice = createSlice({
   name: 'commandSlice',
-  initialState: '' as String,
+  initialState: '' as string,
   reducers: {
-    setCommand: (state, action: { payload: String }) => {
+    setCommand: (state, action: { payload: string }) => {
       return action.payload;
     },
   },

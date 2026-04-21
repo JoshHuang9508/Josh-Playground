@@ -6,9 +6,9 @@ import type * as Types from '@/lib/types';
 
 import { DEFAULT_SETTINGS } from '@/lib/constants';
 
-import { t } from '@/lib/i18n';
-
 import { hslString } from '@/lib/settings';
+
+import useI18n from '@/lib/hooks/i18n';
 
 import { Slider } from './Slider';
 import { HslPicker } from './HslPicker';
@@ -17,14 +17,9 @@ import ColorSpan from '@/components/ColorSpan';
 
 import styles from './Settings.module.css';
 
-const TEXT_FIELDS: { key: 'primary' | 'secondary' | 'muted'; label: string }[] = [
-  { key: 'primary', label: t('settings.text.primary') },
-  { key: 'secondary', label: t('settings.text.secondary') },
-  { key: 'muted', label: t('settings.text.muted') },
-];
-
 export default function Settings() {
   const { settings, setSettings, isSettingsOpen, setIsSettingsOpen } = useContext(AppContext)!;
+  const { t } = useI18n();
 
   const panelRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef({
@@ -42,6 +37,12 @@ export default function Settings() {
     y: 0,
   }));
   const [isDragging, setIsDragging] = useState(false);
+
+  const TEXT_FIELDS: { key: 'primary' | 'secondary' | 'muted'; label: string }[] = [
+    { key: 'primary', label: t('settings.text.primary') },
+    { key: 'secondary', label: t('settings.text.secondary') },
+    { key: 'muted', label: t('settings.text.muted') },
+  ];
 
   const cardHex = hslString(settings.cardColor);
   const highlightHex = hslString(settings.textHighlight);
