@@ -429,8 +429,8 @@ export const TEXT_CONTENT = {
   'osu': {
     loading: 'Loading stats...',
     unavailable: {
-      title: 'Stats temporarily unavailable.',
-      desc: 'osu! API proxy not configured yet.',
+      title: 'Stats not available.',
+      desc: 'Try again later.',
     },
     globalRank: 'Global Rank',
     country: 'Country',

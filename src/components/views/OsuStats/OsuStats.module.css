@@ -219,14 +219,14 @@ div.rank-chart-wrap {
   overflow: hidden;
 }
 
-div.peak-note {
+span.peak-note {
   font-family: Consolas, monospace;
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-span.peak-date {
-  color: var(--text-muted);
+span.peak-rank {
+  color: #ff77b7;
 }
 
 div.chart-empty {
@@ -296,6 +296,11 @@ div.profile-page-content blockquote {
   border-left: 3px solid hsl(var(--profile-hue) 100% 60%);
 }
 
+p.loading-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 div.unavailable {
   display: flex;
   flex-direction: column;
@@ -305,6 +310,10 @@ div.unavailable {
   min-height: 30vh;
   font-size: 1rem;
   color: var(--text-muted);
+}
+
+p.unavailable-text {
+  font-size: 0.8rem;
 }
 
 @keyframes page-enter {

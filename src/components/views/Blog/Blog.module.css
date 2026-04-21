@@ -36,6 +36,10 @@ div.blog-page::-webkit-scrollbar {
   width: 0;
 }
 
+div.loading-text {
+  color: var(--text-muted);
+}
+
 div.timeline {
   position: relative;
   padding-left: 1.5rem;

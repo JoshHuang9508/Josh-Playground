@@ -101,7 +101,7 @@ export default function HomeView() {
         <span className={styles['section-label']}>{t('home.sections.aboutMe')}</span>
         <div className={styles['bento']}>
           {/* Left column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div className={styles['left-column']}>
             {/* Hero card */}
             <div className={styles['hero-card']}>
               <div className={`${styles['avatar-wrapper']} ${avatarFlipped ? styles['flipped'] : ''}`} onClick={handleAvatarClick}>

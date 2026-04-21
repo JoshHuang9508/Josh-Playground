@@ -52,6 +52,25 @@ div.player-area > iframe {
   pointer-events: none;
 }
 
+div.member-dot {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  animation: member-appear 0.4s ease forwards;
+}
+
+span.member-dot-color {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+span.member-dot-name {
+  font-family: Consolas, monospace;
+  font-size: 0.8rem;
+}
+
 div.no-track-placeholder {
   display: flex;
   align-items: center;

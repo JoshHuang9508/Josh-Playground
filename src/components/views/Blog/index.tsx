@@ -17,7 +17,7 @@ export default function BlogView() {
       <p className="page-subtitle">{t('blog.subtitle')}</p>
       <hr className="divider" />
 
-      {loading && <p style={{ color: '#888' }}>{t('blog.loading')}</p>}
+      {loading && <p className={styles['loading-text']}>{t('blog.loading')}</p>}
 
       {!loading && posts.length === 0 && <div className={styles['empty']}>{t('blog.empty')}</div>}
 

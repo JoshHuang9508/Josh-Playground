@@ -216,7 +216,7 @@ export default function OsuStatsView() {
   if (loading) {
     return (
       <div className={styles['osu-page']}>
-        <p style={{ color: '#888' }}>{t('osu.loading')}</p>
+        <p className={styles['loading-text']}>{t('osu.loading')}</p>
       </div>
     );
   }
@@ -226,7 +226,7 @@ export default function OsuStatsView() {
       <div className={styles['osu-page']}>
         <div className={styles['unavailable']}>
           <p>{t('osu.unavailable.title')}</p>
-          <p style={{ fontSize: '0.85rem' }}>{t('osu.unavailable.desc')}</p>
+          <p className={styles['unavailable-text']}>{t('osu.unavailable.desc')}</p>
         </div>
       </div>
     );
@@ -282,10 +282,11 @@ export default function OsuStatsView() {
         <div className={styles['rank-card-top']}>
           <CardHeader color="#ff77b7" title={t('osu.rankHistory')} />
           {user.peakRank && (
-            <div className={styles['peak-note']}>
-              {t('osu.peakRank')} <span style={{ color: '#ff77b7' }}>#{formatNumber(user.peakRank.rank)}</span>
-              <span className={styles['peak-date']}> · {new Date(user.peakRank.updated_at).toLocaleDateString()}</span>
-            </div>
+            <span className={styles['peak-note']}>
+              {`${t('osu.peakRank')} `}
+              <span className={styles['peak-rank']}>#{formatNumber(user.peakRank.rank)}</span>
+              {` · ${new Date(user.peakRank.updated_at).toLocaleDateString()}`}
+            </span>
           )}
         </div>
         <div className={styles['rank-chart-wrap']}>

@@ -1,8 +1,6 @@
 import type { User } from '@/lib/types';
 
-interface MemberDotsProps {
-  users: User;
-}
+import styles from './ListenTogether.module.css';
 
 const WARM_COLORS = [
   '#e8a87c', // caramel
@@ -22,6 +20,10 @@ function userColor(id: string): string {
   return WARM_COLORS[Math.abs(hash) % WARM_COLORS.length];
 }
 
+interface MemberDotsProps {
+  users: User;
+}
+
 export default function MemberDots({ users }: MemberDotsProps) {
   const entries = Object.entries(users);
   if (entries.length === 0) return null;
@@ -31,32 +33,9 @@ export default function MemberDots({ users }: MemberDotsProps) {
       {entries.map(([id, name]) => {
         const color = userColor(id);
         return (
-          <div
-            key={id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              animation: 'member-appear 0.4s ease forwards',
-            }}
-          >
-            <span
-              style={{
-                display: 'inline-block',
-                width: '0.55rem',
-                height: '0.55rem',
-                borderRadius: '50%',
-                backgroundColor: color,
-                boxShadow: `0 0 6px ${color}`,
-              }}
-            />
-            <span
-              style={{
-                fontFamily: 'Consolas, monospace',
-                fontSize: '0.8rem',
-                color: `${color}cc`,
-              }}
-            >
+          <div key={id} className={styles['member-dot']}>
+            <span className={styles['member-dot-color']} style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}` }} />
+            <span className={styles['member-dot-name']} style={{ color: color }}>
               {name}
             </span>
           </div>

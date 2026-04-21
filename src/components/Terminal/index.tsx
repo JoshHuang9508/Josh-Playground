@@ -68,8 +68,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   const [terminalContents, setTerminalContents] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>([]);
 
-  const currentURL = '/' + currentHash.split('/').filter(Boolean).join('/');
-  const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentURL}$ `;
+  const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentHash}$ `;
   const isMinimized = windowState === 'minimized';
   const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
   const iconY = window.innerHeight - 64;
