@@ -127,9 +127,6 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
         target: { value: newIndex !== -1 ? cmdHistory[newIndex] : '' },
       });
     }
-    if (event.key === 'Shift') {
-      isShifting.current = true;
-    }
     if (event.key === 'Tab') {
       event.preventDefault();
       let input = inputTemp;
@@ -145,6 +142,8 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
           setAvailableIndex(availableIndex >= available.length - 1 ? 0 : availableIndex + 1);
         }
       }
+    } else if (event.key === 'Shift') {
+      event.preventDefault();
     } else if (isTabbing.current) {
       handleInputChange(event);
       isTabbing.current = false;
@@ -158,58 +157,6 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     const isBottom = event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight - 10;
     event.currentTarget.classList.toggle(styles['bottom'], isBottom);
   };
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const ref = interactionRef.current;
-    const dx = e.clientX - ref.startMouseX;
-    const dy = e.clientY - ref.startMouseY;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    if (ref.type === 'drag') {
-      const newX = Math.min(Math.max(0, ref.startPosX + dx), vw - ref.startWidth);
-      const newY = Math.min(Math.max(0, ref.startPosY + dy), vh - ref.startHeight);
-      setPosition({ x: newX, y: newY });
-    } else if (ref.type === 'resize') {
-      let newX = ref.startPosX;
-      let newY = ref.startPosY;
-      let newW = ref.startWidth;
-      let newH = ref.startHeight;
-
-      if (ref.resizeDir.includes('e')) {
-        newW = Math.min(Math.max(TERMINAL_MIN_WIDTH, ref.startWidth + dx), vw - newX);
-      }
-      if (ref.resizeDir.includes('w')) {
-        const maxDx = ref.startPosX;
-        const clampedDx = Math.min(dx, ref.startWidth - TERMINAL_MIN_WIDTH);
-        const finalDx = Math.max(-maxDx, clampedDx);
-        newW = ref.startWidth - finalDx;
-        newX = ref.startPosX + finalDx;
-      }
-      if (ref.resizeDir.includes('s')) {
-        newH = Math.min(Math.max(TERMINAL_MIN_HEIGHT, ref.startHeight + dy), vh - newY);
-      }
-      if (ref.resizeDir.includes('n')) {
-        const maxDy = ref.startPosY;
-        const clampedDy = Math.min(dy, ref.startHeight - TERMINAL_MIN_HEIGHT);
-        const finalDy = Math.max(-maxDy, clampedDy);
-        newH = ref.startHeight - finalDy;
-        newY = ref.startPosY + finalDy;
-      }
-
-      setPosition({ x: newX, y: newY });
-      setSize({ width: newW, height: newH });
-    }
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    interactionRef.current.type = '';
-    setIsDragging(false);
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove]);
 
   const handleClose = () => {
     onWindowStateChange(id, 'closed');
@@ -268,8 +215,6 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     setIsDragging(true);
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleResizeStart = (e: React.MouseEvent, dir: string) => {
@@ -287,13 +232,86 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     };
     setIsDragging(true);
     document.body.style.userSelect = 'none';
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
   };
 
   useEffect(() => {
     const cmdHistory = localStorage.getItem('cmdHistory')?.split(',') ?? [];
     setCmdHistory(cmdHistory);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const ref = interactionRef.current;
+      const dx = e.clientX - ref.startMouseX;
+      const dy = e.clientY - ref.startMouseY;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      if (ref.type === 'drag') {
+        const newX = Math.min(Math.max(0, ref.startPosX + dx), vw - ref.startWidth);
+        const newY = Math.min(Math.max(0, ref.startPosY + dy), vh - ref.startHeight);
+        setPosition({ x: newX, y: newY });
+      } else if (ref.type === 'resize') {
+        let newX = ref.startPosX;
+        let newY = ref.startPosY;
+        let newW = ref.startWidth;
+        let newH = ref.startHeight;
+
+        if (ref.resizeDir.includes('e')) {
+          newW = Math.min(Math.max(TERMINAL_MIN_WIDTH, ref.startWidth + dx), vw - newX);
+        }
+        if (ref.resizeDir.includes('w')) {
+          const maxDx = ref.startPosX;
+          const clampedDx = Math.min(dx, ref.startWidth - TERMINAL_MIN_WIDTH);
+          const finalDx = Math.max(-maxDx, clampedDx);
+          newW = ref.startWidth - finalDx;
+          newX = ref.startPosX + finalDx;
+        }
+        if (ref.resizeDir.includes('s')) {
+          newH = Math.min(Math.max(TERMINAL_MIN_HEIGHT, ref.startHeight + dy), vh - newY);
+        }
+        if (ref.resizeDir.includes('n')) {
+          const maxDy = ref.startPosY;
+          const clampedDy = Math.min(dy, ref.startHeight - TERMINAL_MIN_HEIGHT);
+          const finalDy = Math.max(-maxDy, clampedDy);
+          newH = ref.startHeight - finalDy;
+          newY = ref.startPosY + finalDy;
+        }
+
+        setPosition({ x: newX, y: newY });
+        setSize({ width: newW, height: newH });
+      }
+    };
+
+    const handleMouseUp = () => {
+      interactionRef.current.type = '';
+      setIsDragging(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Shift') {
+        isShifting.current = true;
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === 'Shift') {
+        isShifting.current = false;
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+    };
   }, []);
 
   useEffect(() => {
