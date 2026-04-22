@@ -220,7 +220,7 @@ export const TEXT_CONTENT_ZH = {
       '這個網站是我的個人網站，有什麼想了解的歡迎到處看看，若需要聯絡我的話可以在上方聯絡欄位找到我的聯絡方式。',
     ],
     hero: {
-      name: 'Josh, Huang',
+      name: 'Josh',
       school: 'NTUST-CSIE',
       age: '18yo',
       motto: '「人生就是為了達到溫柔這一個目標」',

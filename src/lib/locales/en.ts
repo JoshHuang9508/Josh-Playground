@@ -220,7 +220,7 @@ export const TEXT_CONTENT_EN = {
       'This website is my personal website, feel free to explore around, if you need to contact me, you can find my contact information in the contact section above.',
     ],
     hero: {
-      name: 'Josh, Huang',
+      name: 'Josh',
       school: 'NTUST-CSIE',
       age: '18yo',
       motto: '\"The goal of life is to achieve gentleness\"',
