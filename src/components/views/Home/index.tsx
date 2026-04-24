@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { emitTerminalLog } from '@/lib/terminalLog';
 
@@ -12,6 +12,8 @@ import useOsuStats from '@/lib/hooks/OsuStats';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import ColorSpan from '@/components/ColorSpan';
+
+import { AppContext } from '@/pages';
 
 import styles from './Home.module.css';
 
@@ -30,6 +32,7 @@ function formatHueStyleProperty(hue: number): string {
 }
 
 export default function HomeView() {
+  const { username } = useContext(AppContext)!;
   const { user: osuData } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
   const { t } = useI18n();
@@ -174,7 +177,7 @@ export default function HomeView() {
         <span className={styles['section-label']}>{t('home.sections.aboutMe')}</span>
 
         <div className={`${styles['hero-bio']} markdown-content`}>
-          {t('home.bio').map((bio) => (
+          {t('home.bio', username).map((bio) => (
             <ColorSpan key={bio} str={bio} />
           ))}
         </div>

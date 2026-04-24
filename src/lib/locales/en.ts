@@ -211,7 +211,7 @@ export const TEXT_CONTENT_EN = {
       },
     },
     bio: [
-      'Hello, @#fff700Annoymous@#! I am Josh(Whitedog/Whydog), my real name is Chenhao, Huang, I am 18 years old, and I am currently a second-year student at the National Taiwan University of Science and Technology, Department of CSIE.',
+      'Hello, @#fff700{0}@#! I am Josh(Whitedog/Whydog), my real name is Chenhao, Huang, I am 18 years old, and I am currently a second-year student at the National Taiwan University of Science and Technology, Department of CSIE.',
       'I was introduced to programming by my family when I was young, and I knew that I was destined to dedicate my life to programming before I graduated from high school. So I chose to become a computer science student.',
       'I have a deep addiction to programming, I can spend a whole day just coding, without eating or sleeping.',
       'My dream is to become a free developer, able to enjoy the scenery while coding every day.',
