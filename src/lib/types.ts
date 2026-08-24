@@ -20,6 +20,20 @@ export type HSL = { h: number; s: number; l: number };
 
 export type TextColorKey = 'primary' | 'secondary' | 'muted' | 'accent1' | 'accent2' | 'accent3' | 'accent4';
 
+export type MusicPlaylist = {
+  id: string;
+  name: string;
+  /** Video ID whose thumbnail stands in as the playlist cover. */
+  coverVideoId: string;
+};
+
+export type MusicTrack = {
+  id: string;
+  title: string;
+  author: string;
+  thumbnail: string;
+};
+
 export type Settings = {
   backgroundImageUrl: string;
   backgroundColor: HSL;

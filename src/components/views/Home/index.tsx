@@ -12,6 +12,7 @@ import useOsuStats from '@/lib/hooks/OsuStats';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import ColorSpan from '@/components/ColorSpan';
+import MusicCard from '@/components/MusicCard';
 
 import { AppContext } from '@/pages';
 
@@ -287,6 +288,8 @@ export default function HomeView() {
                 </div>
               </div>
             </div>
+
+            <MusicCard />
           </div>
         </div>
       </div>

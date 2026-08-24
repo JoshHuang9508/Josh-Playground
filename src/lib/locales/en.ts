@@ -151,10 +151,12 @@ export const TEXT_CONTENT_EN = {
         },
       },
       music: {
-        description: 'Manage music playback',
-        usage: '@#00ffaamusic@# @#fff700<-p|-s|-i|-l>@#',
-        list: 'Music list:',
+        description: 'Control background music playback',
+        usage: '@#00ffaamusic@# @#fff700<-p|-s|-n|-b|-l>@# @#fff700[playlist_index]@#',
+        list: 'Playlists:',
         nowPlaying: 'Now playing: @#FFF700{0}@#...',
+        switched: 'Switched to playlist @#fff700{0}@#',
+        invalidPlaylist: 'Invalid playlist index. Run @#00ffaamusic -l@# to list them.',
       },
       download: {
         description: 'Download a video or audio from a URL',
@@ -218,6 +220,15 @@ export const TEXT_CONTENT_EN = {
       projects: '@#00ffaaPROJECTS@#',
       osuStats: '@#ff77b7OSU! STATS@#',
       aboutSite: 'ABOUT THIS SITE',
+    },
+    music: {
+      noPlaylist: 'No playlist configured yet.',
+      loading: 'Loading...',
+      playlistHint: 'Release to switch',
+      play: 'Play',
+      pause: 'Pause',
+      previous: 'Previous track',
+      next: 'Next track',
     },
     latestPost: {
       allPosts: 'All Posts \u2192',

@@ -1,17 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useState, useRef, createContext, type MutableRefObject, useCallback } from 'react';
+import { useEffect, useState, useRef, createContext, type MutableRefObject } from 'react';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, DEFAULT_USERNAME, ABOUT_SEEN_KEY } from '@/lib/constants';
+import { DEFAULT_USERNAME, ABOUT_SEEN_KEY } from '@/lib/constants';
 
 import { applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
 
 import useI18n, { I18nProvider } from '@/lib/hooks/i18n';
+import { MusicProvider } from '@/lib/hooks/Music';
 import useBlogPosts from '@/lib/hooks/BlogPosts';
 
 import store from '@/redux';
@@ -55,29 +56,17 @@ function PageInner() {
   const { posts } = useBlogPosts();
   const { t, setLocale } = useI18n();
 
-  const audioPlayerRef = useRef<HTMLAudioElement>(null);
   const extensionArgs = useRef<Record<string, string[]>>({});
   const extensionCommands = useRef<Types.CommandList>({});
   const extensionPaths = useRef<Record<string, string[]>>({});
-  const isListenTogetherRef = useRef(window.location.hash === '#/listentogether');
-  const isPlayingRef = useRef(false);
 
   const [settings, setSettingsState] = useState<Types.Settings>(() => loadSettings());
   const [username, setUsername] = useState<string>(() => localStorage.getItem('username') ?? DEFAULT_USERNAME);
   const [currentHash, setCurrentHash] = useState<string>('/');
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
-  const [musicIndex, setMusicIndex] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   // Open on the visitor's first ever visit, then never again.
   const [isAboutOpen, setIsAboutOpen] = useState(() => !localStorage.getItem(ABOUT_SEEN_KEY));
-
-  const playMusic = useCallback(() => {
-    if (!audioPlayerRef.current || isPlayingRef.current) return;
-    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.01;
-    audioPlayerRef.current.play().then(() => {
-      isPlayingRef.current = true;
-    });
-  }, []);
 
   const setExtensionArgs = (args: Record<string, string[]>) => {
     extensionArgs.current = args;
@@ -97,10 +86,6 @@ function PageInner() {
     applySettingsToDOM(s);
   };
 
-  const handleMusicEnd = () => {
-    setMusicIndex((prev) => (prev + 1) % MUSIC_LIST.length);
-  };
-
   useEffect(() => {
     const onHashChange = () => {
       const hash = window.location.hash.slice(1) || '/';
@@ -111,29 +96,6 @@ function PageInner() {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
-
-  useEffect(() => {
-    const onInteraction = () => {
-      playMusic();
-    };
-    document.addEventListener('click', onInteraction);
-    document.addEventListener('touchstart', onInteraction);
-    return () => {
-      document.removeEventListener('click', onInteraction);
-      document.removeEventListener('touchstart', onInteraction);
-    };
-  }, [playMusic]);
-
-  useEffect(() => {
-    if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.volume = isListenTogetherRef.current ? 0 : 0.01;
-  }, [currentHash]);
-
-  useEffect(() => {
-    if (!audioPlayerRef.current) return;
-    audioPlayerRef.current.src = MUSIC_LIST[musicIndex].path;
-    playMusic();
-  }, [musicIndex, playMusic]);
 
   useEffect(() => {
     if (posts.length > 0) {
@@ -175,7 +137,6 @@ function PageInner() {
 
   return (
     <>
-      <audio data-audio-player ref={audioPlayerRef} src={MUSIC_LIST[musicIndex].path} onEnded={handleMusicEnd} />
       <Head>
         <title>{dynamicTitle ?? t(`${currentHash}.title`)}</title>
         <meta name="description" content={t(`${currentHash}.subtitle`)} />
@@ -230,7 +191,9 @@ function PageComponent() {
   return (
     <Provider store={store}>
       <I18nProvider>
-        <PageInner />
+        <MusicProvider>
+          <PageInner />
+        </MusicProvider>
       </I18nProvider>
     </Provider>
   );

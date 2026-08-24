@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, DEFAULT_SETTINGS, TEXT_COLOR_KEYS } from '@/lib/constants';
+import { DEFAULT_SETTINGS, TEXT_COLOR_KEYS } from '@/lib/constants';
 
 import { findAvailablePath, findCommandObject, renderWebPaths } from '@/lib/terminal';
 
@@ -12,6 +12,7 @@ import { clearActiveTerminalLog, emitTerminalLog } from '@/lib/terminalLog';
 import { escapeCustomColorTags } from '@/lib/color';
 
 import useI18n from '@/lib/hooks/i18n';
+import useMusic from '@/lib/hooks/Music';
 
 import { AppContext } from '@/pages/index';
 
@@ -35,6 +36,7 @@ const navigateToHash = (hash: string) => {
 export default function useTerminalCommand(extension: Types.CommandList) {
   const { extensionCommands, extensionPaths, currentHash, settings, setSettings, setUsername, setExtensionCommands } = useContext(AppContext)!;
   const { t, setLocale } = useI18n();
+  const music = useMusic();
 
   const contextCommands: Types.CommandList = {
     help: {
@@ -182,20 +184,37 @@ export default function useTerminalCommand(extension: Types.CommandList) {
       name: 'music',
       description: t('global.commands.music.description'),
       usage: t('global.commands.music.usage'),
-      flags: ['-p', '--play', '-s', '--stop', '-l', '--list'],
-      handler: (_cmd, _args, flags) => {
+      flags: ['-p', '--play', '-s', '--stop', '-n', '--next', '-b', '--back', '-l', '--list'],
+      handler: (_cmd, args, flags) => {
         if (flags.includes('-l') || flags.includes('--list')) {
-          emitTerminalLog(t('global.commands.music.list'), ...MUSIC_LIST.map((_, index) => `  #${index} - ${_.name}`));
+          emitTerminalLog(t('global.commands.music.list'), ...music.playlists.map((playlist, index) => `  #${index} - ${playlist.name}${index === music.playlistIndex ? ' *' : ''}`));
           return;
         }
         if (flags.includes('-p') || flags.includes('--play')) {
-          const audioPlayer = document.querySelector('[data-audio-player]') as HTMLAudioElement;
-          if (audioPlayer) audioPlayer.play();
+          if (!music.playing) music.toggle();
+          if (music.track) emitTerminalLog(t('global.commands.music.nowPlaying', music.track.title));
           return;
         }
         if (flags.includes('-s') || flags.includes('--stop')) {
-          const audioPlayer = document.querySelector('[data-audio-player]') as HTMLAudioElement;
-          if (audioPlayer) audioPlayer.pause();
+          if (music.playing) music.toggle();
+          return;
+        }
+        if (flags.includes('-n') || flags.includes('--next')) {
+          music.next();
+          return;
+        }
+        if (flags.includes('-b') || flags.includes('--back')) {
+          music.previous();
+          return;
+        }
+        if (args.length) {
+          const index = num(args[0]);
+          if (Number.isNaN(index) || index < 0 || index >= music.playlists.length) {
+            emitTerminalLog(t('global.commands.music.invalidPlaylist'));
+            return;
+          }
+          music.selectPlaylist(index);
+          emitTerminalLog(t('global.commands.music.switched', music.playlists[index].name));
           return;
         }
         emitTerminalLog(t('global.commands.music.usage'));

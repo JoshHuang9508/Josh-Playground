@@ -14,16 +14,6 @@ export const TAG_COLORS: Record<string, string> = {
   'design': '#ffa24c',
   '': '#ccc',
 };
-export const MUSIC_LIST = [
-  {
-    name: 'Crywolf - Eyes Half Closed',
-    path: '/musics/eyes-half-closed.mp3',
-  },
-  {
-    name: 'BlueArchive - The Promise at Sunset',
-    path: '/musics/the-promise-at-sunset.mp3',
-  },
-];
 export const SOCIAL_LINKS = [
   { icon: 'github', url: 'https://github.com/JoshHuang9508' },
   { icon: 'youtube', url: 'https://www.youtube.com/@whydog5555' },
@@ -57,6 +47,7 @@ export const LANGUAGE_COLORS: Record<string, string> = {
 export const VALID_VIBES = ['default', 'lofi', 'rave', 'cinema', 'dawn'];
 export * from './color';
 export * from './path-list';
+export * from './playlists';
 export * from './projects';
 export * from '../locales/en';
 export * from './theme-settings';

@@ -151,10 +151,12 @@ export const TEXT_CONTENT_ZH = {
         },
       },
       music: {
-        description: 'Manage music playback',
-        usage: '@#00ffaamusic@# @#fff700<-p|-s|-i|-l>@#',
-        list: 'Music list:',
+        description: 'Control background music playback',
+        usage: '@#00ffaamusic@# @#fff700<-p|-s|-n|-b|-l>@# @#fff700[playlist_index]@#',
+        list: 'Playlists:',
         nowPlaying: 'Now playing: @#FFF700{0}@#...',
+        switched: 'Switched to playlist @#fff700{0}@#',
+        invalidPlaylist: 'Invalid playlist index. Run @#00ffaamusic -l@# to list them.',
       },
       download: {
         description: 'Download a video or audio from a URL',
@@ -218,6 +220,15 @@ export const TEXT_CONTENT_ZH = {
       projects: '@#00ffaa專案集@#',
       osuStats: '@#ff77b7OSU! 成績@#',
       aboutSite: '關於這個網站',
+    },
+    music: {
+      noPlaylist: '尚未設定歌單。',
+      loading: '載入中...',
+      playlistHint: '放開以切換',
+      play: '播放',
+      pause: '暫停',
+      previous: '上一首',
+      next: '下一首',
     },
     latestPost: {
       allPosts: '所有文章 \u2192',
