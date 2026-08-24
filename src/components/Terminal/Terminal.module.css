@@ -1,6 +1,6 @@
 div.terminal {
   position: absolute;
-  z-index: 999;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   overflow: hidden;

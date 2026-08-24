@@ -18,6 +18,8 @@ export type CommandList = Record<string, Command>;
 
 export type HSL = { h: number; s: number; l: number };
 
+export type TextColorKey = 'primary' | 'secondary' | 'muted' | 'accent1' | 'accent2' | 'accent3' | 'accent4';
+
 export type Settings = {
   backgroundImageUrl: string;
   backgroundColor: HSL;
@@ -25,12 +27,7 @@ export type Settings = {
   cardColor: HSL;
   cardBlur: number;
   textHighlight: HSL;
-  textColors: {
-    primary: string;
-    secondary: string;
-    muted: string;
-    accent: string[];
-  };
+  textColors: Record<TextColorKey, string>;
 };
 
 export type Track = {

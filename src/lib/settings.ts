@@ -1,9 +1,20 @@
 import type * as Types from '@/lib/types';
 
-import { DEFAULT_SETTINGS, STORAGE_KEY } from '@/lib/constants';
+import { DEFAULT_SETTINGS, STORAGE_KEY, TEXT_COLOR_KEYS } from '@/lib/constants';
 
 function isHslShape(v: unknown): v is Types.HSL {
   return typeof v === 'object' && v !== null && typeof (v as Types.HSL).h === 'number' && typeof (v as Types.HSL).s === 'number' && typeof (v as Types.HSL).l === 'number';
+}
+
+// Reads only the known keys, so settings saved by older versions (which stored
+// an `accent` array here) drop their stale shape instead of leaking through.
+function resolveTextColors(stored: unknown): Types.Settings['textColors'] {
+  const source = (typeof stored === 'object' && stored !== null ? stored : {}) as Partial<Record<Types.TextColorKey, unknown>>;
+  const resolved = { ...DEFAULT_SETTINGS.textColors };
+  TEXT_COLOR_KEYS.forEach((key) => {
+    if (typeof source[key] === 'string') resolved[key] = source[key];
+  });
+  return resolved;
 }
 
 export function loadSettings(): Types.Settings {
@@ -18,11 +29,7 @@ export function loadSettings(): Types.Settings {
       backgroundColor: isHslShape(parsed.backgroundColor) ? parsed.backgroundColor : DEFAULT_SETTINGS.backgroundColor,
       cardColor: isHslShape(parsed.cardColor) ? parsed.cardColor : DEFAULT_SETTINGS.cardColor,
       textHighlight: isHslShape(parsed.textHighlight) ? parsed.textHighlight : DEFAULT_SETTINGS.textHighlight,
-      textColors: {
-        ...DEFAULT_SETTINGS.textColors,
-        ...(parsed.textColors ?? {}),
-        accent: Array.isArray(parsed.textColors?.accent) ? parsed.textColors!.accent : DEFAULT_SETTINGS.textColors.accent,
-      },
+      textColors: resolveTextColors(parsed.textColors),
     };
   } catch {
     return DEFAULT_SETTINGS;
@@ -58,11 +65,8 @@ export function applySettingsToDOM(s: Types.Settings): void {
   r.setProperty('--text-secondary', s.textColors.secondary);
   r.setProperty('--text-muted', s.textColors.muted);
 
-  const MAX_ACCENT_SLOTS = 32;
-  for (let i = 0; i < MAX_ACCENT_SLOTS; i++) {
-    const name = `--accent-${i + 1}`;
-    const color = s.textColors.accent[i];
-    if (color) r.setProperty(name, color);
-    else r.removeProperty(name);
-  }
+  r.setProperty('--accent-1', s.textColors.accent1);
+  r.setProperty('--accent-2', s.textColors.accent2);
+  r.setProperty('--accent-3', s.textColors.accent3);
+  r.setProperty('--accent-4', s.textColors.accent4);
 }

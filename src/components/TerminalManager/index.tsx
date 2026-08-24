@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type * as Types from '@/lib/types';
 
@@ -11,8 +11,6 @@ type TerminalInstance = {
 };
 
 export default function TerminalManager() {
-  const nextZIndexRef = useRef(999);
-
   const [terminals, setTerminals] = useState<TerminalInstance[]>([{ id: '1', windowState: 'minimized', positionOffset: 0 }]);
 
   const minimizedIds = terminals.filter((t) => t.windowState === 'minimized').map((t) => t.id);
@@ -53,19 +51,6 @@ export default function TerminalManager() {
 
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
-
-  useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => {
-      const headerEl = (event.target as HTMLElement).closest('[data-header]') as HTMLDivElement;
-      if (headerEl) {
-        headerEl.style.zIndex = String(nextZIndexRef.current);
-        nextZIndexRef.current += 1;
-      }
-    };
-
-    document.addEventListener('pointerdown', onPointerDown);
-    return () => document.removeEventListener('pointerdownter', onPointerDown);
   }, []);
 
   return terminals.map((t) => (

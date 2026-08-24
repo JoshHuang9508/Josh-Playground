@@ -46,6 +46,14 @@ span.separator {
   user-select: none;
 }
 
+div.actions {
+  display: flex;
+  gap: 0.15rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+button.help,
 button.gear {
   display: flex;
   align-items: center;
@@ -53,7 +61,6 @@ button.gear {
   width: 2rem;
   height: 2rem;
   padding: 0;
-  margin-left: auto;
   color: var(--text-muted);
   cursor: pointer;
   background: transparent;
@@ -69,6 +76,12 @@ button.gear:hover {
   color: var(--text-primary);
   background-color: rgb(255 255 255 / 8%);
   transform: rotate(60deg);
+}
+
+button.help:hover {
+  color: var(--text-primary);
+  background-color: rgb(255 255 255 / 8%);
+  transform: scale(1.12);
 }
 
 @keyframes page-enter {

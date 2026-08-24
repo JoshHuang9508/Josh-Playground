@@ -4,11 +4,14 @@ import { AppContext } from '@/pages/index';
 
 import type * as Types from '@/lib/types';
 
-import { DEFAULT_SETTINGS } from '@/lib/constants';
+import { DEFAULT_SETTINGS, NAV_SETTINGS_ANCHOR, TEXT_COLOR_KEYS } from '@/lib/constants';
 
 import { hslString } from '@/lib/settings';
 
+import { anchoredPosition } from '@/lib/anchor';
+
 import useI18n from '@/lib/hooks/i18n';
+import useWindowFocus from '@/lib/hooks/WindowFocus';
 
 import { Slider } from './Slider';
 import { HslPicker } from './HslPicker';
@@ -20,6 +23,7 @@ import styles from './Settings.module.css';
 export default function Settings() {
   const { settings, setSettings, isSettingsOpen, setIsSettingsOpen } = useContext(AppContext)!;
   const { t } = useI18n();
+  const { zIndex, bringToFront } = useWindowFocus();
 
   const panelRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef({
@@ -38,11 +42,7 @@ export default function Settings() {
   }));
   const [isDragging, setIsDragging] = useState(false);
 
-  const TEXT_FIELDS: { key: 'primary' | 'secondary' | 'muted'; label: string }[] = [
-    { key: 'primary', label: t('settings.text.primary') },
-    { key: 'secondary', label: t('settings.text.secondary') },
-    { key: 'muted', label: t('settings.text.muted') },
-  ];
+  const TEXT_FIELDS: { key: Types.TextColorKey; label: string }[] = TEXT_COLOR_KEYS.map((key) => ({ key, label: t(`settings.text.${key}`) }));
 
   const cardHex = hslString(settings.cardColor);
   const highlightHex = hslString(settings.textHighlight);
@@ -51,23 +51,8 @@ export default function Settings() {
     setSettings({ ...settings, ...patch });
   };
 
-  const updateText = (key: 'primary' | 'secondary' | 'muted', color: string) => {
+  const updateText = (key: Types.TextColorKey, color: string) => {
     setSettings({ ...settings, textColors: { ...settings.textColors, [key]: color } });
-  };
-
-  const updateAccent = (idx: number, color: string) => {
-    const accent = [...settings.textColors.accent];
-    accent[idx] = color;
-    setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-  };
-
-  const addAccent = () => {
-    setSettings({ ...settings, textColors: { ...settings.textColors, accent: [...settings.textColors.accent, '#ffffff'] } });
-  };
-
-  const removeAccent = (idx: number) => {
-    const accent = settings.textColors.accent.filter((_, i) => i !== idx);
-    setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
   };
 
   const reset = () => {
@@ -90,6 +75,15 @@ export default function Settings() {
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
   };
+
+  // Re-anchor under the nav button every time the panel is opened.
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!isSettingsOpen || !panel) return;
+    const anchored = anchoredPosition(NAV_SETTINGS_ANCHOR, panel);
+    if (anchored) setPosition(anchored);
+    bringToFront();
+  }, [isSettingsOpen, bringToFront]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -122,7 +116,13 @@ export default function Settings() {
   }, []);
 
   return (
-    <div ref={panelRef} className={`${styles['panel']} ${isSettingsOpen ? '' : styles['closed']}`} style={{ left: position.x, top: position.y }} onClick={(e) => e.stopPropagation()}>
+    <div
+      ref={panelRef}
+      className={`${styles['panel']} ${isSettingsOpen ? '' : styles['closed']}`}
+      style={{ left: position.x, top: position.y, zIndex }}
+      onPointerDown={bringToFront}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className={`${styles['header']} ${isDragging ? styles['dragging'] : ''}`} onMouseDown={handleDragStart}>
         <div className={styles['traffic-lights']}>
           <span className={styles['close']} onClick={() => setIsSettingsOpen(false)} />
@@ -166,7 +166,7 @@ export default function Settings() {
               <span className={styles['swatch']} style={{ background: hslString(settings.backgroundColor, settings.backgroundAlpha) }} />
             </div>
             <HslPicker value={settings.backgroundColor} onChange={(backgroundColor) => update({ backgroundColor })} />
-            <Slider label="A" min={0} max={1} step={0.01} value={settings.backgroundAlpha} onChange={(backgroundAlpha) => update({ backgroundAlpha })} hsl={settings.backgroundColor} />
+            <Slider label="A" min={0} max={1} step={0.01} value={settings.backgroundAlpha} onChange={(backgroundAlpha) => update({ backgroundAlpha })} />
           </div>
         </section>
 
@@ -189,7 +189,7 @@ export default function Settings() {
               <span className={styles['swatch']} style={{ background: cardHex }} />
             </div>
             <HslPicker value={settings.cardColor} onChange={(cardColor) => update({ cardColor })} />
-            <Slider label="blur" min={0} max={40} value={settings.cardBlur} onChange={(cardBlur) => update({ cardBlur })} suffix="px" hsl={settings.cardColor} />
+            <Slider label="blur" min={0} max={40} value={settings.cardBlur} onChange={(cardBlur) => update({ cardBlur })} suffix="px" />
           </div>
 
           <div className={styles['hint']} style={{ marginBottom: '0.25rem' }}>
@@ -217,27 +217,6 @@ export default function Settings() {
           {TEXT_FIELDS.map(({ key, label }) => (
             <ColorRow key={key} label={label} value={settings.textColors[key]} onChange={(c) => updateText(key, c)} />
           ))}
-        </section>
-
-        {/* Accent array */}
-        <section className={styles['section']}>
-          <div className={styles['section-head']}>
-            <span className={styles['bracket']}>[</span>
-            <span className={styles['section-title']}>{t('settings.accent.title')}</span>
-            <span className={styles['bracket']}>]</span>
-            <span className={styles['accent-count']}>({settings.textColors.accent.length})</span>
-            <span className={styles['section-rule']} />
-          </div>
-
-          {settings.textColors.accent.map((color, idx) => (
-            <ColorRow key={idx} label={`[${idx}]`} value={color} onChange={(c) => updateAccent(idx, c)} onRemove={() => removeAccent(idx)} />
-          ))}
-
-          <div className={styles['accent-add']}>
-            <button type="button" className={styles['ghost-btn']} onClick={addAccent}>
-              [{t('settings.accent.add')}]
-            </button>
-          </div>
         </section>
 
         <div className={styles['footer']}>

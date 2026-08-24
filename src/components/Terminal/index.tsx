@@ -9,6 +9,7 @@ import { subscribeTerminal, setActiveTerminal, emitTerminalLog } from '@/lib/ter
 import { findAvailable, findCommandHandler, replaceInput } from '@/lib/terminal';
 
 import useI18n from '@/lib/hooks/i18n';
+import useWindowFocus from '@/lib/hooks/WindowFocus';
 
 import { AppContext } from '@/pages/index';
 
@@ -29,6 +30,7 @@ interface TerminalProps {
 export default function Terminal({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: TerminalProps) {
   const { extensionArgs, extensionCommands, extensionPaths, currentHash, username } = useContext(AppContext)!;
   const { t } = useI18n();
+  const { zIndex, bringToFront } = useWindowFocus();
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -330,10 +332,15 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     }
   }, [terminalContents]);
 
+  // Restoring via Ctrl+` fires no pointer event, so surface the window here too.
+  useEffect(() => {
+    if (isMinimized) return;
+    bringToFront();
+  }, [isMinimized, bringToFront]);
+
   return (
     <div
       ref={terminalRef}
-      data-header
       className={`${styles['terminal']} ${isMinimized ? styles['minimized'] : ''} ${isDragging ? styles['no-transition'] : ''}`}
       style={{
         left: isMinimized ? iconX : position.x,
@@ -341,7 +348,9 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
         width: size.width,
         height: size.height,
         borderRadius: windowState === 'maximized' ? 0 : undefined,
+        zIndex,
       }}
+      onPointerDown={bringToFront}
       onClick={isMinimized ? handleRestore : undefined}
     >
       <div className={styles['minimize-icon']}>

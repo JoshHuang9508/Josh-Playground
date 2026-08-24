@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, DEFAULT_SETTINGS } from '@/lib/constants';
+import { MUSIC_LIST, DEFAULT_SETTINGS, TEXT_COLOR_KEYS } from '@/lib/constants';
 
 import { findAvailablePath, findCommandObject, renderWebPaths } from '@/lib/terminal';
 
@@ -308,9 +308,9 @@ export default function useTerminalCommand(extension: Types.CommandList) {
           description: t('global.commands.settings.text.description'),
           usage: t('global.commands.settings.text.usage'),
           handler: (_cmd, args) => {
-            const which = args[0];
+            const which = args[0] as Types.TextColorKey;
             const color = args[1];
-            if (!['primary', 'secondary', 'muted'].includes(which)) {
+            if (!TEXT_COLOR_KEYS.includes(which)) {
               emitTerminalLog(t('global.commands.settings.text.invalid'));
               return;
             }
@@ -320,78 +320,6 @@ export default function useTerminalCommand(extension: Types.CommandList) {
             }
             setSettings({ ...settings, textColors: { ...settings.textColors, [which]: color } });
             emitTerminalLog(t('global.commands.settings.text.set', which, color));
-          },
-        },
-        'accent': {
-          name: 'accent',
-          description: t('global.commands.settings.accent.description'),
-          usage: t('global.commands.settings.accent.usage'),
-          flags: ['-h', '--help'],
-          subCommands: {
-            add: {
-              name: 'add',
-              description: t('global.commands.settings.accent.add.description'),
-              usage: t('global.commands.settings.accent.add.usage'),
-              handler: (_cmd, args) => {
-                const color = args[0];
-                if (!isHex(color)) {
-                  emitTerminalLog(t('global.commands.settings.accent.add.invalid'));
-                  return;
-                }
-                const accent = [...settings.textColors.accent, color];
-                setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-                emitTerminalLog(t('global.commands.settings.accent.add.added', color, `${accent.length - 1}`));
-              },
-            },
-            rm: {
-              name: 'rm',
-              description: t('global.commands.settings.accent.rm.description'),
-              usage: t('global.commands.settings.accent.rm.usage'),
-              handler: (_cmd, args) => {
-                const index = num(args[0] ?? -1);
-                if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
-                  emitTerminalLog(t('global.commands.settings.accent.rm.indexInvalid'));
-                  return;
-                }
-                const accent = settings.textColors.accent.filter((_, i) => i !== index);
-                setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-                emitTerminalLog(t('global.commands.settings.accent.rm.removed', `${index}`));
-              },
-            },
-            set: {
-              name: 'set',
-              description: t('global.commands.settings.accent.set.description'),
-              usage: t('global.commands.settings.accent.set.usage'),
-              handler: (_cmd, args) => {
-                const index = num(args[0] ?? -1);
-                const color = args[1];
-                if (Number.isNaN(index) || index < 0 || index >= settings.textColors.accent.length) {
-                  emitTerminalLog(t('global.commands.settings.accent.set.indexInvalid'));
-                  return;
-                }
-                if (!isHex(color)) {
-                  emitTerminalLog(t('global.commands.settings.accent.set.invalid'));
-                  return;
-                }
-                const accent = [...settings.textColors.accent];
-                accent[index] = color;
-                setSettings({ ...settings, textColors: { ...settings.textColors, accent } });
-                emitTerminalLog(t('global.commands.settings.accent.set.set', `${index}`, color));
-              },
-            },
-          },
-          handler: (_cmd, _args, flags, cmdObj) => {
-            if (flags.includes('-h') || flags.includes('--help')) {
-              emitTerminalLog(t('terminal.availableCommands'));
-              const commands = Object.values(cmdObj?.subCommands ?? {});
-              const paddingWidth = Math.max(...commands.map((cmd) => escapeCustomColorTags(cmd.usage).length));
-              commands.forEach((cmd) => {
-                const offset = cmd.usage.length - escapeCustomColorTags(cmd.usage).length;
-                const paddedUsage = cmd.usage.padEnd(paddingWidth + offset, ' ');
-                emitTerminalLog(t('terminal.commandUsage', paddedUsage, cmd.description));
-              });
-              return;
-            }
           },
         },
       },
@@ -419,7 +347,10 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               settings.textColors.primary,
               settings.textColors.secondary,
               settings.textColors.muted,
-              settings.textColors.accent.length > 0 ? settings.textColors.accent.join(', ') : '(empty)',
+              settings.textColors.accent1,
+              settings.textColors.accent2,
+              settings.textColors.accent3,
+              settings.textColors.accent4,
             ),
           );
           return;

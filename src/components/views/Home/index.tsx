@@ -293,41 +293,6 @@ export default function HomeView() {
 
       <hr className="divider" />
 
-      {/* Feature showcase & terminal tutorial */}
-      <div className={styles['section']}>
-        <span className={styles['section-label']}>{t('home.sections.aboutSite')}</span>
-        <div className={styles['feature-card']}>
-          <p className={styles['feature-title']}>
-            <ColorSpan str={t('home.features.terminal.title')} />
-          </p>
-          <p className={styles['feature-desc']}>
-            <ColorSpan str={t('home.features.terminal.desc')} />
-          </p>
-          <div className={styles['shortcut-list']}>
-            <span className={styles['shortcut']}>
-              <span className={styles['shortcut-key']}>{t('home.features.terminal.ctrl')}</span>+<span className={styles['shortcut-key']}>{t('home.features.terminal.backtick')}</span>{' '}
-              {t('home.features.terminal.toggleTerminal')}
-            </span>
-            <span className={styles['shortcut']}>
-              <span className={styles['shortcut-key']}>{t('home.features.terminal.esc')}</span> {t('home.features.terminal.minimize')}
-            </span>
-            <span className={styles['shortcut']}>
-              <span className={styles['shortcut-key']}>{t('home.features.terminal.tab')}</span> {t('home.features.terminal.autocomplete')}
-            </span>
-          </div>
-        </div>
-        <div className={styles['feature-card']}>
-          <p className={styles['feature-title']}>
-            <ColorSpan str={t('home.features.commands.title')} />
-          </p>
-          <p className={styles['feature-desc']}>
-            <ColorSpan str={t('home.features.commands.desc')} />
-          </p>
-        </div>
-      </div>
-
-      <hr className="divider" />
-
       <p className={styles['footer']}>{t('home.footer')}</p>
     </div>
   );

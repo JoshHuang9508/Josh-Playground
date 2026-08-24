@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { MUSIC_LIST, DEFAULT_USERNAME } from '@/lib/constants';
+import { MUSIC_LIST, DEFAULT_USERNAME, ABOUT_SEEN_KEY } from '@/lib/constants';
 
 import { applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
 
@@ -25,6 +25,7 @@ import BlogView from '@/components/views/Blog';
 import BlogPostView from '@/components/views/BlogPost';
 import Navigation from '@/components/Navigation';
 import Settings from '@/components/Settings';
+import About from '@/components/About';
 
 import styles from './index.module.css';
 
@@ -37,6 +38,7 @@ export type AppContextType = {
   username: string;
   settings: Types.Settings;
   isSettingsOpen: boolean;
+  isAboutOpen: boolean;
   setExtensionArgs: (args: Record<string, string[]>) => void;
   setExtensionCommands: (commands: Types.CommandList) => void;
   setExtensionPaths: (paths: Record<string, string[]>) => void;
@@ -44,6 +46,7 @@ export type AppContextType = {
   setUsername: (name: string) => void;
   setSettings: (s: Types.Settings) => void;
   setIsSettingsOpen: (open: boolean) => void;
+  setIsAboutOpen: (open: boolean) => void;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -65,6 +68,8 @@ function PageInner() {
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
   const [musicIndex, setMusicIndex] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  // Open on the visitor's first ever visit, then never again.
+  const [isAboutOpen, setIsAboutOpen] = useState(() => !localStorage.getItem(ABOUT_SEEN_KEY));
 
   const playMusic = useCallback(() => {
     if (!audioPlayerRef.current || isPlayingRef.current) return;
@@ -145,6 +150,10 @@ function PageInner() {
     applySettingsToDOM(loadSettings());
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(ABOUT_SEEN_KEY, '1');
+  }, []);
+
   const renderView = () => {
     if (currentHash.startsWith('/blog/') && currentHash !== '/blog') {
       const slug = currentHash.slice('/blog/'.length);
@@ -191,6 +200,7 @@ function PageInner() {
           username,
           settings,
           isSettingsOpen,
+          isAboutOpen,
           setExtensionArgs,
           setExtensionCommands,
           setExtensionPaths,
@@ -198,6 +208,7 @@ function PageInner() {
           setDynamicTitle,
           setSettings,
           setIsSettingsOpen,
+          setIsAboutOpen,
         }}
       >
         <div className={styles['app']}>
@@ -208,6 +219,7 @@ function PageInner() {
           </div>
           <TerminalManager />
           <Settings />
+          <About />
         </div>
       </AppContext.Provider>
     </>

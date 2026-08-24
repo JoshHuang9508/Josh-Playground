@@ -1,5 +1,8 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 export const OSU_USERNAME = '-Whitedog-';
+export const BASE_WINDOW_Z_INDEX = 1000;
+export const NAV_ABOUT_ANCHOR = '[data-nav-anchor="about"]';
+export const NAV_SETTINGS_ANCHOR = '[data-nav-anchor="settings"]';
 export const TERMINAL_MIN_WIDTH = 400;
 export const TERMINAL_MIN_HEIGHT = 150;
 export const DEFAULT_SITE_NAME = 'Whydog';
