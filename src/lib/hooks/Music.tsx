@@ -26,8 +26,8 @@ type MusicContextValue = {
 const MusicContext = createContext<MusicContextValue | null>(null);
 
 function playlistUrl(playlist: Types.MusicPlaylist | undefined): string {
-  if (!playlist?.id) return '';
-  return `https://www.youtube.com/playlist?list=${playlist.id}`;
+  if (!playlist?.id || !playlist.coverVideoId) return '';
+  return `https://www.youtube.com/watch?v=${playlist.coverVideoId}&list=${playlist.id}`;
 }
 
 export function MusicProvider({ children }: { children: ReactNode }) {
@@ -66,6 +66,13 @@ export function MusicProvider({ children }: { children: ReactNode }) {
           },
     );
   }, [internalPlayer]);
+
+  const handleReady = useCallback(() => {
+    const player = internalPlayer();
+    player?.setShuffle?.(true);
+    player?.setLoop?.(true);
+    syncTrack();
+  }, [internalPlayer, syncTrack]);
 
   const toggle = useCallback(() => setPlaying((prev) => !prev), []);
 
@@ -133,7 +140,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
             controls={false}
             width="0"
             height="0"
-            onReady={syncTrack}
+            onReady={handleReady}
             onPlay={syncTrack}
             onDuration={setDuration}
             onProgress={(state) => {
