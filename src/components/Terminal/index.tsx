@@ -27,7 +27,7 @@ interface TerminalProps {
 }
 
 export default function Terminal({ id, windowState, onWindowStateChange, positionOffset }: TerminalProps) {
-  const { extensionArgs, extensionCommands, extensionPaths, currentHash, username } = useContext(AppContext)!;
+  const { extensionArgs, extensionCommands, username } = useContext(AppContext)!;
   const { t } = useI18n();
   const { zIndex, bringToFront } = useWindowFocus();
 
@@ -70,7 +70,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   const [terminalContents, setTerminalContents] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>([]);
 
-  const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentHash}$ `;
+  const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~$ `;
   const isMinimized = windowState === 'minimized';
   const isHidden = isMinimized || windowState === 'closed';
 
@@ -78,7 +78,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
     const input = (event.target as HTMLInputElement).value;
     setInputValue(input);
 
-    const available = findAvailable(input, extensionCommands.current, extensionArgs.current, extensionPaths.current, currentHash);
+    const available = findAvailable(input, extensionCommands.current, extensionArgs.current);
     setAvailable(available);
 
     if (inputRef.current) {

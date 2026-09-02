@@ -16,8 +16,6 @@ export const TEXT_CONTENT_ZH = {
       ' ',
       '  @#FF77B7Quick Start:@#',
       '    @#00ffaahelp@#            List all available commands',
-      '    @#00ffaacd@# @#FFF700<path>@#       Navigate to a different page',
-      '    @#00ffaals@#              List available paths',
       '    @#00ffaacl@#              Clear terminal output',
       ' ',
       '  @#FF77B7Shortcuts:@#',
@@ -69,15 +67,6 @@ export const TEXT_CONTENT_ZH = {
       echo: {
         description: 'Echo a message',
         usage: '@#00ffaaecho@# @#fff700<message>@#',
-      },
-      ls: {
-        description: 'List files and directories',
-        usage: '@#00ffaals@# @#fff700<path>@#',
-        availablePaths: 'Available paths:',
-      },
-      cd: {
-        description: 'Change the current directory',
-        usage: '@#00ffaacd@# @#fff700<path>@#',
       },
       clear: {
         description: 'Clear the terminal',
@@ -250,7 +239,7 @@ export const TEXT_CONTENT_ZH = {
     features: {
       terminal: {
         title: '@#00ffaa>_@# 內建終端機',
-        desc: '這個網站帶有一個可拖動、可調整大小的終端機 — 一個真正的終端機，您可以用來瀏覽頁面、開啟連結，並探索隱藏的命令。試試看吧！',
+        desc: '這個網站帶有可拖動、可調整大小的終端機，可用來開啟連結、控制 App 並探索命令。試試看吧！',
         ctrl: 'Ctrl',
         backtick: '`',
         esc: 'Esc',
@@ -261,10 +250,9 @@ export const TEXT_CONTENT_ZH = {
       },
       commands: {
         title: '@#ffa24c$@# 快速命令',
-        desc: '輸入 @#fff700help@# 查看所有可用命令。使用 @#fff700cd@# 在頁面之間導航，或使用 @#fff700open github@# 、 @#fff700music -i@# 直接互動。',
+        desc: '輸入 @#fff700help@# 查看所有全域命令，或使用 @#fff700open github@#、@#fff700music -i@# 直接互動。',
       },
     },
-    footer: 'built with next.js + too much coffee',
   },
   'listentogether': {
     unmute: '點我一下',

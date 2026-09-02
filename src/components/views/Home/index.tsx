@@ -193,10 +193,24 @@ export default function HomeView() {
           {/* Left column */}
           <div className={styles['column']}>
             {/* Latest post preview */}
-            <div className={styles['card']} onClick={() => { setSelectedBlogSlug(latestPost?.slug ?? null); setIsBlogOpen(true); }}>
+            <div
+              className={styles['card']}
+              onClick={() => {
+                setSelectedBlogSlug(latestPost?.slug ?? null);
+                setIsBlogOpen(true);
+              }}
+            >
               <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.latestPost')} />
-                <button type="button" className={styles['view-all-link']} onClick={(e) => { e.stopPropagation(); setSelectedBlogSlug(null); setIsBlogOpen(true); }}>
+                <button
+                  type="button"
+                  className={styles['view-all-link']}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedBlogSlug(null);
+                    setIsBlogOpen(true);
+                  }}
+                >
                   {t('home.latestPost.allPosts')}
                 </button>
               </div>
@@ -218,7 +232,14 @@ export default function HomeView() {
             <div className={styles['card']} onClick={() => setIsProjectsOpen(true)}>
               <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.projects')} />
-                <button type="button" className={styles['view-all-link']} onClick={(e) => { e.stopPropagation(); setIsProjectsOpen(true); }}>
+                <button
+                  type="button"
+                  className={styles['view-all-link']}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsProjectsOpen(true);
+                  }}
+                >
                   {t('home.projects.viewAll')}
                 </button>
               </div>
@@ -293,10 +314,6 @@ export default function HomeView() {
           </div>
         </div>
       </div>
-
-      <hr className="divider" />
-
-      <p className={styles['footer']}>{t('home.footer')}</p>
     </div>
   );
 }

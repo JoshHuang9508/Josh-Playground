@@ -1,7 +1,5 @@
 import type * as Types from '@/lib/types';
 
-import { PATH_LIST } from '@/lib/constants';
-
 export function parseCommand(command: string) {
   const parts = command.split(' ');
   const cmdName = parts.shift() ?? null;
@@ -27,39 +25,6 @@ export function parseCommand(command: string) {
 
   return { cmdName, args, flags };
 }
-
-export const findAvailablePath = (input: string, extensionPaths: Record<string, string[]>, currentHash: string) => {
-  const parts = input.split(' ');
-  const lastPart = parts[parts.length - 1] ?? '';
-  const paths = lastPart.split('/');
-  const lastPath = paths.pop() ?? '';
-
-  let pagePaths = currentHash.split('/').filter(Boolean);
-  const availables: string[] = [];
-
-  paths.forEach((element, index) => {
-    if (index === 0 && element === '~') {
-      pagePaths = [];
-    } else if (element === '.') {
-      return;
-    } else if (element === '..') {
-      pagePaths.pop();
-    } else {
-      pagePaths.push(element);
-    }
-  });
-
-  if (!input.startsWith(' ')) {
-    if (PATH_LIST[`/${pagePaths.join('/')}`]) {
-      availables.push(...PATH_LIST[`/${pagePaths.join('/')}`]);
-    }
-    if (extensionPaths[`/${pagePaths.join('/')}`]) {
-      availables.push(...extensionPaths[`/${pagePaths.join('/')}`]);
-    }
-  }
-
-  return availables.filter((a) => a.startsWith(lastPath));
-};
 
 export const findAvailableCommand = (input: string, commandList: Types.CommandList, extensionArgs: Record<string, string[]>): string[] => {
   const parts = input.split(' ');
@@ -95,12 +60,12 @@ export const findAvailableCommand = (input: string, commandList: Types.CommandLi
   return availables.filter((a) => a.startsWith(lastPart));
 };
 
-export const findAvailable = (input: string, commandList: Types.CommandList, extensionArgs: Record<string, string[]>, extensionPaths: Record<string, string[]>, currentHash: string): string[] => {
+export const findAvailable = (input: string, commandList: Types.CommandList, extensionArgs: Record<string, string[]>): string[] => {
   if (input == '' || input == ' ') {
     return [];
   }
 
-  return findAvailableCommand(input, commandList, extensionArgs).concat(findAvailablePath(input, extensionPaths, currentHash));
+  return findAvailableCommand(input, commandList, extensionArgs);
 };
 
 export const findCommandObject = (fullCommand: string, commandList: Types.CommandList): Types.Command | undefined => {
@@ -141,39 +106,3 @@ export const replaceInput = (input: string, replace: string) => {
 
   return input + replace;
 };
-
-type WebPaths = (string | string[] | WebPaths)[];
-
-export function renderWebPaths(paths: WebPaths, prefix: string): string[] {
-  const result: string[] = [];
-
-  paths.map((path, index) => {
-    if (Array.isArray(path)) {
-      if (index != paths.length - 1) {
-        result.push(`${prefix}├─ ${path[0]}/`);
-        result.push(
-          ...renderWebPaths(
-            path.filter((_, i) => i > 0),
-            prefix + '│　',
-          ),
-        );
-      } else {
-        result.push(`${prefix}└─ ${path[0]}/`);
-        result.push(
-          ...renderWebPaths(
-            path.filter((_, i) => i > 0),
-            prefix + '　　',
-          ),
-        );
-      }
-    } else {
-      if (index != paths.length - 1) {
-        result.push(`${prefix}├─ ${path}`);
-      } else {
-        result.push(`${prefix}└─ ${path}`);
-      }
-    }
-  });
-
-  return result;
-}

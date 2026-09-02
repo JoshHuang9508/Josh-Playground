@@ -5,7 +5,7 @@ import type * as Types from '@/lib/types';
 
 import { DEFAULT_SETTINGS, TEXT_COLOR_KEYS } from '@/lib/constants';
 
-import { findAvailablePath, findCommandObject, renderWebPaths } from '@/lib/terminal';
+import { findCommandObject } from '@/lib/terminal';
 
 import { clearActiveTerminalLog, emitTerminalLog } from '@/lib/terminalLog';
 
@@ -18,8 +18,6 @@ import { AppContext } from '@/pages/index';
 
 import { getVideoBlob } from '@/api';
 
-const webPaths = ['listentogether', 'projects', 'osu', ['blog', ':slug']];
-
 const isHex = (v: string) => {
   return /^#[0-9a-fA-F]{6}$/.test(v);
 };
@@ -29,12 +27,8 @@ const num = (v: string) => {
   return NaN;
 };
 
-const navigateToHash = (hash: string) => {
-  window.location.hash = hash;
-};
-
 export default function useTerminalCommand(extension: Types.CommandList) {
-  const { extensionCommands, extensionPaths, currentHash, settings, setSettings, setUsername, setExtensionCommands } = useContext(AppContext)!;
+  const { extensionCommands, settings, setSettings, setUsername, setExtensionCommands } = useContext(AppContext)!;
   const { t, setLocale } = useI18n();
   const music = useMusic();
 
@@ -71,63 +65,12 @@ export default function useTerminalCommand(extension: Types.CommandList) {
         emitTerminalLog(args.join(' '));
       },
     },
-    ls: {
-      name: 'ls',
-      description: t('global.commands.ls.description'),
-      usage: t('global.commands.ls.usage'),
-      flags: ['-a', '-l', '-t'],
-      handler: (_cmd, args, flags) => {
-        const path = args[0] ?? '';
-        const available = findAvailablePath(path, extensionPaths.current, currentHash);
-        if (flags.includes('-t') || flags.includes('--tree')) {
-          renderWebPaths(webPaths, '').forEach((path) => {
-            emitTerminalLog(path);
-          });
-          return;
-        } else if (flags.includes('-a') || flags.includes('--all')) {
-          emitTerminalLog(['./', '../', ...available].join(' '));
-          return;
-        } else if (flags.includes('-l') || flags.includes('--long')) {
-          emitTerminalLog(t('global.commands.ls.availablePaths'), ...available);
-          return;
-        } else {
-          emitTerminalLog(available.join(' '));
-          return;
-        }
-      },
-    },
     clear: {
       name: 'clear',
       description: t('global.commands.clear.description'),
       usage: t('global.commands.clear.usage'),
       handler: () => {
         clearActiveTerminalLog();
-      },
-    },
-    cd: {
-      name: 'cd',
-      description: t('global.commands.cd.description'),
-      usage: t('global.commands.cd.usage'),
-      handler: (_cmd, args) => {
-        const page = args[0] ?? '';
-        const hash = window.location.hash.slice(1) || '/';
-        let paths = hash.split('/').filter(Boolean);
-        if (!page) {
-          navigateToHash('#/');
-        } else {
-          page.split('/').forEach((element, index) => {
-            if (index === 0 && element === '~') {
-              paths = [];
-            } else if (element === '.') {
-              return;
-            } else if (element === '..') {
-              paths.pop();
-            } else if (element !== '') {
-              paths.push(element);
-            }
-          });
-          navigateToHash(paths.length > 0 ? `#/${paths.join('/')}` : '#/');
-        }
       },
     },
     download: {
@@ -415,7 +358,7 @@ export default function useTerminalCommand(extension: Types.CommandList) {
     },
   };
 
-  const commandList = { ...contextCommands, ...extension };
+  const commandList = { ...extensionCommands.current, ...contextCommands, ...extension };
 
   setExtensionCommands(commandList);
 }

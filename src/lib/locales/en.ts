@@ -16,8 +16,6 @@ export const TEXT_CONTENT_EN = {
       ' ',
       '  @#FF77B7Quick Start:@#',
       '    @#00ffaahelp@#            List all available commands',
-      '    @#00ffaacd@# @#FFF700<path>@#       Navigate to a different page',
-      '    @#00ffaals@#              List available paths',
       '    @#00ffaacl@#              Clear terminal output',
       ' ',
       '  @#FF77B7Shortcuts:@#',
@@ -69,15 +67,6 @@ export const TEXT_CONTENT_EN = {
       echo: {
         description: 'Echo a message',
         usage: '@#00ffaaecho@# @#fff700<message>@#',
-      },
-      ls: {
-        description: 'List files and directories',
-        usage: '@#00ffaals@# @#fff700<path>@#',
-        availablePaths: 'Available paths:',
-      },
-      cd: {
-        description: 'Change the current directory',
-        usage: '@#00ffaacd@# @#fff700<path>@#',
       },
       clear: {
         description: 'Clear the terminal',
@@ -250,7 +239,7 @@ export const TEXT_CONTENT_EN = {
     features: {
       terminal: {
         title: '@#00ffaa>_@# Built-in Terminal',
-        desc: 'This site comes with a draggable, resizable terminal — a real terminal you can use to navigate pages, open links, and explore hidden commands. Try it out!',
+        desc: 'This site comes with a draggable, resizable terminal for opening links, controlling apps, and exploring commands. Try it out!',
         ctrl: 'Ctrl',
         backtick: '`',
         esc: 'Esc',
@@ -261,10 +250,9 @@ export const TEXT_CONTENT_EN = {
       },
       commands: {
         title: '@#ffa24c$@# Quick Commands',
-        desc: 'Type @#fff700help@# to see all available commands. Use @#fff700cd@# to navigate between pages, or @#fff700open github@#, @#fff700music -i@# to interact directly.',
+        desc: 'Type @#fff700help@# to see all globally available commands. Use @#fff700open github@# or @#fff700music -i@# to interact directly.',
       },
     },
-    footer: 'built with next.js + too much coffee',
   },
   'listentogether': {
     unmute: 'Click me to unmute',
