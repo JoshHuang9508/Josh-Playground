@@ -27,7 +27,6 @@ export function loadSettings(): Types.Settings {
       ...DEFAULT_SETTINGS,
       ...parsed,
       backgroundColor: isHslShape(parsed.backgroundColor) ? parsed.backgroundColor : DEFAULT_SETTINGS.backgroundColor,
-      cardColor: isHslShape(parsed.cardColor) ? parsed.cardColor : DEFAULT_SETTINGS.cardColor,
       textHighlight: isHslShape(parsed.textHighlight) ? parsed.textHighlight : DEFAULT_SETTINGS.textHighlight,
       textColors: resolveTextColors(parsed.textColors),
     };
@@ -56,8 +55,6 @@ export function applySettingsToDOM(s: Types.Settings): void {
   const r = document.documentElement.style;
 
   r.setProperty('--bg-color', hslString(s.backgroundColor, s.backgroundAlpha));
-  r.setProperty('--card-color', hslString(s.cardColor, 0.06));
-  r.setProperty('--card-border', hslString(s.cardColor, 0.08));
   r.setProperty('--card-blur', `${s.cardBlur}px`);
 
   r.setProperty('--text-highlight', hslString(s.textHighlight));

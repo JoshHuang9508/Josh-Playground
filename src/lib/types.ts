@@ -38,7 +38,6 @@ export type Settings = {
   backgroundImageUrl: string;
   backgroundColor: HSL;
   backgroundAlpha: number;
-  cardColor: HSL;
   cardBlur: number;
   textHighlight: HSL;
   textColors: Record<TextColorKey, string>;

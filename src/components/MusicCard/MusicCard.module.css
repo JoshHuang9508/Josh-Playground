@@ -5,7 +5,7 @@ div.card {
   padding: 1rem;
   overflow: hidden;
   touch-action: pan-y;
-  background-color: var(--card-color);
+  background-color: rgb(10 10 10 / 33%);
   border: 1px solid var(--card-border);
   border-radius: 0.5rem;
   backdrop-filter: blur(var(--card-blur));

@@ -6,7 +6,6 @@ export const DEFAULT_SETTINGS: Types.Settings = {
   backgroundImageUrl: '',
   backgroundColor: { h: 240, s: 5, l: 8 },
   backgroundAlpha: 0.72,
-  cardColor: { h: 0, s: 0, l: 100 },
   cardBlur: 28,
   textHighlight: { h: 263, s: 100, l: 74 },
   textColors: {

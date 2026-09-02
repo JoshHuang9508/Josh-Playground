@@ -8,7 +8,7 @@ nav.dock {
   align-items: center;
   padding: 0.7rem;
   font-family: inherit;
-  background-color: var(--card-color);
+  background-color: rgb(10 10 10 / 33%);
   border: 1px solid #ffffff10;
   border-radius: 1.35rem;
   box-shadow: var(--card-shadow);
@@ -94,7 +94,7 @@ span.tooltip {
   color: var(--text-primary);
   white-space: nowrap;
   pointer-events: none;
-  background-color: var(--card-color);
+  background-color: rgb(10 10 10 / 33%);
   border: 1px solid #ffffff10;
   border-radius: 999px;
   box-shadow: var(--card-shadow);

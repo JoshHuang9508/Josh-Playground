@@ -219,22 +219,6 @@ export default function useTerminalCommand(extension: Types.CommandList) {
             emitTerminalLog(t('global.commands.settings.bg.set', `${h} ${s} ${l} / ${a}`));
           },
         },
-        'color': {
-          name: 'color',
-          description: t('global.commands.settings.color.description'),
-          usage: t('global.commands.settings.color.usage'),
-          handler: (_cmd, args) => {
-            const h = num(args[0]);
-            const s = num(args[1]);
-            const l = num(args[2]);
-            if ([h, s, l].some(Number.isNaN)) {
-              emitTerminalLog(t('global.commands.settings.color.invalid'));
-              return;
-            }
-            setSettings({ ...settings, cardColor: { h, s, l } });
-            emitTerminalLog(t('global.commands.settings.color.set', `${h} ${s} ${l}`));
-          },
-        },
         'blur': {
           name: 'blur',
           description: t('global.commands.settings.blur.description'),
@@ -303,7 +287,6 @@ export default function useTerminalCommand(extension: Types.CommandList) {
               'global.commands.settings.show',
               settings.backgroundImageUrl || '(default)',
               `H:${settings.backgroundColor.h} S:${settings.backgroundColor.s} L:${settings.backgroundColor.l} / A:${settings.backgroundAlpha}`,
-              `H:${settings.cardColor.h} S:${settings.cardColor.s} L:${settings.cardColor.l}`,
               `${settings.cardBlur}px`,
               `H:${settings.textHighlight.h} S:${settings.textHighlight.s} L:${settings.textHighlight.l}`,
               settings.textColors.primary,

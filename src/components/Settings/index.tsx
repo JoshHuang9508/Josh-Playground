@@ -42,7 +42,6 @@ export default function Settings() {
 
   const TEXT_FIELDS: { key: Types.TextColorKey; label: string }[] = TEXT_COLOR_KEYS.map((key) => ({ key, label: t(`settings.text.${key}`) }));
 
-  const cardHex = hslString(settings.cardColor);
   const highlightHex = hslString(settings.textHighlight);
 
   const update = (patch: Partial<Types.Settings>) => {
@@ -179,16 +178,7 @@ export default function Settings() {
             <span className={styles['section-rule']} />
           </div>
 
-          <div className={styles['hint']} style={{ marginBottom: '0.25rem' }}>
-            <ColorSpan str={t('settings.theme.cardColorHint')} />
-          </div>
-
           <div className={styles['block']}>
-            <div className={styles['block-head']}>
-              <span className={styles['field-key']}>{t('settings.theme.cardColor')}</span>
-              <span className={styles['swatch']} style={{ background: cardHex }} />
-            </div>
-            <HslPicker value={settings.cardColor} onChange={(cardColor) => update({ cardColor })} />
             <Slider label="blur" min={0} max={40} value={settings.cardBlur} onChange={(cardBlur) => update({ cardBlur })} suffix="px" />
           </div>
 
