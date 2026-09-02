@@ -10,10 +10,12 @@ type TerminalInstance = {
   positionOffset: number;
 };
 
-export default function TerminalManager() {
-  const [terminals, setTerminals] = useState<TerminalInstance[]>([{ id: '1', windowState: 'minimized', positionOffset: 0 }]);
+interface TerminalManagerProps {
+  onVisibilityChange: (visible: boolean) => void;
+}
 
-  const minimizedIds = terminals.filter((t) => t.windowState === 'minimized').map((t) => t.id);
+export default function TerminalManager({ onVisibilityChange }: TerminalManagerProps) {
+  const [terminals, setTerminals] = useState<TerminalInstance[]>([{ id: '1', windowState: 'closed', positionOffset: 0 }]);
 
   const toggleTerminal = () => {
     setTerminals((prev) => {
@@ -29,12 +31,12 @@ export default function TerminalManager() {
   };
 
   const handleWindowStateChange = (id: string, state: Types.TerminalWindowState) => {
-    if (state === 'closed') {
-      setTerminals((prev) => prev.map((t) => (t.id === id ? { ...t, windowState: 'minimized' } : t)));
-      return;
-    }
     setTerminals((prev) => prev.map((t) => (t.id === id ? { ...t, windowState: state } : t)));
   };
+
+  useEffect(() => {
+    onVisibilityChange(terminals.some((terminal) => terminal.windowState !== 'closed'));
+  }, [terminals, onVisibilityChange]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -49,11 +51,19 @@ export default function TerminalManager() {
       }
     };
 
+    const onDockToggle = () => {
+      setTerminals((prev) => prev.map((terminal) => ({ ...terminal, windowState: terminal.windowState === 'closed' ? 'normal' : 'closed' })));
+    };
+
     document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    window.addEventListener('toggle-terminal', onDockToggle);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('toggle-terminal', onDockToggle);
+    };
   }, []);
 
   return terminals.map((t) => (
-    <Terminal key={t.id} id={t.id} windowState={t.windowState} onWindowStateChange={handleWindowStateChange} positionOffset={t.positionOffset} minimizedIndex={minimizedIds.indexOf(t.id)} />
+    <Terminal key={t.id} id={t.id} windowState={t.windowState} onWindowStateChange={handleWindowStateChange} positionOffset={t.positionOffset} />
   ));
 }

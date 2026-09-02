@@ -6,7 +6,7 @@ import PostCard from './PostCard';
 
 import styles from './Blog.module.css';
 
-export default function BlogView() {
+export default function BlogView({ onSelectPost }: { onSelectPost: (slug: string) => void }) {
   const { posts, loading } = useBlogPosts();
   const { t } = useI18n();
 
@@ -25,7 +25,7 @@ export default function BlogView() {
         <div className={styles['timeline']}>
           <div className={styles['timeline-line']} />
           {posts.map((post, index) => (
-            <PostCard key={post.slug} post={post} index={index} />
+            <PostCard key={post.slug} post={post} index={index} onSelect={onSelectPost} />
           ))}
         </div>
       )}

@@ -4,11 +4,9 @@ import { AppContext } from '@/pages/index';
 
 import type * as Types from '@/lib/types';
 
-import { DEFAULT_SETTINGS, NAV_SETTINGS_ANCHOR, TEXT_COLOR_KEYS } from '@/lib/constants';
+import { DEFAULT_SETTINGS, TEXT_COLOR_KEYS } from '@/lib/constants';
 
 import { hslString } from '@/lib/settings';
-
-import { anchoredPosition } from '@/lib/anchor';
 
 import useI18n from '@/lib/hooks/i18n';
 import useWindowFocus from '@/lib/hooks/WindowFocus';
@@ -76,12 +74,14 @@ export default function Settings() {
     document.body.style.userSelect = 'none';
   };
 
-  // Re-anchor under the nav button every time the panel is opened.
+  // Center the app window whenever it is opened from the Dock.
   useEffect(() => {
     const panel = panelRef.current;
     if (!isSettingsOpen || !panel) return;
-    const anchored = anchoredPosition(NAV_SETTINGS_ANCHOR, panel);
-    if (anchored) setPosition(anchored);
+    setPosition({
+      x: Math.max(16, (window.innerWidth - panel.offsetWidth) / 2),
+      y: Math.max(24, (window.innerHeight - panel.offsetHeight) / 2 - 24),
+    });
     bringToFront();
   }, [isSettingsOpen, bringToFront]);
 

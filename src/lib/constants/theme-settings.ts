@@ -4,11 +4,11 @@ export const STORAGE_KEY = 'settings';
 export const ABOUT_SEEN_KEY = 'aboutSeen';
 export const DEFAULT_SETTINGS: Types.Settings = {
   backgroundImageUrl: '',
-  backgroundColor: { h: 200, s: 60, l: 5 },
-  backgroundAlpha: 0.95,
-  cardColor: { h: 360, s: 0, l: 75 },
-  cardBlur: 4,
-  textHighlight: { h: 200, s: 100, l: 60 },
+  backgroundColor: { h: 240, s: 5, l: 8 },
+  backgroundAlpha: 0.72,
+  cardColor: { h: 0, s: 0, l: 100 },
+  cardBlur: 28,
+  textHighlight: { h: 263, s: 100, l: 74 },
   textColors: {
     primary: '#ffffff',
     secondary: '#cccccc',

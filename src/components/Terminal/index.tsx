@@ -24,10 +24,9 @@ interface TerminalProps {
   windowState: Types.TerminalWindowState;
   onWindowStateChange: (id: string, state: Types.TerminalWindowState) => void;
   positionOffset: number;
-  minimizedIndex: number;
 }
 
-export default function Terminal({ id, windowState, onWindowStateChange, positionOffset, minimizedIndex }: TerminalProps) {
+export default function Terminal({ id, windowState, onWindowStateChange, positionOffset }: TerminalProps) {
   const { extensionArgs, extensionCommands, extensionPaths, currentHash, username } = useContext(AppContext)!;
   const { t } = useI18n();
   const { zIndex, bringToFront } = useWindowFocus();
@@ -73,8 +72,7 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
 
   const prefix = `@#FF77B7${username}@#@@#FFA24C${window?.location.hostname ?? DEFAULT_SITE_NAME}@#:~${currentHash}$ `;
   const isMinimized = windowState === 'minimized';
-  const iconX = window.innerWidth - (1 + minimizedIndex) * 64;
-  const iconY = window.innerHeight - 64;
+  const isHidden = isMinimized || windowState === 'closed';
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = (event.target as HTMLInputElement).value;
@@ -165,13 +163,6 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
       height: size.height,
     };
     onWindowStateChange(id, 'minimized');
-  };
-
-  const handleRestore = () => {
-    const prev = prevLayoutRef.current;
-    setPosition({ x: prev.x, y: prev.y });
-    setSize({ width: prev.width, height: prev.height });
-    onWindowStateChange(id, 'normal');
   };
 
   const handleMaximize = () => {
@@ -341,22 +332,18 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
   return (
     <div
       ref={terminalRef}
-      className={`${styles['terminal']} ${isMinimized ? styles['minimized'] : ''} ${isDragging ? styles['no-transition'] : ''}`}
+      className={`${styles['terminal']} ${isHidden ? styles['closed'] : ''} ${isDragging ? styles['no-transition'] : ''}`}
       style={{
-        left: isMinimized ? iconX : position.x,
-        top: isMinimized ? iconY : position.y,
+        left: position.x,
+        top: position.y,
         width: size.width,
         height: size.height,
         borderRadius: windowState === 'maximized' ? 0 : undefined,
         zIndex,
       }}
       onPointerDown={bringToFront}
-      onClick={isMinimized ? handleRestore : undefined}
+      aria-hidden={isHidden}
     >
-      <div className={styles['minimize-icon']}>
-        <span>{'>_'}</span>
-      </div>
-
       {windowState !== 'maximized' && (
         <>
           <div className={`${styles['resize-handle']} ${styles['resize-n']}`} onMouseDown={(e) => handleResizeStart(e, 'n')} />
@@ -385,18 +372,19 @@ export default function Terminal({ id, windowState, onWindowStateChange, positio
             <ColorSpan str={content} />
           </div>
         ))}
-        <div ref={outputEndRef} />
-      </div>
 
-      {available[0] && (
-        <div className={styles['prompt']}>
-          <ColorSpan str={`@#FFF700${available.join('@#, @#FFF700')}`} />
+        <div className={styles['input']}>
+          <ColorSpan className={styles['prefix']} str={prefix} />
+          <input ref={inputRef} type="text" value={inputValue} placeholder={t('terminal.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
         </div>
-      )}
 
-      <div className={styles['input']}>
-        <ColorSpan className={styles['prefix']} str={prefix} />
-        <input ref={inputRef} type="text" value={inputValue} placeholder={t('terminal.placeholder')} onChange={handleInputChange} onKeyDown={handleEnter} />
+        {available[0] && (
+          <div className={styles['prompt']}>
+            <ColorSpan str={`@#FFF700${available.join('@#, @#FFF700')}`} />
+          </div>
+        )}
+
+        <div ref={outputEndRef} />
       </div>
     </div>
   );

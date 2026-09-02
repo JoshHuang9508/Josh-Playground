@@ -1,0 +1,135 @@
+nav.dock {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  z-index: 10000;
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.7rem;
+  background: rgb(28 28 30 / 58%);
+  border: 1px solid rgb(255 255 255 / 24%);
+  border-radius: 1.35rem;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 35%);
+  backdrop-filter: blur(24px) saturate(160%);
+  transform: translateX(-50%);
+}
+
+button.dock-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: white;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  transition: transform 180ms ease;
+}
+
+button.dock-item:hover {
+  transform: translateY(-10px) scale(1.12);
+}
+
+span.icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  overflow: hidden;
+  background: linear-gradient(145deg, #5d6677, #252a34);
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: 0.9rem;
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 30%), 0 5px 12px rgb(0 0 0 / 30%);
+}
+
+span.icon svg {
+  width: 2rem;
+  height: 2rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+span.about svg {
+  fill: rgb(255 255 255 / 18%);
+}
+
+span.about {
+  background: linear-gradient(145deg, #59b8ff, #126ed1);
+}
+
+span.settings {
+  background: linear-gradient(145deg, #9ba4af, #4a515b);
+}
+
+span.projects {
+  background: linear-gradient(145deg, #ffb44c, #d56a16);
+}
+
+span.blog {
+  background: linear-gradient(145deg, #62d99b, #168a5c);
+}
+
+span.listentogether {
+  background: linear-gradient(145deg, #f778b8, #9d3cc7);
+}
+
+span.terminal {
+  background: linear-gradient(145deg, #363b45, #0c0d10);
+}
+
+span.tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.8rem);
+  padding: 0.3rem 0.55rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  background: rgb(20 20 20 / 82%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 0.4rem;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+button.dock-item:hover span.tooltip {
+  opacity: 1;
+}
+
+span.indicator {
+  position: absolute;
+  top: calc(100% + 0.18rem);
+  left: 50%;
+  width: 0.3rem;
+  height: 0.3rem;
+  background: transparent;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+span.indicator.active {
+  background: rgb(255 255 255 / 85%);
+}
+
+@media (width <= 520px) {
+  nav.dock {
+    bottom: 0.65rem;
+    gap: 0.3rem;
+    padding: 0.5rem;
+  }
+
+  span.icon {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
+
+  span.icon svg {
+    width: 1.65rem;
+    height: 1.65rem;
+  }
+}

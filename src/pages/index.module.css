@@ -17,12 +17,9 @@ div.view-container {
   align-items: center;
   justify-content: flex-start;
   min-height: 60%;
+  padding-bottom: 7rem;
   overflow: auto;
   border: none;
-}
-
-div.view-container > :nth-child(2) {
-  padding-top: 5.6rem;
 }
 
 div.view-container::-webkit-scrollbar {

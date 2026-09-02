@@ -33,7 +33,7 @@ function formatHueStyleProperty(hue: number): string {
 }
 
 export default function HomeView() {
-  const { username } = useContext(AppContext)!;
+  const { username, setIsBlogOpen, setIsProjectsOpen, setSelectedBlogSlug } = useContext(AppContext)!;
   const { user: osuData } = useOsuStats();
   const { posts: blogPosts } = useBlogPosts();
   const { t } = useI18n();
@@ -193,12 +193,12 @@ export default function HomeView() {
           {/* Left column */}
           <div className={styles['column']}>
             {/* Latest post preview */}
-            <div className={styles['card']} onClick={() => (window.location.hash = latestPost ? `#/blog/${latestPost.slug}` : '#/blog')}>
+            <div className={styles['card']} onClick={() => { setSelectedBlogSlug(latestPost?.slug ?? null); setIsBlogOpen(true); }}>
               <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.latestPost')} />
-                <a className={styles['view-all-link']} href="#/blog" onClick={(e) => e.stopPropagation()}>
+                <button type="button" className={styles['view-all-link']} onClick={(e) => { e.stopPropagation(); setSelectedBlogSlug(null); setIsBlogOpen(true); }}>
                   {t('home.latestPost.allPosts')}
-                </a>
+                </button>
               </div>
               {latestPost ? (
                 <>
@@ -215,12 +215,12 @@ export default function HomeView() {
             </div>
 
             {/* Projects preview */}
-            <div className={styles['card']} onClick={() => (window.location.hash = `#/projects`)}>
+            <div className={styles['card']} onClick={() => setIsProjectsOpen(true)}>
               <div className={styles['card-header']}>
                 <ColorSpan className={styles['card-label']} str={t('home.sections.projects')} />
-                <a className={styles['view-all-link']} href="#/projects" onClick={(e) => e.stopPropagation()}>
+                <button type="button" className={styles['view-all-link']} onClick={(e) => { e.stopPropagation(); setIsProjectsOpen(true); }}>
                   {t('home.projects.viewAll')}
-                </a>
+                </button>
               </div>
               <div className={styles['project-carousel']}>
                 {PROJECTS.map((project, i) => (

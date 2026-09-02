@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 
 import type * as Types from '@/lib/types';
 
-import { DEFAULT_USERNAME, ABOUT_SEEN_KEY } from '@/lib/constants';
+import { DEFAULT_USERNAME } from '@/lib/constants';
 
 import { applySettingsToDOM, loadSettings, saveSettings } from '@/lib/settings';
 
@@ -18,15 +18,14 @@ import useBlogPosts from '@/lib/hooks/BlogPosts';
 import store from '@/redux';
 
 import TerminalManager from '@/components/TerminalManager';
-import HomeView from '@/components/views/Home';
 import ListenTogetherView from '@/components/views/ListenTogether';
-import NotFoundView from '@/components/views/NotFound';
 import ProjectsView from '@/components/views/Projects';
 import BlogView from '@/components/views/Blog';
 import BlogPostView from '@/components/views/BlogPost';
-import Navigation from '@/components/Navigation';
 import Settings from '@/components/Settings';
 import About from '@/components/About';
+import Dock from '@/components/Dock';
+import AppWindow from '@/components/AppWindow';
 
 import styles from './index.module.css';
 
@@ -40,6 +39,11 @@ export type AppContextType = {
   settings: Types.Settings;
   isSettingsOpen: boolean;
   isAboutOpen: boolean;
+  isProjectsOpen: boolean;
+  isBlogOpen: boolean;
+  isListenTogetherOpen: boolean;
+  isTerminalOpen: boolean;
+  selectedBlogSlug: string | null;
   setExtensionArgs: (args: Record<string, string[]>) => void;
   setExtensionCommands: (commands: Types.CommandList) => void;
   setExtensionPaths: (paths: Record<string, string[]>) => void;
@@ -48,6 +52,11 @@ export type AppContextType = {
   setSettings: (s: Types.Settings) => void;
   setIsSettingsOpen: (open: boolean) => void;
   setIsAboutOpen: (open: boolean) => void;
+  setIsProjectsOpen: (open: boolean) => void;
+  setIsBlogOpen: (open: boolean) => void;
+  setIsListenTogetherOpen: (open: boolean) => void;
+  setIsTerminalOpen: (open: boolean) => void;
+  setSelectedBlogSlug: (slug: string | null) => void;
 };
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -65,8 +74,12 @@ function PageInner() {
   const [currentHash, setCurrentHash] = useState<string>('/');
   const [dynamicTitle, setDynamicTitle] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  // Open on the visitor's first ever visit, then never again.
-  const [isAboutOpen, setIsAboutOpen] = useState(() => !localStorage.getItem(ABOUT_SEEN_KEY));
+  const [isAboutOpen, setIsAboutOpen] = useState(true);
+  const [isProjectsOpen, setIsProjectsOpen] = useState(false);
+  const [isBlogOpen, setIsBlogOpen] = useState(false);
+  const [isListenTogetherOpen, setIsListenTogetherOpen] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [selectedBlogSlug, setSelectedBlogSlug] = useState<string | null>(null);
 
   const setExtensionArgs = (args: Record<string, string[]>) => {
     extensionArgs.current = args;
@@ -98,6 +111,12 @@ function PageInner() {
   }, []);
 
   useEffect(() => {
+    if (currentHash === '/projects') setIsProjectsOpen(true);
+    if (currentHash.startsWith('/blog')) setIsBlogOpen(true);
+    if (currentHash === '/listentogether') setIsListenTogetherOpen(true);
+  }, [currentHash]);
+
+  useEffect(() => {
     if (posts.length > 0) {
       extensionPaths.current = { '/blog': posts.map((p) => `${p.slug}/`) };
     }
@@ -112,28 +131,7 @@ function PageInner() {
     applySettingsToDOM(loadSettings());
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(ABOUT_SEEN_KEY, '1');
-  }, []);
-
-  const renderView = () => {
-    if (currentHash.startsWith('/blog/') && currentHash !== '/blog') {
-      const slug = currentHash.slice('/blog/'.length);
-      return <BlogPostView slug={slug} />;
-    }
-    switch (currentHash) {
-      case '/':
-        return <HomeView />;
-      case '/projects':
-        return <ProjectsView />;
-      case '/blog':
-        return <BlogView />;
-      case '/listentogether':
-        return <ListenTogetherView />;
-      default:
-        return <NotFoundView />;
-    }
-  };
+  const renderBlogView = () => selectedBlogSlug ? <BlogPostView slug={selectedBlogSlug} onBack={() => setSelectedBlogSlug(null)} /> : <BlogView onSelectPost={setSelectedBlogSlug} />;
 
   return (
     <>
@@ -162,6 +160,11 @@ function PageInner() {
           settings,
           isSettingsOpen,
           isAboutOpen,
+          isProjectsOpen,
+          isBlogOpen,
+          isListenTogetherOpen,
+          isTerminalOpen,
+          selectedBlogSlug,
           setExtensionArgs,
           setExtensionCommands,
           setExtensionPaths,
@@ -170,17 +173,24 @@ function PageInner() {
           setSettings,
           setIsSettingsOpen,
           setIsAboutOpen,
+          setIsProjectsOpen,
+          setIsBlogOpen,
+          setIsListenTogetherOpen,
+          setIsTerminalOpen,
+          setSelectedBlogSlug,
         }}
       >
         <div className={styles['app']}>
           <img src={settings.backgroundImageUrl || '/assets/bg.jpg'} className={styles['background']} alt="background" />
           <div className={styles['view-container']}>
-            <Navigation currentHash={currentHash} />
-            {renderView()}
+            <AppWindow appId="projects" title="Projects" isOpen={isProjectsOpen} onClose={() => setIsProjectsOpen(false)}><ProjectsView /></AppWindow>
+            <AppWindow appId="blog" title="Blog" isOpen={isBlogOpen} onClose={() => setIsBlogOpen(false)}>{renderBlogView()}</AppWindow>
+            <AppWindow appId="listentogether" title="Listen Together" isOpen={isListenTogetherOpen} onClose={() => setIsListenTogetherOpen(false)}><ListenTogetherView /></AppWindow>
           </div>
-          <TerminalManager />
+          <TerminalManager onVisibilityChange={setIsTerminalOpen} />
           <Settings />
           <About />
+          <Dock />
         </div>
       </AppContext.Provider>
     </>

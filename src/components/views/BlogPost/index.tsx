@@ -15,9 +15,10 @@ import styles from './BlogPost.module.css';
 
 interface BlogPostViewProps {
   slug: string;
+  onBack: () => void;
 }
 
-export default function BlogPostView({ slug }: BlogPostViewProps) {
+export default function BlogPostView({ slug, onBack }: BlogPostViewProps) {
   const { setDynamicTitle } = useContext(AppContext)!;
   const { post, loading } = useBlogPost(slug);
   const { t } = useI18n();
@@ -65,9 +66,9 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
     return (
       <div className={styles['blogpost-page']}>
         <div className={styles['loading']}>{t('blogPost.notFound')}</div>
-        <a className={styles['back-link']} href="#/blog">
+        <button type="button" className={styles['back-link']} onClick={onBack}>
           {t('blogPost.backLink')}
-        </a>
+        </button>
       </div>
     );
   }
@@ -96,9 +97,9 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
       </div>
 
       <div className={styles['article-nav']}>
-        <a className={styles['back-link']} href="#/blog">
+        <button type="button" className={styles['back-link']} onClick={onBack}>
           {t('blogPost.backLink')}
-        </a>
+        </button>
       </div>
     </div>
   );
