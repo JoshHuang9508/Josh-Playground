@@ -26,6 +26,7 @@ import Settings from '@/components/Settings';
 import About from '@/components/About';
 import Dock from '@/components/Dock';
 import AppWindow from '@/components/AppWindow';
+import DesktopWidgets from '@/components/DesktopWidgets';
 
 import styles from './index.module.css';
 
@@ -182,6 +183,7 @@ function PageInner() {
       >
         <div className={styles['app']}>
           <img src={settings.backgroundImageUrl || '/assets/bg.jpg'} className={styles['background']} alt="background" />
+          <DesktopWidgets />
           <div className={styles['view-container']}>
             <AppWindow appId="projects" title="Projects" isOpen={isProjectsOpen} onClose={() => setIsProjectsOpen(false)}><ProjectsView /></AppWindow>
             <AppWindow appId="blog" title="Blog" isOpen={isBlogOpen} onClose={() => setIsBlogOpen(false)}>{renderBlogView()}</AppWindow>

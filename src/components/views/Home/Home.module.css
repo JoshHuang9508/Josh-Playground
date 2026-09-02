@@ -208,10 +208,15 @@ div.hero-bio {
 }
 
 div.hero-social-row {
-  display: flex;
+  display: none;
   gap: 0.5rem;
   align-self: flex-start;
   justify-content: flex-end;
+}
+
+div.home-page > hr,
+div.home-page > div.section:last-child {
+  display: none;
 }
 
 img.social-icon {
