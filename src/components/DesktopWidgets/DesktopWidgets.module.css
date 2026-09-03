@@ -1,20 +1,22 @@
 aside.widgets {
+  --widget-gap: 0.75rem;
+  --widget-unit: min(10rem, calc((100vw - 9.25rem) / 8), calc((100vh - 11.75rem) / 4));
+
   position: absolute;
   top: 1rem;
   right: 1rem;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: calc((min(22rem, 100vw - 2rem) - 2.75rem) / 2);
-  gap: 0.75rem;
-  width: min(22rem, calc(100% - 2rem));
-  max-height: calc(100% - 7.5rem);
+  grid-template-rows: repeat(4, var(--widget-unit));
+  grid-template-columns: repeat(8, var(--widget-unit));
+  grid-auto-flow: column dense;
+  gap: var(--widget-gap);
+  width: calc(var(--widget-unit) * 8 + var(--widget-gap) * 7 + 2rem);
+  height: calc(var(--widget-unit) * 4 + var(--widget-gap) * 3 + 2rem);
   padding: 1rem;
-  overflow-y: auto;
-  scrollbar-width: none;
+  overflow: visible;
+  direction: rtl;
 }
-
-aside.widgets::-webkit-scrollbar { display: none; }
 
 .widget,
 div.music-widget {
@@ -27,6 +29,7 @@ div.music-widget {
   border-radius: 1rem;
   box-shadow: var(--card-shadow);
   backdrop-filter: blur(var(--card-blur));
+  direction: ltr;
 }
 
 .size-1x1 {
@@ -49,36 +52,332 @@ div.music-widget {
   grid-column: span 2;
 }
 
+aside.widgets > :nth-child(1) {
+  order: 1;
+}
+
+aside.widgets > :nth-child(2) {
+  order: 6;
+}
+
+aside.widgets > :nth-child(3) {
+  order: 9;
+}
+
+aside.widgets > :nth-child(4) {
+  order: 10;
+}
+
+aside.widgets > :nth-child(5) {
+  order: 8;
+}
+
+aside.widgets > :nth-child(6) {
+  order: 3;
+}
+
+aside.widgets > :nth-child(7) {
+  order: 2;
+}
+
+aside.widgets > :nth-child(8) {
+  order: 5;
+}
+
+aside.widgets > :nth-child(9) {
+  order: 7;
+}
+
+aside.widgets > :nth-child(10) {
+  order: 4;
+}
+
 button.widget {
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
-div.social-widget {
+a.github-widget,
+a.youtube-widget,
+a.profile-widget,
+a.discord-widget {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+a.github-widget,
+a.youtube-widget {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.widget strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+div.social-header {
+  z-index: 1;
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  padding-right: 2.25rem;
+}
+
+img.social-avatar,
+span.platform-avatar {
+  flex: 0 0 auto;
+  width: 3.25rem;
+  height: 3.25rem;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+span.platform-avatar {
+  display: grid;
+  place-items: center;
+}
+
+span.platform-avatar img {
+  width: 1.8rem;
+  height: 1.8rem;
+  object-fit: contain;
+}
+
+span.instagram-avatar {
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+}
+
+span.twitch-avatar {
+  background-color: #9146ff;
+}
+
+div.social-identity {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+div.social-identity strong {
+  font-size: 1.25rem;
+}
+
+div.social-identity span,
+div.social-identity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+div.social-identity span {
+  font-size: 0.85rem;
+}
+
+div.social-identity small {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+}
+
+img.platform-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  width: 1.55rem;
+  height: 1.55rem;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+p.social-bio {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  -webkit-box-orient: vertical;
+}
+
+div.social-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+div.social-stats > div {
+  display: flex;
+  flex-direction: column;
+}
+
+div.social-stats strong {
+  font-size: 1.3rem;
+  color: var(--text-highlight);
+}
+
+div.social-stats span,
+div.latest-activity span,
+div.video-info span,
+div.discord-activity span {
+  font-size: 0.66rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+div.latest-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
   padding: 0.75rem;
+  margin-top: auto;
+  background-color: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 7%);
+  border-radius: 0.7rem;
 }
 
-button.social-link {
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  transition: transform 0.18s ease, opacity 0.18s ease;
+div.latest-activity small,
+div.video-info small,
+div.discord-activity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
-button.social-link:hover { transform: translateY(-3px) scale(1.08); }
+a.youtube-widget {
+  justify-content: space-between;
+}
 
-button.social-link img {
+img.video-thumbnail,
+div.video-gradient {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+}
+
+img.video-thumbnail {
+  object-fit: cover;
+}
+
+div.video-gradient {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 25%), rgb(0 0 0 / 45%) 45%, rgb(0 0 0 / 92%));
+}
+
+div.video-info {
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+div.video-info strong {
+  font-size: 1rem;
+  white-space: normal;
+}
+
+a.profile-widget {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 1rem 3.25rem 1rem 1rem;
+}
+
+a.compact-profile-widget {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+a.compact-profile-widget img.social-avatar,
+a.compact-profile-widget span.platform-avatar {
+  width: 3.75rem;
+  height: 3.75rem;
+}
+
+a.compact-profile-widget div.social-identity small {
+  display: none;
+}
+
+a.discord-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  justify-content: space-between;
+  padding: 1rem 3.25rem 1rem 1rem;
+}
+
+a.github-widget:hover,
+a.youtube-widget:hover,
+a.profile-widget:hover,
+a.discord-widget:hover {
+  border-color: rgb(255 255 255 / 18%);
+  transform: translateY(-2px);
+}
+
+div.discord-profile,
+div.discord-activity {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  min-width: 0;
+}
+
+span.avatar-wrap {
+  position: relative;
+}
+
+i.status-dot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0.8rem;
+  height: 0.8rem;
+  background-color: #80848e;
+  border: 2px solid #202124;
+  border-radius: 50%;
+}
+
+i.status-online {
+  background-color: #23a55a;
+}
+
+i.status-idle {
+  background-color: #f0b232;
+}
+
+i.status-dnd {
+  background-color: #f23f43;
+}
+
+div.discord-activity img {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+div.discord-activity > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
 }
 
 button.content-widget,
@@ -100,8 +399,13 @@ button.project-widget img {
 }
 
 @keyframes project-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 span.project-dots {
@@ -130,12 +434,6 @@ span.label {
   color: var(--text-highlight);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-}
-
-.widget strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 span.description {
@@ -227,10 +525,28 @@ div.music-widget > div {
 
 @media (width <= 700px) {
   aside.widgets {
+    --widget-unit: min(calc((100vw - 6.25rem) / 4), calc((100vh - 14rem) / 7));
+
     top: 0.75rem;
     right: 0.75rem;
     left: 0.75rem;
-    grid-auto-rows: calc((100vw - 4.25rem) / 2);
-    width: auto;
+    grid-template-rows: repeat(7, var(--widget-unit));
+    grid-template-columns: repeat(4, var(--widget-unit));
+    width: calc(var(--widget-unit) * 4 + var(--widget-gap) * 3 + 2rem);
+    height: calc(var(--widget-unit) * 7 + var(--widget-gap) * 6 + 2rem);
+    margin-left: auto;
+  }
+
+  p.social-bio,
+  div.social-identity small,
+  div.latest-activity small,
+  div.video-info small {
+    display: none;
+  }
+
+  img.social-avatar,
+  span.platform-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
